@@ -45,4 +45,4 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 7. Once the hotfix is complete it is merged to both develop and master
 
 ## Notes
--Use Prettier for code formatting.
+- Use Prettier for code formatting.
