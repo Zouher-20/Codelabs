@@ -43,3 +43,6 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 5. When the release branch is done it is merged into develop and master
 6. If an issue in master is detected a hotfix branch is created from master
 7. Once the hotfix is complete it is merged to both develop and master
+
+## Notes
+- Use Prettier for code formatting.
