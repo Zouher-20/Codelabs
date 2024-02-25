@@ -1,8 +1,18 @@
 {
-  "singleQuote": true,
-  "trailingComma": "none",
-  "quoteProps": "as-needed",
-  "bracketSameLine": false,
-  "bracketSpacing": true,
-  "tabWidth": 2
+    "singleQuote": true,
+    "trailingComma": "none",
+    "bracketSpacing": true,
+    "semi": true,
+    "useTabs": false,
+    "printWidth": 80,
+    "tabWidth": 4,
+    "arrowParens": "avoid",
+    "endOfLine": "lf",
+    "emptyLineBeforeReturn": true,
+    "plugins": ["prettier-plugin-organize-imports", "prettier-plugin-tailwindcss"],
+    "pluginOptions": {
+        "prettier-plugin-tailwindcss": {
+            "tailwindConfig": "./tailwind.config.js"
+        }
+    }
 }
