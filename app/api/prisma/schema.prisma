@@ -1,0 +1,251 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ROLE {
+  USER
+  ADMIN
+}
+
+enum PLANTYPE {
+  free
+  plus
+  custom
+  premium
+}
+
+enum TAGTYPE {
+  challenge
+  normal
+  class
+}
+
+model User {
+  id                     Int                      @id @default(autoincrement())
+  email                  String                   @unique
+  name                   String?
+  username               String                   @unique
+  password               String
+  role                   ROLE
+  typeUser               String?
+  userImage              String?
+  planEndDate            DateTime?
+  inActive               Boolean                  @default(false)
+  verifiedAt             DateTime?
+  Verified               Verified?
+  Post                   Post[]
+  Feedback               Feedback?
+  EditorConfig           EditorConfig?
+  Plan                   Plan?
+  ChallengeParticipation ChallengeParticipation[]
+  UserProject            UserProject[]
+  Star                   Star[]
+  Comment                Comment[]
+  Blog                   Blog[]
+  MemberClass            MemberClass[]
+}
+
+model Verified {
+  id     Int     @id @default(autoincrement())
+  otp    String?
+  userId Int     @unique
+  user   User    @relation(fields: [userId], references: [id])
+}
+
+model Feedback {
+  id       Int     @id @default(autoincrement())
+  Feedback String?
+  userId   Int     @unique
+  user     User    @relation(fields: [userId], references: [id])
+}
+
+model EditorConfig {
+  id     Int     @id @default(autoincrement())
+  config String?
+  userId Int     @unique
+  user   User    @relation(fields: [userId], references: [id])
+}
+
+model Plan {
+  id          Int           @id @default(autoincrement())
+  type        PLANTYPE?
+  price       Float?
+  duration    DateTime?
+  userId      Int           @unique
+  user        User          @relation(fields: [userId], references: [id])
+  FeaturePlan FeaturePlan[]
+}
+
+model FeaturePlan {
+  id     Int    @id @default(autoincrement())
+  name   String
+  value  Float
+  plan   Plan   @relation(fields: [planId], references: [id])
+  planId Int
+}
+
+model ClassProject {
+  id             Int              @id @default(autoincrement())
+  name           String
+  type           String
+  descraption    String
+  Lab            Lab[]
+  classRomId     Int
+  classRom       ClassRom         @relation(fields: [classRomId], references: [id])
+  FeedbackProjct FeedbackProjct[]
+}
+
+model ClassRom {
+  id           Int            @id @default(autoincrement())
+  ClassProject ClassProject[]
+  MemberClass  MemberClass[]
+}
+
+model tag {
+  id            Int         @id @default(autoincrement())
+  userprojectId Int
+  challengeId   Int
+  challenge     Challenge   @relation(fields: [challengeId], references: [id])
+  userproject   UserProject @relation(fields: [userprojectId], references: [id])
+}
+
+model Challenge {
+  id                     Int                      @id @default(autoincrement())
+  name                   String
+  type                   String
+  description            String
+  endAt                  DateTime
+  startedAt              DateTime
+  ChallengeParticipation ChallengeParticipation[]
+  Attachment             Attachment[]
+  tag                    tag[]
+}
+
+model Attachment {
+  id          Int       @id @default(autoincrement())
+  challengeId Int
+  path        String
+  challenge   Challenge @relation(fields: [challengeId], references: [id])
+}
+
+model ChallengeParticipation {
+  id          Int       @id @default(autoincrement())
+  challenge   Challenge @relation(fields: [challengeId], references: [id])
+  user        User      @relation(fields: [userId], references: [id])
+  challengeId Int
+  userId      Int
+  Lab         Lab[]
+}
+
+model Lab {
+  id                       Int                    @id @default(autoincrement())
+  tamblateId               Int                    @unique
+  tamblate                 Tamblate               @relation(fields: [tamblateId], references: [id])
+  Code                     Code[]
+  userprojectId            Int
+  classProjectId           Int
+  challengeParticipationId Int
+  challengeParticipation   ChallengeParticipation @relation(fields: [challengeParticipationId], references: [id])
+  classProject             ClassProject           @relation(fields: [classProjectId], references: [id])
+  userproject              UserProject            @relation(fields: [userprojectId], references: [id])
+}
+
+model Code {
+  id    Int    @id @default(autoincrement())
+  path  String
+  labId Int
+  lab   Lab    @relation(fields: [labId], references: [id])
+}
+
+model UserProject {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  user        User      @relation(fields: [userId], references: [id])
+  type        String
+  name        String?
+  description String?
+  Star        Star[]
+  Comment     Comment[]
+  tag         tag[]
+  Lab         Lab[]
+}
+
+model Tamblate {
+  id            Int    @id @default(autoincrement())
+  nameTemplate  String
+  imageTemplate String
+  Lab           Lab?
+}
+
+model Blog {
+  id       Int       @id @default(autoincrement())
+  userId   Int
+  user     User      @relation(fields: [userId], references: [id])
+  contant  String?
+  imageUrl String?
+  status   Boolean   @default(false)
+  title    String?
+  Star     Star[]
+  Comment  Comment[]
+}
+
+//TODOoooooooooooooooooooo
+model Star {
+  id            Int         @id @default(autoincrement())
+  userId        Int
+  userprojectId Int
+  blogId        Int
+  blog          Blog        @relation(fields: [blogId], references: [id])
+  userproject   UserProject @relation(fields: [userprojectId], references: [id])
+  user          User        @relation(fields: [userId], references: [id])
+}
+
+model Comment {
+  id            Int         @id @default(autoincrement())
+  comment       String
+  userId        Int
+  userprojectId Int
+  blogId        Int
+  blog          Blog        @relation(fields: [blogId], references: [id])
+  userproject   UserProject @relation(fields: [userprojectId], references: [id])
+  user          User        @relation(fields: [userId], references: [id])
+}
+
+//TODOoooooooooooooooooooo
+
+model MemberClass {
+  id             Int              @id @default(autoincrement())
+  classRomId     Int
+  classRom       ClassRom         @relation(fields: [classRomId], references: [id])
+  userId         Int
+  user           User             @relation(fields: [userId], references: [id])
+  FeedbackProjct FeedbackProjct[]
+}
+
+model FeedbackProjct {
+  id             Int          @id @default(autoincrement())
+  classProjectId Int
+  classProject   ClassProject @relation(fields: [classProjectId], references: [id])
+  memberClassId  Int
+  memberClass    MemberClass  @relation(fields: [memberClassId], references: [id])
+}
+
+model Post {
+  id        Int     @id @default(autoincrement())
+  title     String
+  content   String?
+  published Boolean @default(false)
+  author    User    @relation(fields: [authorId], references: [id])
+  authorId  Int
+}
