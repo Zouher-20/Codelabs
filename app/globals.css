@@ -5,3 +5,7 @@
 body {
     background-color: oklch(var(--n));
 }
+
+.main-page-container {
+    min-height: calc(100vh - 4.25rem);
+}
