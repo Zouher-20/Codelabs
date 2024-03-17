@@ -1,29 +1,61 @@
 'use client';
 
 import PageContainer from './components/layout/page-container';
-import useInput from './components/globals/form/input';
-import { useEffect, useState } from 'react';
+import Input from './components/globals/form/input';
+import Schemas from './schemas';
+import { useFormik } from 'formik';
 
 export default function Home() {
-    const [email, emailInput] = useInput({ type: 'text', icon: 'solar:user-bold', placeholder: 'email' });
-    const [password, passwordInput] = useInput({ type: 'password', icon: 'solar:lock-password-unlocked-bold', placeholder: 'password' });
-    const [textField, textFieldInput] = useInput({ type: 'text', placeholder: 'textField' });
-    const [form, setForm] = useState({ email: email, password: password, textField: textField });
 
-    useEffect(() => {
-        setForm({ email: email, password: password, textField: textField })
-    }, [email, password, textField])
-
-    const HandleClick = () => {
-        console.log(form);
-    };
-
+    const onSubmit = (values: {}) => {
+        console.log(values)
+    }
+    const { values, errors, touched, handleChange, handleSubmit, handleBlur } = useFormik({
+        initialValues: {
+            email: "",
+            password: '',
+            textField: ''
+        },
+        validationSchema: Schemas,
+        onSubmit
+    })
     return <PageContainer >
         <div className='p-8 grid gap-4'>
-            <div className='flex flex-col gap-4'>
-                {emailInput} {passwordInput} {textFieldInput}
-            </div>
+            <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
+                <Input
+                    id='email'
+                    name='email'
+                    type='email'
+                    placeholder='email'
+                    icon='solar:user-bold'
+                    value={values.email}
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    errors={errors.email && touched.email ? errors.email : null}
+                />
+                <Input
+                    type='password'
+                    icon='solar:lock-password-unlocked-bold'
+                    placeholder='password'
+                    id='password'
+                    name='password'
+                    value={values.password}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    errors={errors.password && touched.password ? errors.password : null}
+                />
+                <Input
+                    type='textField'
+                    placeholder='textField'
+                    id='textField'
+                    name='textField'
+                    value={values.textField}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    errors={errors.textField && touched.textField ? errors.textField : null}
+                />
+                <button className='btn btn-sm max-w-sm  btn-primary' type="submit">Submit</button>
+            </form>
         </div>
-
     </PageContainer>;
 }
