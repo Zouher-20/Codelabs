@@ -3,12 +3,14 @@
 import PageContainer from './components/layout/page-container';
 import Input from './components/globals/form/input';
 import Button from './components/globals/form/button';
+import Textarea from './components/globals/form/text-area';
 import Schemas from './schemas';
 import { useFormik } from 'formik';
 
+
 export default function Home() {
 
-     const HandleClick = () => {
+    const HandleClick = () => {
         console.log('hi');
     };
     const onSubmit = (values: {}) => {
@@ -18,20 +20,21 @@ export default function Home() {
         initialValues: {
             email: "",
             password: '',
-            textField: ''
+            textField: '',
+            textarea: ''
         },
         validationSchema: Schemas,
         onSubmit
     })
     return <PageContainer >
         <div className='p-8 grid gap-4'>
-             <div className='flex gap-4'>
+            <div className='flex gap-4'>
                 <Button onClick={HandleClick} label='basic' style='basic' />
                 <Button onClick={HandleClick} label='outline' style='outline' />
                 <Button onClick={HandleClick} label='fill' style='fill' />
                 <Button onClick={HandleClick} label='any' style='any' />
             </div>
-          <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
+            <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
                 <Input
                     id='email'
                     name='email'
@@ -55,7 +58,7 @@ export default function Home() {
                     errors={errors.password && touched.password ? errors.password : null}
                 />
                 <Input
-                    type='textField'
+                    type='text'
                     placeholder='textField'
                     id='textField'
                     name='textField'
@@ -64,8 +67,17 @@ export default function Home() {
                     onBlur={handleBlur}
                     errors={errors.textField && touched.textField ? errors.textField : null}
                 />
+                <Textarea
+                    id='textarea'
+                    name='textarea'
+                    placeholder='textarea'
+                    value={values.textarea}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    errors={errors.textarea && touched.textarea ? errors.textarea : null}
+                />
                 <button className='btn btn-sm max-w-sm  btn-primary' type="submit">Submit</button>
-            </form> 
+            </form>
         </div>
     </PageContainer>;
 }

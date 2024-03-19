@@ -4,6 +4,7 @@ import * as yup from 'yup';
 
 const Schemas = yup.object().shape({
     textField: yup.string().required('Required'),
+    textarea: yup.string().required('Required'),
     email: yup.string().email('Please enter a valid email').required('Required'),
     password: yup
         .string()
