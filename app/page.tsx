@@ -6,8 +6,9 @@ import Button from './components/globals/form/button';
 import Textarea from './components/globals/form/text-area';
 import Schemas from './schemas';
 import { useFormik } from 'formik';
-import PlanCard from './components/plan-card';
-
+import PlanCard from './components/cards/plan-card';
+import UserPlanCard from './components/cards/user-plan-card';
+import { basicPlan, plusPlan, premiumPlan } from './components/cards/plans';
 
 export default function Home() {
 
@@ -27,45 +28,6 @@ export default function Home() {
         validationSchema: Schemas,
         onSubmit
     })
-    const basicPlan = {
-        title: 'Basic',
-        subtitle: 'Perfect plan for Starters.',
-        price: 'Free',
-        duration: 'For a life',
-        advantages: [
-            'Limited 5 labs',
-            'Limited to 2 classes',
-            'Only 5 students in the class',
-            'Only 2 labs in the class',
-            'Participate in challenges'
-        ]
-    }
-    const plusPlan = {
-        title: 'plus',
-        subtitle: 'For users who want to do more.',
-        price: '$5',
-        duration: '/Year',
-        advantages: [
-            'Limited 10 labs',
-            'Limited to 5 classes',
-            'Only 10 students in the class',
-            'Only 5 labs in the class',
-            'Participate in challenges'
-        ]
-    }
-    const premiumPlan = {
-        title: 'premium',
-        subtitle: 'For users who are seeking for the best',
-        price: '$40',
-        duration: '/Year',
-        advantages: [
-            'Unlimited labs',
-            'Unlimited classes',
-            'Up to 25 students in the class',
-            'Up to 25 labs in the class',
-            'Participate in challenges'
-        ]
-    }
 
     return <PageContainer >
         <div className='p-8 grid gap-4'>
@@ -103,6 +65,7 @@ export default function Home() {
                 <PlanCard plan={plusPlan} active={true} />
                 <PlanCard plan={premiumPlan} />
             </div>
+            <UserPlanCard plan={basicPlan} />
         </div>
     </PageContainer>;
 }

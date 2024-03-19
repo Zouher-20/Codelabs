@@ -1,5 +1,5 @@
-import Button from "../globals/form/button";
-import IconRenderer from "../globals/icon";
+import Button from "../../globals/form/button";
+import IconRenderer from "../../globals/icon";
 
 type Props = {
     plan: {
@@ -15,7 +15,7 @@ const PlanCard = ({ plan, active }: Props) => {
     const { title, subtitle, price, duration, advantages } = plan
     return (
         <div className={"p-5 flex flex-col gap-4  rounded-3xl border-base-100 border-2 " + (active ? 'bg-base-100' : '')}>
-            <div className="flex justify-between ">
+            <div className="flex justify-between">
                 <IconRenderer className={active ? 'text-white' : 'text-primary'} fontSize={33} icon="solar:link-circle-line-duotone" />
                 <IconRenderer className={"self-center hover:opacity-65  " + (active ? 'text-white' : 'text-primary')} fontSize={28} icon="solar:pen-2-bold-duotone" />
             </div>
@@ -29,17 +29,18 @@ const PlanCard = ({ plan, active }: Props) => {
             </div>
             <Button label="start now" style={active ? 'basic' : 'outline'} />
             <div className="flex flex-col gap-3">
-                {advantages ?
-                    advantages.map((advantage: string, index: number) => (
-                        <div key={index} className="flex gap-3">
-                            <IconRenderer className={active ? 'text-white' : 'text-primary'} fontSize={28} icon="solar:check-read-broken" />
-                            <p>{advantage}</p>
-                        </div>
-                    ))
-                    : <></>}
+                {advantages && Advantages(advantages, active)}
             </div>
         </div>
     );
 }
-
 export default PlanCard;
+
+function Advantages(advantages: Array<string>, active?: boolean) {
+    return advantages.map((advantage: string, index: number) => (
+        <div key={index} className="flex gap-3">
+            <IconRenderer className={active ? 'text-white' : 'text-primary'} fontSize={28} icon="solar:check-read-broken" />
+            <p>{advantage}</p>
+        </div>
+    ))
+}
