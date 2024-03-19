@@ -6,6 +6,7 @@ import Button from './components/globals/form/button';
 import Textarea from './components/globals/form/text-area';
 import Schemas from './schemas';
 import { useFormik } from 'formik';
+import PlanCard from './components/plan-card';
 
 
 export default function Home() {
@@ -26,6 +27,46 @@ export default function Home() {
         validationSchema: Schemas,
         onSubmit
     })
+    const basicPlan = {
+        title: 'Basic',
+        subtitle: 'Perfect plan for Starters.',
+        price: 'Free',
+        duration: 'For a life',
+        advantages: [
+            'Limited 5 labs',
+            'Limited to 2 classes',
+            'Only 5 students in the class',
+            'Only 2 labs in the class',
+            'Participate in challenges'
+        ]
+    }
+    const plusPlan = {
+        title: 'plus',
+        subtitle: 'For users who want to do more.',
+        price: '$5',
+        duration: '/Year',
+        advantages: [
+            'Limited 10 labs',
+            'Limited to 5 classes',
+            'Only 10 students in the class',
+            'Only 5 labs in the class',
+            'Participate in challenges'
+        ]
+    }
+    const premiumPlan = {
+        title: 'premium',
+        subtitle: 'For users who are seeking for the best',
+        price: '$40',
+        duration: '/Year',
+        advantages: [
+            'Unlimited labs',
+            'Unlimited classes',
+            'Up to 25 students in the class',
+            'Up to 25 labs in the class',
+            'Participate in challenges'
+        ]
+    }
+
     return <PageContainer >
         <div className='p-8 grid gap-4'>
             <div className='flex gap-4'>
@@ -34,7 +75,7 @@ export default function Home() {
                 <Button onClick={HandleClick} label='fill' style='fill' />
                 <Button onClick={HandleClick} label='any' style='any' />
             </div>
-            <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
+            <form className='flex flex-col ' onSubmit={handleSubmit}>
                 <Input
                     id='email'
                     name='email'
@@ -45,27 +86,6 @@ export default function Home() {
                     onBlur={handleBlur}
                     onChange={handleChange}
                     errors={errors.email && touched.email ? errors.email : null}
-                />
-                <Input
-                    type='password'
-                    icon='solar:lock-password-unlocked-bold'
-                    placeholder='password'
-                    id='password'
-                    name='password'
-                    value={values.password}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    errors={errors.password && touched.password ? errors.password : null}
-                />
-                <Input
-                    type='text'
-                    placeholder='textField'
-                    id='textField'
-                    name='textField'
-                    value={values.textField}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    errors={errors.textField && touched.textField ? errors.textField : null}
                 />
                 <Textarea
                     id='textarea'
@@ -78,6 +98,11 @@ export default function Home() {
                 />
                 <button className='btn btn-sm max-w-sm  btn-primary' type="submit">Submit</button>
             </form>
+            <div className='flex gap-4'>
+                <PlanCard plan={basicPlan} />
+                <PlanCard plan={plusPlan} active={true} />
+                <PlanCard plan={premiumPlan} />
+            </div>
         </div>
     </PageContainer>;
 }
