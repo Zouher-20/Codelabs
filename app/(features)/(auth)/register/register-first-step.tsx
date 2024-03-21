@@ -22,7 +22,6 @@ export function RegisterFirstStep({
         await nextPageCallback(async () => {
             return values.email;
         });
-        console.log(values);
     }
     return (
         <form className="m-auto flex flex-col justify-center" onSubmit={handleSubmit}>
