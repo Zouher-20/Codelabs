@@ -8,7 +8,12 @@ import Schemas from './schemas';
 import { useFormik } from 'formik';
 import PlanCard from './components/cards/plan-card';
 import UserPlanCard from './components/cards/user-plan-card';
-import { basicPlan, plusPlan, premiumPlan } from './components/cards/plans';
+import { basicPlan, plusPlan, premiumPlan } from './constants/plans';
+import Lab from './components/globals/lab/lab';
+import InteractionsLab from './components/globals/lab/interactions-lab';
+import LabCard from './components/globals/lab/lab-card';
+import ClassLab from './components/globals/lab/class-lab';
+import SubmittedLab from './components/globals/lab/submitted-lab';
 
 export default function Home() {
 
@@ -21,8 +26,6 @@ export default function Home() {
     const { values, errors, touched, handleChange, handleSubmit, handleBlur } = useFormik({
         initialValues: {
             email: "",
-            password: '',
-            textField: '',
             textarea: ''
         },
         validationSchema: Schemas,
@@ -66,6 +69,13 @@ export default function Home() {
                 <PlanCard plan={premiumPlan} />
             </div>
             <UserPlanCard plan={basicPlan} />
+            <div className='grid grid-cols-4 gap-2'>
+                <Lab />
+                <InteractionsLab react={[754, 213, 30, 84]} />
+                <LabCard title='A new code Lab Sidebar' />
+                <ClassLab name='Class lab name' type='Type' />
+                <SubmittedLab />
+            </div>
         </div>
     </PageContainer>;
 }

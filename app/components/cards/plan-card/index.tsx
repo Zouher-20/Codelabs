@@ -1,17 +1,8 @@
+import { planType } from "@/app/@types/plan";
 import Button from "../../globals/form/button";
 import IconRenderer from "../../globals/icon";
 
-type Props = {
-    plan: {
-        title: string,
-        subtitle: string,
-        price: string,
-        duration: string,
-        advantages: Array<string>
-    }
-    active?: boolean
-}
-const PlanCard = ({ plan, active }: Props) => {
+const PlanCard = ({ plan, active }: { plan: planType, active?: boolean }) => {
     const { title, subtitle, price, duration, advantages } = plan
     return (
         <div className={"p-5 flex flex-col gap-4  rounded-3xl border-base-100 border-2 " + (active ? 'bg-base-100' : '')}>
