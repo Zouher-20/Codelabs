@@ -11,7 +11,7 @@ export function RegisterSecondStep({
     const [otp, setOtp] = useState('');
 
     return (
-        <div className="mx-5 flex flex-col justify-center gap-8 text-center ">
+        <div className="m-auto flex flex-col justify-center gap-8 text-center">
             <div>
                 <p className="text-md font-thin	text-white">Verify your email</p>
                 <p className="text-xs font-thin	text-white">OTP has been sent to</p>
