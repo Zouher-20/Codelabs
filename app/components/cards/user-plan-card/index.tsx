@@ -1,15 +1,7 @@
+import { planType } from "@/app/@types/plan";
 import IconRenderer from "../../globals/icon";
 
-type Props = {
-    plan: {
-        title: string,
-        subtitle: string,
-        price: string,
-        duration: string,
-    }
-    active?: boolean
-}
-const UserPlanCard = ({ plan, active }: Props) => {
+const UserPlanCard = ({ plan, active }: { plan: planType, active?: boolean }) => {
     const { title, subtitle, price, duration } = plan
     return (
         <div className={"py-4 px-6 max-w-xs flex flex-col gap-4  rounded-3xl border-base-100 border-2 " + (active ? 'bg-base-100' : '')}>

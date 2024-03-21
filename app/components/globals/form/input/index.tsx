@@ -1,16 +1,7 @@
+import { inputType } from '@/app/@types/input';
 import IconRenderer from '../../icon';
 
-const Input = ({ id, name, type, placeholder, icon, errors, value, onChange, onBlur }: {
-    id?: string
-    name?: string,
-    type: string,
-    placeholder?: string,
-    icon?: string,
-    errors?: string | null
-    value: string,
-    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
-}) => {
+const Input = ({ id, name, type, placeholder, icon, errors, value, onChange, onBlur }: inputType) => {
     return (
         <div className='flex flex-col gap-1'>
             <label className={"input input-bordered flex items-center gap-2 max-w-sm h-[35px] input-sm " + (errors ? 'input-error' : '')}>
