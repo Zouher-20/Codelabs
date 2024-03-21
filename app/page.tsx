@@ -4,7 +4,7 @@ import PageContainer from './components/layout/page-container';
 import Input from './components/globals/form/input';
 import Button from './components/globals/form/button';
 import Textarea from './components/globals/form/text-area';
-import Schemas from './schemas';
+import { textField, email, password, textarea } from './schemas';
 import { useFormik } from 'formik';
 import PlanCard from './components/cards/plan-card';
 import UserPlanCard from './components/cards/user-plan-card';
@@ -14,6 +14,8 @@ import InteractionsLab from './components/globals/lab/interactions-lab';
 import LabCard from './components/globals/lab/lab-card';
 import ClassLab from './components/globals/lab/class-lab';
 import SubmittedLab from './components/globals/lab/submitted-lab';
+import Challenge from './components/cards/challenge';
+import * as yup from 'yup'
 
 export default function Home() {
 
@@ -23,12 +25,13 @@ export default function Home() {
     const onSubmit = (values: {}) => {
         console.log(values)
     }
+    const Schemas = {};
     const { values, errors, touched, handleChange, handleSubmit, handleBlur } = useFormik({
         initialValues: {
             email: "",
             textarea: ''
         },
-        validationSchema: Schemas,
+        validationSchema: yup.object().shape({ textField, email, password, textarea }),
         onSubmit
     })
 
@@ -75,6 +78,13 @@ export default function Home() {
                 <LabCard title='A new code Lab Sidebar' />
                 <ClassLab name='Class lab name' type='Type' />
                 <SubmittedLab />
+            </div>
+            <div>
+                <Challenge
+                    name='Challenge name'
+                    description='Lorem ipsum dolor sit amet, consectetur adipisicing elit. Repellat, aliquam? Veritatis voluptates reprehenderit maxime neque totam quidem quibusdam, ex earum velit adipisci tenetur atque accusamus!'
+                    onClick={() => 'hi'}
+                />
             </div>
         </div>
     </PageContainer>;
