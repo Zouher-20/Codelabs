@@ -9,7 +9,7 @@ CREATE TYPE "TAGTYPE" AS ENUM ('challenge', 'normal', 'class');
 
 -- CreateTable
 CREATE TABLE "User" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "name" TEXT,
     "username" TEXT NOT NULL,
@@ -25,39 +25,50 @@ CREATE TABLE "User" (
 );
 
 -- CreateTable
+CREATE TABLE "Session" (
+    "id" TEXT NOT NULL,
+    "sessionToken" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "expires" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Session_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "Verified" (
-    "id" SERIAL NOT NULL,
-    "otp" TEXT,
-    "userId" INTEGER NOT NULL,
+    "id" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "otp" INTEGER NOT NULL,
+    "userId" TEXT,
 
     CONSTRAINT "Verified_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Feedback" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "Feedback" TEXT,
-    "userId" INTEGER NOT NULL,
+    "userId" TEXT NOT NULL,
 
     CONSTRAINT "Feedback_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "EditorConfig" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "config" TEXT,
-    "userId" INTEGER NOT NULL,
+    "userId" TEXT NOT NULL,
 
     CONSTRAINT "EditorConfig_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Plan" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "type" "PLANTYPE",
     "price" DOUBLE PRECISION,
     "duration" TIMESTAMP(3),
-    "userId" INTEGER NOT NULL,
+    "userId" TEXT NOT NULL,
 
     CONSTRAINT "Plan_pkey" PRIMARY KEY ("id")
 );
@@ -67,41 +78,41 @@ CREATE TABLE "FeaturePlan" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "value" DOUBLE PRECISION NOT NULL,
-    "planId" INTEGER NOT NULL,
+    "planId" TEXT NOT NULL,
 
     CONSTRAINT "FeaturePlan_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "ClassProject" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "type" TEXT NOT NULL,
     "descraption" TEXT NOT NULL,
-    "classRomId" INTEGER NOT NULL,
+    "classRomId" TEXT NOT NULL,
 
     CONSTRAINT "ClassProject_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "ClassRom" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
 
     CONSTRAINT "ClassRom_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "tag" (
-    "id" SERIAL NOT NULL,
-    "userprojectId" INTEGER NOT NULL,
-    "challengeId" INTEGER NOT NULL,
+    "id" TEXT NOT NULL,
+    "userprojectId" TEXT NOT NULL,
+    "challengeId" TEXT NOT NULL,
 
     CONSTRAINT "tag_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Challenge" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "type" TEXT NOT NULL,
     "description" TEXT NOT NULL,
@@ -114,7 +125,7 @@ CREATE TABLE "Challenge" (
 -- CreateTable
 CREATE TABLE "Attachment" (
     "id" SERIAL NOT NULL,
-    "challengeId" INTEGER NOT NULL,
+    "challengeId" TEXT NOT NULL,
     "path" TEXT NOT NULL,
 
     CONSTRAINT "Attachment_pkey" PRIMARY KEY ("id")
@@ -122,37 +133,37 @@ CREATE TABLE "Attachment" (
 
 -- CreateTable
 CREATE TABLE "ChallengeParticipation" (
-    "id" SERIAL NOT NULL,
-    "challengeId" INTEGER NOT NULL,
-    "userId" INTEGER NOT NULL,
+    "id" TEXT NOT NULL,
+    "challengeId" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
 
     CONSTRAINT "ChallengeParticipation_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Lab" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "tamblateId" INTEGER NOT NULL,
-    "userprojectId" INTEGER NOT NULL,
-    "classProjectId" INTEGER NOT NULL,
-    "challengeParticipationId" INTEGER NOT NULL,
+    "userprojectId" TEXT NOT NULL,
+    "classProjectId" TEXT NOT NULL,
+    "challengeParticipationId" TEXT NOT NULL,
 
     CONSTRAINT "Lab_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Code" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "path" TEXT NOT NULL,
-    "labId" INTEGER NOT NULL,
+    "labId" TEXT NOT NULL,
 
     CONSTRAINT "Code_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "UserProject" (
-    "id" SERIAL NOT NULL,
-    "userId" INTEGER NOT NULL,
+    "id" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
     "type" TEXT NOT NULL,
     "name" TEXT,
     "description" TEXT,
@@ -171,8 +182,8 @@ CREATE TABLE "Tamblate" (
 
 -- CreateTable
 CREATE TABLE "Blog" (
-    "id" SERIAL NOT NULL,
-    "userId" INTEGER NOT NULL,
+    "id" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
     "contant" TEXT,
     "imageUrl" TEXT,
     "status" BOOLEAN NOT NULL DEFAULT false,
@@ -183,52 +194,41 @@ CREATE TABLE "Blog" (
 
 -- CreateTable
 CREATE TABLE "Star" (
-    "id" SERIAL NOT NULL,
-    "userId" INTEGER NOT NULL,
-    "userprojectId" INTEGER NOT NULL,
-    "blogId" INTEGER NOT NULL,
+    "id" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "userprojectId" TEXT NOT NULL,
+    "blogId" TEXT NOT NULL,
 
     CONSTRAINT "Star_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Comment" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "comment" TEXT NOT NULL,
-    "userId" INTEGER NOT NULL,
-    "userprojectId" INTEGER NOT NULL,
-    "blogId" INTEGER NOT NULL,
+    "userId" TEXT NOT NULL,
+    "userprojectId" TEXT NOT NULL,
+    "blogId" TEXT NOT NULL,
 
     CONSTRAINT "Comment_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "MemberClass" (
-    "id" SERIAL NOT NULL,
-    "classRomId" INTEGER NOT NULL,
-    "userId" INTEGER NOT NULL,
+    "id" TEXT NOT NULL,
+    "classRomId" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
 
     CONSTRAINT "MemberClass_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "FeedbackProjct" (
-    "id" SERIAL NOT NULL,
-    "classProjectId" INTEGER NOT NULL,
-    "memberClassId" INTEGER NOT NULL,
+    "id" TEXT NOT NULL,
+    "classProjectId" TEXT NOT NULL,
+    "memberClassId" TEXT NOT NULL,
 
     CONSTRAINT "FeedbackProjct_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "Post" (
-    "id" SERIAL NOT NULL,
-    "title" TEXT NOT NULL,
-    "content" TEXT,
-    "published" BOOLEAN NOT NULL DEFAULT false,
-    "authorId" INTEGER NOT NULL,
-
-    CONSTRAINT "Post_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -236,6 +236,12 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Session_sessionToken_key" ON "Session"("sessionToken");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Verified_email_key" ON "Verified"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Verified_userId_key" ON "Verified"("userId");
@@ -253,7 +259,10 @@ CREATE UNIQUE INDEX "Plan_userId_key" ON "Plan"("userId");
 CREATE UNIQUE INDEX "Lab_tamblateId_key" ON "Lab"("tamblateId");
 
 -- AddForeignKey
-ALTER TABLE "Verified" ADD CONSTRAINT "Verified_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Session" ADD CONSTRAINT "Session_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Verified" ADD CONSTRAINT "Verified_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Feedback" ADD CONSTRAINT "Feedback_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -335,6 +344,3 @@ ALTER TABLE "FeedbackProjct" ADD CONSTRAINT "FeedbackProjct_classProjectId_fkey"
 
 -- AddForeignKey
 ALTER TABLE "FeedbackProjct" ADD CONSTRAINT "FeedbackProjct_memberClassId_fkey" FOREIGN KEY ("memberClassId") REFERENCES "MemberClass"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Post" ADD CONSTRAINT "Post_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
