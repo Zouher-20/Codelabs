@@ -6,7 +6,7 @@ const Button = ({ label, style, onClick }: buttonType) => {
     const fill = 'bg-base-100';
     return (
         <button onClick={onClick}
-            className={"btn min-w-24 "
+            className={"btn min-w-24 max-w-fit "
                 +
                 (style == 'basic' ? basic : (style == 'fill' ? fill : (style == 'outline' ? outlin : 'bg-base-200 text-primary')))}
         >

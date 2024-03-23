@@ -32,9 +32,8 @@ enum TAGTYPE {
 }
 
 model User {
-  id                     Int                      @id @default(autoincrement())
+  id                     String                   @id @default(cuid())
   email                  String                   @unique
-  name                   String?
   username               String                   @unique
   password               String
   role                   ROLE
@@ -43,8 +42,6 @@ model User {
   planEndDate            DateTime?
   inActive               Boolean                  @default(false)
   verifiedAt             DateTime?
-  Verified               Verified?
-  Post                   Post[]
   Feedback               Feedback?
   EditorConfig           EditorConfig?
   Plan                   Plan?
@@ -54,35 +51,46 @@ model User {
   Comment                Comment[]
   Blog                   Blog[]
   MemberClass            MemberClass[]
+  Session                Session[]
+  Verified               Verified?
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Verified {
-  id     Int     @id @default(autoincrement())
-  otp    String?
-  userId Int     @unique
-  user   User    @relation(fields: [userId], references: [id])
+  id     String  @id @default(cuid())
+  email  String  @unique
+  otp    Int
+  user   User?   @relation(fields: [userId], references: [id])
+  userId String? @unique
 }
 
 model Feedback {
-  id       Int     @id @default(autoincrement())
+  id       String  @id @default(cuid())
   Feedback String?
-  userId   Int     @unique
+  userId   String  @unique
   user     User    @relation(fields: [userId], references: [id])
 }
 
 model EditorConfig {
-  id     Int     @id @default(autoincrement())
+  id     String  @id @default(cuid())
   config String?
-  userId Int     @unique
+  userId String  @unique
   user   User    @relation(fields: [userId], references: [id])
 }
 
 model Plan {
-  id          Int           @id @default(autoincrement())
+  id          String        @id @default(cuid())
   type        PLANTYPE?
   price       Float?
   duration    DateTime?
-  userId      Int           @unique
+  userId      String        @unique
   user        User          @relation(fields: [userId], references: [id])
   FeaturePlan FeaturePlan[]
 }
@@ -92,36 +100,36 @@ model FeaturePlan {
   name   String
   value  Float
   plan   Plan   @relation(fields: [planId], references: [id])
-  planId Int
+  planId String
 }
 
 model ClassProject {
-  id             Int              @id @default(autoincrement())
+  id             String           @id @default(cuid())
   name           String
   type           String
   descraption    String
   Lab            Lab[]
-  classRomId     Int
+  classRomId     String
   classRom       ClassRom         @relation(fields: [classRomId], references: [id])
   FeedbackProjct FeedbackProjct[]
 }
 
 model ClassRom {
-  id           Int            @id @default(autoincrement())
+  id           String         @id @default(cuid())
   ClassProject ClassProject[]
   MemberClass  MemberClass[]
 }
 
 model tag {
-  id            Int         @id @default(autoincrement())
-  userprojectId Int
-  challengeId   Int
+  id            String      @id @default(cuid())
+  userprojectId String
+  challengeId   String
   challenge     Challenge   @relation(fields: [challengeId], references: [id])
   userproject   UserProject @relation(fields: [userprojectId], references: [id])
 }
 
 model Challenge {
-  id                     Int                      @id @default(autoincrement())
+  id                     String                   @id @default(cuid())
   name                   String
   type                   String
   description            String
@@ -134,43 +142,43 @@ model Challenge {
 
 model Attachment {
   id          Int       @id @default(autoincrement())
-  challengeId Int
+  challengeId String
   path        String
   challenge   Challenge @relation(fields: [challengeId], references: [id])
 }
 
 model ChallengeParticipation {
-  id          Int       @id @default(autoincrement())
+  id          String    @id @default(cuid())
   challenge   Challenge @relation(fields: [challengeId], references: [id])
   user        User      @relation(fields: [userId], references: [id])
-  challengeId Int
-  userId      Int
+  challengeId String
+  userId      String
   Lab         Lab[]
 }
 
 model Lab {
-  id                       Int                    @id @default(autoincrement())
+  id                       String                 @id @default(cuid())
   tamblateId               Int                    @unique
   tamblate                 Tamblate               @relation(fields: [tamblateId], references: [id])
   Code                     Code[]
-  userprojectId            Int
-  classProjectId           Int
-  challengeParticipationId Int
+  userprojectId            String
+  classProjectId           String
+  challengeParticipationId String
   challengeParticipation   ChallengeParticipation @relation(fields: [challengeParticipationId], references: [id])
   classProject             ClassProject           @relation(fields: [classProjectId], references: [id])
   userproject              UserProject            @relation(fields: [userprojectId], references: [id])
 }
 
 model Code {
-  id    Int    @id @default(autoincrement())
+  id    String @id @default(cuid())
   path  String
-  labId Int
+  labId String
   lab   Lab    @relation(fields: [labId], references: [id])
 }
 
 model UserProject {
-  id          Int       @id @default(autoincrement())
-  userId      Int
+  id          String    @id @default(cuid())
+  userId      String
   user        User      @relation(fields: [userId], references: [id])
   type        String
   name        String?
@@ -189,8 +197,8 @@ model Tamblate {
 }
 
 model Blog {
-  id       Int       @id @default(autoincrement())
-  userId   Int
+  id       String    @id @default(cuid())
+  userId   String
   user     User      @relation(fields: [userId], references: [id])
   contant  String?
   imageUrl String?
@@ -202,21 +210,21 @@ model Blog {
 
 //TODOoooooooooooooooooooo
 model Star {
-  id            Int         @id @default(autoincrement())
-  userId        Int
-  userprojectId Int
-  blogId        Int
+  id            String      @id @default(cuid())
+  userId        String
+  userprojectId String
+  blogId        String
   blog          Blog        @relation(fields: [blogId], references: [id])
   userproject   UserProject @relation(fields: [userprojectId], references: [id])
   user          User        @relation(fields: [userId], references: [id])
 }
 
 model Comment {
-  id            Int         @id @default(autoincrement())
+  id            String      @id @default(cuid())
   comment       String
-  userId        Int
-  userprojectId Int
-  blogId        Int
+  userId        String
+  userprojectId String
+  blogId        String
   blog          Blog        @relation(fields: [blogId], references: [id])
   userproject   UserProject @relation(fields: [userprojectId], references: [id])
   user          User        @relation(fields: [userId], references: [id])
@@ -225,27 +233,18 @@ model Comment {
 //TODOoooooooooooooooooooo
 
 model MemberClass {
-  id             Int              @id @default(autoincrement())
-  classRomId     Int
+  id             String           @id @default(cuid())
+  classRomId     String
   classRom       ClassRom         @relation(fields: [classRomId], references: [id])
-  userId         Int
+  userId         String
   user           User             @relation(fields: [userId], references: [id])
   FeedbackProjct FeedbackProjct[]
 }
 
 model FeedbackProjct {
-  id             Int          @id @default(autoincrement())
-  classProjectId Int
+  id             String       @id @default(cuid())
+  classProjectId String
   classProject   ClassProject @relation(fields: [classProjectId], references: [id])
-  memberClassId  Int
+  memberClassId  String
   memberClass    MemberClass  @relation(fields: [memberClassId], references: [id])
-}
-
-model Post {
-  id        Int     @id @default(autoincrement())
-  title     String
-  content   String?
-  published Boolean @default(false)
-  author    User    @relation(fields: [authorId], references: [id])
-  authorId  Int
 }

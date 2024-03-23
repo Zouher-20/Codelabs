@@ -4,7 +4,7 @@ import PageContainer from './components/layout/page-container';
 import Input from './components/globals/form/input';
 import Button from './components/globals/form/button';
 import Textarea from './components/globals/form/text-area';
-import Schemas from './schemas';
+import { textField, email, password, textarea } from './schemas';
 import { useFormik } from 'formik';
 import PlanCard from './components/cards/plan-card';
 import UserPlanCard from './components/cards/user-plan-card';
@@ -16,6 +16,8 @@ import ClassLab from './components/globals/lab/class-lab';
 import SubmittedLab from './components/globals/lab/submitted-lab';
 import CircleChart from './components/statistics/circle';
 import RadialChart from './components/statistics/radial';
+import Challenge from './components/cards/challenge';
+import * as yup from 'yup'
 
 export default function Home() {
 
@@ -25,12 +27,13 @@ export default function Home() {
     const onSubmit = (values: {}) => {
         console.log(values)
     }
+    const Schemas = {};
     const { values, errors, touched, handleChange, handleSubmit, handleBlur } = useFormik({
         initialValues: {
             email: "",
             textarea: ''
         },
-        validationSchema: Schemas,
+        validationSchema: yup.object().shape({ textField, email, password, textarea }),
         onSubmit
     })
 
@@ -78,6 +81,11 @@ export default function Home() {
                 <ClassLab name='Class lab name' type='Type' />
                 <SubmittedLab />
             </div>
+            <Challenge
+                name='Challenge name'
+                description='Lorem ipsum dolor sit amet, consectetur adipisicing elit. Repellat, aliquam? Veritatis voluptates reprehenderit maxime neque totam quidem quibusdam, ex earum velit adipisci tenetur atque accusamus!'
+                onClick={() => 'hi'}
+            />
             <div className='flex gap-8'>
                 <CircleChart labels={['Apple', 'Mango']} series={[30, 80]} colors={['#282C2B', '#50FA7B']} width={300} height={300} />
                 <RadialChart labels={['']} series={[40]} colors={['#50FA7B', '#282C2B']} width={300} height={300} />
