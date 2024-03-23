@@ -14,6 +14,8 @@ import InteractionsLab from './components/globals/lab/interactions-lab';
 import LabCard from './components/globals/lab/lab-card';
 import ClassLab from './components/globals/lab/class-lab';
 import SubmittedLab from './components/globals/lab/submitted-lab';
+import CircleChart from './components/statistics/circle';
+import RadialChart from './components/statistics/radial';
 
 export default function Home() {
 
@@ -69,12 +71,16 @@ export default function Home() {
                 <PlanCard plan={premiumPlan} />
             </div>
             <UserPlanCard plan={basicPlan} />
-            <div className='grid grid-cols-4 gap-2'>
+            <div className='flex flex-wrap gap-2'>
                 <Lab />
                 <InteractionsLab react={[754, 213, 30, 84]} />
                 <LabCard title='A new code Lab Sidebar' />
                 <ClassLab name='Class lab name' type='Type' />
                 <SubmittedLab />
+            </div>
+            <div className='flex gap-8'>
+                <CircleChart labels={['Apple', 'Mango']} series={[30, 80]} colors={['#282C2B', '#50FA7B']} width={300} height={300} />
+                <RadialChart labels={['']} series={[40]} colors={['#50FA7B', '#282C2B']} width={300} height={300} />
             </div>
         </div>
     </PageContainer>;
