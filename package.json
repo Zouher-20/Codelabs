@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@prisma/client": "^5.10.2",
+    "apexcharts": "^3.48.0",
     "@types/bcrypt": "^5.0.2",
     "@types/bcryptjs": "^2.4.6",
     "@types/nodemailer": "^6.4.14",
@@ -23,6 +24,7 @@
     "next": "14.1.0",
     "nodemailer": "^6.9.13",
     "react": "^18",
+    "react-apexcharts": "^1.4.1",
     "react-dom": "^18",
     "rxjs": "^7.8.1",
     "yup": "^1.4.0",
