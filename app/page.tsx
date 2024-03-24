@@ -18,8 +18,28 @@ import RadialChart from './components/statistics/radial';
 import PageContainer from './components/layout/page-container';
 import { basicPlan, plusPlan, premiumPlan } from './constants/plans';
 import { email, password, textField, textarea } from './schemas';
+import RadioButtonGroup from './components/globals/form/type-multi-select/radio-button-group';
 
 export default function Home() {
+
+    const types = [
+        {
+            label: "Vue js",
+            name: "button-types",
+            icon: 'logos:vue'
+        },
+        {
+            label: "React js",
+            name: "button-types",
+            icon: 'logos:react'
+        },
+        {
+            label: "Angular js",
+            name: "button-types",
+            icon: 'vscode-icons:file-type-angular'
+        },
+    ];
+
     const HandleClick = () => {
         console.log('hi');
     };
@@ -89,6 +109,9 @@ export default function Home() {
                 <div className='flex gap-8'>
                     <CircleChart labels={['Apple', 'Mango']} series={[30, 80]} colors={['#282C2B', '#50FA7B']} width={300} height={300} />
                     <RadialChart labels={['']} series={[40]} colors={['#50FA7B', '#282C2B']} width={300} height={300} />
+                </div>
+                <div className='w-1/3'>
+                    <RadioButtonGroup options={types} onChange={(e) => { console.log('value is:' + e.target.value) }} />
                 </div>
             </div>
         </PageContainer>
