@@ -1,10 +1,59 @@
+'use client';
+import { useFormik } from 'formik';
+import Link from 'next/link';
+import * as yup from 'yup';
+import Input from '../../../components/globals/form/input';
 import AuthCardComponent from '../components/auth-card';
 
 export default function LoginPage() {
+    const onSubmit = (values: {}) => {
+        console.log(values);
+    };
+    const Schemas = yup.object().shape({
+        email: yup.string().email('Please enter a valid email').required('Required'),
+        password: yup.string().min(5).required('Required')
+    });
+    const { values, errors, touched, handleChange, handleSubmit, handleBlur } = useFormik({
+        initialValues: {
+            email: '',
+            password: ''
+        },
+        validationSchema: Schemas,
+        onSubmit
+    });
+
     return (
-        <div className="flex flex-col  p-24 text-4xl">
-            <AuthCardComponent />
-            Hello Auth
-        </div>
+        <AuthCardComponent>
+            <form className="m-auto flex flex-col justify-center" onSubmit={handleSubmit}>
+                <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="email"
+                    icon="solar:user-bold"
+                    value={values.email}
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    errors={errors.email && touched.email ? errors.email : null}
+                />
+                <Input
+                    id="password"
+                    name="password"
+                    type="password"
+                    placeholder="password"
+                    icon="solar:lock-unlocked-bold"
+                    value={values.email}
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    errors={errors.email && touched.email ? errors.email : null}
+                />
+                <button className="btn btn-primary btn-sm  max-w-sm" type="submit">
+                    Login
+                </button>
+                <Link href={'register'} className="flex w-full justify-center py-1 md:justify-end">
+                    <h4 className="text-sm font-light text-white underline">register</h4>
+                </Link>
+            </form>
+        </AuthCardComponent>
     );
 }
