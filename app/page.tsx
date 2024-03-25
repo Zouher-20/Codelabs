@@ -18,7 +18,8 @@ import RadialChart from './components/statistics/radial';
 import PageContainer from './components/layout/page-container';
 import { basicPlan, plusPlan, premiumPlan } from './constants/plans';
 import { email, password, textField, textarea } from './schemas';
-import RadioButtonGroup from './components/globals/form/type-multi-select/radio-button-group';
+import NewLabModal from './components/modals/new-lab';
+import RadioOption from './components/globals/form/type-multi-select/radio-option';
 
 export default function Home() {
 
@@ -60,10 +61,10 @@ export default function Home() {
         <PageContainer>
             <div className="grid gap-4 p-8">
                 <div className="flex gap-4">
-                    <Button onClick={HandleClick} label="basic" style="basic" />
-                    <Button onClick={HandleClick} label="outline" style="outline" />
-                    <Button onClick={HandleClick} label="fill" style="fill" />
-                    <Button onClick={HandleClick} label="any" style="any" />
+                    <Button onClick={HandleClick} label="basic" color="basic" />
+                    <Button onClick={HandleClick} label="outline" color="outline" />
+                    <Button onClick={HandleClick} label="fill" color="fill" />
+                    <Button onClick={HandleClick} label="any" color="any" />
                 </div>
                 <form className='flex flex-col ' onSubmit={handleSubmit}>
                     <Input
@@ -111,8 +112,9 @@ export default function Home() {
                     <RadialChart labels={['']} series={[40]} colors={['#50FA7B', '#282C2B']} width={300} height={300} />
                 </div>
                 <div className='w-1/3'>
-                    <RadioButtonGroup options={types} onChange={(e) => { console.log('value is:' + e.target.value) }} />
+                    <RadioOption options={types} onChange={(e) => { console.log('value is:' + e.target.value) }} />
                 </div>
+                <NewLabModal />
             </div>
         </PageContainer>
     );
