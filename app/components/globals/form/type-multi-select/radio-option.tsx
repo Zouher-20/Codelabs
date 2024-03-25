@@ -9,10 +9,9 @@ const RadioOption = ({ options, onChange }: radio) => {
     return (
         <div className="flex flex-col gap-2 ">
             {options.map(({ label, name, icon, disabled }, index) => {
-
                 return (
-                    <div key={index} className="flex gap-2  items-center bg-base-200 px-2 py-1 rounded-xl">
-                        <IconRenderer className='text-primary ' fontSize={24} icon={icon} />
+                    <div key={index} className="flex gap-2  items-center bg-base-200 px-2 py-2 rounded-xl">
+                        <IconRenderer className='text-primary ' fontSize={28} icon={icon} />
                         <label className="flex items-center gap-2 justify-between w-full p-2 cursor-pointer ">
                             <span className="label-text">{label}</span>
                             <input
