@@ -1,8 +1,44 @@
+import { Icon } from '@iconify/react/dist/iconify.js';
+import { Url } from 'next/dist/shared/lib/router/router';
 import Image from 'next/image';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import sidebarItem from './../../constants/sidebar-item';
 export default function Sidebar() {
+    const router = usePathname();
+
+    const MenuItem = ({
+        icon,
+        name,
+        route
+    }: {
+        icon: React.ReactNode | undefined;
+        name: String | undefined;
+        route: Url | undefined;
+    }) => {
+        if (name == null || route == null || icon == null) {
+            return <div className="h-10"></div>;
+        }
+        // Highlight menu item based on currently displayed route
+        const colorClass = router === route ? 'text-primary' : 'text-white/50 hover:text-white';
+        const background = router === route ? 'bg-base-100' : '';
+
+        return (
+            <li>
+                <Link
+                    href={route}
+                    className={`text-md flex gap-1 border-b-white/10 py-3 pl-6 [&>*]:my-auto ${colorClass} ${background} `}
+                >
+                    <div className="flex w-[30px] text-xl [&>*]:mx-auto">{icon}</div>
+                    <div>{name}</div>
+                </Link>
+            </li>
+        );
+    };
+
     return (
         <>
-            <div className=" drawer drawer-open w-64">
+            <div className="drawer drawer-open w-64">
                 <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
                 <div className="drawer-side">
                     <label
@@ -15,12 +51,13 @@ export default function Sidebar() {
                             <Image src="/logo-title.svg" width={150} height={35} alt="logo" />
                         </div>
                         <ul>
-                            <li>
-                                <a>Sidebar Item 1</a>
-                            </li>
-                            <li>
-                                <a>Sidebar Item 2</a>
-                            </li>
+                            {sidebarItem.map(e => (
+                                <MenuItem
+                                    icon={<Icon icon={e.icon ?? ''} />}
+                                    name={e.name}
+                                    route={e.route}
+                                ></MenuItem>
+                            ))}
                         </ul>
                     </nav>
                 </div>

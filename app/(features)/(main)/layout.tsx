@@ -1,12 +1,15 @@
-import Navbar from '@/app/components/layout/navbar';
-import Sidebar from '@/app/components/layout/sidebar';
+'use client';
 
-export default function LoginPage() {
+import PageContainer from '@/app/components/layout/page-container';
+
+export default function TabsLayout({
+    children
+}: Readonly<{
+    children: React.ReactNode;
+}>) {
     return (
-        <div>
-            <Navbar />
-            <Sidebar />
-            Hello Auth
-        </div>
+        <PageContainer>
+            {children}
+        </PageContainer>
     );
 }
