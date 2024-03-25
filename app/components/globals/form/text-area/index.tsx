@@ -1,13 +1,13 @@
 import { textareaType } from "@/app/@types/textarea";
 
-const Textarea = ({ id, name, placeholder, errors, value, onChange, onBlur }: textareaType) => {
+const Textarea = ({ id, name, placeholder, errors, style, value, onChange, onBlur }: textareaType) => {
     return (
-        <div className='flex flex-col gap-1'>
+        <div className='flex flex-col gap-1 h-full'>
             <textarea
                 id={id}
                 name={name}
                 placeholder={placeholder ? placeholder : 'textarea'}
-                className={'textarea textarea-bordered textarea-sm max-w-sm ' + (errors ? 'textarea-error' : '')}
+                className={'textarea textarea-bordered textarea-sm max-w-sm ' + (style) + ' ' + (errors ? ' textarea-error' : '')}
                 value={value}
                 onChange={onChange}
                 onBlur={onBlur}

@@ -18,7 +18,7 @@ const PlanCard = ({ plan, active }: { plan: planType, active?: boolean }) => {
                 <p className={"text-4xl font-bold " + (active ? 'text-white' : 'text-primary')}>{price}</p>
                 <p>{duration}</p>
             </div>
-            <Button label="start now" style={active ? 'basic' : 'outline'} />
+            <Button label="start now" color={active ? 'basic' : 'outline'} />
             <div className="flex flex-col gap-3">
                 {advantages && Advantages(advantages, active)}
             </div>
