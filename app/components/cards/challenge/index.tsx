@@ -13,7 +13,7 @@ const Challenge = ({ name, description, onClick }: {
                 <div className="flex flex-col gap-4 slef-center w-full">
                     <h1 className="text-2xl font-bold">{name}</h1>
                     <p className=" tracking-wide h-full">{description}</p>
-                    <section className="self-end"><Button label="enroll" style="any" onClick={onClick} /></section>
+                    <section className="self-end"><Button label="enroll" color="any" onClick={onClick} /></section>
                 </div>
             </div>
         </div>
