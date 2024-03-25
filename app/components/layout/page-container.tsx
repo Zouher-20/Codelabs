@@ -6,7 +6,7 @@ export default function PageContainer({
     children: React.ReactNode;
 }>) {
     return (
-        <div className="flex items-center">
+        <div className="flex items-start">
             <Sidebar />
             <div className="flex w-full flex-col">
                 <Navbar />
