@@ -20,9 +20,9 @@ export default function LabListComponent({
             <div className="h-3"></div>
             <div className="carousel relative w-full rounded-box">
                 <div className="carousel-item">
-                    {labs.map(e => (
-                        <div className="px-1">
-                            <LabCard key={e.title} title={e.title ?? ''} />
+                    {labs.map((e, index) => (
+                        <div className="px-1" key={e.title + `${index}`}>
+                            <LabCard title={e.title ?? ''} />
                         </div>
                     ))}
                 </div>
