@@ -17,7 +17,7 @@ export default function HomeButtons({
     return (
         <div
             onClick={onButtonClick}
-            className="flex min-w-96 cursor-pointer justify-center rounded-2xl border-2 border-base-100 bg-base-200 p-5"
+            className="flex min-w-80 cursor-pointer justify-center rounded-2xl border-2 border-base-100 bg-base-200 p-5"
         >
             <div className={`border-${color} border-1 flex items-center rounded-md border-2 p-3`}>
                 <Icon icon={icon} className={`size-14 text-${color}`} />
