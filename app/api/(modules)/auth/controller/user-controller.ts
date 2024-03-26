@@ -16,6 +16,18 @@ class UserController {
             });
         }
     };
+
+    adminRegister = async (req: Request, res: NextResponse) => {
+        try {
+            return repository.adminRegister(req, res);
+        } catch (err) {
+            return baseResponse.returnResponse({
+                statusCode: 500,
+                message: String(err),
+                data: null
+            });
+        }
+    };
 }
 
 export default UserController;
