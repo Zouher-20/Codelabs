@@ -4,7 +4,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import sidebarItem from './../../constants/sidebar-item';
-export default function Sidebar() {
+export default function Sidebar({
+    children
+}: Readonly<{
+    children: React.ReactNode;
+}>) {
     const router = usePathname();
 
     const MenuItem = ({
@@ -38,21 +42,23 @@ export default function Sidebar() {
 
     return (
         <>
-            <div className="drawer drawer-open w-64">
+            <div className="drawer lg:drawer-open">
                 <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
+                <div className="drawer-content">{children}</div>
                 <div className="drawer-side">
                     <label
                         htmlFor="my-drawer-2"
                         aria-label="close sidebar"
                         className="drawer-overlay"
                     ></label>
-                    <nav className="bg-base-400 menu min-h-full w-64 p-4 text-base-content">
+                    <nav className="menu min-h-full w-64 bg-neutral p-4 text-base-content">
                         <div className="w-full pb-6 pt-1">
                             <Image src="/logo-title.svg" width={150} height={35} alt="logo" />
                         </div>
                         <ul>
                             {sidebarItem.map(e => (
                                 <MenuItem
+                                    key={e.name + 'name'}
                                     icon={<Icon icon={e.icon ?? ''} />}
                                     name={e.name}
                                     route={e.route}
