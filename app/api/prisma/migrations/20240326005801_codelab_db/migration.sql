@@ -11,7 +11,6 @@ CREATE TYPE "TAGTYPE" AS ENUM ('challenge', 'normal', 'class');
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
     "email" TEXT NOT NULL,
-    "name" TEXT,
     "username" TEXT NOT NULL,
     "password" TEXT NOT NULL,
     "role" "ROLE" NOT NULL,
