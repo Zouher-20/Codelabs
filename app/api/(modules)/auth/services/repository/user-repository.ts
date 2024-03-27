@@ -3,7 +3,7 @@ import { db } from '@/app/api/core/db/db';
 import { ROLE } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import { NextResponse } from 'next/server';
-import UserVailedator from '../../../veryfied/services/validator/validation';
+import UserVailedator from '../validator/validation';
 class UserRepository {
     async register(req: Request, res: NextResponse) {
         const body = await req.json();
@@ -111,6 +111,46 @@ class UserRepository {
             return BaseResponse.returnResponse({
                 statusCode: 400,
                 message: 'Invalid OTP !! or you are not verified your email',
+                data: null
+            });
+        }
+    }
+
+    async forgetPassword(req: Request, res: NextResponse) {
+        const body = await req.json();
+        UserVailedator.forgetPasswordValidator(body);
+        const {
+            otp: otpString,
+            email,
+            password
+        }: { otp: string; email: string; password: string } = body;
+        const otp = parseInt(otpString, 10);
+        const existingUser = await db.user.findUnique({ where: { email: email } });
+        const verifiedUser = await db.verified.findUnique({ where: { email: email } });
+
+        if (!existingUser || !verifiedUser) {
+            return BaseResponse.returnResponse({
+                statusCode: 400,
+                message: 'Email is not found',
+                data: null
+            });
+        }
+
+        if (verifiedUser.otp === otp) {
+            const hashedPassword = await bcrypt.hash(password, 15);
+            await db.user.update({
+                where: { email: verifiedUser.email },
+                data: { password: hashedPassword }
+            });
+            return BaseResponse.returnResponse({
+                statusCode: 200,
+                message: 'Password updated successfully',
+                data: null
+            });
+        } else {
+            return BaseResponse.returnResponse({
+                statusCode: 400,
+                message: 'Invalid code please rewrite againe',
                 data: null
             });
         }

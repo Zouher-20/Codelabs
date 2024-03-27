@@ -15,6 +15,18 @@ class VeryfiedController {
             });
         }
     };
+
+    forgetPasswordOtp = async (req: Request, res: NextResponse) => {
+        try {
+            return repository.forgetPasswordOtp(req, res);
+        } catch (err) {
+            return baseResponse.returnResponse({
+                statusCode: 400,
+                message: String(err),
+                data: null
+            });
+        }
+    };
 }
 
 export default VeryfiedController;
