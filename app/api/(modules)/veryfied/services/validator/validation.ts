@@ -1,13 +1,10 @@
 import { z } from 'zod';
 import BaseValidation from '../../../../core/base-validation/base-validation';
 
-class UserValidator {
-    static registerValidator(reqBody: any) {
+class VeryfiedValidator {
+    static emailValidator(reqBody: any) {
         const error = BaseValidation.validate(reqBody, {
-            email: z.string().email(),
-            otp: z.string(),
-            name: z.string().min(3),
-            password: z.string().min(8)
+            email: z.string().email()
         });
         if (error) {
             throw error;
@@ -15,4 +12,4 @@ class UserValidator {
     }
 }
 
-export default UserValidator;
+export default VeryfiedValidator;
