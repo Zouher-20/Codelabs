@@ -66,7 +66,7 @@ const NewLabModal = () => {
                                 id='description'
                                 name='description'
                                 placeholder='description'
-                                size='h-full'
+                                style='h-full'
                                 value={values.description}
                                 onChange={handleChange}
                                 onBlur={handleBlur}

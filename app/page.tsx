@@ -16,42 +16,26 @@ import SubmittedLab from './components/globals/lab/submitted-lab';
 import CircleChart from './components/statistics/circle';
 import RadialChart from './components/statistics/radial';
 import PageContainer from './components/layout/page-container';
+import RadioOption from './components/globals/form/type-multi-select/radio-option';
 import { basicPlan, plusPlan, premiumPlan } from './constants/plans';
 import { email, password, textField, textarea } from './schemas';
-import NewLabModal from './components/modals/new-lab';
-import RadioOption from './components/globals/form/type-multi-select/radio-option';
+import { types } from './constants/types';
+import MultiSelectForm from './components/globals/form/select/useSelect';
+import SelectField from './components/globals/form/select/select';
 
 export default function Home() {
-
-    const types = [
-        {
-            label: "Vue js",
-            name: "button-types",
-            icon: 'logos:vue'
-        },
-        {
-            label: "React js",
-            name: "button-types",
-            icon: 'logos:react'
-        },
-        {
-            label: "Angular js",
-            name: "button-types",
-            icon: 'vscode-icons:file-type-angular'
-        },
-    ];
 
     const HandleClick = () => {
         console.log('hi');
     };
-    const onSubmit = (values: {}) => {
+    const onSubmit = () => {
         console.log(values);
     };
-    const Schemas = {};
     const { values, errors, touched, handleChange, handleSubmit, handleBlur } = useFormik({
         initialValues: {
             email: '',
-            textarea: ''
+            textarea: '',
+            tag: [{ label: '', value: '' }]
         },
         validationSchema: yup.object().shape({ textField, email, password, textarea }),
         onSubmit
@@ -111,10 +95,12 @@ export default function Home() {
                     <CircleChart labels={['Apple', 'Mango']} series={[30, 80]} colors={['#282C2B', '#50FA7B']} width={300} height={300} />
                     <RadialChart labels={['']} series={[40]} colors={['#50FA7B', '#282C2B']} width={300} height={300} />
                 </div>
+                <MultiSelectForm />
+
                 <div className='w-1/3'>
                     <RadioOption options={types} onChange={(e) => { console.log('value is:' + e.target.value) }} />
                 </div>
-                <NewLabModal />
+
             </div>
         </PageContainer>
     );
