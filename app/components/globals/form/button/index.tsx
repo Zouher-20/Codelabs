@@ -1,4 +1,4 @@
-import { buttonType } from "@/app/@types/button";
+import { buttonType } from '@/app/@types/button';
 
 const Button = ({ label, style, color, type, onClick }: buttonType) => {
     const basic = ' bg-white text-black hover:bg-base-100 hover:text-white';
@@ -8,13 +8,22 @@ const Button = ({ label, style, color, type, onClick }: buttonType) => {
         <button
             type={type}
             onClick={onClick}
-            className={"btn min-w-24 " + (style) + ' '
-                +
-                (color == 'basic' ? basic : (color == 'fill' ? fill : (color == 'outline' ? outlin : 'bg-base-200 text-primary')))}
+            className={
+                'btn min-w-24 ' +
+                style +
+                ' ' +
+                (color == 'basic'
+                    ? basic
+                    : color == 'fill'
+                      ? fill
+                      : color == 'outline'
+                        ? outlin
+                        : 'bg-base-200 text-primary')
+            }
         >
             {label}
-        </button >
+        </button>
     );
-}
+};
 
 export default Button;
