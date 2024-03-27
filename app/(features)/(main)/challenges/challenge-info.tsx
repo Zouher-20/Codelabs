@@ -10,8 +10,8 @@ interface Props {
 const ChallengeInfo = ({ items }: Props) => {
     return (
         <div className='justify-center p-8 bg-base-100 flex flex-col gap-4 h-full rounded-2xl'>
-            {items.map((item) => (
-                <section className='flex gap-3'>
+            {items.map((item, index) => (
+                <section key={index} className='flex gap-3'>
                     <IconRenderer className={'self-center ' + item.color} fontSize={24} icon={item.icon} />
                     <p>{item.label}</p>
                 </section>
