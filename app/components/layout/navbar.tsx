@@ -1,6 +1,7 @@
 import { Icon } from '@iconify/react/dist/iconify.js';
 import Button from '../globals/form/button';
 import UserDropDown from './user-dropdown';
+import NewLabModal from '../modals/new-lab';
 
 export default function Navbar() {
     function toggleModal() {
@@ -21,6 +22,7 @@ export default function Navbar() {
                 </div>
                 <Button label="+ New Lab" color="any" onClick={toggleModal} />
             </div>
+            <NewLabModal />
         </div>
     );
 }
