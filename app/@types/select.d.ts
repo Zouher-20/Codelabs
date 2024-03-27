@@ -15,5 +15,5 @@ export interface CustomSelectProps extends FieldProps {
     options: OptionsType<MyOptionType>;
     isMulti?: boolean;
     placeholder?: string;
-    errors: boolean;
+    errors: string | null;
 }

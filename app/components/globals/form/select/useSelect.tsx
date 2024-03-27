@@ -24,7 +24,10 @@ const MultiSelectForm = () => {
     return (
         <Formik
             initialValues={defaultValues}
-            onSubmit={() => { }}
+            onSubmit={(values: FormValues, actions: FormikHelpers<FormValues>) => {
+                alert(JSON.stringify(values, null, 2));
+                actions.setSubmitting(false);
+            }}
         >
             {props => (
                 <Form className='flex flex-col gap-2'>
@@ -35,12 +38,8 @@ const MultiSelectForm = () => {
                         placeholder="Select multi tags..."
                         isMulti={true}
                         validate={(value: Array<any>) => (value.length == 0) ? 'Required' : undefined}
-                        errors={props.errors.tags ? true : false}
+                        errors={props.errors.tags && props.touched.tags ? props.errors.tags : null}
                     />
-                    {props.errors.tags && props.touched.tags ?
-                        <p className='text-error pl-2 pb-2'>{props.errors.tags}</p>
-                        : null
-                    }
                     <Button onClick={() => props.validateForm()} style="w-fit" color="any" label="Continue" type="submit" />
                 </Form>
             )}
