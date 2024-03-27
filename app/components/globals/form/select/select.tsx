@@ -41,11 +41,12 @@ const SelectField = ({ placeholder, field, form, options, isMulti, errors }: typ
                         isMulti={isMulti}
                     />
                 </label>
+                <p className='text-error pl-2 pb-2'>{errors}</p>
             </div>
         ) : null
     );
 }
-const selectStyle = (errors: boolean) => {
+const selectStyle = (errors: string | null) => {
     const style: StylesConfig = {
         control: (baseStyles) => ({
             ...baseStyles,
