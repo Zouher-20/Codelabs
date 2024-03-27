@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Image from 'next/image';
 
 const UserAvatar = () => {
     return (
@@ -13,9 +13,9 @@ const UserAvatar = () => {
                     />
                 </div>
             </div>
-            <span className="text-lg">username</span>
+            <span className="text-sm">username</span>
         </div>
     );
-}
+};
 
 export default UserAvatar;

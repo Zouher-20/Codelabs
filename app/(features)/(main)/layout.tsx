@@ -7,9 +7,5 @@ export default function TabsLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-    return (
-        <PageContainer>
-            {children}
-        </PageContainer>
-    );
+    return <PageContainer>{children}</PageContainer>;
 }
