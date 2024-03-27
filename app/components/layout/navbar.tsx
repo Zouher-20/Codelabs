@@ -1,5 +1,6 @@
 import UserDropDown from './user-dropdown';
 import Button from '../globals/form/button';
+import NewLabModal from '../modals/new-lab';
 
 export default function Navbar() {
 
@@ -15,6 +16,7 @@ export default function Navbar() {
                 <UserDropDown />
                 <Button label='+ New Lab' color='any' onClick={toggleModal} />
             </div>
+            <NewLabModal />
         </div>
     );
 }
