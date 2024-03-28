@@ -12,7 +12,7 @@ const interactions = [
 const InteractionsLab = ({ react }: { react: Array<number> }) => {
     return (
         <Lab>
-            <div className="flex flex-wrap gap-1 px-2 pb-1 text-xs">
+            <div className="flex flex-wrap gap-1 px-2 pb-1 text-xs bottom-0">
                 {interactions.map((interaction: InteractionType, index: number) =>
                     Interaction({
                         icon: interaction.icon,
