@@ -5,7 +5,17 @@ export default function EmptyClasses() {
         <div className="flex w-full flex-col items-center gap-5">
             <img src={empty.src} className="m-auto w-1/3" />
             <p>Add class room to get started </p>
-            <Button label="Create new class" color="any" onClick={() => {}} />
+            <Button
+                label="Create new class"
+                color="any"
+                onClick={() => {
+                    if (document) {
+                        (
+                            document.getElementById('new-class-modal') as HTMLFormElement
+                        )?.showModal();
+                    }
+                }}
+            />
         </div>
     );
 }
