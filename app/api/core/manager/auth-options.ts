@@ -6,7 +6,9 @@ import { db } from '../db/db';
 
 export const authOptions: NextAuthOptions = {
     adapter: PrismaAdapter(db),
-
+    pages: {
+        signIn: '../../../(features)/(auth)/login/page.tsx'
+    },
     secret: 'sadasdasdmK$$lw3mlas',
     session: { strategy: 'jwt' },
     providers: [
@@ -18,20 +20,20 @@ export const authOptions: NextAuthOptions = {
             },
             async authorize(credentials) {
                 if (!credentials?.email || !credentials.password) {
-                    return null;
+                    throw 'email or password error ';
                 }
                 const existingUser = await db.user.findUnique({
-                    where: { email: credentials.email }
+                    where: { email: credentials?.email }
                 });
 
                 if (!existingUser) {
-                    return null;
+                    throw 'email not found';
                 }
 
                 const passwordMatch = await compare(credentials.password, existingUser.password);
 
                 if (!passwordMatch) {
-                    return null;
+                    throw 'password is not match';
                 }
 
                 return {
@@ -39,10 +41,10 @@ export const authOptions: NextAuthOptions = {
                     email: `${existingUser.email}`,
                     name: `${existingUser.username}`,
                     image: `${existingUser.userImage}`,
-                    ROLE: `${existingUser.role}`,
-                    typeUser: '${existingUser.typeUser}',
-                    planEndDate: '${existingUser.planEndDate}',
-                    inActive: '${existingUser.inActive}'
+                    role: `${existingUser.role}`,
+                    typeUser: existingUser.typeUser
+                    // planEndDate: '${existingUser.planEndDate}',
+                    // inActive: '${existingUser.inActive}'
                 };
             }
         })
@@ -50,7 +52,7 @@ export const authOptions: NextAuthOptions = {
     callbacks: {
         async jwt({ token, user }) {
             if (user) {
-                return { ...token };
+                return { ...token, typeUser: user.typeUser, role: user.role };
             }
 
             return token;
@@ -59,7 +61,9 @@ export const authOptions: NextAuthOptions = {
             return {
                 ...session,
                 user: {
-                    ...session.user
+                    ...session.user,
+                    typeUser: token.typeUser,
+                    role: token.role
                 }
             };
         }
