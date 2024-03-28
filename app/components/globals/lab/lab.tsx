@@ -3,12 +3,13 @@ import defaultImage from '../../../../public/lab.png';
 
 const Lab = ({ children, image }: { children?: React.ReactNode; image?: string }) => {
     return (
-        <div className="flex h-48 w-64 flex-col items-center justify-center rounded-xl bg-base-200">
-            <Image
-                src={image ? image : defaultImage}
-                className="mb-6 h-16 w-16 "
-                alt="Picture of the author"
-            />
+        <div className="p-1 flex h-full w-64 flex-col items-center justify-center rounded-xl bg-base-200">
+            <div className='p-6 self-center'>
+                <Image
+                    src={image ? image : defaultImage}
+                    alt="Picture of the author"
+                />
+            </div>
             {children}
         </div>
     );

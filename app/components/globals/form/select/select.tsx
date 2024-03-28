@@ -26,7 +26,7 @@ const SelectField = ({ placeholder, field, form, options, isMulti, errors }: typ
     return (
         isMounted ? (
             <div className="flex flex-col gap-1 ">
-                <label className={"input input-bordered flex h-fit items-center gap-2 max-w-sm pr-0 " + (errors ? ' input-error' : '')}>
+                <label className={"input input-bordered flex h-fit items-center gap-2  pr-0 " + (errors ? ' input-error' : '')}>
                     <IconRenderer className={'opacity-70 ' + (errors ? 'text-error' : '')} fontSize={16} icon='solar:bookmark-circle-broken' />
                     <Select
                         components={animatedComponents}
