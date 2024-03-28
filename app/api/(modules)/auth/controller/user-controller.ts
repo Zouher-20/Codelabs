@@ -28,6 +28,18 @@ class UserController {
             });
         }
     };
+
+    forgetPassword = async (req: Request, res: NextResponse) => {
+        try {
+            return repository.forgetPassword(req, res);
+        } catch (err) {
+            return baseResponse.returnResponse({
+                statusCode: 500,
+                message: String(err),
+                data: null
+            });
+        }
+    };
 }
 
 export default UserController;
