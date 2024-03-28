@@ -6,7 +6,7 @@ import IconRenderer from '@/app/components/globals/icon';
 import TournamentCard from './tournament-card';
 import ChallengeInfo from './challenge-info';
 
-const challenges = true;
+const challenges = false;
 
 const items = [{
     icon: 'solar:bookmark-circle-broken',
