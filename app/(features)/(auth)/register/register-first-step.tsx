@@ -1,6 +1,28 @@
 import { useFormik } from 'formik';
 import * as yup from 'yup';
+import * as z from 'zod';
 import Input from '../../../components/globals/form/input';
+
+const FormSchema = z.object({
+    email: z.string().email()
+});
+
+const onSubmit = async (value: z.infer<typeof FormSchema>) => {
+    const response = await fetch('api/veryfied/register-otp', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            email: value.email
+        })
+    });
+    if (response.ok) {
+        console.log('Email sent successfully');
+    } else {
+        console.error('Failed to send email');
+    }
+};
 
 export function RegisterFirstStep({
     nextPageCallback
@@ -15,14 +37,14 @@ export function RegisterFirstStep({
             email: ''
         },
         validationSchema: Schemas,
-        onSubmit
+        onSubmit: async values => {
+            await onSubmit(values);
+            await nextPageCallback(async () => {
+                return values.email;
+            });
+        }
     });
 
-    async function onSubmit(values: {}) {
-        await nextPageCallback(async () => {
-            return values.email;
-        });
-    }
     return (
         <form className="m-auto flex flex-col justify-center" onSubmit={handleSubmit}>
             <Input
