@@ -24,8 +24,10 @@ export default function Sidebar({
             return <div className="h-10"></div>;
         }
         // Highlight menu item based on currently displayed route
-        const colorClass = router === route ? 'text-primary' : 'text-white/50 hover:text-white';
-        const background = router === route ? 'bg-base-100' : '';
+        const colorClass = router.includes(route.toString())
+            ? 'text-primary'
+            : 'text-white/50 hover:text-white';
+        const background = router.includes(route.toString()) ? 'bg-base-100' : '';
 
         return (
             <li>

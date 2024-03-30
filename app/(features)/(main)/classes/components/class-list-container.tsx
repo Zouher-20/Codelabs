@@ -1,26 +1,43 @@
+import { classType } from '@/app/@types/class';
 import { Icon } from '@iconify/react/dist/iconify.js';
+import Link from 'next/link';
 import { MouseEventHandler } from 'react';
 import CodeLabContainer from './container';
 
-export default function ClassesList({ classes, title }: { classes: Array<string>; title: string }) {
+export default function ClassesList({
+    classes,
+    title
+}: {
+    classes: Array<classType>;
+    title: string;
+}) {
     function ListItem({
-        title,
+        classModel,
         onClick
     }: {
-        title: string;
+        classModel: classType;
         onClick?: MouseEventHandler<HTMLDivElement>;
     }) {
         return (
-            <div
-                className="flex w-full items-center gap-3 rounded-lg bg-base-200 p-3"
-                onClick={onClick}
+            <Link
+                href={{
+                    pathname: 'classes/statistics',
+                    query: {
+                        id: classModel.id
+                    }
+                }}
             >
-                <Icon
-                    icon="solar:square-academic-cap-bold-duotone"
-                    className={`size-10 text-primary`}
-                />
-                <p>{title}</p>
-            </div>
+                <div
+                    className="flex w-full items-center gap-3 rounded-lg bg-base-200 p-3"
+                    onClick={onClick}
+                >
+                    <Icon
+                        icon="solar:square-academic-cap-bold-duotone"
+                        className={`size-10 text-primary`}
+                    />
+                    <p>{classModel.title}</p>
+                </div>
+            </Link>
         );
     }
     if (classes.length == 0) {
@@ -34,7 +51,7 @@ export default function ClassesList({ classes, title }: { classes: Array<string>
                     <div className="carousel-item flex w-full flex-col gap-2">
                         {classes.map((e, index) => (
                             <div className="px-1" key={e + `${index}`}>
-                                <ListItem title={e} />
+                                <ListItem classModel={e} />
                             </div>
                         ))}
                     </div>

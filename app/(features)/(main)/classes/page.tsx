@@ -1,5 +1,6 @@
 'use client';
 
+import { classType } from '@/app/@types/class';
 import ClassesList from './components/class-list-container';
 import CreateClassContainer from './components/create-button-container';
 import EmptyClasses from './components/empty';
@@ -7,8 +8,14 @@ import InfoContainer from './components/info-container';
 import NewClassModal from './components/new-class-modal';
 
 export default function LabsPage() {
-    var createdClasses: Array<string> = ['majd', 'majd2', 'majd3', 'majd4', 'majd6'];
-    var joinedClasses: Array<string> = [];
+    var createdClasses: Array<classType> = [
+        { id: 1, title: 'majd1' },
+        { id: 2, title: 'majd2' },
+        { id: 3, title: 'majd3' },
+        { id: 4, title: 'majd4' },
+        { id: 5, title: 'majd5' }
+    ];
+    var joinedClasses: Array<classType> = [];
     var resultComponenet;
     if (createdClasses.length == 0 && joinedClasses.length == 0) {
         resultComponenet = <EmptyClasses></EmptyClasses>;
