@@ -72,7 +72,7 @@ export default ChallengeDetails;
 const Attachments = (attachments: any) => {
     const attachmentss = [attachment, attachment, attachment, attachment]
     return (
-        <div className="bg-base-300 flex flex-col gap-4 p-4 rounded-2xl w-full max-xl:text-center">
+        <div className="bg-base-300 flex flex-col gap-4 p-4 rounded-2xl w-full max-xl:text-center h-fit">
             <p className=" text-xl">Attachments</p>
             <div className="flex flex-col md:flex-row gap-4 flex-wrap max-xl:self-center">
                 {attachmentss.map((attachment, index) => (
