@@ -9,15 +9,15 @@ const Challenge = ({ image, name, description, onClick }: {
     onClick?: () => void
 }) => {
     return (
-        <div className=" bg-base-100 flex flex-col gap-1 p-4 rounded-2xl">
-            <div className="flex gap-8">
-                <div className="min-w-64  h-min pt-12 bg-base-200 flex flex-col items-center rounded-xl">
-                    <Image className="h-28 mb-8 w-32" src={image ? image : defaultImage} alt="image" />
+        <div className=" bg-base-100 flex flex-col gap-1 p-4 rounded-2xl h-full">
+            <div className="h-full flex gap-8">
+                <div className="justify-center min-w-52 bg-base-200 flex flex-col items-center rounded-xl">
+                    <Image className="self-center" src={image ? image : defaultImage} alt="image" />
                 </div>
                 <div className="flex flex-col gap-2 slef-center w-full py-4">
-                    <h1 className="text-2xl font-bold">{name}</h1>
-                    <p className=" tracking-wide h-full">{description}</p>
-                    <section ><Button label="enroll" style="any" onClick={onClick} /></section>
+                    <h1 className="text-xl font-bold">{name}</h1>
+                    <p className="text-sm tracking-wide h-full">{description}</p>
+                    <section className=""><Button label="enroll" style="any" onClick={onClick} /></section>
                 </div>
             </div>
         </div>
