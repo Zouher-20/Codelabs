@@ -1,25 +1,21 @@
 import Image from "next/image";
-import defaultImage from '../../../../public/lab.png'
-import Link from "next/link";
-import { Route } from "next/types";
+import defaultImage from '@/public/lab.png'
 
-const Challenge = ({ image, name, description, id }: {
+const Challenge = ({ image, name, description, children }: {
     image?: string,
     name: string,
     description: string,
-    id: number
+    children?: React.ReactNode
 }) => {
     return (
-        <div className=" bg-base-300 flex flex-col gap-1 p-4 rounded-2xl h-full">
-            <div className="h-full flex gap-8">
-                <div className="justify-center min-w-52 bg-base-200 flex flex-col items-center rounded-xl">
-                    <Image className="self-center" src={image ? image : defaultImage} alt="image" />
-                </div>
-                <div className="flex flex-col gap-2 slef-center w-full py-4">
-                    <h1 className="text-xl font-bold">{name}</h1>
-                    <p className="text-sm tracking-wide h-full">{description}</p>
-                    <section><Link className="btn min-w-24 bg-base-200 text-primary" href={('/challenges/' + `${id}`) as Route} >enroll</Link></section>
-                </div>
+        <div className="bg-base-300 flex flex-col xl:flex-row xl:gap-8 p-4 rounded-2xl  max-xl:text-center w-full">
+            <div className="bg-base-200 flex max-xl:self-center justify-center max-h-40 min-w-40 max-w-fit p-4 rounded-xl">
+                <Image className="self-center" src={image ? image : defaultImage} alt="image" />
+            </div>
+            <div className="flex flex-col gap-2 slef-center w-full py-4">
+                <h1 className="text-xl font-bold">{name}</h1>
+                <p className="text-sm tracking-wide h-full max-w-xl">{description}</p>
+                {children}
             </div>
         </div>
     );

@@ -16,7 +16,7 @@ const Input = ({
         <div className="flex flex-col gap-1">
             <label
                 className={
-                    'input input-sm input-bordered flex h-[35px] items-center gap-2 ' +
+                    'input input-sm input-bordered flex max-w-sm h-[35px] items-center gap-2 ' +
                     (errors ? 'input-error' : '')
                 }
             >
