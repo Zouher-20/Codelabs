@@ -89,8 +89,8 @@ export default function Home() {
                 <Challenge
                     name='Challenge name'
                     description='Lorem ipsum dolor sit amet, consectetur adipisicing elit. Repellat, aliquam? Veritatis voluptates reprehenderit maxime neque totam quidem quibusdam, ex earum velit adipisci tenetur atque accusamus!'
-                    onClick={() => 'hi'}
-                />
+                ></Challenge>
+
                 <div className='flex gap-8'>
                     <CircleChart labels={['Apple', 'Mango']} series={[30, 80]} colors={['#282C2B', '#50FA7B']} width={300} height={300} />
                     <RadialChart labels={['']} series={[40]} colors={['#50FA7B', '#282C2B']} width={300} height={300} />
