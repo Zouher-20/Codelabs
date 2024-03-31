@@ -15,7 +15,13 @@ export default function LabsPage() {
         { id: 4, title: 'majd4' },
         { id: 5, title: 'majd5' }
     ];
-    var joinedClasses: Array<classType> = [];
+    var joinedClasses: Array<classType> = [
+        { id: 1, title: 'majd1' },
+        { id: 2, title: 'majd2' },
+        { id: 3, title: 'majd3' },
+        { id: 4, title: 'majd4' },
+        { id: 5, title: 'majd5' }
+    ];
     var resultComponenet;
     if (createdClasses.length == 0 && joinedClasses.length == 0) {
         resultComponenet = <EmptyClasses></EmptyClasses>;

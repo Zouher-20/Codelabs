@@ -15,7 +15,7 @@ export default function DiscoverPage() {
     ];
     return (
         <div className="px-3 py-5">
-            <div className="flex justify-between gap-5 max-md:flex-col">
+            <div className="flex justify-center gap-5 max-md:flex-col">
                 <HomeButtons
                     onButtonClick={() => {}}
                     color="primary"
