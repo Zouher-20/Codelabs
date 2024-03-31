@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import defaultImage from '@/public/images/challenges/attachment.png';
+import defaultImage from '@/public/lab.svg';
 
 const Lab = ({ children, image }: { children?: React.ReactNode; image?: string }) => {
     return (

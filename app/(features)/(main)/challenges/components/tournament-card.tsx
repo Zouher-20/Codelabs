@@ -1,4 +1,4 @@
-import imageTournament from '@/public/images/challenges/challenge-tournament.png'
+import imageTournament from '@/public/images/challenges/tornament.svg'
 import Image from 'next/image';
 
 const TournamentCard = () => {

@@ -8,7 +8,7 @@ import { Route } from 'next/types';
 import Empty from './components/empty';
 import { challengeType } from '@/app/@types/challenge';
 import { useEffect, useState } from 'react';
-import defaultImage from '@/public/lab.png'
+import defaultImage from '@/public/lab.svg'
 
 
 const info = {

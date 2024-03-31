@@ -1,7 +1,7 @@
 "use client"
 import Image from "next/image";
-import defaultImage from '@/public/lab.png'
-import attachment from '@/public/images/challenges/attachment.png'
+import defaultImage from '@/public/lab.svg'
+import attachment from '@/public/images/challenges/attachment.svg'
 import ChallengeInfo from "../components/challenge-info";
 import Lab from "@/app/components/globals/lab/lab";
 import Button from "@/app/components/globals/form/button";

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import imageDefault from '@/public/images/challenges/challenge-background.png'
+import imageDefault from '@/public/images/challenges/notFound.svg'
 
 const Empty = ({ emptyImage }: { emptyImage?: string }) => {
     return (

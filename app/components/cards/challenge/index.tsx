@@ -1,5 +1,5 @@
 import Image from "next/image";
-import defaultImage from '@/public/lab.png'
+import defaultImage from '@/public/lab.svg'
 
 const Challenge = ({ image, name, description, children }: {
     image?: string,
