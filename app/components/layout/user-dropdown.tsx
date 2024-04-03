@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import IconRenderer from '../globals/icon';
+import Link from 'next/link';
 
 export default function UserDropDown() {
     return (
@@ -31,10 +32,10 @@ export default function UserDropDown() {
                 className="menu dropdown-content z-[1] mt-4 w-52 rounded-box bg-base-100  p-2 shadow"
             >
                 <li>
-                    <a className="flex items-center gap-2">
+                    <Link href={'/profile'} className="flex items-center gap-2">
                         <IconRenderer fontSize={16} icon="solar:user-outline" />
                         <div>Profile</div>
-                    </a>
+                    </Link>
                 </li>
                 <span className="divider my-0" />
                 <li>
