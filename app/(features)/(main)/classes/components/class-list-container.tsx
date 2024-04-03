@@ -44,7 +44,7 @@ export default function ClassesList({
         return <></>;
     }
     return (
-        <CodeLabContainer height={'19rem'}>
+        <CodeLabContainer height={'19rem'} minWidth="64">
             <div className="flex w-full flex-col p-2">
                 <p>{title}</p>
                 <div className="carousel relative  rounded-box  p-2">

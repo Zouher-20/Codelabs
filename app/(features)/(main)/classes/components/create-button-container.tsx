@@ -8,7 +8,7 @@ export default function CreateClassContainer({
     onClick?: MouseEventHandler<HTMLDivElement>;
 }) {
     return (
-        <CodeLabContainer height={'19rem'}>
+        <CodeLabContainer height={'19rem'} minWidth="64">
             <div
                 className="flex w-full cursor-pointer flex-col items-center justify-center gap-4"
                 onClick={onClick}

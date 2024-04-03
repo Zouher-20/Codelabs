@@ -18,15 +18,17 @@ export default function StudentList({
         onClick?: MouseEventHandler<HTMLDivElement>;
     }) {
         return (
-            <div
-                className="flex w-full items-center gap-3 rounded-lg bg-base-200 p-3"
-                onClick={onClick}
-            >
-                <Icon
-                    icon="solar:square-academic-cap-bold-duotone"
-                    className={`size-10 text-primary`}
-                />
-                <p>{studentModel.name}</p>
+            <div className="carousel-item w-full">
+                <div
+                    className="flex w-full items-center gap-3 rounded-lg bg-base-200 p-3"
+                    onClick={onClick}
+                >
+                    <Icon
+                        icon="solar:square-academic-cap-bold-duotone"
+                        className={`size-10 text-primary`}
+                    />
+                    <p>{studentModel.name}</p>
+                </div>
             </div>
         );
     }
@@ -34,17 +36,15 @@ export default function StudentList({
         return <></>;
     }
     return (
-        <CodeLabContainer height={'19rem'}>
+        <CodeLabContainer height={'19rem'} minWidth="64">
             <div className="flex w-full flex-col p-2">
                 <p>{title}</p>
-                <div className="carousel relative  rounded-box  p-2">
-                    <div className="carousel-item flex w-full flex-col gap-2">
-                        {students.map((e, index) => (
-                            <div className="px-1" key={e + `${index}`}>
-                                <ListItem studentModel={e} />
-                            </div>
-                        ))}
-                    </div>
+                <div className="carousel carousel-vertical w-full gap-1 rounded-box p-2">
+                    {students.map((e, index) => (
+                        <div className="px-1" key={e + `${index}`}>
+                            <ListItem studentModel={e} />
+                        </div>
+                    ))}
                 </div>
             </div>
         </CodeLabContainer>
