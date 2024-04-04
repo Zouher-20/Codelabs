@@ -42,9 +42,6 @@ const CircleChart = ({ labels, colors, series, height, width }: chartType) => {
             enabled: false
         },
         dataLabels: {
-            enabled: false
-        },
-        dataLabels: {
             enabled: true,
             formatter: function (value, { seriesIndex, dataPointIndex, w }) {
                 return w.config.series[seriesIndex];
