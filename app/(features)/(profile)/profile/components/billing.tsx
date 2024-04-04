@@ -1,0 +1,14 @@
+import PlanCard from "@/app/components/cards/plan-card";
+import { basicPlan, plusPlan, premiumPlan } from "@/app/constants/plans";
+
+const Billing = ({ plan }: { plan: string }) => {
+    return (
+        <div className="flex flex-col xl:flex xl:flex-row sm:grid sm:grid-cols-2 gap-4 max-xl:justify-center pt-4">
+            <PlanCard plan={basicPlan} active={plan == "basic" ? true : false} />
+            <PlanCard plan={plusPlan} active={plan == "plus" ? true : false} />
+            <PlanCard plan={premiumPlan} active={plan == "premuim" ? true : false} />
+        </div>
+    );
+}
+
+export default Billing;
