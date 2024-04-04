@@ -16,6 +16,13 @@ const CircleChart = ({ labels, colors, series, height, width }: chartType) => {
             type: 'donut',
             id: 'apexchart-example'
         },
+        legend: {
+            position: 'bottom',
+            horizontalAlign: 'left',
+            labels: {
+                colors: 'white'
+            },
+        },
         responsive: [{
             breakpoint: 480,
             options: {
@@ -23,37 +30,31 @@ const CircleChart = ({ labels, colors, series, height, width }: chartType) => {
                     width: 200
                 },
                 legend: {
-                    position: 'bottom'
+                    horizontalAlign: 'left',
+                    position: 'bottom',
                 }
             }
         }],
         stroke: {
             show: false,
         },
-        dataLabels: {
+        tooltip: {
             enabled: false,
+        },
+        dataLabels: {
+            enabled: true,
+            formatter: function (value, { seriesIndex, dataPointIndex, w }) {
+                return w.config.series[seriesIndex]
+            },
             style: {
                 fontSize: '14px',
                 fontFamily: 'Helvetica, Arial, sans-serif',
                 fontWeight: 'bold',
-                colors: ['#50FA7B', '#282C2B'],
+                colors: colors,
             },
             background: {
                 enabled: true,
-                foreColor: '#fff',
-                padding: 4,
-                borderRadius: 2,
-                borderWidth: 1,
-                borderColor: '#fff',
-                opacity: 0.9,
-                dropShadow: {
-                    enabled: false,
-                    top: 1,
-                    left: 1,
-                    blur: 1,
-                    color: '#000',
-                    opacity: 0.45
-                }
+
             },
         }
     };
