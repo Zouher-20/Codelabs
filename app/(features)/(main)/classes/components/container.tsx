@@ -9,7 +9,7 @@ export default function CodeLabContainer({
 }) {
     return (
         <div
-            className={`flex min-h-60 min-w-${minWidth} flex-1 rounded-lg bg-base-300`}
+            className={`flex min-h-52 min-w-${minWidth} flex-1 rounded-lg bg-base-300`}
             style={{ height }}
         >
             {children}
