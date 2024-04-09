@@ -30,18 +30,18 @@ const Avatar = ({ user }: { user: userType }) => {
 
     return (
         <div className="flex gap-4 py-1">
-            <div className="avatar w-[140px] h-[120px]">
+            <div className="avatar w-[140px] h-[140px]">
                 <Image
                     className="rounded-xl"
-                    height={120}
-                    width={120}
+                    height={140}
+                    width={140}
                     alt="user"
                     src={imageFile ? imageFile :
                         "https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"}
                 />
             </div>
             <section className="self-center flex flex-col">
-                <span className="text-lg self-center">{name}</span>
+                <span className="text-lg ">{name}</span>
                 <span onClick={handleClick} className="relative flex gap-1  text-gray-500 cursor-pointer">
                     <IconRenderer className="self-end cursor-pointer" height={18} width={18} icon='basil:edit-outline' />
                     <button style={{ cursor: 'pointer', font: 'inherit', }} >

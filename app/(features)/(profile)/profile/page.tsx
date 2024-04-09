@@ -6,12 +6,12 @@ import Statistics from "./components/statistics";
 
 
 const user: userType = {
-    name: 'user name',
-    email: 'user@gmail.com',
+    name: 'User name',
+    email: 'username903@gmail.com',
     image: null,
     plan: 'plus',
-    bio: 'a few word about you',
-    location: 'syria',
+    bio: 'A few word about you',
+    position: 'Developer',
     labs: 4,
     classes: 1
 }
@@ -23,7 +23,7 @@ const Profile = () => {
     ]
 
     return (
-        <div className="flex flex-col gap-1 px-2">
+        <div className="flex flex-col gap-4 px-2">
             <h1 className=" text-2xl">Account Setting</h1>
             <Avatar user={user} />
             <div role="tablist" className="tabs tabs-bordered" key="tabs">
@@ -39,7 +39,7 @@ const Profile = () => {
                             value={name}
                             defaultChecked={index === 0}
                         />
-                        <div role="tabpanel" className="tab-content p-4 max-sm:pt-8">{component}</div>
+                        <div role="tabpanel" className="tab-content py-6 max-sm:pt-8">{component}</div>
                     </>
                 ))
                 }
