@@ -1,12 +1,17 @@
 export default function CodeLabContainer({
     height,
-    children
+    children,
+    minWidth = '52'
 }: {
     height?: string;
     children?: React.ReactNode;
+    minWidth?: string;
 }) {
     return (
-        <div className="flex min-h-52 min-w-64 flex-1 rounded-lg bg-base-300" style={{ height }}>
+        <div
+            className={`flex min-h-52 min-w-${minWidth} flex-1 rounded-lg bg-base-300`}
+            style={{ height }}
+        >
             {children}
         </div>
     );

@@ -2,6 +2,8 @@ import * as yup from 'yup';
 
 // const passwordRules = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).(5,)$/;
 
+export const searchField = yup.string().required('Required');
+
 export const textField = yup.string().required('Required');
 
 export const textarea = yup.string().required('Required');

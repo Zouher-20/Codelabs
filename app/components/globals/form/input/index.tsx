@@ -9,14 +9,15 @@ const Input = ({
     icon,
     errors,
     value,
+    onSubmit,
     onChange,
     onBlur
 }: inputType) => {
     return (
-        <div className="flex flex-col gap-1">
+        <div className="flex w-full flex-col gap-1">
             <label
                 className={
-                    'input input-sm input-bordered flex max-w-sm h-[35px] items-center gap-2 ' +
+                    'input input-sm input-bordered flex h-[35px] max-w-sm items-center gap-2 ' +
                     (errors ? 'input-error' : '')
                 }
             >
@@ -36,6 +37,7 @@ const Input = ({
                     placeholder={placeholder ? placeholder : 'text Field'}
                     className="grow"
                     value={value}
+                    onSubmit={onSubmit}
                     onChange={onChange}
                     onBlur={onBlur}
                 />
