@@ -3,6 +3,7 @@
 import { userType } from '@/app/@types/user';
 import { useSearchParams } from 'next/navigation';
 import CodeLabContainer from '../components/container';
+import NewClassLabModal from './components/add_lab_modal';
 import AddStudentModal from './components/add_student_modal';
 import ClassDescriptionComponent from './components/class-description';
 import ClassLabListComponent, { LabModel } from './components/lab-list';
@@ -43,7 +44,11 @@ export default function StatisticsPage() {
                     color="#E3E354"
                     primaryText="Labs"
                     anotherText="Labs Capicity"
-                    onClick={() => {}}
+                    onClick={() => {
+                        (
+                            document.getElementById('new-class-lab-modal') as HTMLFormElement
+                        )?.showModal();
+                    }}
                 />
             </div>
             <div className="flex w-full gap-2 max-lg:flex-wrap">
@@ -70,6 +75,7 @@ export default function StatisticsPage() {
                 classType="type"
             />
             <AddStudentModal initialUser={students} />
+            <NewClassLabModal />
         </div>
     );
 }
