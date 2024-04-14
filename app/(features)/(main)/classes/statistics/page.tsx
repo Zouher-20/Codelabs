@@ -69,7 +69,7 @@ export default function StatisticsPage() {
                 className="class name"
                 classType="type"
             />
-            <AddStudentModal />
+            <AddStudentModal initialUser={students} />
         </div>
     );
 }

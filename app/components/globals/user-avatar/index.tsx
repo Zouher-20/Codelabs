@@ -1,8 +1,9 @@
+import { userType } from '@/app/@types/user';
 import Image from 'next/image';
 
-const UserAvatar = () => {
+const UserAvatar = ({ user }: { user?: userType | undefined }) => {
     return (
-        <div className="flex gap-4 py-1">
+        <div className="flex items-center gap-4 py-1">
             <div className="avatar w-9">
                 <div className="rounded-full">
                     <Image
@@ -13,7 +14,7 @@ const UserAvatar = () => {
                     />
                 </div>
             </div>
-            <span className="text-sm">username</span>
+            <span className="text-sm">{user?.name ?? 'userName'}</span>
         </div>
     );
 };

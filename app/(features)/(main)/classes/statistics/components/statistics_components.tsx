@@ -16,7 +16,7 @@ export default function StatisticsContainer({
 }) {
     return (
         <CodeLabContainer>
-            <div className="flex w-full flex-col items-center justify-center">
+            <div className="flex w-full flex-col items-center justify-center p-5">
                 <div className="flex w-full justify-between px-5">
                     <h1>{primaryText}</h1>
                     <Icon
@@ -30,8 +30,8 @@ export default function StatisticsContainer({
                     labels={[anotherText, primaryText]}
                     series={[30, 80]}
                     colors={['#282C2B', color]}
-                    width={260}
-                    height={260}
+                    width={200}
+                    height={200}
                 />
             </div>
         </CodeLabContainer>
