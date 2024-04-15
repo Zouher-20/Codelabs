@@ -1,5 +1,5 @@
 import Image from "next/image";
-import defaultImage from '@/public/lab.svg'
+import defaultImage from '@/public/images/challenges/attachment.svg'
 
 const Challenge = ({ image, name, description, children }: {
     image?: string,
@@ -9,7 +9,7 @@ const Challenge = ({ image, name, description, children }: {
 }) => {
     return (
         <div className="bg-base-300 flex flex-col xl:flex-row xl:gap-8 p-4 rounded-2xl  max-xl:text-center w-full">
-            <div className="bg-base-200 flex max-xl:self-center justify-center max-h-40 min-w-40 max-w-fit  rounded-xl">
+            <div className="bg-base-200 flex max-xl:self-center justify-center h-fit min-w-40 max-w-fit   rounded-xl">
                 <Image className="self-center h-full w-full" src={image ? image : defaultImage} alt="image" />
             </div>
             <div className="flex flex-col gap-2 slef-center w-full py-4">

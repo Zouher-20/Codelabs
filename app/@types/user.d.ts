@@ -6,5 +6,5 @@ export interface userType {
     classes: number;
     image?: string | null;
     bio?: string;
-    location?: string;
+    position?: string;
 }
