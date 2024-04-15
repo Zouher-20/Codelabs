@@ -116,7 +116,8 @@ const LastChallenge = ({ duration, state, time, name, title, description }: {
                 {title}</h1>
             <span className="leading-6">
                 {description.map((desc) => (<>
-                    {desc} <br /><br />
+                    {desc}
+                    <br /><br />
                 </>
                 ))}
             </span>
