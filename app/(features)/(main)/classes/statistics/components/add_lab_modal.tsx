@@ -2,6 +2,7 @@ import * as yup from 'yup';
 
 import Button from '@/app/components/globals/form/button';
 import Input from '@/app/components/globals/form/input';
+import CodeLabDatePicker from '@/app/components/globals/form/input/date-picker';
 import Select from '@/app/components/globals/form/select/select';
 import Textarea from '@/app/components/globals/form/text-area';
 import RadioOption from '@/app/components/globals/form/type-multi-select/radio-option';
@@ -9,8 +10,10 @@ import IconRenderer from '@/app/components/globals/icon';
 import { tagOptions } from '@/app/constants/tag-options';
 import { types } from '@/app/constants/types';
 import { Field, Form, Formik } from 'formik';
+import { useState } from 'react';
 
 const NewClassLabModal = () => {
+    const [startDate, setStartDate] = useState(new Date());
     interface FormValues {
         name: string;
         option: string;
@@ -31,12 +34,12 @@ const NewClassLabModal = () => {
     });
 
     const onSubmit = (values: FormValues) => {
-        (document.getElementById('new-lab-modal') as HTMLDialogElement).close();
+        (document.getElementById('new-class-lab-modal') as HTMLDialogElement).close();
         console.log(values);
     };
 
     return (
-        <dialog id="new-lab-modal" className="modal">
+        <dialog id="new-class-lab-modal" className="modal">
             <div className="modal-box flex w-8/12 max-w-5xl flex-col gap-4 ">
                 <form className="flex gap-2" method="dialog">
                     <button>
@@ -99,6 +102,11 @@ const NewClassLabModal = () => {
                                                 ? props.errors.description
                                                 : null
                                         }
+                                    />
+                                    <CodeLabDatePicker
+                                        icon="solar:sort-by-time-bold-duotone"
+                                        date={startDate}
+                                        onChange={e => setStartDate(e)}
                                     />
                                 </div>
                                 <div className="divider divider-horizontal max-md:hidden"></div>

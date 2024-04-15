@@ -1,13 +1,11 @@
-'use client'
+'use client';
 
-import dynamic from "next/dynamic";
-const ApexChart = dynamic(() => import("react-apexcharts"), { ssr: false });
-import { ApexOptions } from "apexcharts";
-import { chartType } from "@/app/@types/chart";
-
+import { chartType } from '@/app/@types/chart';
+import { ApexOptions } from 'apexcharts';
+import dynamic from 'next/dynamic';
+const ApexChart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 const CircleChart = ({ labels, colors, series, height, width }: chartType) => {
-
     const chartOptions: ApexOptions = {
         series: series,
         labels: labels,
@@ -21,54 +19,53 @@ const CircleChart = ({ labels, colors, series, height, width }: chartType) => {
             horizontalAlign: 'left',
             labels: {
                 colors: 'white'
-            },
+            }
         },
-        responsive: [{
-            breakpoint: 480,
-            options: {
-                chart: {
-                    width: 200
-                },
-                legend: {
-                    horizontalAlign: 'left',
-                    position: 'bottom',
+        responsive: [
+            {
+                breakpoint: 0,
+                options: {
+                    chart: {
+                        width: 200
+                    },
+                    legend: {
+                        horizontalAlign: 'left',
+                        position: 'bottom'
+                    }
                 }
             }
-        }],
+        ],
         stroke: {
-            show: false,
+            show: false
         },
         tooltip: {
-            enabled: false,
+            enabled: false
         },
         dataLabels: {
             enabled: true,
             formatter: function (value, { seriesIndex, dataPointIndex, w }) {
-                return w.config.series[seriesIndex]
+                return w.config.series[seriesIndex];
             },
             style: {
                 fontSize: '14px',
                 fontFamily: 'Helvetica, Arial, sans-serif',
                 fontWeight: 'bold',
-                colors: colors,
+                colors: ['#50FA7B', '#282C2B']
             },
             background: {
-                enabled: true,
-
-            },
+                enabled: true
+            }
         }
     };
     return (
-        <div className='w-1/3 h-1/3'>
-            <ApexChart
-                options={chartOptions}
-                series={chartOptions.series}
-                type="donut"
-                height={height}
-                width={width}
-            />
-        </div>
+        <ApexChart
+            options={chartOptions}
+            series={chartOptions.series}
+            type="donut"
+            height={height}
+            width={width}
+        />
     );
-}
+};
 
 export default CircleChart;
