@@ -1,4 +1,4 @@
-export interface classType {
+export interface RoomType {
     title: string;
     id: number;
 }

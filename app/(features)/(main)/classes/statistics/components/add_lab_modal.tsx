@@ -40,7 +40,7 @@ const NewClassLabModal = () => {
 
     return (
         <dialog id="new-class-lab-modal" className="modal">
-            <div className="modal-box flex w-8/12 max-w-5xl flex-col gap-4 ">
+            <div className="modal-box flex w-8/12 max-w-5xl flex-col gap-4 max-md:w-11/12">
                 <form className="flex gap-2" method="dialog">
                     <button>
                         <IconRenderer fontSize={24} icon="solar:arrow-left-linear" />

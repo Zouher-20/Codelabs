@@ -1,6 +1,7 @@
 'use client';
 
 import { classType } from '@/app/@types/class';
+import { useRouter } from 'next/navigation';
 import ClassesList from './components/class-list-container';
 import CreateClassContainer from './components/create-button-container';
 import EmptyClasses from './components/empty';
@@ -22,6 +23,16 @@ export default function LabsPage() {
         { id: 4, title: 'majd4' },
         { id: 5, title: 'majd5' }
     ];
+    const route = useRouter();
+
+    const handleClassClick = (currentClass: classType) => {
+        const params = {
+            id: currentClass.id.toString()
+        };
+        const queryString = new URLSearchParams(params).toString();
+        route.push('/classes/statistics' + '?' + queryString);
+        return;
+    };
     var resultComponenet;
     if (createdClasses.length == 0 && joinedClasses.length == 0) {
         resultComponenet = <EmptyClasses></EmptyClasses>;
@@ -38,8 +49,16 @@ export default function LabsPage() {
                             }
                         }}
                     />
-                    <ClassesList classes={createdClasses} title="Classes Created" />
-                    <ClassesList classes={joinedClasses} title="Classes joined" />
+                    <ClassesList
+                        classes={createdClasses}
+                        title="Classes Created"
+                        onClick={handleClassClick}
+                    />
+                    <ClassesList
+                        classes={joinedClasses}
+                        title="Classes joined"
+                        onClick={handleClassClick}
+                    />
                 </div>
                 <InfoContainer />
             </div>

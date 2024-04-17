@@ -88,7 +88,7 @@ const AddStudentModal = ({ initialUser }: { initialUser: Array<userType> }) => {
     }
     return (
         <dialog id="add-student-modal" className="modal">
-            <div className="modal-box w-1/2 justify-center">
+            <div className="modal-box w-1/2 justify-center max-md:w-11/12">
                 <form
                     className="flex w-full flex-col items-center justify-center"
                     onSubmit={e => {

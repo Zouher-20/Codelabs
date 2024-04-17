@@ -7,23 +7,30 @@ export default function StatisticsContainer({
     color,
     primaryText,
     anotherText,
-    onClick
+    onClick,
+    withAdd = true
 }: {
     color: string;
     primaryText: string;
     anotherText: string;
     onClick?: MouseEventHandler<SVGSVGElement>;
+    withAdd?: boolean;
 }) {
     return (
         <CodeLabContainer>
             <div className="flex w-full flex-col items-center justify-center p-5">
                 <div className="flex w-full justify-between px-5">
                     <h1>{primaryText}</h1>
-                    <Icon
-                        icon="solar:add-circle-broken"
-                        className="size-6 hover:cursor-pointer"
-                        onClick={onClick}
-                    />
+
+                    {withAdd ? (
+                        <Icon
+                            icon="solar:add-circle-broken"
+                            className="size-6 hover:cursor-pointer"
+                            onClick={onClick}
+                        />
+                    ) : (
+                        <></>
+                    )}
                 </div>
                 <div className="h-8"></div>
                 <CircleChart
