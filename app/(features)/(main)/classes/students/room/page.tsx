@@ -66,12 +66,7 @@ export default function ClassLabPage() {
                 teacher={{ name: 'majd', id: 1 }}
             />
             <div className="flex gap-2 max-md:flex-wrap">
-                <FeedbackComponent
-                    feedbacks={feedbacks}
-                    onClick={() => {
-                        onFeedbackClicked;
-                    }}
-                />
+                <FeedbackComponent feedbacks={feedbacks} onClick={onFeedbackClicked} />
                 <CloneLabComponent buttonText="Clone To Start Coding" onButtonClick={() => {}} />
             </div>
             <FeedbackModal />
