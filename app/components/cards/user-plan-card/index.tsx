@@ -4,7 +4,7 @@ import IconRenderer from "../../globals/icon";
 const UserPlanCard = ({ plan, active }: { plan: planType, active?: boolean }) => {
     const { title, subtitle, price, duration } = plan
     return (
-        <div className={"py-4 px-6 max-w-xs flex flex-col gap-4  rounded-3xl border-base-100 border-2 " + (active ? 'bg-base-100' : '')}>
+        <div className={" py-4 px-6 max-w-xs flex flex-col gap-4  rounded-3xl border-base-100 border-2 " + (active ? 'bg-base-100' : '')}>
             <div className="flex justify-between ">
                 <IconRenderer className={active ? 'text-white' : 'text-primary'} fontSize={33} icon="solar:link-circle-line-duotone" />
                 <IconRenderer className={"self-center hover:opacity-65  " + (active ? 'text-white' : 'text-primary')} fontSize={28} icon="solar:pen-2-bold-duotone" />
