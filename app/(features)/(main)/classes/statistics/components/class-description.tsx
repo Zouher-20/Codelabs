@@ -1,14 +1,18 @@
+import { userType } from '@/app/@types/user';
+import UserAvatar from '@/app/components/globals/user-avatar';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import CodeLabContainer from '../../components/container';
 
 export default function ClassDescriptionComponent({
     className,
     classDescription,
-    classType
+    classType,
+    teacher
 }: {
     classType: string;
     className: string;
     classDescription: string;
+    teacher?: userType;
 }) {
     return (
         <div className="w-full">
@@ -20,9 +24,8 @@ export default function ClassDescriptionComponent({
                         <div className="w-1"></div>
                         <p className="text-xs">{classType}</p>
                     </div>
-                    <p>
-                        {classDescription}
-                    </p>
+                    <p>{classDescription}</p>
+                    {teacher != null ? <UserAvatar user={teacher} /> : <div></div>}
                 </div>
             </CodeLabContainer>
         </div>

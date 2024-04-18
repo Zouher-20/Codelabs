@@ -4,14 +4,10 @@ import { RoomType } from '@/app/@types/room';
 import { userType } from '@/app/@types/user';
 import { useRouter, useSearchParams } from 'next/navigation';
 import CodeLabContainer from '../components/container';
-import NewClassLabModal from './components/add_lab_modal';
-import AddStudentModal from './components/add_student_modal';
-import ClassDescriptionComponent from './components/class-description';
-import RoomListComponent from './components/room_list';
-import StatisticsContainer from './components/statistics_components';
-import StudentList from './components/student_list';
-
-export default function StatisticsPage() {
+import ClassDescriptionComponent from '../statistics/components/class-description';
+import RoomListComponent from '../statistics/components/room_list';
+import StudentList from '../statistics/components/student_list';
+export default function ClassLabPage() {
     var students: Array<userType> = [
         { id: 1, name: 'majd1' },
         { id: 2, name: 'majd2' },
@@ -37,46 +33,27 @@ export default function StatisticsPage() {
                 roomId: rooms[index].id.toString() // Convert labId to a string
             };
             const queryString = new URLSearchParams(params).toString();
-            route.push('/classes/statistics/room' + '?' + queryString);
+            route.push('/classes/students/room' + '?' + queryString);
         } else {
             console.error('Invalid id or index.');
         }
         return;
     };
-
     return (
-        <div className="flex min-h-[550px] flex-col gap-2 p-3">
-            <div className="flex flex-wrap gap-2 md:w-1/2">
-                <StatisticsContainer
-                    color="#50FA7B"
-                    primaryText="Student"
-                    anotherText="Class Capicity"
-                    onClick={() => {
-                        (
-                            document.getElementById('add-student-modal') as HTMLFormElement
-                        )?.showModal();
-                    }}
-                />
-                <StatisticsContainer
-                    color="#E3E354"
-                    primaryText="Labs"
-                    anotherText="Labs Capicity"
-                    onClick={() => {
-                        (
-                            document.getElementById('new-class-lab-modal') as HTMLFormElement
-                        )?.showModal();
-                    }}
-                />
-            </div>
+        <div className="flex flex-col gap-2">
             <div className="flex w-full gap-2 max-lg:flex-wrap">
                 <div className="w-full xl:w-1/4">
-                    <StudentList students={students} title="Students" height='20.5rem'></StudentList>
+                    <StudentList
+                        students={students}
+                        title="Students"
+                        height="20.5rem"
+                    ></StudentList>
                 </div>
                 <div className="w-full xl:w-3/4">
                     <CodeLabContainer height="20.5rem">
                         <div className="w-full p-3">
                             <RoomListComponent
-                            title='Rooms'
+                                title="Rooms"
                                 rooms={rooms}
                                 onLabClicked={handleLabClick}
                             ></RoomListComponent>
@@ -92,8 +69,6 @@ export default function StatisticsPage() {
                 className="class name"
                 classType="type"
             />
-            <AddStudentModal initialUser={students} />
-            <NewClassLabModal />
         </div>
     );
 }
