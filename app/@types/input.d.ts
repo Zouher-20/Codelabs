@@ -5,6 +5,7 @@ export interface inputType {
     placeholder?: string;
     icon?: string;
     errors?: string | null;
+    disabled?: boolean;
     value: string;
     onSubmit?: (e: React.SubmitEvent<HTMLInputElement>) => void;
     onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;

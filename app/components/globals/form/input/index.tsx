@@ -9,6 +9,7 @@ const Input = ({
     icon,
     errors,
     value,
+    disabled,
     onSubmit,
     onChange,
     onBlur
@@ -36,6 +37,7 @@ const Input = ({
                     name={name}
                     placeholder={placeholder ? placeholder : 'text Field'}
                     className="grow"
+                    disabled={disabled}
                     value={value}
                     onSubmit={onSubmit}
                     onChange={onChange}
