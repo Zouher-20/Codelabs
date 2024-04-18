@@ -1,39 +1,39 @@
 export const basicPlan = {
     title: 'Basic',
     subtitle: 'Perfect plan for Starters.',
-    price: 'Free',
     duration: 'For a life',
-    advantages: [
-        'Limited 5 labs',
-        'Limited to 2 classes',
-        'Only 5 students in the class',
-        'Only 2 labs in the class',
-        'Participate in challenges'
+    price: -1,
+    features: [
+        { name: 'labs', value: 5 },
+        { name: 'classes', value: 2 },
+        { name: 'students in class', value: 5 },
+        { name: 'labs in class', value: 2 },
+        { name: 'participate', value: -1 },
     ]
 }
 export const plusPlan = {
-    title: 'plus',
+    title: 'Plus',
     subtitle: 'For users who want to do more.',
-    price: '$5',
     duration: '/Year',
-    advantages: [
-        'Limited 10 labs',
-        'Limited to 5 classes',
-        'Only 10 students in the class',
-        'Only 5 labs in the class',
-        'Participate in challenges'
+    price: 5,
+    features: [
+        { name: 'labs', value: 10 },
+        { name: 'classes', value: 5 },
+        { name: 'students in class', value: 10 },
+        { name: 'labs in class', value: 5 },
+        { name: 'participate', value: -1 },
     ]
 }
 export const premiumPlan = {
-    title: 'premium',
+    title: 'Premium',
     subtitle: 'For users who are seeking for the best',
-    price: '$40',
     duration: '/Year',
-    advantages: [
-        'Unlimited labs',
-        'Unlimited classes',
-        'Up to 25 students in the class',
-        'Up to 25 labs in the class',
-        'Participate in challenges'
+    price: 40,
+    features: [
+        { name: 'labs', value: -1 },
+        { name: 'classes', value: -1 },
+        { name: 'students in class', value: -1 },
+        { name: 'labs in class', value: -1 },
+        { name: 'participate', value: 1 },
     ]
 }
