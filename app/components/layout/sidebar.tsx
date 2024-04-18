@@ -1,13 +1,15 @@
+import { SideBarItemType } from '@/app/constants/sidebar-item';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import { Url } from 'next/dist/shared/lib/router/router';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import sidebarItem from './../../constants/sidebar-item';
 export default function Sidebar({
-    children
+    children,
+    sidebarItems
 }: Readonly<{
     children: React.ReactNode;
+    sidebarItems: Array<SideBarItemType>;
 }>) {
     const router = usePathname();
 
@@ -58,7 +60,7 @@ export default function Sidebar({
                             <Image src="/logo-title.svg" width={150} height={35} alt="logo" />
                         </div>
                         <ul>
-                            {sidebarItem.map(e => (
+                            {sidebarItems.map(e => (
                                 <MenuItem
                                     key={e.name + 'name'}
                                     icon={<Icon icon={e.icon ?? ''} />}

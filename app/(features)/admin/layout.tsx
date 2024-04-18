@@ -1,6 +1,7 @@
 'use client';
 
-import Sidebar from "@/app/components/layout/sidebar";
+import Sidebar from '@/app/components/layout/sidebar';
+import { AdminSiteSidebarItem } from '@/app/constants/sidebar-item';
 
 export default function AuthPage({
     children
@@ -10,11 +11,8 @@ export default function AuthPage({
     return (
         <div className="">
             <Sidebar
-                children={
-                    <div className="flex flex-col py-4">
-                        {children}
-                    </div>
-                }
+                children={<div className="flex flex-col py-4">{children}</div>}
+                sidebarItems={AdminSiteSidebarItem}
             />
         </div>
     );

@@ -1,4 +1,4 @@
-const sidebarItem = [
+const UserSiteSidebarItem: Array<SideBarItemType> = [
     {
         icon: 'solar:earth-bold-duotone',
         name: 'Discover',
@@ -37,4 +37,46 @@ const sidebarItem = [
         route: '/blogs'
     }
 ];
-export default sidebarItem;
+const AdminSiteSidebarItem: Array<SideBarItemType> = [
+    {
+        icon: 'solar:earth-bold-duotone',
+        name: 'Discover',
+        route: '/admin/discover'
+    },
+    {
+        icon: 'solar:user-circle-bold-duotone',
+        name: 'Users',
+        route: '/admin/users'
+    },
+    {
+        icon: 'solar:screen-share-bold-duotone',
+        name: 'Plans',
+        route: '/admin/plans'
+    },
+    {},
+    {
+        icon: 'solar:medal-star-circle-bold-duotone',
+        name: 'Challenges',
+        route: '/admin/challenges'
+    },
+
+    {
+        icon: 'solar:square-academic-cap-bold-duotone',
+        name: 'Classes',
+        route: '/admin/classes'
+    },
+    {
+        icon: 'solar:slider-minimalistic-horizontal-bold-duotone',
+        name: 'Blogs',
+        route: '/admin/blogs'
+    }
+];
+
+interface SideBarItemType {
+    icon?: string;
+    name?: string;
+    route?: string;
+}
+
+export { AdminSiteSidebarItem, UserSiteSidebarItem };
+export type { SideBarItemType };
