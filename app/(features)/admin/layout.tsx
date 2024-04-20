@@ -1,7 +1,9 @@
 'use client';
 
 import Sidebar from '@/app/components/layout/sidebar';
+import NewLabModel from '@/app/components/modals/new-lab';
 import { AdminSiteSidebarItem } from '@/app/constants/sidebar-item';
+import AdminNavBar from './components/navbar';
 
 export default function AuthPage({
     children
@@ -9,11 +11,17 @@ export default function AuthPage({
     children: React.ReactNode;
 }>) {
     return (
-        <div className="">
+        <div className="flex items-start">
             <Sidebar
-                children={<div className="flex flex-col py-4">{children}</div>}
+                children={
+                    <div className="flex flex-col">
+                        <AdminNavBar />
+                        {children}
+                    </div>
+                }
                 sidebarItems={AdminSiteSidebarItem}
             />
+            <NewLabModel />
         </div>
     );
 }

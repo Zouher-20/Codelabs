@@ -1,6 +1,6 @@
 import Image from 'next/image';
-import IconRenderer from '../globals/icon';
 import Link from 'next/link';
+import IconRenderer from '../globals/icon';
 
 export default function UserDropDown() {
     return (
