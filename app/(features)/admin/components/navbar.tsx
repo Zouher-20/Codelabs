@@ -1,9 +1,7 @@
+import Button from '@/app/components/globals/form/button';
 import { Icon } from '@iconify/react/dist/iconify.js';
-import Button from '../globals/form/button';
-import NewLabModal from '../modals/new-lab';
-import UserDropDown from './user-dropdown';
 
-export default function Navbar() {
+export default function AdminNavBar() {
     function toggleModal() {
         if (document) {
             (document.getElementById('new-lab-modal') as HTMLFormElement)?.showModal();
@@ -17,12 +15,9 @@ export default function Navbar() {
                     <label htmlFor="my-drawer-2" className="cursor-pointer lg:hidden">
                         <Icon icon="solar:list-bold" className="size-8" />
                     </label>
-                    <div className="w-2"></div>
-                    <UserDropDown />
                 </div>
                 <Button label="+ New Lab" color="any" onClick={toggleModal} />
             </div>
-            <NewLabModal />
         </div>
     );
 }
