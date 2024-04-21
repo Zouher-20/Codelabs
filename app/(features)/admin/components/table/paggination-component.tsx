@@ -6,7 +6,7 @@ export default function PagginationComponent({
     pageCount
 }: {
     currentPage: number;
-    onPageChange: ({ index }: { index: number }) => void;
+    onPageChange: ({ page }: { page: number }) => void;
     pageCount: number;
 }) {
     console.log(currentPage);
@@ -18,7 +18,7 @@ export default function PagginationComponent({
     const router = useRouter();
     function Item({ index }: { index: number }) {
         const handleClassClick = () => {
-            onPageChange({ index: index });
+            onPageChange({ page: index });
             const params = {
                 id: index.toString()
             };
@@ -42,7 +42,7 @@ export default function PagginationComponent({
     function PreviosNextItem({ toIndex }: { toIndex: number }) {
         const handleClassClick = () => {
             if (toIndex > 0 && toIndex <= pageCount) {
-                onPageChange({ index: toIndex });
+                onPageChange({ page: toIndex });
                 const params = {
                     id: toIndex.toString()
                 };

@@ -1,5 +1,5 @@
 import Button from '@/app/components/globals/form/button';
-import PagginationComponent from './paggination-component';
+import CodeLabTable, { GenericTableModel } from './generic-tabel';
 
 export default function ClassesTable({
     currentPage,
@@ -28,40 +28,31 @@ export default function ClassesTable({
         );
     }
 
-    return (
-        <div className="flex flex-col items-end gap-4">
-            <div className="w-full overflow-x-auto">
-                <table className="table">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>Classes</th>
-                            <th>Teacher</th>
-                            <th>Member</th>
-                            <th>Labs</th>
-                            <th>Created</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {classes.map((item, index) => {
-                            return <TableItem index={index} item={item} key={index} />;
-                        })}
-                    </tbody>
-                </table>
-            </div>
-            <div className="mr-3">
-                <PagginationComponent
-                    currentPage={currentPage}
-                    onPageChange={onPageChange}
-                    pageCount={pageCount}
-                />
-            </div>
-        </div>
-    );
+    return new CodeLabTable<ClassTableType>({
+        currentPage: currentPage,
+        items: classes,
+        onChangePage: ({ page }: { page: number }) => onPageChange({ index: page }),
+        pageCount: pageCount,
+        tabelRowBuilder: ({ item, index }: { item: ClassTableType; index: number }) => {
+            return TableItem({ item: item, index: index });
+        },
+        tableHeader: (
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Classes</th>
+                    <th>Teacher</th>
+                    <th>Member</th>
+                    <th>Labs</th>
+                    <th>Created</th>
+                    <th></th>
+                </tr>
+            </thead>
+        )
+    }).build();
 }
 
-export interface ClassTableType {
+export interface ClassTableType extends GenericTableModel {
     id: number;
     className: string;
     teacherName: string;
