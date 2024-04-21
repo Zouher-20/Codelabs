@@ -83,6 +83,20 @@ const Classes = () => {
         return chunks;
     }
     return (
+        <div className="flex flex-col gap-2 p-6">
+            <Header />
+            <ClassesTable
+                classes={selectedClasses}
+                pageCount={Math.ceil(classes.length / pageSize)}
+                currentPage={currentPage}
+                onPageChange={onPageChange}
+            />
+        </div>
+    );
+};
+
+const Header = () => {
+    return (
         <div className="flex flex-col gap-8 p-6">
             <h1 className="text-4xl font-bold text-white">Classes</h1>
 
@@ -110,14 +124,7 @@ const Classes = () => {
                     </ul>
                 </div>
             </div>
-            <ClassesTable
-                classes={selectedClasses}
-                pageCount={Math.ceil(classes.length / pageSize)}
-                currentPage={currentPage}
-                onPageChange={onPageChange}
-            />
         </div>
     );
 };
-
 export default Classes;
