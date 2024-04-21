@@ -11,7 +11,7 @@ export default function AuthPage({
     children: React.ReactNode;
 }>) {
     return (
-        <div className="flex items-start">
+        <div className="flex min-h-screen items-start">
             <Sidebar
                 children={
                     <div className="flex flex-col">
