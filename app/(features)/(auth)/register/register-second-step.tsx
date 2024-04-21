@@ -5,7 +5,7 @@ export function RegisterSecondStep({
     nextPageCallback,
     email
 }: {
-    nextPageCallback: (callback: () => Promise<void>) => Promise<void>;
+    nextPageCallback: (callback: () => Promise<string>) => Promise<void>;
     email: String;
 }) {
     const [otp, setOtp] = useState('');
@@ -35,7 +35,7 @@ export function RegisterSecondStep({
             <button
                 className="btn btn-primary btn-sm  max-w-sm"
                 onClick={async () => {
-                    await nextPageCallback(async () => {});
+                    await nextPageCallback(async () => otp);
                 }}
             >
                 Verify

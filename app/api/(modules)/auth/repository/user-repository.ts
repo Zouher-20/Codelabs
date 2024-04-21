@@ -1,36 +1,23 @@
 import BaseResponse from '@/app/api/core/base-response/base-response';
 import { db } from '@/app/api/core/db/db';
 import { ROLE } from '@prisma/client';
-import bcrypt from 'bcrypt';
+import { RegisterUserInput } from '../service/actions';
 import UserVailedator from '../validator/validation';
 
 class UserRepository {
-    static async register(req: Request) {
-        const body = await req.json();
-        UserVailedator.registerValidator(body);
+    static async register(req: RegisterUserInput) {
+        UserVailedator.registerValidator(req);
         const {
             otp: otpString,
             email,
             name,
             password
-        }: { otp: string; email: string; name: string; password: string } = body;
+        }: { otp: string; email: string; name: string; password: string } = req;
         const otp = parseInt(otpString, 10);
 
         const existUserByEmail = await db.user.findUnique({ where: { email: email } });
         if (existUserByEmail) {
-            return BaseResponse.returnResponse({
-                statusCode: 400,
-                message: 'user is exist for this email please register from another email',
-                data: null
-            });
-        }
-        const existUserByName = await db.user.findUnique({ where: { username: name } });
-        if (existUserByName) {
-            return BaseResponse.returnResponse({
-                statusCode: 400,
-                message: 'user is exist for this username please select another username',
-                data: null
-            });
+            throw new Error('User already registerd');
         }
 
         const existuserVerified = await db.verified.findUnique({ where: { email } });
@@ -39,25 +26,17 @@ class UserRepository {
             const newUser = await db.user.create({
                 data: {
                     username: name,
-                    password: await bcrypt.hash(password, 15),
+                    password: password,
                     role: ROLE.USER,
                     email: email
                 }
             });
 
-            return BaseResponse.returnResponse({
-                statusCode: 200,
-                message: 'reigster successful',
-                data: {
-                    user: { id: newUser.id, name, email, role: newUser.role }
-                }
-            });
+            return {
+                user: { id: newUser.id, name, email, role: newUser.role }
+            };
         } else {
-            return BaseResponse.returnResponse({
-                statusCode: 400,
-                message: 'Invalid OTP !! or you are not verified your email',
-                data: null
-            });
+            throw new Error('Invalid OTP');
         }
     }
     static async adminRegister(req: Request) {
@@ -94,7 +73,7 @@ class UserRepository {
             const newUser = await db.user.create({
                 data: {
                     username: name,
-                    password: await bcrypt.hash(password, 15),
+                    password: password,
                     role: ROLE.ADMIN,
                     email: email
                 }
@@ -137,10 +116,9 @@ class UserRepository {
         }
 
         if (verifiedUser.otp === otp) {
-            const hashedPassword = await bcrypt.hash(password, 15);
             await db.user.update({
                 where: { email: verifiedUser.email },
-                data: { password: hashedPassword }
+                data: { password }
             });
             return BaseResponse.returnResponse({
                 statusCode: 200,
@@ -161,9 +139,11 @@ class UserRepository {
                 email
             }
         });
+
         if (user) {
             const providedPassword: string = password || '';
-            const isMatch = await bcrypt.compare(providedPassword, user?.password);
+            const isMatch = providedPassword === password;
+
             if (!isMatch) return { userData: null, valid: false };
             return { userData: user, valid: true };
         } else {

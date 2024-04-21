@@ -1,17 +1,14 @@
-import * as yup from 'yup';
+import { string } from 'yup';
+import { z } from 'zod';
+// Yup
+export const searchField = string().required('This field is required');
+export const textField = string().required('This field is required');
+export const email = string()
+    .email('Please enter a valid email')
+    .required('This field is required');
+export const password = string().min(8).required('Required');
 
-// const passwordRules = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).(5,)$/;
-
-export const searchField = yup.string().required('Required');
-
-export const textField = yup.string().required('Required');
-
-export const textarea = yup.string().required('Required');
-
-export const email = yup.string().email('Please enter a valid email').required('Required');
-
-export const password = yup
-    .string()
-    .min(5)
-    // .matches(passwordRules, { message: 'Please create a strong password' })
-    .required('Required');
+// Zod
+export const zemail = z.string().email();
+export const ztext = (min = 5, max = 50) => z.string().min(min).max(max);
+export const zpass = z.string().min(8);
