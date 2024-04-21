@@ -1,6 +1,5 @@
 'use client';
 import { useFormik } from 'formik';
-import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import * as yup from 'yup';
 import * as z from 'zod';
@@ -15,10 +14,7 @@ export default function LoginPage() {
     });
 
     const onSubmit = async (values: z.infer<typeof FormSchema>) => {
-        const signInData = await signIn('credentials', {
-            email: values.email,
-            password: values.password
-        });
+        // TODO call server action signin
     };
 
     const Schemas = yup.object().shape({

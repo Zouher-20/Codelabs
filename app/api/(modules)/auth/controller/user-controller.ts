@@ -1,13 +1,14 @@
-import { NextResponse } from 'next/server';
+'use server';
+import GlobalUtils from '@/app/utils/global-utils';
+import jwt from 'jsonwebtoken';
+import { cookies } from 'next/headers';
 import baseResponse from '../../../core/base-response/base-response';
 import UserRepository from '../services/repository/user-repository';
-
-const repository = new UserRepository();
-
+const key = process.env.AUTH_SECRET || '';
 class UserController {
-    register = async (req: Request, res: NextResponse) => {
+    static register = async (req: Request) => {
         try {
-            return repository.register(req, res);
+            return UserRepository.register(req);
         } catch (err) {
             return baseResponse.returnResponse({
                 statusCode: 500,
@@ -17,9 +18,9 @@ class UserController {
         }
     };
 
-    adminRegister = async (req: Request, res: NextResponse) => {
+    static adminRegister = async (req: Request) => {
         try {
-            return repository.adminRegister(req, res);
+            return UserRepository.adminRegister(req);
         } catch (err) {
             return baseResponse.returnResponse({
                 statusCode: 500,
@@ -29,9 +30,9 @@ class UserController {
         }
     };
 
-    forgetPassword = async (req: Request, res: NextResponse) => {
+    static forgetPassword = async (req: Request) => {
         try {
-            return repository.forgetPassword(req, res);
+            return UserRepository.forgetPassword(req);
         } catch (err) {
             return baseResponse.returnResponse({
                 statusCode: 500,
@@ -39,6 +40,33 @@ class UserController {
                 data: null
             });
         }
+    };
+
+    static signIn = async (email: string, password: string) => {
+        try {
+            const { valid, userData } = await UserRepository.authinticate(email, password);
+            if (!valid && GlobalUtils) throw 'Invalid Credentials';
+            const encryptedSessionData = jwt.sign(userData as object, key, {
+                expiresIn: '7d'
+            });
+            cookies().set('session', encryptedSessionData, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                maxAge: 60 * 60 * 24 * 7, // One week
+                path: '/'
+            });
+            console.log('singed');
+        } catch (err) {}
+    };
+
+    static signOut = async () => {
+        cookies().set('session', '', { expires: new Date(0) });
+    };
+
+    static getSession = () => {
+        const sessionAsToken = cookies().get('session')?.value;
+        if (!sessionAsToken) return null;
+        return jwt.verify(sessionAsToken, key);
     };
 }
 

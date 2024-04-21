@@ -2,10 +2,10 @@ import BaseResponse from '@/app/api/core/base-response/base-response';
 import { db } from '@/app/api/core/db/db';
 import { ROLE } from '@prisma/client';
 import bcrypt from 'bcrypt';
-import { NextResponse } from 'next/server';
 import UserVailedator from '../validator/validation';
+
 class UserRepository {
-    async register(req: Request, res: NextResponse) {
+    static async register(req: Request) {
         const body = await req.json();
         UserVailedator.registerValidator(body);
         const {
@@ -60,7 +60,7 @@ class UserRepository {
             });
         }
     }
-    async adminRegister(req: Request, res: NextResponse) {
+    static async adminRegister(req: Request) {
         const body = await req.json();
         UserVailedator.registerValidator(body);
         const {
@@ -116,7 +116,7 @@ class UserRepository {
         }
     }
 
-    async forgetPassword(req: Request, res: NextResponse) {
+    static async forgetPassword(req: Request) {
         const body = await req.json();
         UserVailedator.forgetPasswordValidator(body);
         const {
@@ -153,6 +153,21 @@ class UserRepository {
                 message: 'Invalid code please rewrite againe',
                 data: null
             });
+        }
+    }
+    static async authinticate(email: string, password: string) {
+        const user = await db.user.findUnique({
+            where: {
+                email
+            }
+        });
+        if (user) {
+            const providedPassword: string = password || '';
+            const isMatch = await bcrypt.compare(providedPassword, user?.password);
+            if (!isMatch) return { userData: null, valid: false };
+            return { userData: user, valid: true };
+        } else {
+            return { userData: null, valid: false };
         }
     }
 }
