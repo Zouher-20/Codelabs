@@ -1,4 +1,6 @@
 'use client';
+import Input from '@/app/components/globals/form/input';
+import IconRenderer from '@/app/components/globals/icon';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import ClassesTable, { ClassTableType } from '../components/table/classes-table';
@@ -49,7 +51,7 @@ const Classes = () => {
         }
     ];
     const [selectedClasses, setSelectedClasses] = useState<Array<ClassTableType>>([]);
-    const pageSize = 2;
+    const pageSize = 4;
 
     useEffect(() => {
         const id = Number(currentParams.get('id') ?? '1');
@@ -81,7 +83,33 @@ const Classes = () => {
         return chunks;
     }
     return (
-        <div>
+        <div className="flex flex-col gap-8 p-6">
+            <h1 className="text-4xl font-bold text-white">Classes</h1>
+
+            <div className="flex gap-8">
+                <span>
+                    <Input
+                        id="search"
+                        type="text"
+                        placeholder="Search for Classes ..."
+                        icon="circum:search"
+                        value={''}
+                    />
+                </span>
+                <div className="dropdown">
+                    <summary tabIndex={0} className=" btn flex h-[35px] min-h-[35px]">
+                        Date
+                        <IconRenderer width={24} height={24} icon={'solar:alt-arrow-down-linear'} />
+                    </summary>
+                    <ul
+                        tabIndex={0}
+                        className="menu dropdown-content z-[1] ml-4 mt-2 w-52 rounded-box bg-base-100 p-2 shadow"
+                    >
+                        <li></li>
+                        <li></li>
+                    </ul>
+                </div>
+            </div>
             <ClassesTable
                 classes={selectedClasses}
                 pageCount={Math.ceil(classes.length / pageSize)}
