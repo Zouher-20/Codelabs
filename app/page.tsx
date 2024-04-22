@@ -20,7 +20,7 @@ import CircleChart from './components/statistics/circle';
 import RadialChart from './components/statistics/radial';
 import { basicPlan, plusPlan, premiumPlan } from './constants/plans';
 import { types } from './constants/types';
-import { email, password, textField, textarea } from './schemas';
+import { email, password, textField } from './schemas';
 
 export default function Home() {
     const HandleClick = () => {
@@ -35,7 +35,7 @@ export default function Home() {
             textarea: '',
             tag: [{ label: '', value: '' }]
         },
-        validationSchema: yup.object().shape({ textField, email, password, textarea }),
+        validationSchema: yup.object().shape({ textField, email, password, textarea: textField }),
         onSubmit
     });
 

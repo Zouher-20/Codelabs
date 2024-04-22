@@ -9,12 +9,13 @@ import { useMultistepForm } from './useMultistepForm';
 
 function Register() {
     const [email, setCurrentEmail] = useState('');
+    const [otp, setCurrentOtp] = useState('');
 
     const { steps, currentStepIndex, step, isFirstStep, isLastStep, back, next } = useMultistepForm(
         [
-            <RegisterFirstStep nextPageCallback={onSubmit} />,
-            <RegisterSecondStep nextPageCallback={onSubmit} email={email} />,
-            <RegisterThirdStep nextPageCallback={onSubmit} email={email} />
+            <RegisterFirstStep nextPageCallback={onSubmit} key={1} />,
+            <RegisterSecondStep nextPageCallback={onSubmit} email={email} key={2} />,
+            <RegisterThirdStep nextPageCallback={onSubmit} email={email} otp={otp} key={3} />
         ]
     );
 
@@ -23,6 +24,9 @@ function Register() {
             var res = await callback();
             if (isFirstStep) {
                 setCurrentEmail(res);
+            }
+            if (currentStepIndex === 1) {
+                setCurrentOtp(res);
             }
             if (!isLastStep) return next();
         } catch (error) {}

@@ -1,17 +1,21 @@
+import { register } from '@/app/api/(modules)/auth/service/actions';
+import { password, textField } from '@/app/schemas';
 import { useFormik } from 'formik';
-import * as yup from 'yup';
+import { object } from 'yup';
 import Input from '../../../components/globals/form/input';
 
 export function RegisterThirdStep({
     nextPageCallback,
-    email
+    email,
+    otp
 }: {
     nextPageCallback: (callback: () => Promise<void>) => Promise<void>;
-    email: String;
+    email: string;
+    otp: string;
 }) {
-    const Schemas = yup.object().shape({
-        name: yup.string().required('name field must not be empty'),
-        password: yup.string().min(5).required('Required')
+    const Schemas = object().shape({
+        name: textField,
+        password: password
     });
     const { values, errors, touched, handleChange, handleSubmit, handleBlur } = useFormik({
         initialValues: {
@@ -22,9 +26,10 @@ export function RegisterThirdStep({
         onSubmit
     });
 
-    async function onSubmit(values: {}) {
-        await nextPageCallback(async () => {});
-        console.log(values);
+    async function onSubmit() {
+        await nextPageCallback(async () => {
+            register({ email, otp, name: values.name, password: values.password });
+        });
     }
 
     return (

@@ -51,16 +51,7 @@ model User {
   Comment                Comment[]
   Blog                   Blog[]
   MemberClass            MemberClass[]
-  Session                Session[]
   Verified               Verified?
-}
-
-model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Verified {
