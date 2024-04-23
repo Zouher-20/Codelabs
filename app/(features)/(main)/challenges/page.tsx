@@ -85,17 +85,19 @@ export default function LabsPage() {
     ]
     return <div className="flex flex-col gap-8 pb-8">
         <Introduction />
-        <CurrentChallenge time={info.time} name={info.name} title={info.title} description={info.description} />
+        <CurrentChallenge time={info.time} name={info.name} description={info.description} />
         <div className="grid grid-cols-2 gap-8 px-8">
-            {lastChallenge.map((challenge) => (
-                <LastChallenge
-                    duration={challenge.duration}
-                    state={challenge.state}
-                    time={challenge.time}
-                    name={challenge.name}
-                    title={challenge.title}
-                    description={challenge.description}
-                />
+            {lastChallenge.map((challenge, index) => (
+                <div key={index}>
+                    <LastChallenge
+                        duration={challenge.duration}
+                        state={challenge.state}
+                        time={challenge.time}
+                        name={challenge.name}
+                        title={challenge.title}
+                        description={challenge.description}
+                    />
+                </div>
             ))
             }
         </div>
@@ -108,17 +110,17 @@ const LastChallenge = ({ duration, state, time, name, title, description }: {
     duration: string, state: string, time: string, name: string, title: string, description: Array<string>
 }) => {
     return (
-        <div className="flex flex-col rounded-2xl p-4 bg-base-100 gap-2">
+        <div className="flex flex-col rounded-2xl p-4 bg-base-100 gap-2" >
             <span className="text-primary mt-4">{duration} - {state}</span>
             <span className="text-white text-xl font-bold">{time}-{name}</span>
             <h1 className="text-white text-4xl font-bold flex gap-2 -ml-12">
                 <IconRenderer className="self-center rounded-full text-primary  w-12 h-12" fontSize={24} icon="solar:check-circle-bold" />
                 {title}</h1>
             <span className="leading-6">
-                {description.map((desc) => (<>
+                {description.map((desc, index) => (<div key={index} >
                     {desc}
                     <br /><br />
-                </>
+                </div>
                 ))}
             </span>
         </div>
@@ -136,18 +138,20 @@ const Introduction = () => {
     </div>
 }
 
-const CurrentChallenge = ({ time, name, title, description }: {
-    time: string, name: string, title: string, description: Array<string>
+const CurrentChallenge = ({ time, name, description }: {
+    time: string, name: string, description: Array<string>
 }) => {
     return (
         <div className="flex flex-col gap-2 bg-base-100 p-4 rounded-l-xl">
             <span className="text-primary">This month challenge</span>
             <span className="text-white text-xl font-bold">{time}-{name}</span>
-            <h1 className="text-white text-4xl font-bold">{title}</h1>
+            <h1 className="text-white text-4xl font-bold">{name}</h1>
             <span className="leading-6">
-                {description.map((desc) => (<>
-                    {desc} <br /><br />
-                </>
+                {description.map((desc, index) => (
+                    <div key={index}>
+                        {desc}
+                        <br /><br />
+                    </div>
                 ))}
             </span>
             <Link href={"/challenges/1"} className="btn w-fit btn-primary">Start Now</Link>
