@@ -4,11 +4,15 @@ import Link from 'next/link';
 import * as yup from 'yup';
 import * as z from 'zod';
 
-import { signIn } from '@/app/api/(modules)/auth/service/actions';
+import { getSession, signIn } from '@/app/api/(modules)/auth/service/actions';
+import { ROLE } from '@prisma/client';
+import { useRouter } from 'next/navigation';
 import Input from '../../../components/globals/form/input';
 import AuthCardComponent from '../components/auth-card';
 
 export default function LoginPage() {
+    const router = useRouter();
+
     const FormSchema = z.object({
         email: z.string().email(),
         password: z.string().min(8)
@@ -16,7 +20,17 @@ export default function LoginPage() {
 
     const onSubmit = async (values: z.infer<typeof FormSchema>) => {
         // TODO call server action signin
-        await signIn(values.email, values.password);
+        try {
+            await signIn(values.email, values.password);
+            const session = await getSession();
+            if (session) {
+                if (session.role === ROLE.ADMIN) {
+                    router.push('/admin');
+                } else {
+                    router.push('/');
+                }
+            }
+        } catch (e) {}
     };
 
     const Schemas = yup.object().shape({
