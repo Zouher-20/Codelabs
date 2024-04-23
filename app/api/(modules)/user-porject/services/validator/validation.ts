@@ -1,8 +1,9 @@
 import { z } from 'zod';
 import BaseValidation from '../../../../core/base-validation/base-validation';
+import { OtpInput } from '../../controller/verified-controller';
 
-class VeryfiedValidator {
-    static emailValidator(reqBody: any) {
+class VerifiedValidator {
+    static emailValidator(reqBody: OtpInput) {
         const error = BaseValidation.validate(reqBody, {
             email: z.string().email()
         });
@@ -12,4 +13,4 @@ class VeryfiedValidator {
     }
 }
 
-export default VeryfiedValidator;
+export default VerifiedValidator;

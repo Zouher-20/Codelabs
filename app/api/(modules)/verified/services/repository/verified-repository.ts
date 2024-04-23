@@ -5,11 +5,90 @@ import { db } from '@/app/api/core/db/db';
 import { NextResponse } from 'next/server';
 
 import { z } from 'zod';
-import VeryfiedValidator from '../../../veryfied/services/validator/validation';
+import VerifiedValidator from '../../../verified/services/validator/validation';
 
 const services = new BaseServices();
 
 class VeryfiedRepository {
+    //TODO***************************
+    async sendOtp(emailTypes: any, email: any) {
+        var otp = Math.floor(100000 + Math.random() * 900000);
+        if (emailTypes === EmailTypes.CHANGE_PASSWORD) {
+            if (!email) {
+                return BaseResponse.returnResponse({
+                    statusCode: 400,
+                    message: 'Email is required',
+                    data: null
+                });
+            }
+            const existingUser = await db.user.findUnique({ where: { email: email } });
+            const verifiedUser = await db.verified.findUnique({ where: { email: email } });
+
+            if (existingUser) {
+                return BaseResponse.returnResponse({
+                    statusCode: 400,
+                    message: 'you dont have anyt pirmetion',
+                    data: null
+                });
+            } else {
+                if (!verifiedUser) {
+                    await db.verified.create({
+                        data: { email: email, otp: otp }
+                    });
+                } else {
+                    await db.verified.update({
+                        where: { id: verifiedUser.id },
+                        data: { otp }
+                    });
+                }
+                services.sendEmailWithLogo(email, otp, EmailTypes.CHANGE_PASSWORD);
+                return BaseResponse.returnResponse({
+                    statusCode: 200,
+                    message: 'registration code sent to email',
+                    data: null
+                });
+            }
+        }
+        if (emailTypes === EmailTypes.FORGET_PASSWORD) {
+            if (!email) {
+                return BaseResponse.returnResponse({
+                    statusCode: 400,
+                    message: 'Email is required',
+                    data: null
+                });
+            }
+            const existingUser = await db.user.findUnique({ where: { email: email } });
+            const verifiedUser = await db.verified.findUnique({ where: { email: email } });
+
+            if (!existingUser) {
+                return BaseResponse.returnResponse({
+                    statusCode: 400,
+                    message: 'your email is not found please register',
+                    data: null
+                });
+            } else {
+                if (!verifiedUser) {
+                    await db.verified.create({
+                        data: { email: email, otp: otp }
+                    });
+                } else {
+                    await db.verified.update({
+                        where: { id: verifiedUser.id },
+                        data: { otp }
+                    });
+                }
+            }
+            services.sendEmailWithLogo(email, otp, EmailTypes.FORGET_PASSWORD);
+
+            return BaseResponse.returnResponse({
+                statusCode: 200,
+                message: 'forget Password code sent to email',
+                data: null
+            });
+        }
+    }
+    //TODO***************************
+
     async registerOtp(req: Request, res: NextResponse) {
         const schema = z
             .object({
@@ -57,7 +136,7 @@ class VeryfiedRepository {
 
     async forgetPasswordOtp(req: Request, res: NextResponse) {
         const body = await req.json();
-        VeryfiedValidator.emailValidator(body);
+        VerifiedValidator.emailValidator(body);
         const { email }: { email: string } = body;
         if (!email) {
             return BaseResponse.returnResponse({
