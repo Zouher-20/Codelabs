@@ -5,14 +5,24 @@ export default function ClassesTable({
     currentPage,
     onPageChange,
     pageCount,
-    classes
+    classes,
+    onDetailsButtonClicked
 }: {
     currentPage: number;
     onPageChange: ({ index }: { index: number }) => void;
     pageCount: number;
     classes: Array<ClassTableType>;
+    onDetailsButtonClicked: ({ currentClass }: { currentClass: ClassTableType }) => void;
 }) {
-    function TableItem({ item, index }: { item: ClassTableType; index: number }) {
+    function TableItem({
+        item,
+        index,
+        onDetailsButtonClicked
+    }: {
+        item: ClassTableType;
+        index: number;
+        onDetailsButtonClicked: ({ currentClass }: { currentClass: ClassTableType }) => void;
+    }) {
         return (
             <tr className={`my-3 ${index % 2 == 0 ? 'bg-base-300' : ''}`}>
                 <th>{item.id}</th>
@@ -22,7 +32,11 @@ export default function ClassesTable({
                 <td>{item.labCount} Labs</td>
                 <td>{item.createdAt}</td>
                 <td>
-                    <Button label="Details" color="basic" onClick={() => {}} />
+                    <Button
+                        label="Details"
+                        color="basic"
+                        onClick={() => onDetailsButtonClicked({ currentClass: item })}
+                    />
                 </td>
             </tr>
         );
@@ -34,7 +48,7 @@ export default function ClassesTable({
         onChangePage: ({ page }: { page: number }) => onPageChange({ index: page }),
         pageCount: pageCount,
         tabelRowBuilder: ({ item, index }: { item: ClassTableType; index: number }) => {
-            return TableItem({ item: item, index: index });
+            return TableItem({ item: item, index: index, onDetailsButtonClicked });
         },
         tableHeader: (
             <thead>
