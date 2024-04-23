@@ -1,8 +1,28 @@
+import { userType } from '@/app/@types/user';
+import { getSession, signOut } from '@/app/api/(modules)/auth/service/actions';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import IconRenderer from '../globals/icon';
 
 export default function UserDropDown() {
+    const router = useRouter();
+    const [user, setUser] = useState<userType | null>(null);
+    useEffect(() => {
+        getUser();
+    }, []);
+    async function getUser() {
+        const session = await getSession();
+        if (session) {
+            setUser({
+                id: session?.id as string,
+                email: session?.email as string,
+                name: session?.username as string
+            });
+        }
+    }
+
     return (
         <div className="dropdown">
             <div
@@ -22,8 +42,8 @@ export default function UserDropDown() {
                     </div>
                 </div>
                 <div className="text-start">
-                    <span className="font-bold">username</span>
-                    <div className="text-xs">email@email.com</div>
+                    <span className="font-bold">{user?.name}</span>
+                    <div className="text-xs">{user?.email}</div>
                 </div>
             </div>
 
@@ -38,7 +58,17 @@ export default function UserDropDown() {
                     </Link>
                 </li>
                 <span className="divider my-0" />
-                <li>
+                <li
+                    onClick={() => {
+                        signOut()
+                            .then(() => {
+                                router.push('/auth');
+                            })
+                            .catch(e => {
+                                console.log(e);
+                            });
+                    }}
+                >
                     <a className="flex items-center gap-2 text-error">
                         <IconRenderer fontSize={16} icon="solar:logout-2-outline" />
                         <div>Logout</div>
