@@ -8,11 +8,9 @@ const ChallengeDetails = ({ params }: { params: { id: number } }) => {
     const info = {
         id: id,
         name: 'Notifactions',
-        title: 'Notification Center',
-        subtitle: 'notification center',
         time: 'March 2024',
         startIn: '1h 30 sec',
-        state: 'complete',
+        isComplete: true,
         duration: 'week 4',
         type: 'Vue JS',
         difficulty: 'hard',
@@ -43,15 +41,15 @@ const ChallengeDetails = ({ params }: { params: { id: number } }) => {
                 <span className="text-white text-xl font-bold flex gap-1 -ml-4">
                     <Link href={'/challenges'}><IconRenderer fontSize={24} icon="solar:arrow-left-linear" /></Link>
                     {info.time}-{info.name}</span>
-                <span className="text-primary mt-4">{info.duration} - {info.state}</span>
-                <h1 className="text-white text-4xl font-bold ">{info.title}</h1>
+                <span className="text-primary mt-4">{info.duration} - {info.isComplete ? 'Complete' : 'inProgress'}</span>
+                <h1 className="text-white text-4xl font-bold ">{info.name}</h1>
                 <span className="mt-4 leading-6">
                     {info.description.map((desc) => (<>
                         {desc} <br /><br />
                     </>
                     ))}
                 </span>
-                <EnrollCard title={info.title} tags={info.tags} />
+                <EnrollCard title={info.name} tags={info.tags} />
             </div>
             <div className="flex pr-2 gap-12 mt-[7rem] ">
                 <DisplayCard name="IDEAS" items={info.ideas} />

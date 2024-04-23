@@ -1,6 +1,8 @@
-import { register } from '@/app/api/(modules)/auth/service/actions';
+import { getSession, register, signIn } from '@/app/api/(modules)/auth/service/actions';
 import { password, textField } from '@/app/schemas';
+import { ROLE } from '@prisma/client';
 import { useFormik } from 'formik';
+import { useRouter } from 'next/navigation';
 import { object } from 'yup';
 import Input from '../../../components/globals/form/input';
 
@@ -25,10 +27,29 @@ export function RegisterThirdStep({
         validationSchema: Schemas,
         onSubmit
     });
+    const router = useRouter();
 
     async function onSubmit() {
         await nextPageCallback(async () => {
-            register({ email, otp, name: values.name, password: values.password });
+            try {
+                const user = await register({
+                    email,
+                    otp,
+                    name: values.name,
+                    password: values.password
+                });
+                if (user) {
+                    await signIn(email, values.password);
+                    const session = await getSession();
+                    if (session) {
+                        if (session.role === ROLE.ADMIN) {
+                            router.push('/admin');
+                        } else {
+                            router.push('/');
+                        }
+                    }
+                }
+            } catch (e) {}
         });
     }
 

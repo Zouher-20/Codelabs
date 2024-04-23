@@ -9,6 +9,7 @@ const Input = ({
     icon,
     errors,
     value,
+    defaultValue,
     disabled,
     onSubmit,
     onChange,
@@ -39,6 +40,7 @@ const Input = ({
                     className="grow"
                     disabled={disabled}
                     value={value}
+                    defaultValue={defaultValue}
                     onSubmit={onSubmit}
                     onChange={onChange}
                     onBlur={onBlur}
