@@ -8,7 +8,7 @@ const FormSchema = z.object({
 });
 
 const onSubmit = async (value: z.infer<typeof FormSchema>) => {
-    const response = await fetch('api/veryfied/register-otp', {
+    const response = await fetch('api/verified/register-otp', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

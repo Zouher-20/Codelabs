@@ -3,8 +3,9 @@ import { NextResponse } from 'next/server';
 import { getSession } from './app/api/(modules)/auth/service/actions';
 
 // This function can be marked `async` if using `await` inside
-export function middleware(request: NextRequest) {
-    const session = getSession();
+export async function middleware(request: NextRequest) {
+    const session = await getSession();
+
     if (!session) return NextResponse.redirect(new URL('/login', request.url));
 }
 

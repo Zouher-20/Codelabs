@@ -18,6 +18,20 @@ enum ROLE {
   ADMIN
 }
 
+enum DIFFICULTTYPE {
+  easy
+  difficult
+  Medium
+}
+
+enum NAMEPLAN {
+  labs
+  classes
+  studentsInClass
+  labsInClass
+  challenge
+}
+
 enum PLANTYPE {
   free
   plus
@@ -44,7 +58,6 @@ model User {
   verifiedAt             DateTime?
   Feedback               Feedback?
   EditorConfig           EditorConfig?
-  Plan                   Plan?
   ChallengeParticipation ChallengeParticipation[]
   UserProject            UserProject[]
   Star                   Star[]
@@ -52,6 +65,7 @@ model User {
   Blog                   Blog[]
   MemberClass            MemberClass[]
   Verified               Verified?
+  PlanSubscription       PlanSubscription?
 }
 
 model Verified {
@@ -77,20 +91,19 @@ model EditorConfig {
 }
 
 model Plan {
-  id          String        @id @default(cuid())
-  type        PLANTYPE?
-  price       Float?
-  duration    DateTime?
-  userId      String        @unique
-  user        User          @relation(fields: [userId], references: [id])
-  FeaturePlan FeaturePlan[]
+  id               String            @id @default(cuid())
+  type             String?
+  price            String?
+  duration         DateTime?
+  FeaturePlan      FeaturePlan[]
+  PlanSubscription PlanSubscription?
 }
 
 model FeaturePlan {
-  id     Int    @id @default(autoincrement())
-  name   String
-  value  Float
-  plan   Plan   @relation(fields: [planId], references: [id])
+  id     Int      @id @default(autoincrement())
+  name   NAMEPLAN
+  value  Int
+  plan   Plan     @relation(fields: [planId], references: [id])
   planId String
 }
 
@@ -100,9 +113,20 @@ model ClassProject {
   type           String
   descraption    String
   Lab            Lab[]
+  createdAt      DateTime         @default(now())
   classRomId     String
   classRom       ClassRom         @relation(fields: [classRomId], references: [id])
   FeedbackProjct FeedbackProjct[]
+  broketag       broketag[]
+}
+
+model PlanSubscription {
+  id String @id @default(cuid())
+
+  userId String @unique
+  planId String @unique
+  user   User   @relation(fields: [userId], references: [id])
+  plan   Plan   @relation(fields: [planId], references: [id])
 }
 
 model ClassRom {
@@ -111,24 +135,41 @@ model ClassRom {
   MemberClass  MemberClass[]
 }
 
-model tag {
-  id            String      @id @default(cuid())
+model Tag {
+  id       String     @id @default(cuid())
+  tagename String     @unique
+  tagtype  TAGTYPE?
+  broketag broketag[]
+}
+
+model broketag {
+  id            String       @id @default(cuid())
+  tagId         String
+  tag           Tag          @relation(fields: [tagId], references: [id])
   userprojectId String
+  userproject   UserProject  @relation(fields: [userprojectId], references: [id])
   challengeId   String
-  challenge     Challenge   @relation(fields: [challengeId], references: [id])
-  userproject   UserProject @relation(fields: [userprojectId], references: [id])
+  challenge     Challenge    @relation(fields: [challengeId], references: [id])
+  classId       String
+  class         ClassProject @relation(fields: [classId], references: [id])
+  blogId        String
+  blog          Blog         @relation(fields: [blogId], references: [id])
 }
 
 model Challenge {
   id                     String                   @id @default(cuid())
   name                   String
+  duration               DateTime?
+  isComplete             Boolean
+  difficulty             DIFFICULTTYPE
   type                   String
   description            String
   endAt                  DateTime
   startedAt              DateTime
+  createdAt              DateTime                 @default(now())
   ChallengeParticipation ChallengeParticipation[]
   Attachment             Attachment[]
-  tag                    tag[]
+  broketag               broketag[]
 }
 
 model Attachment {
@@ -151,7 +192,7 @@ model Lab {
   id                       String                 @id @default(cuid())
   tamblateId               Int                    @unique
   tamblate                 Tamblate               @relation(fields: [tamblateId], references: [id])
-  Code                     Code[]
+  jsonFile                 String
   userprojectId            String
   classProjectId           String
   challengeParticipationId String
@@ -160,24 +201,17 @@ model Lab {
   userproject              UserProject            @relation(fields: [userprojectId], references: [id])
 }
 
-model Code {
-  id    String @id @default(cuid())
-  path  String
-  labId String
-  lab   Lab    @relation(fields: [labId], references: [id])
-}
-
 model UserProject {
-  id          String    @id @default(cuid())
+  id          String     @id @default(cuid())
   userId      String
-  user        User      @relation(fields: [userId], references: [id])
+  user        User       @relation(fields: [userId], references: [id])
   type        String
   name        String?
   description String?
   Star        Star[]
   Comment     Comment[]
-  tag         tag[]
   Lab         Lab[]
+  broketag    broketag[]
 }
 
 model Tamblate {
@@ -188,15 +222,16 @@ model Tamblate {
 }
 
 model Blog {
-  id       String    @id @default(cuid())
+  id       String     @id @default(cuid())
   userId   String
-  user     User      @relation(fields: [userId], references: [id])
+  user     User       @relation(fields: [userId], references: [id])
   contant  String?
   imageUrl String?
-  status   Boolean   @default(false)
+  status   Boolean    @default(false)
   title    String?
   Star     Star[]
   Comment  Comment[]
+  broketag broketag[]
 }
 
 //TODOoooooooooooooooooooo
