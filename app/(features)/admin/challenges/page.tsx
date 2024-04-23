@@ -1,5 +1,6 @@
 import Input from "@/app/components/globals/form/input";
 import IconRenderer from "@/app/components/globals/icon";
+import Link from "next/link";
 
 const Challenges = () => {
 
@@ -20,7 +21,7 @@ const Challenges = () => {
                     type="text"
                     placeholder="Search for challenge ..."
                     icon="circum:search"
-                    value={""}
+                    defaultValue={""}
                 />
             </span>
             <div className="dropdown">
@@ -43,9 +44,9 @@ const Challenges = () => {
                     <li><a>Skratch</a></li>
                 </ul>
             </div>
-            <button className="btn h-[35px] min-h-[35px] btn-outline">Challenges
+            <Link href={'/admin/challenges/add-challenge'} className="btn h-[35px] min-h-[35px] btn-outline">Challenges
                 <IconRenderer width={24} height={24} icon={'heroicons-solid:plus-sm'} />
-            </button>
+            </Link>
         </div>
         <div className="p-4">
             <table className="w-full">
