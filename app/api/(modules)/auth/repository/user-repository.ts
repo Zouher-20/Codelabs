@@ -43,12 +43,10 @@ class UserRepository {
         const body = await req.json();
         UserVailedator.registerValidator(body);
         const {
-            otp: otpString,
             email,
             name,
             password
         }: { otp: string; email: string; name: string; password: string } = body;
-        const otp = parseInt(otpString, 10);
 
         const existUserByEmail = await db.user.findUnique({ where: { email: email } });
         if (existUserByEmail) {
@@ -66,33 +64,22 @@ class UserRepository {
                 data: null
             });
         }
+        const newUser = await db.user.create({
+            data: {
+                username: name,
+                password: password,
+                role: ROLE.ADMIN,
+                email: email
+            }
+        });
 
-        const existuserVerified = await db.verified.findUnique({ where: { email } });
-
-        if (existuserVerified && existuserVerified.otp === otp) {
-            const newUser = await db.user.create({
-                data: {
-                    username: name,
-                    password: password,
-                    role: ROLE.ADMIN,
-                    email: email
-                }
-            });
-
-            return BaseResponse.returnResponse({
-                statusCode: 200,
-                message: 'reigster successful',
-                data: {
-                    user: { id: newUser.id, name, email, role: newUser.role }
-                }
-            });
-        } else {
-            return BaseResponse.returnResponse({
-                statusCode: 400,
-                message: 'Invalid OTP !! or you are not verified your email',
-                data: null
-            });
-        }
+        return BaseResponse.returnResponse({
+            statusCode: 200,
+            message: 'reigster successful',
+            data: {
+                user: { id: newUser.id, name, email, role: newUser.role }
+            }
+        });
     }
 
     static async forgetPassword(req: Request) {
