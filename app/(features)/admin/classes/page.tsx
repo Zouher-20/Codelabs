@@ -1,7 +1,7 @@
 'use client';
 import Input from '@/app/components/globals/form/input';
 import IconRenderer from '@/app/components/globals/icon';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import ClassesTable, { ClassTableType } from '../components/table/classes-table';
 
@@ -52,7 +52,16 @@ const Classes = () => {
     ];
     const [selectedClasses, setSelectedClasses] = useState<Array<ClassTableType>>([]);
     const pageSize = 4;
+    const route = useRouter();
 
+    const handleClassClick = (currentClass: ClassTableType) => {
+        const params = {
+            id: currentClass.id.toString()
+        };
+        const queryString = new URLSearchParams(params).toString();
+        route.push('/admin/classes/statistics' + '?' + queryString);
+        return;
+    };
     useEffect(() => {
         const id = Number(currentParams.get('id') ?? '1');
         onPageChange({ index: id });
@@ -86,6 +95,9 @@ const Classes = () => {
         <div className="flex flex-col gap-2 p-6">
             <Header />
             <ClassesTable
+                onDetailsButtonClicked={({ currentClass }: { currentClass: ClassTableType }) =>
+                    handleClassClick(currentClass)
+                }
                 classes={selectedClasses}
                 pageCount={Math.ceil(classes.length / pageSize)}
                 currentPage={currentPage}
