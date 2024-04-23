@@ -35,6 +35,7 @@ const MainAdminPage = () => {
         'color',
         'code-block'
     ];
+
     const handleEditorChange = ({ newContent }: { newContent: string }) => {
         content = newContent;
     };
@@ -52,7 +53,7 @@ const MainAdminPage = () => {
                     }}
                     modules={quillModules}
                     formats={quillFormats}
-                    className="mt-10 h-[70%] w-full bg-white"
+                    className="w-1/2  bg-white"
                 />
             </div>
         </div>
