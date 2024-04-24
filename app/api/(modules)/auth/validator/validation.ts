@@ -10,7 +10,6 @@ class AuthValidator {
     }) {
         const error = BaseValidation.validate(payload, {
             email: zemail,
-            otp: ztext(6, 6),
             name: ztext(5, 35),
             password: zpass
         });
