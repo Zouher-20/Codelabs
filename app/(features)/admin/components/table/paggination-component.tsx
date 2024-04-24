@@ -1,4 +1,4 @@
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 export default function PagginationComponent({
     currentPage,
@@ -16,6 +16,8 @@ export default function PagginationComponent({
         startingIndex--;
     }
     const router = useRouter();
+    const path = usePathname();
+
     function Item({ index }: { index: number }) {
         const handleClassClick = () => {
             onPageChange({ page: index });
@@ -23,7 +25,7 @@ export default function PagginationComponent({
                 id: index.toString()
             };
             const queryString = new URLSearchParams(params).toString();
-            router.push('/admin/classes' + '?' + queryString);
+            router.push(path + '?' + queryString);
             return;
         };
         return (
@@ -47,7 +49,7 @@ export default function PagginationComponent({
                     id: toIndex.toString()
                 };
                 const queryString = new URLSearchParams(params).toString();
-                router.push('/admin/classes' + '?' + queryString);
+                router.push(path + '?' + queryString);
                 return;
             }
         };
