@@ -7,11 +7,13 @@ import { signIn } from '@/app/api/(modules)/auth/service/actions';
 import { CustomToaster } from '@/app/components/toast/custom-toaster';
 import { email, password } from '@/app/schemas';
 import { ROLE } from '@prisma/client';
+import { Play } from 'next/font/google';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import Input from '../../../components/globals/form/input';
 import AuthCardComponent from '../components/auth-card';
+const play = Play({ subsets: ['latin'], weight: '400' });
 
 export default function LoginPage() {
     const router = useRouter();
@@ -80,8 +82,15 @@ export default function LoginPage() {
                 >
                     Login
                 </button>
-                <Link href={'register'} className="flex w-full justify-center py-1 md:justify-end">
-                    <h4 className="text-sm font-light text-white underline">register</h4>
+                <div className="divider my-4 text-center">or</div>
+                <Link href={'register'} className="text-center hover:underline ">
+                    <h4 className=" font-light text-white">
+                        Signup to{' '}
+                        <span className={play.className}>
+                            <span className="text-primary">Code</span>
+                            <span className="text-white">Labs</span>
+                        </span>
+                    </h4>
                 </Link>
             </form>
             <CustomToaster />

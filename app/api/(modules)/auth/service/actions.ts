@@ -2,11 +2,9 @@
 import AuthUtils from '@/app/utils/auth-utils';
 import { ROLE } from '@prisma/client';
 import { cookies } from 'next/headers';
-import baseResponse from '../../../core/base-response/base-response';
 import UsersRepository from '../../users/repository';
 import VeryfiedRepository from '../../verified/repository/verified-repository';
-import AuthRepository from '../repository/auth-repository';
-import { RegisterUserInput } from '../types';
+import { AdminRegisterInput, RegisterUserInput } from '../types';
 import AuthValidator from '../validator/validation';
 
 export const register = async (payload: RegisterUserInput) => {
@@ -42,29 +40,41 @@ export const register = async (payload: RegisterUserInput) => {
     }
 };
 
-export const adminRegister = async (req: Request) => {
-    try {
-        return AuthRepository.adminRegister(req);
-    } catch (err) {
-        return baseResponse.returnResponse({
-            statusCode: 500,
-            message: String(err),
-            data: null
-        });
+export const adminRegister = async (payload: AdminRegisterInput) => {
+    AuthValidator.adminRegisterValidator(payload);
+    const { email, name, password }: AdminRegisterInput = payload;
+
+    const existUserByEmail = await UsersRepository.find({ email });
+    if (existUserByEmail) {
+        throw 'user is exist for this email please register from another email';
     }
+    const newUser = await UsersRepository.create({
+        username: name,
+        password: password,
+        role: ROLE.ADMIN,
+        email: email
+    });
+
+    return {
+        id: newUser.id,
+        name,
+        email,
+        role: newUser.role
+    };
 };
 
-export const forgetPassword = async (req: Request) => {
-    try {
-        return AuthRepository.forgetPassword(req);
-    } catch (err) {
-        return baseResponse.returnResponse({
-            statusCode: 500,
-            message: String(err),
-            data: null
-        });
-    }
-};
+// TODO: uncomment this when we implement forget password
+// export const forgetPassword = async (req: Request) => {
+//     try {
+//         return AuthRepository.forgetPassword(req);
+//     } catch (err) {
+//         return baseResponse.returnResponse({
+//             statusCode: 500,
+//             message: String(err),
+//             data: null
+//         });
+//     }
+// };
 
 export const signIn = async (email: string, password: string) => {
     try {

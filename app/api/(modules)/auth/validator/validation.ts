@@ -18,6 +18,16 @@ class AuthValidator {
             throw error;
         }
     }
+    static adminRegisterValidator(payload: { email: string; name: string; password: string }) {
+        const error = BaseValidation.validate(payload, {
+            email: zemail,
+            name: ztext(5, 35),
+            password: zpass
+        });
+        if (error) {
+            throw error;
+        }
+    }
 
     static signInValidator(payload: { email: string; password: string }) {
         const error = BaseValidation.validate(payload, {
