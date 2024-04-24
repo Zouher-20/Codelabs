@@ -117,7 +117,7 @@ model ClassProject {
   classRomId     String
   classRom       ClassRom         @relation(fields: [classRomId], references: [id])
   FeedbackProjct FeedbackProjct[]
-  broketag       broketag[]
+  tagMorph       TagMorph[]
 }
 
 model PlanSubscription {
@@ -139,10 +139,10 @@ model Tag {
   id       String     @id @default(cuid())
   tagename String     @unique
   tagtype  TAGTYPE?
-  broketag broketag[]
+  tagMorph TagMorph[]
 }
 
-model broketag {
+model TagMorph {
   id            String       @id @default(cuid())
   tagId         String
   tag           Tag          @relation(fields: [tagId], references: [id])
@@ -169,7 +169,7 @@ model Challenge {
   createdAt              DateTime                 @default(now())
   ChallengeParticipation ChallengeParticipation[]
   Attachment             Attachment[]
-  broketag               broketag[]
+  tagMorph               TagMorph[]
 }
 
 model Attachment {
@@ -211,7 +211,7 @@ model UserProject {
   Star        Star[]
   Comment     Comment[]
   Lab         Lab[]
-  broketag    broketag[]
+  tagMorph    TagMorph[]
 }
 
 model Tamblate {
@@ -231,10 +231,9 @@ model Blog {
   title    String?
   Star     Star[]
   Comment  Comment[]
-  broketag broketag[]
+  tagMorph TagMorph[]
 }
 
-//TODOoooooooooooooooooooo
 model Star {
   id            String      @id @default(cuid())
   userId        String
@@ -255,8 +254,6 @@ model Comment {
   userproject   UserProject @relation(fields: [userprojectId], references: [id])
   user          User        @relation(fields: [userId], references: [id])
 }
-
-//TODOoooooooooooooooooooo
 
 model MemberClass {
   id             String           @id @default(cuid())

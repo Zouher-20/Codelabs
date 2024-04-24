@@ -5,7 +5,7 @@ import { db } from '@/app/api/core/db/db';
 import { NextResponse } from 'next/server';
 
 import { z } from 'zod';
-import VerifiedValidator from '../../../verified/services/validator/validation';
+import VerifiedValidator from '../validator/validation';
 
 const services = new BaseServices();
 
@@ -175,6 +175,14 @@ class VeryfiedRepository {
             statusCode: 200,
             message: 'foget password code sent to email',
             data: null
+        });
+    }
+
+    static async find(args: any) {
+        return await db.verified.findUnique({
+            where: {
+                ...args
+            }
         });
     }
 }

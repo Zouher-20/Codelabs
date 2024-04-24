@@ -2,8 +2,8 @@ import { EmailTypes } from '@/app/api/core/constant/enum';
 import { NextResponse } from 'next/server';
 import { default as baseResponse } from '../../../core/base-response/base-response';
 import { getSession } from '../../auth/service/actions';
-import VerifiedRepository from '../services/repository/verified-repository';
-import VerifiedValidator from '../services/validator/validation';
+import VerifiedRepository from '../repository/verified-repository';
+import VerifiedValidator from '../validator/validation';
 const repository = new VerifiedRepository();
 export interface OtpInput {
     email?: string;
@@ -24,7 +24,7 @@ class VeryfiedController {
 
     forgetPasswordOtp = async (value: OtpInput) => {
         try {
-            await VerifiedValidator.emailValidator(value);
+            VerifiedValidator.emailValidator(value);
             return repository.sendOtp(EmailTypes.CHANGE_PASSWORD, value);
         } catch (err) {
             return baseResponse.returnResponse({

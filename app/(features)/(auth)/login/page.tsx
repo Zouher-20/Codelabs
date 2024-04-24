@@ -1,41 +1,43 @@
 'use client';
 import { useFormik } from 'formik';
 import Link from 'next/link';
-import * as yup from 'yup';
-import * as z from 'zod';
+import { object } from 'yup';
 
-import { getSession, signIn } from '@/app/api/(modules)/auth/service/actions';
+import { signIn } from '@/app/api/(modules)/auth/service/actions';
+import { CustomToaster } from '@/app/components/toast/custom-toaster';
+import { email, password } from '@/app/schemas';
 import { ROLE } from '@prisma/client';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import toast from 'react-hot-toast';
 import Input from '../../../components/globals/form/input';
 import AuthCardComponent from '../components/auth-card';
 
 export default function LoginPage() {
     const router = useRouter();
+    const [loading, setLoading] = useState(false);
 
-    const FormSchema = z.object({
-        email: z.string().email(),
-        password: z.string().min(8)
-    });
-
-    const onSubmit = async (values: z.infer<typeof FormSchema>) => {
-        // TODO call server action signin
+    const onSubmit = async () => {
+        setLoading(true);
         try {
-            await signIn(values.email, values.password);
-            const session = await getSession();
-            if (session) {
-                if (session.role === ROLE.ADMIN) {
+            const user = await signIn(values.email, values.password);
+            if (user) {
+                if (user.role === ROLE.ADMIN) {
                     router.push('/admin');
                 } else {
                     router.push('/');
                 }
             }
-        } catch (e) {}
+        } catch (err: any) {
+            toast.error(err.message);
+        } finally {
+            setLoading(false);
+        }
     };
 
-    const Schemas = yup.object().shape({
-        email: yup.string().email('Please enter a valid email').required('Required'),
-        password: yup.string().min(5).required('Required')
+    const Schemas = object().shape({
+        email: email,
+        password: password
     });
     const { values, errors, touched, handleChange, handleSubmit, handleBlur } = useFormik({
         initialValues: {
@@ -71,13 +73,18 @@ export default function LoginPage() {
                     onChange={handleChange}
                     errors={errors.email && touched.email ? errors.email : null}
                 />
-                <button className="btn btn-primary btn-sm  max-w-sm" type="submit">
+                <button
+                    disabled={loading}
+                    className="btn btn-primary btn-sm max-w-sm"
+                    type="submit"
+                >
                     Login
                 </button>
                 <Link href={'register'} className="flex w-full justify-center py-1 md:justify-end">
                     <h4 className="text-sm font-light text-white underline">register</h4>
                 </Link>
             </form>
+            <CustomToaster />
         </AuthCardComponent>
     );
 }

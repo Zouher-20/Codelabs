@@ -1,12 +1,27 @@
 import { zemail, zpass, ztext } from '@/app/schemas';
 import BaseValidation from '../../../core/base-validation/base-validation';
 
-class UserValidator {
-    static registerValidator(reqBody: any) {
-        const error = BaseValidation.validate(reqBody, {
+class AuthValidator {
+    static registerValidator(payload: {
+        email: string;
+        otp: string;
+        name: string;
+        password: string;
+    }) {
+        const error = BaseValidation.validate(payload, {
             email: zemail,
             otp: ztext(6, 6),
             name: ztext(5, 35),
+            password: zpass
+        });
+        if (error) {
+            throw error;
+        }
+    }
+
+    static signInValidator(payload: { email: string; password: string }) {
+        const error = BaseValidation.validate(payload, {
+            email: zemail,
             password: zpass
         });
         if (error) {
@@ -26,4 +41,4 @@ class UserValidator {
     }
 }
 
-export default UserValidator;
+export default AuthValidator;
