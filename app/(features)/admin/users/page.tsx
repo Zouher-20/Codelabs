@@ -1,4 +1,5 @@
 'use client';
+import { findUsers } from '@/app/api/(modules)/admin/service/action';
 import Button from '@/app/components/globals/form/button';
 import Input from '@/app/components/globals/form/input';
 import IconRenderer from '@/app/components/globals/icon';
@@ -12,7 +13,15 @@ import UsersTable, { UserTableType } from './components/user-table';
 const Users = () => {
     const [currentPage, updateCurrentPage] = useState(0);
     const currentParams = useSearchParams();
-
+    useEffect(() => {
+        try {
+            getUser();
+        } catch (e) {}
+    }, []);
+    const getUser = async () => {
+        const user = await findUsers({ page: 1, pageSize: 10 });
+        console.log(user);
+    };
     var users: Array<UserTableType> = [
         {
             id: 1,

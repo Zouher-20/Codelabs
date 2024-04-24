@@ -35,6 +35,7 @@ export default function UsersTable({
         tableHeader: (
             <thead>
                 <tr>
+                    <th></th>
                     <th>Users</th>
                     <th>Name</th>
                     <th>Email</th>

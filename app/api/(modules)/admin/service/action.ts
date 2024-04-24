@@ -1,18 +1,17 @@
 import { ROLE } from '@prisma/client';
 import { getSession } from '../../auth/service/actions';
-import AdminValidator from '../validator/validation';
 import AdminRepository from './../repository/admin-repository';
 export default interface paginationInput {
-    page: number;
-    pageSize: number;
-    searchWord: string;
-    date: Date;
+    page?: number;
+    pageSize?: number;
+    searchWord?: string;
+    date?: Date;
 }
 
 export const findUsers = async (req: paginationInput) => {
     try {
         const { page, pageSize, searchWord, date }: paginationInput = req;
-        AdminValidator.userPaginationValidator(req);
+        // AdminValidator.userPaginationValidator(req);
         const session = await getSession();
         if (session?.role === ROLE.ADMIN) {
             let args = {};
@@ -41,11 +40,13 @@ export const findUsers = async (req: paginationInput) => {
                 };
             }
 
-            return AdminRepository.findManyUser(page, pageSize, args);
+            return AdminRepository.findManyUser(page ?? 1, pageSize ?? 10, args);
         } else {
             throw { message: 'you are not admin ' };
         }
     } catch (err) {
+        console.log('Asdgsdgs');
+        console.log(err);
         throw { message: 'there is an  error' };
     }
 };
