@@ -1,19 +1,33 @@
-import { textareaType } from "@/app/@types/textarea";
+import { textareaType } from '@/app/@types/textarea';
 
-const Textarea = ({ id, name, placeholder, errors, style, value, onChange, onBlur }: textareaType) => {
+const Textarea = ({
+    id,
+    name,
+    placeholder,
+    errors,
+    style,
+    value,
+    onChange,
+    onBlur
+}: textareaType) => {
     return (
-        <div className='flex flex-col gap-1 h-full'>
+        <div className="flex h-full flex-col gap-1">
             <textarea
                 id={id}
                 name={name}
                 placeholder={placeholder ? placeholder : 'textarea'}
-                className={'max-w-sm textarea textarea-bordered textarea-sm ' + (style) + ' ' + (errors ? ' textarea-error' : '')}
+                className={
+                    'textarea textarea-bordered textarea-sm max-w-sm ' +
+                    style +
+                    ' ' +
+                    (errors ? ' textarea-error' : '')
+                }
                 value={value}
                 onChange={onChange}
                 onBlur={onBlur}
             />
-            <p className='text-error pl-2 pb-2'>{errors}</p>
+            <p className="pb-2 pl-2 text-error">{errors}</p>
         </div>
     );
-}
+};
 export default Textarea;

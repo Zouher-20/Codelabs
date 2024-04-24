@@ -1,8 +1,12 @@
 'use client';
+import Button from '@/app/components/globals/form/button';
 import Input from '@/app/components/globals/form/input';
 import IconRenderer from '@/app/components/globals/icon';
+import { basicPlan } from '@/app/constants/plans';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import NewUserModel from './components/modal/new-user-modal';
+import UpdateUserPlanModal from './components/modal/update-user-plan-modal';
 import UsersTable, { UserTableType } from './components/user-table';
 
 const Users = () => {
@@ -92,14 +96,24 @@ const Users = () => {
                 currentPage={currentPage}
                 onPageChange={onPageChange}
             />
+            <NewUserModel />
+            <UpdateUserPlanModal plan={basicPlan} planValues={() => {}} />
         </div>
     );
 };
 
 const Header = () => {
+    function toggleModal() {
+        if (document) {
+            (document.getElementById('new-user-modal') as HTMLFormElement)?.showModal();
+        }
+    }
     return (
         <div className="flex flex-col gap-8 p-6">
-            <h1 className="text-4xl font-bold text-white">Users</h1>
+            <div className="flex w-full justify-between">
+                <h1 className="text-4xl font-bold text-white">Users</h1>
+                <Button label="+ New User" color="any" onClick={toggleModal} />
+            </div>
 
             <div className="flex gap-8">
                 <span>

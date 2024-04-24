@@ -7,6 +7,7 @@ export const email = string()
     .email('Please enter a valid email')
     .required('This field is required');
 export const password = string().min(8).required('Required');
+export const username = string().min(4).required('Required');
 
 // Zod
 export const zemail = z.string().email();
