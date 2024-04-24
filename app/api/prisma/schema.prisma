@@ -51,6 +51,7 @@ model User {
   username               String                   @unique
   password               String
   role                   ROLE
+  createdAt              DateTime                 @default(now())
   typeUser               String?
   userImage              String?
   planEndDate            DateTime?
