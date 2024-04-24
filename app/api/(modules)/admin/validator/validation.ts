@@ -9,8 +9,8 @@ class AdminValidator {
         const error = BaseValidation.validate(reqBody, {
             page: zPage,
             pageSize: zpageSize,
-            searchWord: z.string().min(1),
-            data: z.date()
+            searchWord: z.string().min(1).nullable(),
+            data: z.date().nullable()
         });
         throw error;
     }
