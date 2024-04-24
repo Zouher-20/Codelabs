@@ -1,47 +1,33 @@
+import { registerOtp } from '@/app/api/(modules)/verified/service/actions';
+import { CustomToaster } from '@/app/components/toast/custom-toaster';
+import { email } from '@/app/schemas';
 import { useFormik } from 'formik';
-import * as yup from 'yup';
-import * as z from 'zod';
+import toast from 'react-hot-toast';
+import { object } from 'yup';
 import Input from '../../../components/globals/form/input';
-
-const FormSchema = z.object({
-    email: z.string().email()
-});
-
-const onSubmit = async (value: z.infer<typeof FormSchema>) => {
-    const response = await fetch('api/verified/register-otp', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            email: value.email
-        })
-    });
-    if (response.ok) {
-        console.log('Email sent successfully');
-    } else {
-        console.error('Failed to send email');
-    }
-};
 
 export function RegisterFirstStep({
     nextPageCallback
 }: {
     nextPageCallback: (callback: () => Promise<string>) => Promise<void>;
 }) {
-    const Schemas = yup.object().shape({
-        email: yup.string().email('Please enter a valid email').required('Required')
+    const Schemas = object().shape({
+        email: email
     });
     const { values, errors, touched, handleChange, handleSubmit, handleBlur } = useFormik({
         initialValues: {
             email: ''
         },
         validationSchema: Schemas,
-        onSubmit: async values => {
-            await onSubmit(values);
-            await nextPageCallback(async () => {
-                return values.email;
-            });
+        onSubmit: async ({ email }: { email: string }) => {
+            try {
+                await registerOtp({ email });
+                await nextPageCallback(async () => {
+                    return values.email;
+                });
+            } catch (err: any) {
+                toast.error(err);
+            }
         }
     });
 
@@ -61,6 +47,7 @@ export function RegisterFirstStep({
             <button className="btn btn-primary btn-sm  max-w-sm" type="submit">
                 Register
             </button>
+            <CustomToaster />
         </form>
     );
 }
