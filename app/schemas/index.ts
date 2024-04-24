@@ -13,3 +13,5 @@ export const username = string().min(4).required('Required');
 export const zemail = z.string().email();
 export const ztext = (min = 5, max = 50) => z.string().min(min).max(max);
 export const zpass = z.string().min(8);
+export const zPage = z.number().default(1);
+export const zpageSize = z.number().default(10);
