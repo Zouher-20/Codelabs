@@ -42,11 +42,7 @@ class UserRepository {
     static async adminRegister(req: Request) {
         const body = await req.json();
         UserVailedator.registerValidator(body);
-        const {
-            email,
-            name,
-            password
-        }: { otp: string; email: string; name: string; password: string } = body;
+        const { email, name, password }: { email: string; name: string; password: string } = body;
 
         const existUserByEmail = await db.user.findUnique({ where: { email: email } });
         if (existUserByEmail) {
