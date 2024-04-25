@@ -24,6 +24,15 @@ class AdminValidator {
         });
         throw error;
     }
+
+    static tagValidator(reqBody: any) {
+        const error = BaseValidation.validate(reqBody, {
+            tag: z.string()
+        });
+        console.log('sssssssssssssssssssssssssssssss');
+        throw error;
+        console.log('sssssssssssssssssssssssssssssssss');
+    }
 }
 
 export default AdminValidator;

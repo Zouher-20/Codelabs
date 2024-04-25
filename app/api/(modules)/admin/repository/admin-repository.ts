@@ -16,6 +16,26 @@ class AdminRepository {
             userCount: userCount
         };
     }
+
+    static async addTag(tag: string) {
+        const existingTag = await db.tag.findUnique({
+            where: {
+                tagename: tag
+            }
+        });
+
+        if (existingTag) {
+            throw new Error('Tag already exists.');
+        }
+
+        const newTag = await db.tag.create({
+            data: {
+                tagename: tag
+            }
+        });
+
+        return newTag;
+    }
 }
 
 export default AdminRepository;

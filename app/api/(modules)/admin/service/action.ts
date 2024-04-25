@@ -12,7 +12,6 @@ export default interface PaginationInput {
 export const findUsers = async (req: Request) => {
     try {
         const body = await req.json();
-
         const { page = 1, pageSize = 10, searchWord, date }: PaginationInput = body;
         const session = await getSession();
 
@@ -48,5 +47,13 @@ export const findUsers = async (req: Request) => {
     } catch (err) {
         console.error('An error occurred:', err);
         throw new Error('An error occurred while fetching users.');
+    }
+};
+export const addTag = async (tag: string) => {
+    try {
+        return AdminRepository.addTag(tag);
+    } catch (err) {
+        console.error('An error occurred:', err);
+        throw new Error('An error occurred while adding a tag.');
     }
 };
