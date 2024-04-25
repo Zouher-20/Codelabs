@@ -1,18 +1,21 @@
 import { ROLE } from '@prisma/client';
 import { getSession } from '../../auth/service/actions';
-import AdminRepository from './../repository/admin-repository';
-export default interface paginationInput {
+import AdminRepository from '../repository/admin-repository';
+
+export default interface PaginationInput {
     page?: number;
     pageSize?: number;
     searchWord?: string;
     date?: Date;
 }
 
-export const findUsers = async (req: paginationInput) => {
+export const findUsers = async (req: Request) => {
     try {
-        const { page, pageSize, searchWord, date }: paginationInput = req;
-        // AdminValidator.userPaginationValidator(req);
+        const body = await req.json();
+
+        const { page = 1, pageSize = 10, searchWord, date }: PaginationInput = body;
         const session = await getSession();
+
         if (session?.role === ROLE.ADMIN) {
             let args = {};
             if (searchWord && date) {
@@ -35,18 +38,15 @@ export const findUsers = async (req: paginationInput) => {
                     ]
                 };
             } else if (date) {
-                args = {
-                    createdAt: date
-                };
+                args = { createdAt: date };
             }
 
-            return AdminRepository.findManyUser(page ?? 1, pageSize ?? 10, args);
+            return AdminRepository.findManyUser(page, pageSize, args);
         } else {
-            throw { message: 'you are not admin ' };
+            throw new Error('Access denied: You are not an admin.');
         }
     } catch (err) {
-        console.log('Asdgsdgs');
-        console.log(err);
-        throw { message: 'there is an  error' };
+        console.error('An error occurred:', err);
+        throw new Error('An error occurred while fetching users.');
     }
 };
