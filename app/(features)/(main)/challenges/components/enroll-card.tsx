@@ -1,6 +1,6 @@
 import IconRenderer from "@/app/components/globals/icon"
 
-const EnrollCard = ({ title, tags }: { title: string, tags: Array<string> }) => {
+const EnrollCard = ({ title, tags }: { title: string, tags: Array<{ name: string, tagType: string }> }) => {
     return (
         <div className="relative p-24">
             <div className="flex flex-col flex-8 bg-base-300 p-8 gap-4 rounded-3xl  absolute -bottom-24 ml-12 mt-24 -right-24">
@@ -12,14 +12,14 @@ const EnrollCard = ({ title, tags }: { title: string, tags: Array<string> }) => 
                 <span> Make sure to tag your Lab
                     {tags.map((tag, index) => (
                         <>
-                            <span className="text-warning"> {tag} </span>
+                            <span className="text-warning"> {tag.name} </span>
                             {
                                 tags[index + 1] == null
                                     ? <span> and </span> : <span> , </span>
                             }
                         </>
                     ))}
-                    <span className="text-warning">CodeLabsChallenge </span>
+                    <span className="text-warning">Code-Labs-Challenge </span>
                     so that we can all see it!</span>
             </div>
         </div>
