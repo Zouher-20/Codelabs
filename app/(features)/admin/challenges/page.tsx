@@ -1,21 +1,114 @@
-import Input from "@/app/components/globals/form/input";
-import IconRenderer from "@/app/components/globals/icon";
-import Link from "next/link";
+'use client';
+import Input from '@/app/components/globals/form/input';
+import IconRenderer from '@/app/components/globals/icon';
+import { useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import ChallengeTable, { challengeTableType } from './components/table/challenge-table'
+import Link from 'next/link';
 
 const Challenges = () => {
-
-    let heading = ["", "Challenge", "Duration", "Members", "Type", "Difficulty"];
-    let body = [
-        ["Kapil", "Jaipur", "MCA", 'MCA', 'MCA'],
-        ["Aakash", "Hisar", "Btech", 'MCA', 'MCA'],
-        ["Mani", "Ranchi", "MSc", 'MCA', 'MCA'],
-        ["Yash", "Udaipur", "Mtech", 'MCA', 'MCA'],
+    const [currentPage, updateCurrentPage] = useState(0);
+    const currentParams = useSearchParams();
+    var challenges: Array<challengeTableType> = [
+        {
+            id: 1,
+            name: 'Challenge',
+            difficulty: 'Hard',
+            duration: '2 weeks',
+            createdAt: 'April 22/4/204',
+            tags: [{ name: 'clc-notification-center', tagType: 'challenges' }, { name: 'clc--center', tagType: 'challenges' }],
+            isComplete: false
+        },
+        {
+            id: 2,
+            name: 'Challenge',
+            difficulty: 'Hard',
+            duration: '2 weeks',
+            createdAt: 'April 22/4/204',
+            tags: [{ name: 'clc-notification-center', tagType: 'challenges' },
+            { name: 'clc-notification-center', tagType: 'challenges' },
+            { name: 'clc-notification-center', tagType: 'challenges' },
+            ],
+            isComplete: true
+        },
+        {
+            id: 3,
+            name: 'Challenge',
+            difficulty: 'Hard',
+            duration: '2 weeks',
+            createdAt: 'April 22/4/204',
+            tags: [{ name: 'clc-notification-center', tagType: 'challenges' },],
+            isComplete: true
+        },
+        {
+            id: 4,
+            name: 'Challenge',
+            difficulty: 'Hard',
+            duration: '2 weeks',
+            tags: [{ name: 'clc-notification-center', tagType: 'challenges' }, { name: 'clc--center', tagType: 'challenges' }],
+            createdAt: 'April 22/4/204',
+            isComplete: true
+        },
+        {
+            id: 5,
+            name: 'Challenge',
+            difficulty: 'Hard',
+            duration: '2 weeks',
+            tags: [{ name: 'clc-notification-center', tagType: 'challenges' }, { name: 'clc--center', tagType: 'challenges' }],
+            createdAt: 'April 22/4/204',
+            isComplete: true
+        }
     ];
+    const [selectedChallenges, setSelectedChallenges] = useState<Array<challengeTableType>>([]);
+    const pageSize = 4;
 
-    return <div className="p-6 flex flex-col gap-8">
-        <h1 className="text-4xl font-bold text-white">Challenges</h1>
+    useEffect(() => {
+        const id = Number(currentParams.get('id') ?? '1');
+        onPageChange({ index: id });
+    }, []);
+    const onPageChange = ({ index }: { index: number }) => {
+        updateCurrentPage(index);
+        setSelectedChallenges([
+            ...chunkArray({
+                startingIndex: (index - 1) * pageSize,
+                lastIndex: index * pageSize,
+                array: challenges
+            })
+        ]);
+    };
+    function chunkArray({
+        array,
+        lastIndex,
+        startingIndex
+    }: {
+        startingIndex: number;
+        array: Array<challengeTableType>;
+        lastIndex: number;
+    }): Array<challengeTableType> {
+        const chunks: Array<challengeTableType> = [];
+        for (let i = startingIndex; i < lastIndex && i < array.length; i++) {
+            chunks.push(array[i]);
+        }
+        return chunks;
+    }
+    return <div className="flex flex-col gap-2 px-6">
+        <Header />
+        <ChallengeTable
+            challenges={selectedChallenges}
+            pageCount={Math.ceil(challenges.length / pageSize)}
+            currentPage={currentPage}
+            onPageChange={onPageChange}
+        />
+    </div>
+}
+
+export default Challenges;
+
+const Header = () => {
+    return <div className="flex flex-col gap-8 ">
+        <h1 className="text-4xl font-bold text-white">Challenegs</h1>
         <div className="flex gap-8">
-            <span>
+            <span className='min-w-72'>
                 <Input
                     id="search"
                     type="text"
@@ -24,7 +117,7 @@ const Challenges = () => {
                     defaultValue={""}
                 />
             </span>
-            <div className="dropdown">
+            <div className="dropdown mr-auto">
                 <summary tabIndex={0} className=" flex min-h-[35px] h-[35px] btn">Difficulty
                     <IconRenderer width={24} height={24} icon={'solar:alt-arrow-down-linear'} />
                 </summary>
@@ -33,46 +126,9 @@ const Challenges = () => {
                     <li><a>easy</a></li>
                 </ul>
             </div>
-            <div className="dropdown mr-auto">
-                <div tabIndex={0} className="flex min-h-[35px] h-[35px] btn">Type
-                    <IconRenderer width={24} height={24} icon={'solar:alt-arrow-down-linear'} />
-                </div>
-                <ul tabIndex={0} className="mt-2 ml-4 p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-52">
-                    <li><a>Vue js</a></li>
-                    <li><a>React js</a></li>
-                    <li><a>Angular</a></li>
-                    <li><a>Skratch</a></li>
-                </ul>
-            </div>
-            <Link href={'/admin/challenges/add-challenge'} className="btn h-[35px] min-h-[35px] btn-outline">Challenges
+            <Link href={'/admin/challenges/challenge-details'} className="btn h-[35px] min-h-[35px] btn-outline">Challenges
                 <IconRenderer width={24} height={24} icon={'heroicons-solid:plus-sm'} />
             </Link>
         </div>
-        <div className="p-4">
-            <table className="w-full">
-                <thead>
-                    <tr className="grid grid-cols-7 w-full">
-                        {heading.map((head, headID) => (
-                            <th className="text-lg text-start" key={headID}>{head}</th>
-                        ))}
-                    </tr>
-                </thead>
-                <tbody className="flex flex-col gap-2">
-                    {body.map((rowContent, rowID) => (
-                        <tr key={rowID} className="grid grid-cols-7 rounded-2xl px-2 py-1 bg-base-100">
-                            <td ><IconRenderer className="text-primary" icon={'solar:medal-star-line-duotone'} width={52} height={52} /></td>
-                            {rowContent.map((val, rowID) => (
-                                <td className="self-center text-sm" key={rowID}>{val}</td>
-                            ))}
-                            <td>
-                                <button className="btn h-[35px]">review</button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
     </div>
 }
-
-export default Challenges;
