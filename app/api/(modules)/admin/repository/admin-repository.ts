@@ -1,19 +1,39 @@
 import { db } from '@/app/api/core/db/db';
 
 class AdminRepository {
-    static async findManyUser(page: number, pageSize: number, args: any) {
-        const skip = (page - 1) * pageSize;
+    static async findManyUser(payload: {
+        page: number;
+        pageSize: number;
+        searchWord?: string;
+        date?: Date;
+        args: any;
+    }) {
+        const skip = (payload.page - 1) * payload.pageSize;
         const users = await db.user.findMany({
-            take: pageSize,
+            take: payload.pageSize,
             skip: skip,
             where: {
-                ...args
+                ...payload.args
             }
         });
         const userCount = await db.user.count();
         return {
             user: { users },
             userCount: userCount
+        };
+    }
+
+    static async findManyTag(payload: { page: number; pageSize: number; tagName?: string }) {
+        const skip = (payload.page - 1) * payload.pageSize;
+        const tags = await db.tag.findMany({
+            take: payload.pageSize,
+            skip: skip,
+            where: {
+                tagename: { contains: payload.tagName }
+            }
+        });
+        return {
+            tags
         };
     }
 
