@@ -1,4 +1,5 @@
 'use server';
+import BaseResponse from '@/app/api/core/base-response/base-response';
 import AuthUtils from '@/app/utils/auth-utils';
 import { ROLE } from '@prisma/client';
 import { cookies } from 'next/headers';
@@ -40,13 +41,19 @@ export const register = async (payload: RegisterUserInput) => {
     }
 };
 
-export const adminRegister = async (payload: AdminRegisterInput) => {
-    AuthValidator.adminRegisterValidator(payload);
-    const { email, name, password }: AdminRegisterInput = payload;
+export const adminRegister = async (req: Request) => {
+    const body = await req.json();
+
+    AuthValidator.adminRegisterValidator(body);
+    const { email, name, password }: AdminRegisterInput = body;
 
     const existUserByEmail = await UsersRepository.find({ email });
     if (existUserByEmail) {
-        throw 'user is exist for this email please register from another email';
+        return BaseResponse.returnResponse({
+            statusCode: 400,
+            message: 'user is exist for this email please register from another email',
+            data: null
+        });
     }
     const newUser = await UsersRepository.create({
         username: name,
@@ -55,12 +62,13 @@ export const adminRegister = async (payload: AdminRegisterInput) => {
         email: email
     });
 
-    return {
-        id: newUser.id,
-        name,
-        email,
-        role: newUser.role
-    };
+    return BaseResponse.returnResponse({
+        statusCode: 200,
+        message: 'reigster successful',
+        data: {
+            user: { id: newUser.id, name, email, role: newUser.role }
+        }
+    });
 };
 
 // TODO: uncomment this when we implement forget password

@@ -17,8 +17,9 @@ class AuthValidator {
             throw error;
         }
     }
-    static adminRegisterValidator(payload: { email: string; name: string; password: string }) {
-        const error = BaseValidation.validate(payload, {
+
+    static adminRegisterValidator(reqBody: any) {
+        const error = BaseValidation.validate(reqBody, {
             email: zemail,
             name: ztext(5, 35),
             password: zpass
