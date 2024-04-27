@@ -62,7 +62,7 @@ export default function UserDropDown() {
                     onClick={() => {
                         signOut()
                             .then(() => {
-                                router.push('/auth');
+                                router.push('/login');
                             })
                             .catch(e => {
                                 console.log(e);

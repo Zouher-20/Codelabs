@@ -7,13 +7,13 @@ import AuthUtils from './app/utils/auth-utils';
 
 // This function can be marked `async` if using `await` inside
 export async function middleware(request: NextRequest) {
-    const sessionAsToken = cookies().get('session')?.value;
-    if (!sessionAsToken) return null;
-    await AuthUtils.decryptJwt(sessionAsToken);
-    const session = await AuthUtils.decryptJwt(sessionAsToken);
-    // const session = await getSession();
-    if (!session) return NextResponse.redirect(new URL('/login', request.url));
-    return CheckRole({ request, session });
+    try {
+        const session = await getSessionInMiddelware(request.url);
+        if (!session) return LoginRedirect(request.url);
+        return CheckRole({ request, session });
+    } catch (error) {
+        return LoginRedirect(request.url);
+    }
 }
 function CheckRole({ session, request }: { session: JWTPayload; request: NextRequest }) {
     if (request.nextUrl.pathname.startsWith('/admin')) {
@@ -25,6 +25,16 @@ function CheckRole({ session, request }: { session: JWTPayload; request: NextReq
             return NextResponse.redirect(new URL('/admin', request.url));
         }
     }
+}
+function LoginRedirect(url: string) {
+    return NextResponse.redirect(new URL('/login', url));
+}
+
+async function getSessionInMiddelware(url: string) {
+    const sessionAsToken = cookies().get('session')?.value;
+    if (!sessionAsToken) return null;
+    await AuthUtils.decryptJwt(sessionAsToken);
+    const session = await AuthUtils.decryptJwt(sessionAsToken);
 }
 
 // See "Matching Paths" below to learn more
