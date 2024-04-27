@@ -5,34 +5,10 @@ import { TagPaginationInput, UsersPaginationInput } from '../types';
 
 export const findUsers = async (payload: UsersPaginationInput) => {
     try {
-        const { page, pageSize, searchWord, date, args } = payload;
+        const { page, pageSize, searchWord, date } = payload;
         const session = await getSession();
 
         if (session?.role === ROLE.ADMIN) {
-            let args = {};
-            if (searchWord && date) {
-                args = {
-                    AND: [
-                        {
-                            OR: [
-                                { email: { contains: searchWord } },
-                                { username: { contains: searchWord } }
-                            ]
-                        },
-                        { createdAt: date }
-                    ]
-                };
-            } else if (searchWord) {
-                args = {
-                    OR: [
-                        { email: { contains: searchWord } },
-                        { username: { contains: searchWord } }
-                    ]
-                };
-            } else if (date) {
-                args = { createdAt: date };
-            }
-
             return AdminRepository.findManyUser(payload);
         } else {
             throw new Error('Access denied: You are not an admin.');
@@ -44,7 +20,13 @@ export const findUsers = async (payload: UsersPaginationInput) => {
 };
 export const addTag = async (tag: string) => {
     try {
-        return AdminRepository.addTag(tag);
+        const session = await getSession();
+
+        if (session?.role === ROLE.ADMIN) {
+            return AdminRepository.addTag(tag);
+        } else {
+            throw new Error('Access denied: You are not an admin.');
+        }
     } catch (err) {
         console.error('An error occurred:', err);
         throw new Error('An error occurred while adding a tag.');
@@ -52,8 +34,14 @@ export const addTag = async (tag: string) => {
 };
 export const getTag = async (payload: TagPaginationInput) => {
     try {
-        const { page = 1, pageSize = 10, tagName } = payload;
-        return AdminRepository.findManyTag(payload);
+        const { page, pageSize, tagName } = payload;
+        const session = await getSession();
+
+        if (session?.role === ROLE.ADMIN) {
+            return AdminRepository.findManyTag(payload);
+        } else {
+            throw new Error('Access denied: You are not an admin.');
+        }
     } catch (error) {
         console.error('An error occurred:', error);
         throw new Error('An error occurred while futching a tag.');
