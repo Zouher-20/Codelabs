@@ -2,16 +2,17 @@ import { planType } from "@/app/@types/plan";
 import Button from "../../globals/form/button";
 import IconRenderer from "../../globals/icon";
 
-const PlanCard = ({ plan, active, onClick }: {
+const PlanCard = ({ plan, active, isAdmin, onClick }: {
     plan: planType,
     active?: boolean,
+    isAdmin?: boolean,
     onClick?: () => void;
 }) => {
     return (
         <div className={"p-5 min-w-72 flex flex-col gap-4  rounded-3xl border-base-100 border-2 " + (active ? 'bg-base-100' : '')}>
             <div className="flex justify-between">
                 <IconRenderer className={active ? 'text-white' : 'text-primary'} fontSize={33} icon="solar:link-circle-line-duotone" />
-                <IconRenderer onClick={onClick} className={"self-center hover:opacity-65  " + (active ? 'text-white' : 'text-primary')} fontSize={28} icon="solar:pen-2-bold-duotone" />
+                <IconRenderer onClick={onClick} className={"self-center hover:opacity-65  " + (isAdmin ? '' : 'hidden ') + (active ? 'text-white' : 'text-primary')} fontSize={28} icon="solar:pen-2-bold-duotone" />
             </div>
             <div className="grid">
                 <p className="text-2xl text-white">{plan.title}</p>
