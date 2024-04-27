@@ -2,6 +2,8 @@ import IconRenderer from "@/app/components/globals/icon";
 import EnrollCard from '../components/enroll-card'
 import DisplayCard from "../components/display-card";
 import Link from "next/link";
+import Image from "next/image"
+import imageBBad from '@/public/images/challenges/BBad.png'
 
 const ChallengeDetails = ({ params }: { params: { id: number } }) => {
 
@@ -29,6 +31,10 @@ const ChallengeDetails = ({ params }: { params: { id: number } }) => {
                 <EnrollCard title={info.name} tags={info.tags} />
             </div>
             <div className="flex pr-2 gap-12 mt-[7rem] justify-end">
+                <div className="flex flex-col">
+                    <Image src={imageBBad} alt="" className='w-96 h-96' />
+                    <span className="text-2xl self-center -mt-4">LETS COOK</span>
+                </div>
                 <DisplayCard name="RESOURCES" items={info.resources} />
             </div>
         </div>
