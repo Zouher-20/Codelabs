@@ -1,19 +1,11 @@
 import { ROLE } from '@prisma/client';
 import { getSession } from '../../auth/service/actions';
 import AdminRepository from '../repository/admin-repository';
+import { TagPaginationInput, UsersPaginationInput } from '../types';
 
-export default interface PaginationInput {
-    page?: number;
-    pageSize?: number;
-    searchWord?: string;
-    date?: Date;
-}
-
-export const findUsers = async (req: Request) => {
+export const findUsers = async (payload: UsersPaginationInput) => {
     try {
-        const body = await req.json();
-
-        const { page = 1, pageSize = 10, searchWord, date }: PaginationInput = body;
+        const { page, pageSize, searchWord, date, args } = payload;
         const session = await getSession();
 
         if (session?.role === ROLE.ADMIN) {
@@ -41,12 +33,29 @@ export const findUsers = async (req: Request) => {
                 args = { createdAt: date };
             }
 
-            return AdminRepository.findManyUser(page, pageSize, args);
+            return AdminRepository.findManyUser(payload);
         } else {
             throw new Error('Access denied: You are not an admin.');
         }
     } catch (err) {
         console.error('An error occurred:', err);
         throw new Error('An error occurred while fetching users.');
+    }
+};
+export const addTag = async (tag: string) => {
+    try {
+        return AdminRepository.addTag(tag);
+    } catch (err) {
+        console.error('An error occurred:', err);
+        throw new Error('An error occurred while adding a tag.');
+    }
+};
+export const getTag = async (payload: TagPaginationInput) => {
+    try {
+        const { page = 1, pageSize = 10, tagName } = payload;
+        return AdminRepository.findManyTag(payload);
+    } catch (error) {
+        console.error('An error occurred:', error);
+        throw new Error('An error occurred while futching a tag.');
     }
 };
