@@ -1,3 +1,4 @@
+'use client';
 import PagginationComponent from './paggination-component';
 
 export interface GenericTableModel {}
