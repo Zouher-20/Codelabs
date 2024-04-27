@@ -106,8 +106,8 @@ export const signOut = async () => {
     cookies().set('session', '', { expires: new Date(0) });
 };
 
-export const getSession = () => {
+export const getSession = async () => {
     const sessionAsToken = cookies().get('session')?.value;
     if (!sessionAsToken) return null;
-    return AuthUtils.decryptJwt(sessionAsToken);
+    return await AuthUtils.decryptJwt(sessionAsToken);
 };
