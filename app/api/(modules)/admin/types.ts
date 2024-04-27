@@ -9,5 +9,4 @@ export interface UsersPaginationInput {
     pageSize: number;
     searchWord?: string;
     date?: Date;
-    args: any;
 }

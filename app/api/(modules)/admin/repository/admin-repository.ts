@@ -6,14 +6,37 @@ class AdminRepository {
         pageSize: number;
         searchWord?: string;
         date?: Date;
-        args: any;
     }) {
         const skip = (payload.page - 1) * payload.pageSize;
+
+        let args = {};
+        if (payload.searchWord && payload.date) {
+            args = {
+                AND: [
+                    {
+                        OR: [
+                            { email: { contains: payload.searchWord } },
+                            { username: { contains: payload.searchWord } }
+                        ]
+                    },
+                    { createdAt: payload.date }
+                ]
+            };
+        } else if (payload.searchWord) {
+            args = {
+                OR: [
+                    { email: { contains: payload.searchWord } },
+                    { username: { contains: payload.searchWord } }
+                ]
+            };
+        } else if (payload.date) {
+            args = { createdAt: payload.date };
+        }
         const users = await db.user.findMany({
             take: payload.pageSize,
             skip: skip,
             where: {
-                ...payload.args
+                ...args
             }
         });
         const userCount = await db.user.count();
