@@ -50,7 +50,7 @@ const CircleChart = ({ labels, colors, series, height, width }: chartType) => {
                 fontSize: '14px',
                 fontFamily: 'Helvetica, Arial, sans-serif',
                 fontWeight: 'bold',
-                colors: ['#50FA7B', '#282C2B']
+                colors: [colors[1], colors[0]],
             },
             background: {
                 enabled: true

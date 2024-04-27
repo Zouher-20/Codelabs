@@ -8,7 +8,7 @@ const user: userType = {
     name: 'User name',
     email: 'username903@gmail.com',
     image: null,
-    id: 1,
+    id: '1',
     plan: 'plus',
     bio: 'A few word about you',
     position: 'Developer',
