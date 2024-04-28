@@ -33,7 +33,7 @@ const UserViewHeader = ({
                         icon="circum:search"
                         value={searchWord}
                         onChange={e => {
-                            onFieldChanged(e);
+                            onFieldChanged(e.target.value);
                         }}
                         onSubmit={() => onFieldSubmited()}
                     />

@@ -24,7 +24,7 @@ export const addTag = async (tag: string) => {
         const session = await getSession();
 
         if (session?.role === ROLE.ADMIN) {
-            return AdminRepository.addTag(tag);
+            return AdminRepository.addTag(tag, null);
         } else {
             throw new Error('Access denied: You are not an admin.');
         }

@@ -1,4 +1,5 @@
 import { db } from '@/app/api/core/db/db';
+import { TAGTYPE } from '@prisma/client';
 
 class AdminRepository {
     static async findManyUser(payload: {
@@ -64,7 +65,7 @@ class AdminRepository {
         };
     }
 
-    static async addTag(tag: string) {
+    static async addTag(tag: string, tagType: TAGTYPE | null) {
         const existingTag = await db.tag.findUnique({
             where: {
                 tagename: tag
@@ -77,7 +78,8 @@ class AdminRepository {
 
         const newTag = await db.tag.create({
             data: {
-                tagename: tag
+                tagename: tag,
+                tagtype: tagType ?? TAGTYPE.normal
             }
         });
 

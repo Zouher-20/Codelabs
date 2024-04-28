@@ -1,50 +1,38 @@
 'use client';
-
+import { MyOptionType } from '@/app/@types/select';
+import { tag } from '@/app/@types/tag';
+import { getTag } from '@/app/api/(modules)/admin/service/action';
+import CodeLabsQuill from '@/app/components/globals/codelabs-quill';
 import Button from '@/app/components/globals/form/button';
 import Input from '@/app/components/globals/form/input';
 import Select from '@/app/components/globals/form/select/select';
 import IconRenderer from '@/app/components/globals/icon';
-import { tagOptions } from '@/app/constants/tag-options';
 import { textField } from '@/app/schemas';
 import { Field, Form, Formik } from 'formik';
-import dynamic from 'next/dynamic';
-import { useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import 'react-quill/dist/quill.snow.css'; // Import Quill styles
 import * as yup from 'yup';
 import AddTagModal from '../../components/tags-modal';
 import './styles.css';
 
 const AddChallenge = ({ params }: { params: { id: number } }) => {
-    const QuillEditor = useMemo(() => dynamic(() => import('react-quill'), { ssr: false }), []);
-    const [tOptions, setTOptions] = useState(tagOptions); // Assuming initialTagOptions exists
-
-    const quillModules = {
-        toolbar: [
-            [{ header: [1, 2, 3, false] }],
-            ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-            [{ list: 'ordered' }, { list: 'bullet' }],
-            ['link', 'image'],
-            [{ align: [] }],
-            [{ color: [] }],
-            ['code-block'],
-            ['clean']
-        ]
+    const [tOptions, setTOptions] = useState<Array<MyOptionType>>([]); // Assuming initialTagOptions exists
+    useEffect(() => {
+        getTags();
+    }, []);
+    const getTags = async () => {
+        try {
+            const res = await getTag({ page: 1, pageSize: 100 });
+            setTOptions(
+                res.tags.map<MyOptionType>(e => {
+                    return {
+                        value: e.id,
+                        label: e.tagename
+                    };
+                })
+            );
+        } catch (error) {}
     };
-    const quillFormats = [
-        'header',
-        'bold',
-        'italic',
-        'underline',
-        'strike',
-        'blockquote',
-        'list',
-        'bullet',
-        'link',
-        'image',
-        'align',
-        'color',
-        'code-block'
-    ];
     type FormValues = {
         name: string;
         difficulty: string;
@@ -53,7 +41,6 @@ const AddChallenge = ({ params }: { params: { id: number } }) => {
         description: string;
         resources: string;
     };
-    type tag = { name: string; tagType: string };
 
     let createChallenge: boolean = false;
     let defaultValues: FormValues;
@@ -94,8 +81,8 @@ const AddChallenge = ({ params }: { params: { id: number } }) => {
         if (document) (document.getElementById('add-tag-modal') as HTMLDialogElement).showModal();
     };
     const handleTag = (tag: tag) => {
-        const newtag = { value: tag.name, label: tag.name };
-        setTOptions([...tagOptions, newtag]);
+        const newtag: MyOptionType = { value: tag.id, label: tag.tagename };
+        setTOptions([...tOptions, newtag]);
     };
     return (
         <div className="flex flex-col gap-6 p-6">
@@ -201,26 +188,20 @@ const AddChallenge = ({ params }: { params: { id: number } }) => {
                         <div className="divider col-span-2 h-0"></div>
                         <div className="col-span-2">
                             <label>Description</label>
-                            <QuillEditor
-                                value={props.values.description}
-                                onChange={(value: string) => {
-                                    props.values.description = value;
+                            <CodeLabsQuill
+                                onChange={e => {
+                                    props.values.description = e;
                                 }}
-                                modules={quillModules}
-                                formats={quillFormats}
-                                className="mt-4"
+                                value={props.values.description}
                             />
                         </div>
                         <div className="col-span-2">
                             <label>Resources</label>
-                            <QuillEditor
-                                value={props.values.resources}
+                            <CodeLabsQuill
                                 onChange={(value: string) => {
                                     props.values.resources = value;
                                 }}
-                                modules={quillModules}
-                                formats={quillFormats}
-                                className="mt-4"
+                                value={props.values.resources}
                             />
                         </div>
                         <span className="col-start-2 flex justify-end">
@@ -235,7 +216,7 @@ const AddChallenge = ({ params }: { params: { id: number } }) => {
                     </Form>
                 )}
             </Formik>
-            <AddTagModal tag={(tag: tag) => handleTag(tag)} />
+            <AddTagModal newTagCallbackFunction={(tag: tag) => handleTag(tag)} />
         </div>
     );
 };
