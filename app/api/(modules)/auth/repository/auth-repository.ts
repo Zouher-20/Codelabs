@@ -1,50 +1,63 @@
-// TODO: uncomment this when we implement forget password
-// import BaseResponse from '@/app/api/core/base-response/base-response';
-// import { db } from '@/app/api/core/db/db';
-// import UserVailedator from '../validator/validation';
-// interface AdminRegisterInput {
-//     email: string;
-//     name: string;
-//     password: string;
-// }
-// class AuthRepository {
-//     static async forgetPassword(req: Request) {
-//         const body = await req.json();
-//         UserVailedator.forgetPasswordValidator(body);
-//         const {
-//             otp: otpString,
-//             email,
-//             password
-//         }: { otp: string; email: string; password: string } = body;
-//         const otp = parseInt(otpString, 10);
-//         const existingUser = await db.user.findUnique({ where: { email: email } });
-//         const verifiedUser = await db.verified.findUnique({ where: { email: email } });
+import { db } from '@/app/api/core/db/db';
+import bcrypt from 'bcrypt';
 
-//         if (!existingUser || !verifiedUser) {
-//             return BaseResponse.returnResponse({
-//                 statusCode: 400,
-//                 message: 'Email is not found',
-//                 data: null
-//             });
-//         }
+class AuthRepository {
+    // static async forgetPassword(req: Request) {
+    //     const body = await req.json();
+    //     UserVailedator.forgetPasswordValidator(body);
+    //     const {
+    //         otp: otpString,
+    //         email,
+    //         password
+    //     }: { otp: string; email: string; password: string } = body;
+    //     const otp = parseInt(otpString, 10);
+    //     const existingUser = await db.user.findUnique({ where: { email: email } });
+    //     const verifiedUser = await db.verified.findUnique({ where: { email: email } });
+    //     if (!existingUser || !verifiedUser) {
+    //         return BaseResponse.returnResponse({
+    //             statusCode: 400,
+    //             message: 'Email is not found',
+    //             data: null
+    //         });
+    //     }
+    //     if (verifiedUser.otp === otp) {
+    //         await db.user.update({
+    //             where: { email: verifiedUser.email },
+    //             data: { password }
+    //         });
+    //         return BaseResponse.returnResponse({
+    //             statusCode: 200,
+    //             message: 'Password updated successfully',
+    //             data: null
+    //         });
+    //     } else {
+    //         return BaseResponse.returnResponse({
+    //             statusCode: 400,
+    //             message: 'Invalid code please rewrite againe',
+    //             data: null
+    //         });
+    //     }
+    // }
+    static async deleteMyAccount(payload: { password: string }, userId: string) {
+        const requestingUser = await db.user.findUnique({
+            where: {
+                id: userId
+            }
+        });
 
-//         if (verifiedUser.otp === otp) {
-//             await db.user.update({
-//                 where: { email: verifiedUser.email },
-//                 data: { password }
-//             });
-//             return BaseResponse.returnResponse({
-//                 statusCode: 200,
-//                 message: 'Password updated successfully',
-//                 data: null
-//             });
-//         } else {
-//             return BaseResponse.returnResponse({
-//                 statusCode: 400,
-//                 message: 'Invalid code please rewrite againe',
-//                 data: null
-//             });
-//         }
-//     }
-// }
-// export default AuthRepository;
+        if (!requestingUser) {
+            throw new Error('User not found');
+        }
+        const passwordMatch = await bcrypt.compare(payload.password, requestingUser.password);
+        if (!passwordMatch) {
+            throw new Error('Incorrect password');
+        } else {
+            await db.user.deleteMany({
+                where: {
+                    id: userId
+                }
+            });
+        }
+    }
+}
+export default AuthRepository;
