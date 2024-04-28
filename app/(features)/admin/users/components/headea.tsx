@@ -3,7 +3,15 @@ import Button from '@/app/components/globals/form/button';
 import Input from '@/app/components/globals/form/input';
 import IconRenderer from '@/app/components/globals/icon';
 
-const UserViewHeader = () => {
+const UserViewHeader = ({
+    onFieldChanged,
+    searchWord,
+    onFieldSubmited
+}: {
+    searchWord: string;
+    onFieldChanged: (searchWord: string) => void;
+    onFieldSubmited: () => void;
+}) => {
     function toggleModal() {
         if (document) {
             (document.getElementById('new-user-modal') as HTMLFormElement)?.showModal();
@@ -23,7 +31,11 @@ const UserViewHeader = () => {
                         type="text"
                         placeholder="Search for Users ..."
                         icon="circum:search"
-                        value={''}
+                        value={searchWord}
+                        onChange={e => {
+                            onFieldChanged(e);
+                        }}
+                        onSubmit={() => onFieldSubmited()}
                     />
                 </span>
                 <div className="dropdown">

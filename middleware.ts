@@ -8,7 +8,7 @@ import AuthUtils from './app/utils/auth-utils';
 // This function can be marked `async` if using `await` inside
 export async function middleware(request: NextRequest) {
     try {
-        const session = await getSessionInMiddelware(request.url);
+        const session = await getSessionInMiddleware();
         if (!session) return LoginRedirect(request.url);
         return CheckRole({ request, session });
     } catch (error) {
@@ -30,13 +30,13 @@ function LoginRedirect(url: string) {
     return NextResponse.redirect(new URL('/login', url));
 }
 
-async function getSessionInMiddelware(url: string) {
+async function getSessionInMiddleware() {
     const sessionAsToken = cookies().get('session')?.value;
     if (!sessionAsToken) return null;
     await AuthUtils.decryptJwt(sessionAsToken);
     const session = await AuthUtils.decryptJwt(sessionAsToken);
+    return session;
 }
-
 // See "Matching Paths" below to learn more
 export const config = {
     matcher: '/((?!api|login|register|_next/static|_next/image|favicon.ico).*)'

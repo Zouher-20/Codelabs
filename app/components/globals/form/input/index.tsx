@@ -42,7 +42,9 @@ const Input = ({
                     value={value}
                     defaultValue={defaultValue}
                     onSubmit={onSubmit}
-                    onChange={onChange}
+                    onChange={e => {
+                        if (onChange != null) onChange(e.target.value);
+                    }}
                     onBlur={onBlur}
                 />
             </label>

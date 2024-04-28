@@ -10,7 +10,6 @@ import { useFormik } from 'formik';
 const NewClassModal = () => {
     const onSubmit = () => {
         (document.getElementById('new-class-modal') as HTMLDialogElement).close();
-        console.log(values);
     };
 
     const { values, errors, touched, handleChange, handleSubmit, handleBlur } = useFormik({

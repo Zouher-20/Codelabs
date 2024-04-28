@@ -2,11 +2,10 @@ import * as yup from 'yup';
 
 import Button from '@/app/components/globals/form/button';
 import Input from '@/app/components/globals/form/input';
-import Textarea from '@/app/components/globals/form/text-area';
 import IconRenderer from '@/app/components/globals/icon';
 import { useFormik } from 'formik';
 
-type tag = { name: string, tagType: string }
+type tag = { name: string; tagType: string };
 
 const AddTagModal = ({ tag }: { tag: (tag: tag) => void }) => {
     const validationSchema = yup.object().shape({
@@ -18,28 +17,28 @@ const AddTagModal = ({ tag }: { tag: (tag: tag) => void }) => {
         tag(values);
         resetForm();
         (document.getElementById('add-tag-modal') as HTMLDialogElement).close();
-        console.log(values);
     };
 
-    const { values, errors, touched, resetForm, handleChange, handleSubmit, handleBlur } = useFormik({
-        initialValues: {
-            name: '',
-            tagType: '',
-        },
-        validationSchema: validationSchema,
-        onSubmit
-    });
+    const { values, errors, touched, resetForm, handleChange, handleSubmit, handleBlur } =
+        useFormik({
+            initialValues: {
+                name: '',
+                tagType: ''
+            },
+            validationSchema: validationSchema,
+            onSubmit
+        });
     return (
         <dialog id="add-tag-modal" className="modal">
-            <div className="modal-box flex flex-col gap-4 w-8/12 max-w-2xl max-md:w-11/12">
+            <div className="modal-box flex w-8/12 max-w-2xl flex-col gap-4 max-md:w-11/12">
                 <form className="flex gap-2" method="dialog">
                     <button>
                         <IconRenderer fontSize={24} icon="solar:arrow-left-linear" />
                     </button>
                     <h3 className="slef-center text-2xl font-bold">Add Tag</h3>
                 </form>
-                <form onSubmit={handleSubmit} className="flex flex-col w-full gap-4">
-                    <div className='flex max-md:flex-col gap-2'>
+                <form onSubmit={handleSubmit} className="flex w-full flex-col gap-4">
+                    <div className="flex gap-2 max-md:flex-col">
                         <Input
                             id="name"
                             name="name"
@@ -49,11 +48,7 @@ const AddTagModal = ({ tag }: { tag: (tag: tag) => void }) => {
                             value={values.name}
                             onBlur={handleBlur}
                             onChange={handleChange}
-                            errors={
-                                errors.name && touched.name
-                                    ? errors.name
-                                    : null
-                            }
+                            errors={errors.name && touched.name ? errors.name : null}
                         />
                         <Input
                             id="tagType"
@@ -64,11 +59,7 @@ const AddTagModal = ({ tag }: { tag: (tag: tag) => void }) => {
                             value={values.tagType}
                             onChange={handleChange}
                             onBlur={handleBlur}
-                            errors={
-                                errors.tagType && touched.tagType
-                                    ? errors.tagType
-                                    : null
-                            }
+                            errors={errors.tagType && touched.tagType ? errors.tagType : null}
                         />
                     </div>
                     <Button style="w-fit self-end" color="any" label="Continue" type="submit" />

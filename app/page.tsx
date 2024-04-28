@@ -23,12 +23,8 @@ import { types } from './constants/types';
 import { email, password, textField } from './schemas';
 
 export default function Home() {
-    const HandleClick = () => {
-        console.log('hi');
-    };
-    const onSubmit = () => {
-        console.log(values);
-    };
+    const HandleClick = () => {};
+    const onSubmit = () => {};
     const { values, errors, touched, handleChange, handleSubmit, handleBlur } = useFormik({
         initialValues: {
             email: '',
@@ -110,12 +106,7 @@ export default function Home() {
                 <MultiSelectForm />
 
                 <div className="w-1/3">
-                    <RadioOption
-                        options={types}
-                        onChange={e => {
-                            console.log('value is:' + e.target.value);
-                        }}
-                    />
+                    <RadioOption options={types} onChange={e => {}} />
                 </div>
             </div>
         </PageContainer>

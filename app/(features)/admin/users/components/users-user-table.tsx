@@ -1,59 +1,75 @@
 'use client';
 import { findUsers } from '@/app/api/(modules)/admin/service/action';
 import { useEffect, useState } from 'react';
+import UserViewHeader from './headea';
 import UsersTable, { UserTableType } from './user-table';
 
-export function UserViewUserTable({
-    pageSize,
-    users
-}: {
-    pageSize: number;
-    users: Array<UserTableType>;
-}) {
-    const [selectedClasses, setSelectedClasses] = useState<Array<UserTableType>>([]);
-    const [currentPage, updateCurrentPage] = useState(0);
+export function UserViewUserTable({ pageSize }: { pageSize: number }) {
+    const [users, setUsers] = useState<Array<UserTableType>>([]);
+    const [currentPage, updateCurrentPage] = useState(1);
+    const [totalPageCount, setTotalPageCount] = useState(0);
+    const [loading, setLoading] = useState(true);
+    const [searchWord, setSearchWord] = useState('');
+
     useEffect(() => {
-        try {
-            getUser();
-        } catch (e) {}
+        getUser({ newSearchWord: searchWord });
     }, []);
-    const getUser = async () => {
-        const user = await findUsers({ page: 1, pageSize: 10 });
-        console;
-        console.log(user.user);
-        console.log(user);
-    };
-    function chunkArray({
-        array,
-        lastIndex,
-        startingIndex
-    }: {
-        startingIndex: number;
-        array: Array<UserTableType>;
-        lastIndex: number;
-    }): Array<UserTableType> {
-        const chunks: Array<UserTableType> = [];
-        for (let i = startingIndex; i < lastIndex && i < array.length; i++) {
-            chunks.push(array[i]);
+    const getUser = async ({ newSearchWord }: { newSearchWord: string }) => {
+        setLoading(true);
+
+        try {
+            const user = await findUsers({
+                page: currentPage,
+                pageSize: pageSize,
+                searchWord: newSearchWord
+            });
+            setTotalPageCount(user.userCount);
+            setUsers(
+                user.user.users.map(e => {
+                    return {
+                        email: e.email,
+                        id: e.id,
+                        name: e.username,
+                        labs: 1,
+                        role: e.role,
+                        createdAt: e.createdAt,
+                        classes: 1,
+                        plan: 'free'
+                    } as UserTableType;
+                })
+            );
+        } catch (e) {
+        } finally {
+            setLoading(false);
         }
-        return chunks;
-    }
+    };
     const onPageChange = ({ index }: { index: number }) => {
         updateCurrentPage(index);
-        setSelectedClasses([
-            ...chunkArray({
-                startingIndex: (index - 1) * pageSize,
-                lastIndex: index * pageSize,
-                array: users
-            })
-        ]);
+        getUser({ newSearchWord: searchWord });
     };
+
     return (
-        <UsersTable
-            users={selectedClasses}
-            pageCount={Math.ceil(users.length / pageSize)}
-            currentPage={currentPage}
-            onPageChange={onPageChange}
-        />
+        <div className="flex flex-col">
+            <UserViewHeader
+                searchWord={searchWord}
+                onFieldChanged={e => {
+                    setSearchWord(e);
+                    updateCurrentPage(1);
+                    setTotalPageCount(0);
+                    getUser({ newSearchWord: e });
+                }}
+                onFieldSubmited={() => {}}
+            />
+            {loading ? (
+                <div className="flex justify-center">Loading</div>
+            ) : (
+                <UsersTable
+                    users={users}
+                    pageCount={totalPageCount}
+                    currentPage={currentPage}
+                    onPageChange={onPageChange}
+                />
+            )}
+        </div>
     );
 }

@@ -27,7 +27,6 @@ const NewUserModel = () => {
 
     const onSubmit = (values: FormValues) => {
         (document.getElementById('new-user-modal') as HTMLDialogElement).close();
-        console.log(values);
     };
 
     return (

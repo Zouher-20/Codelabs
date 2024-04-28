@@ -3,9 +3,9 @@ export interface userType {
     id: string;
     email: string;
     image?: string | null;
-    plan: string;
+    plan?: string;
     bio?: string;
     position?: string;
-    labs: number;
-    classes: number;
+    labs?: number;
+    classes?: number;
 }

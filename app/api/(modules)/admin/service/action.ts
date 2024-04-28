@@ -1,3 +1,5 @@
+'use server';
+
 import { ROLE } from '@prisma/client';
 import { getSession } from '../../auth/service/actions';
 import AdminRepository from '../repository/admin-repository';
@@ -7,7 +9,6 @@ export const findUsers = async (payload: UsersPaginationInput) => {
     try {
         const { page, pageSize, searchWord, date } = payload;
         const session = await getSession();
-
         if (session?.role === ROLE.ADMIN) {
             return AdminRepository.findManyUser(payload);
         } else {

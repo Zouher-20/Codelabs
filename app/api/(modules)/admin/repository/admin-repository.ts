@@ -39,7 +39,11 @@ class AdminRepository {
                 ...args
             }
         });
-        const userCount = await db.user.count();
+        const userCount = await db.user.count({
+            where: {
+                ...args
+            }
+        });
         return {
             user: { users },
             userCount: userCount

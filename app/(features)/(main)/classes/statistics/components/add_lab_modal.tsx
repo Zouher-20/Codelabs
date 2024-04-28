@@ -35,7 +35,6 @@ const NewClassLabModal = () => {
 
     const onSubmit = (values: FormValues) => {
         (document.getElementById('new-class-lab-modal') as HTMLDialogElement).close();
-        console.log(values);
     };
 
     return (

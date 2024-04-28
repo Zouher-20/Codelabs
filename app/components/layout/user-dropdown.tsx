@@ -64,9 +64,7 @@ export default function UserDropDown() {
                             .then(() => {
                                 router.push('/login');
                             })
-                            .catch(e => {
-                                console.log(e);
-                            });
+                            .catch(e => {});
                     }}
                 >
                     <a className="flex items-center gap-2 text-error">

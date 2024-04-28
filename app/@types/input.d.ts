@@ -9,6 +9,6 @@ export interface inputType {
     value?: string;
     defaultValue?: string;
     onSubmit?: (e: React.SubmitEvent<HTMLInputElement>) => void;
-    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onChange?: (e: string) => void;
     onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
 }
