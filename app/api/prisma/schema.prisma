@@ -118,7 +118,7 @@ model ClassProject {
   classRomId     String
   classRom       ClassRom         @relation(fields: [classRomId], references: [id])
   FeedbackProjct FeedbackProjct[]
-  tagMorph       TagMorph[]
+  TagMorph       TagMorph[]
 }
 
 model PlanSubscription {
@@ -140,7 +140,7 @@ model Tag {
   id       String     @id @default(cuid())
   tagename String     @unique
   tagtype  TAGTYPE?
-  tagMorph TagMorph[]
+  TagMorph TagMorph[]
 }
 
 model TagMorph {
@@ -163,14 +163,13 @@ model Challenge {
   duration               DateTime?
   isComplete             Boolean
   difficulty             DIFFICULTTYPE
-  type                   String
   description            String
   endAt                  DateTime
   startedAt              DateTime
   createdAt              DateTime                 @default(now())
   ChallengeParticipation ChallengeParticipation[]
   Attachment             Attachment[]
-  tagMorph               TagMorph[]
+  TagMorph               TagMorph[]               
 }
 
 model Attachment {
@@ -212,7 +211,7 @@ model UserProject {
   Star        Star[]
   Comment     Comment[]
   Lab         Lab[]
-  tagMorph    TagMorph[]
+  TagMorph    TagMorph[]
 }
 
 model Tamblate {
@@ -232,7 +231,7 @@ model Blog {
   title    String?
   Star     Star[]
   Comment  Comment[]
-  tagMorph TagMorph[]
+  TagMorph TagMorph[]
 }
 
 model Star {

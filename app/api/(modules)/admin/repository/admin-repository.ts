@@ -1,4 +1,5 @@
 import { db } from '@/app/api/core/db/db';
+import { DIFFICULTTYPE } from '@prisma/client';
 
 class AdminRepository {
     static async findManyUser(payload: {
@@ -78,6 +79,56 @@ class AdminRepository {
         });
 
         return newTag;
+    }
+
+    static async findManyChallenge(payload: {
+        page: number;
+        pageSize: number;
+        tagName?: string;
+        challengeType?: DIFFICULTTYPE;
+    }) {
+        const skip = (payload.page - 1) * payload.pageSize;
+
+        let where = {};
+
+        if (payload.tagName || payload.challengeType) {
+            const filter: any = {};
+
+            if (payload.tagName) {
+                filter.tagMorph = { some: { tag: { tagename: payload.tagName } } };
+            }
+
+            if (payload.challengeType) {
+                filter.difficulty = payload.challengeType;
+            }
+
+            where = { ...where, ...filter };
+        }
+
+        const challenges = await db.challenge.findMany({
+            take: payload.pageSize,
+            skip: skip,
+            where,
+            include: {
+                ChallengeParticipation: true,
+                broketag: {
+                    include: {
+                        tag: true
+                    }
+                }
+            }
+        });
+
+        const challengeCount = await db.challenge.count();
+
+        return {
+            challenges,
+            challengeCount
+        };
+    }
+    static async getDifficultChallenge() {
+        const typeChallenge = Object.values(DIFFICULTTYPE);
+        return typeChallenge;
     }
 }
 
