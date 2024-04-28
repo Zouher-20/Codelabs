@@ -2,6 +2,12 @@
 CREATE TYPE "ROLE" AS ENUM ('USER', 'ADMIN');
 
 -- CreateEnum
+CREATE TYPE "DIFFICULTTYPE" AS ENUM ('easy', 'difficult', 'Medium');
+
+-- CreateEnum
+CREATE TYPE "NAMEPLAN" AS ENUM ('labs', 'classes', 'studentsInClass', 'labsInClass', 'challenge');
+
+-- CreateEnum
 CREATE TYPE "PLANTYPE" AS ENUM ('free', 'plus', 'custom', 'premium');
 
 -- CreateEnum
@@ -14,6 +20,7 @@ CREATE TABLE "User" (
     "username" TEXT NOT NULL,
     "password" TEXT NOT NULL,
     "role" "ROLE" NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "typeUser" TEXT,
     "userImage" TEXT,
     "planEndDate" TIMESTAMP(3),
@@ -54,10 +61,9 @@ CREATE TABLE "EditorConfig" (
 -- CreateTable
 CREATE TABLE "Plan" (
     "id" TEXT NOT NULL,
-    "type" "PLANTYPE",
-    "price" DOUBLE PRECISION,
+    "type" TEXT,
+    "price" TEXT,
     "duration" TIMESTAMP(3),
-    "userId" TEXT NOT NULL,
 
     CONSTRAINT "Plan_pkey" PRIMARY KEY ("id")
 );
@@ -65,8 +71,8 @@ CREATE TABLE "Plan" (
 -- CreateTable
 CREATE TABLE "FeaturePlan" (
     "id" SERIAL NOT NULL,
-    "name" TEXT NOT NULL,
-    "value" DOUBLE PRECISION NOT NULL,
+    "name" "NAMEPLAN" NOT NULL,
+    "value" INTEGER NOT NULL,
     "planId" TEXT NOT NULL,
 
     CONSTRAINT "FeaturePlan_pkey" PRIMARY KEY ("id")
@@ -78,9 +84,19 @@ CREATE TABLE "ClassProject" (
     "name" TEXT NOT NULL,
     "type" TEXT NOT NULL,
     "descraption" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "classRomId" TEXT NOT NULL,
 
     CONSTRAINT "ClassProject_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "PlanSubscription" (
+    "id" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "planId" TEXT NOT NULL,
+
+    CONSTRAINT "PlanSubscription_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -91,33 +107,39 @@ CREATE TABLE "ClassRom" (
 );
 
 -- CreateTable
-CREATE TABLE "tag" (
+CREATE TABLE "Tag" (
     "id" TEXT NOT NULL,
+    "tagename" TEXT NOT NULL,
+    "tagtype" "TAGTYPE",
+
+    CONSTRAINT "Tag_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "TagMorph" (
+    "id" TEXT NOT NULL,
+    "tagId" TEXT NOT NULL,
     "userprojectId" TEXT NOT NULL,
     "challengeId" TEXT NOT NULL,
+    "classId" TEXT NOT NULL,
+    "blogId" TEXT NOT NULL,
 
-    CONSTRAINT "tag_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "TagMorph_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Challenge" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
-    "type" TEXT NOT NULL,
+    "isComplete" BOOLEAN NOT NULL,
+    "difficulty" "DIFFICULTTYPE" NOT NULL,
     "description" TEXT NOT NULL,
-    "endAt" TIMESTAMP(3) NOT NULL,
-    "startedAt" TIMESTAMP(3) NOT NULL,
+    "resources" TEXT NOT NULL,
+    "endAt" TIMESTAMP(3),
+    "startedAt" TIMESTAMP(3),
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Challenge_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "Attachment" (
-    "id" SERIAL NOT NULL,
-    "challengeId" TEXT NOT NULL,
-    "path" TEXT NOT NULL,
-
-    CONSTRAINT "Attachment_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -133,20 +155,12 @@ CREATE TABLE "ChallengeParticipation" (
 CREATE TABLE "Lab" (
     "id" TEXT NOT NULL,
     "tamblateId" INTEGER NOT NULL,
+    "jsonFile" TEXT NOT NULL,
     "userprojectId" TEXT NOT NULL,
     "classProjectId" TEXT NOT NULL,
     "challengeParticipationId" TEXT NOT NULL,
 
     CONSTRAINT "Lab_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "Code" (
-    "id" TEXT NOT NULL,
-    "path" TEXT NOT NULL,
-    "labId" TEXT NOT NULL,
-
-    CONSTRAINT "Code_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -239,7 +253,13 @@ CREATE UNIQUE INDEX "Feedback_userId_key" ON "Feedback"("userId");
 CREATE UNIQUE INDEX "EditorConfig_userId_key" ON "EditorConfig"("userId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Plan_userId_key" ON "Plan"("userId");
+CREATE UNIQUE INDEX "PlanSubscription_userId_key" ON "PlanSubscription"("userId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "PlanSubscription_planId_key" ON "PlanSubscription"("planId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Tag_tagename_key" ON "Tag"("tagename");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Lab_tamblateId_key" ON "Lab"("tamblateId");
@@ -254,22 +274,31 @@ ALTER TABLE "Feedback" ADD CONSTRAINT "Feedback_userId_fkey" FOREIGN KEY ("userI
 ALTER TABLE "EditorConfig" ADD CONSTRAINT "EditorConfig_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Plan" ADD CONSTRAINT "Plan_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "FeaturePlan" ADD CONSTRAINT "FeaturePlan_planId_fkey" FOREIGN KEY ("planId") REFERENCES "Plan"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "ClassProject" ADD CONSTRAINT "ClassProject_classRomId_fkey" FOREIGN KEY ("classRomId") REFERENCES "ClassRom"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "tag" ADD CONSTRAINT "tag_challengeId_fkey" FOREIGN KEY ("challengeId") REFERENCES "Challenge"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "PlanSubscription" ADD CONSTRAINT "PlanSubscription_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "tag" ADD CONSTRAINT "tag_userprojectId_fkey" FOREIGN KEY ("userprojectId") REFERENCES "UserProject"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "PlanSubscription" ADD CONSTRAINT "PlanSubscription_planId_fkey" FOREIGN KEY ("planId") REFERENCES "Plan"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Attachment" ADD CONSTRAINT "Attachment_challengeId_fkey" FOREIGN KEY ("challengeId") REFERENCES "Challenge"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "TagMorph" ADD CONSTRAINT "TagMorph_tagId_fkey" FOREIGN KEY ("tagId") REFERENCES "Tag"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "TagMorph" ADD CONSTRAINT "TagMorph_userprojectId_fkey" FOREIGN KEY ("userprojectId") REFERENCES "UserProject"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "TagMorph" ADD CONSTRAINT "TagMorph_challengeId_fkey" FOREIGN KEY ("challengeId") REFERENCES "Challenge"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "TagMorph" ADD CONSTRAINT "TagMorph_classId_fkey" FOREIGN KEY ("classId") REFERENCES "ClassProject"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "TagMorph" ADD CONSTRAINT "TagMorph_blogId_fkey" FOREIGN KEY ("blogId") REFERENCES "Blog"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "ChallengeParticipation" ADD CONSTRAINT "ChallengeParticipation_challengeId_fkey" FOREIGN KEY ("challengeId") REFERENCES "Challenge"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -288,9 +317,6 @@ ALTER TABLE "Lab" ADD CONSTRAINT "Lab_classProjectId_fkey" FOREIGN KEY ("classPr
 
 -- AddForeignKey
 ALTER TABLE "Lab" ADD CONSTRAINT "Lab_userprojectId_fkey" FOREIGN KEY ("userprojectId") REFERENCES "UserProject"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Code" ADD CONSTRAINT "Code_labId_fkey" FOREIGN KEY ("labId") REFERENCES "Lab"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "UserProject" ADD CONSTRAINT "UserProject_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

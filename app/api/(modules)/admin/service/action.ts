@@ -4,6 +4,7 @@ import { ROLE } from '@prisma/client';
 import { getSession } from '../../auth/service/actions';
 import AdminRepository from '../repository/admin-repository';
 import {
+    ChallengeInput,
     ChallengePaginationInput,
     TagPaginationInput,
     UsersPaginationInput,
@@ -65,6 +66,20 @@ export const getChallengeDifficult = async () => {
     } catch (error) {
         console.error('An error occurred:', error);
         throw new Error('An error occurred while fetching a type challenge.');
+    }
+};
+
+export const addChallenge = async (payload: ChallengeInput) => {
+    try {
+        const session = await getSession();
+        if (session?.role === ROLE.ADMIN) {
+            return AdminRepository.addChallenge(payload);
+        } else {
+            throw new Error('Access denied: You are not an admin.');
+        }
+    } catch (error) {
+        console.error('An error occurred:', error);
+        throw new Error('An error occurred while adding a challenge.');
     }
 };
 

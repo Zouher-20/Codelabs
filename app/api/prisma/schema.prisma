@@ -160,23 +160,15 @@ model TagMorph {
 model Challenge {
   id                     String                   @id @default(cuid())
   name                   String
-  duration               DateTime?
   isComplete             Boolean
   difficulty             DIFFICULTTYPE
-  description            String
-  endAt                  DateTime
-  startedAt              DateTime
+  description            String?
+  resources              String?
+  endAt                  DateTime?
+  startedAt              DateTime?
   createdAt              DateTime                 @default(now())
   ChallengeParticipation ChallengeParticipation[]
-  Attachment             Attachment[]
   TagMorph               TagMorph[]               
-}
-
-model Attachment {
-  id          Int       @id @default(autoincrement())
-  challengeId String
-  path        String
-  challenge   Challenge @relation(fields: [challengeId], references: [id])
 }
 
 model ChallengeParticipation {

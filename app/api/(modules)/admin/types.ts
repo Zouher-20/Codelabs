@@ -22,3 +22,13 @@ export interface ChallengePaginationInput {
 export interface deleteUserInput {
     userId: string;
 }
+
+export interface ChallengeInput {
+    name: string;
+    difficulty: DIFFICULTTYPE;
+    endAt: Date;
+    startedAt: Date;
+    description: string;
+    resources: string;
+    tagNames: string[];
+}

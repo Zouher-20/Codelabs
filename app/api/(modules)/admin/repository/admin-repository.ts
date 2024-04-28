@@ -116,7 +116,7 @@ class AdminRepository {
             where,
             include: {
                 ChallengeParticipation: true,
-                tagMorph: {
+                broketag: {
                     include: {
                         tag: true
                     }
@@ -150,6 +150,54 @@ class AdminRepository {
                 id: payload.userId
             }
         });
+    }
+
+    static async addChallenge(payload: {
+        name: string;
+        difficulty: DIFFICULTTYPE;
+        endAt: Date;
+        startedAt: Date;
+        description: string;
+        resources: string;
+        tagNames: string[];
+    }) {
+        const newChallenge = await db.challenge.create({
+            data: {
+                name: payload.name,
+                description: payload.description,
+                resources: payload.resources,
+                endAt: payload.endAt,
+                startedAt: payload.startedAt,
+                difficulty: payload.difficulty,
+                isComplete: false
+            }
+        });
+
+        // 2. Retrieve tags based on the provided tagNames
+        const tags = await db.tag.findMany({
+            where: {
+                tagename: {
+                    in: payload.tagNames
+                }
+            }
+        });
+
+        if (tags.length !== payload.tagNames.length) {
+            throw new Error(`One or more tags not found.`);
+        }
+
+        const tagMorphCreatePromises = tags.map(tag =>
+            db.tagMorph.create({
+                data: {
+                    tagId: tag.id,
+                    challengeId: newChallenge.id
+                }
+            })
+        );
+
+        await Promise.all(tagMorphCreatePromises);
+
+        return newChallenge;
     }
 }
 
