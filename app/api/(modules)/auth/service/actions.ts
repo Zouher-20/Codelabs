@@ -5,7 +5,8 @@ import { ROLE } from '@prisma/client';
 import { cookies } from 'next/headers';
 import UsersRepository from '../../users/repository';
 import VeryfiedRepository from '../../verified/repository/verified-repository';
-import { AdminRegisterInput, RegisterUserInput } from '../types';
+import AuthRepository from '../repository/auth-repository';
+import { AdminRegisterInput, DeleteMyAccountInput, RegisterUserInput } from '../types';
 import AuthValidator from '../validator/validation';
 
 export const register = async (payload: RegisterUserInput) => {
@@ -118,4 +119,21 @@ export const getSession = async () => {
     const sessionAsToken = cookies().get('session')?.value;
     if (!sessionAsToken) return null;
     return await AuthUtils.decryptJwt(sessionAsToken);
+};
+
+export const deleteMyAccount = async (payload: DeleteMyAccountInput) => {
+    try {
+        const session = await getSession();
+        const userId = session?.id;
+        const { password }: DeleteMyAccountInput = payload;
+        if (typeof userId === 'string') {
+            await AuthRepository.deleteMyAccount(payload, userId);
+        } else {
+            throw new Error('User session not found or invalid.');
+        }
+    } catch (error) {
+        console.error('An error occurred:', error);
+        throw new Error('An error occurred while deleting account.');
+    }
+    cookies().set('session', '', { expires: new Date(0) });
 };
