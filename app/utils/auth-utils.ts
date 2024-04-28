@@ -11,7 +11,7 @@ export default class AuthUtils {
             .sign(key);
     }
 
-    static async decryptJwt(token: string) {
+    static async decryptJwt(token: string): Promise<any> {
         const { payload } = await jwtVerify(token, key, {
             algorithms: ['HS256']
         });

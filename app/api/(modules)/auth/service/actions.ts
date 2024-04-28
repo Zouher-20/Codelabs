@@ -136,3 +136,8 @@ export const deleteMyAccount = async (payload: DeleteMyAccountInput) => {
     }
     cookies().set('session', '', { expires: new Date(0) });
 };
+
+export const getCurrentUser = async () => {
+    const session = await getSession();
+    return await UsersRepository.find({ id: session.id });
+};

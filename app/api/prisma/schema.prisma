@@ -92,12 +92,12 @@ model EditorConfig {
 }
 
 model Plan {
-  id               String            @id @default(cuid())
-  type             String?
-  price            String?
+  id               String             @id @default(cuid())
+  name             String
+  price            Int
   duration         DateTime?
   FeaturePlan      FeaturePlan[]
-  PlanSubscription PlanSubscription?
+  PlanSubscription PlanSubscription[]
 }
 
 model FeaturePlan {
@@ -125,7 +125,7 @@ model PlanSubscription {
   id String @id @default(cuid())
 
   userId String @unique
-  planId String @unique
+  planId String
   user   User   @relation(fields: [userId], references: [id])
   plan   Plan   @relation(fields: [planId], references: [id])
 }
@@ -168,7 +168,7 @@ model Challenge {
   startedAt              DateTime?
   createdAt              DateTime                 @default(now())
   ChallengeParticipation ChallengeParticipation[]
-  TagMorph               TagMorph[]               
+  TagMorph               TagMorph[]
 }
 
 model ChallengeParticipation {
