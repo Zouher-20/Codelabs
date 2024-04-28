@@ -19,7 +19,7 @@ export const register = async (payload: RegisterUserInput) => {
     }: { otp: string; email: string; name: string; password: string } = payload;
     const otp = parseInt(otpString, 10);
 
-    const existUserByEmail = await UsersRepository.find(email);
+    const existUserByEmail = await UsersRepository.find({ email: email });
     if (existUserByEmail) {
         throw new Error('User already registerd');
     }
@@ -125,15 +125,14 @@ export const deleteMyAccount = async (payload: DeleteMyAccountInput) => {
     try {
         const session = await getSession();
         const userId = session?.id;
-        const { password }: DeleteMyAccountInput = payload;
         if (typeof userId === 'string') {
             await AuthRepository.deleteMyAccount(payload, userId);
         } else {
             throw new Error('User session not found or invalid.');
         }
     } catch (error) {
-        console.error('An error occurred:', error);
-        throw new Error('An error occurred while deleting account.');
+        console.error('An error accurred:', error);
+        throw new Error('An error accurred while deleting account.');
     }
     cookies().set('session', '', { expires: new Date(0) });
 };

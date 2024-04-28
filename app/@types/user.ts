@@ -8,4 +8,5 @@ export interface userType {
     position?: string;
     labs?: number;
     classes?: number;
+    role?: string;
 }

@@ -14,7 +14,7 @@ export const registerOtp = async (payload: { email: string }) => {
     const existingUser = await UsersRepository.find({ email });
 
     if (existingUser) {
-        throw 'Email is already associated with an account';
+        throw new Error('Email is already associated with an account');
     }
 
     const verifiedUser = await VeryfiedRepository.find({ email });
@@ -34,7 +34,7 @@ export const registerOtp = async (payload: { email: string }) => {
             verifiedUserObj = await VeryfiedRepository.update(verifiedUser.id, { email, otp });
         }
     } catch (err) {
-        throw 'Error creating OTP';
+        throw new Error('Error creating OTP');
     }
     try {
         services.sendEmailWithLogo(email, otp, EmailTypes.REGISTER);
@@ -43,7 +43,7 @@ export const registerOtp = async (payload: { email: string }) => {
         if (shallRollback && !GlobalUtils.isNullOrUndefined(verifiedUserObj)) {
             VeryfiedRepository.delete(verifiedUserObj.id);
         }
-        throw 'Error sending OTP mail';
+        throw new Error('Error sending OTP mail');
     }
     return 'registration code sent to email';
 };

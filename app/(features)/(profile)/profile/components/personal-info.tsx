@@ -1,5 +1,7 @@
 'use client';
 import { userType } from '@/app/@types/user';
+import { CustomToaster } from '@/app/components/toast/custom-toaster';
+import DeleteAccountModal from './delete-modal';
 import EditModal, { userInfo } from './editeModal';
 
 const PersonalInfo = ({ user }: { user: userType }) => {
@@ -9,6 +11,11 @@ const PersonalInfo = ({ user }: { user: userType }) => {
     function toggleModal() {
         if (document) {
             (document.getElementById('new-lab-modal') as HTMLFormElement)?.showModal();
+        }
+    }
+    function onDeleteAccountClicked() {
+        if (document) {
+            (document.getElementById('delete-account-modal') as HTMLFormElement)?.showModal();
         }
     }
     return (
@@ -39,11 +46,16 @@ const PersonalInfo = ({ user }: { user: userType }) => {
                     In case of deletion you will remove all your projects and personal data. Also
                     you will lose controll of projects in your organization
                 </p>
-                <button className="btn btn-sm max-w-fit bg-base-300 hover:text-error max-sm:self-center">
+                <button
+                    className="btn btn-sm max-w-fit bg-base-300 hover:text-error max-sm:self-center"
+                    onClick={onDeleteAccountClicked}
+                >
                     delete my account
                 </button>
             </div>
             <EditModal userInfo={userInfo} />
+            <DeleteAccountModal />
+            <CustomToaster />
         </div>
     );
 };
