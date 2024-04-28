@@ -119,7 +119,7 @@ class AdminRepository {
             }
         });
 
-        const challengeCount = await db.challenge.count();
+        const challengeCount = await db.challenge.count(where);
 
         return {
             challenges,
