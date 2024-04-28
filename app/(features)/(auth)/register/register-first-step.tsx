@@ -36,11 +36,14 @@ export function RegisterFirstStep({
 
     return (
         <form className="m-auto flex flex-col justify-center" onSubmit={handleSubmit}>
+            <label className="mb-1" htmlFor="email">
+                Email
+            </label>
             <Input
                 id="email"
                 name="email"
                 type="email"
-                placeholder="email"
+                placeholder="enter your email"
                 icon="solar:user-bold"
                 value={values.email}
                 onBlur={handleBlur}

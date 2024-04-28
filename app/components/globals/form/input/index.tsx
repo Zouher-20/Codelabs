@@ -23,14 +23,12 @@ const Input = ({
                     (errors ? 'input-error' : '')
                 }
             >
-                {icon ? (
+                {icon && (
                     <IconRenderer
                         className={'opacity-70 ' + (errors ? 'text-error' : '')}
                         fontSize={16}
                         icon={icon}
                     />
-                ) : (
-                    <></>
                 )}
                 <input
                     type={type ? type : 'text'}
@@ -46,7 +44,7 @@ const Input = ({
                     onBlur={onBlur}
                 />
             </label>
-            <p className="pb-2 pl-2 text-error">{errors}</p>
+            <p className="pb-2 pl-2 text-sm text-error">{errors}</p>
         </div>
     );
 };

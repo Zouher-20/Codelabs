@@ -2,7 +2,7 @@
 import { userType } from '@/app/@types/user';
 import { CustomToaster } from '@/app/components/toast/custom-toaster';
 import DeleteAccountModal from './delete-modal';
-import EditModal, { userInfo } from './editeModal';
+import EditModal, { userInfo } from './edit-modal';
 
 const PersonalInfo = ({ user }: { user: userType }) => {
     const { name, email, bio, position } = user;

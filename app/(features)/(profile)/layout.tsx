@@ -10,10 +10,9 @@ export default function AuthPage({
 }>) {
     return (
         <div className="">
-            <Sidebar
-                children={<div className="flex flex-col py-4">{children}</div>}
-                sidebarItems={UserSiteSidebarItem}
-            />
+            <Sidebar sidebarItems={UserSiteSidebarItem}>
+                <div className="flex flex-col py-4">{children}</div>
+            </Sidebar>
         </div>
     );
 }
