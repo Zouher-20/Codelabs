@@ -18,3 +18,7 @@ export interface ChallengePaginationInput {
     tagName?: string;
     challengeType?: DIFFICULTTYPE;
 }
+
+export interface deleteUserInput {
+    userId: string;
+}

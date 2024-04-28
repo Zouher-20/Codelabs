@@ -130,6 +130,22 @@ class AdminRepository {
         const typeChallenge = Object.values(DIFFICULTTYPE);
         return typeChallenge;
     }
+
+    static async deleteUser(payload: { userId: string }) {
+        const requestingUser = await db.user.findUnique({
+            where: {
+                id: payload.userId
+            }
+        });
+        if (!requestingUser) {
+            throw new Error('User not found');
+        }
+        await db.user.deleteMany({
+            where: {
+                id: payload.userId
+            }
+        });
+    }
 }
 
 export default AdminRepository;

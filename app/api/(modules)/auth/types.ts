@@ -10,3 +10,7 @@ export interface AdminRegisterInput {
     name: string;
     password: string;
 }
+
+export interface DeleteMyAccountInput {
+    password: string;
+}
