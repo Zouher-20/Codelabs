@@ -7,6 +7,7 @@ import Input from '@/app/components/globals/form/input';
 import IconRenderer from '@/app/components/globals/icon';
 import { useFormik } from 'formik';
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 
 const AddTagModal = ({
     newTagCallbackFunction
@@ -17,18 +18,17 @@ const AddTagModal = ({
         name: yup.string().required('Required')
     });
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
 
     const onSubmit = async () => {
-        setError('');
         setLoading(true);
         try {
             const res = await addTag(values.name);
             newTagCallbackFunction(res);
             resetForm();
             (document.getElementById('add-tag-modal') as HTMLDialogElement).close();
+            toast.success('tag added successfully');
         } catch (error: any) {
-            setError(error.message);
+            toast.error(error.message);
         } finally {
             setLoading(false);
         }
@@ -75,9 +75,6 @@ const AddTagModal = ({
                                 label="Continue"
                                 type="submit"
                             />
-                            {error.length != 0 ? (
-                                <p className="text-sm text-red-600">{error}</p>
-                            ) : null}
                         </div>
                     )}
                 </form>

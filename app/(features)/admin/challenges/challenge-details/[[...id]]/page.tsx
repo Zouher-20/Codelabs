@@ -7,9 +7,11 @@ import Button from '@/app/components/globals/form/button';
 import Input from '@/app/components/globals/form/input';
 import Select from '@/app/components/globals/form/select/select';
 import IconRenderer from '@/app/components/globals/icon';
+import { CustomToaster } from '@/app/components/toast/custom-toaster';
 import { textField } from '@/app/schemas';
 import { Field, Form, Formik } from 'formik';
 import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import 'react-quill/dist/quill.snow.css'; // Import Quill styles
 import * as yup from 'yup';
 import AddTagModal from '../../components/tags-modal';
@@ -31,7 +33,9 @@ const AddChallenge = ({ params }: { params: { id: number } }) => {
                     };
                 })
             );
-        } catch (error) {}
+        } catch (error: any) {
+            toast.error(error.message);
+        }
     };
     type FormValues = {
         name: string;
@@ -217,6 +221,7 @@ const AddChallenge = ({ params }: { params: { id: number } }) => {
                 )}
             </Formik>
             <AddTagModal newTagCallbackFunction={(tag: tag) => handleTag(tag)} />
+            <CustomToaster />
         </div>
     );
 };
