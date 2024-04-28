@@ -9,7 +9,6 @@ export default function PagginationComponent({
     onPageChange: ({ page }: { page: number }) => void;
     pageCount: number;
 }) {
-    console.log(currentPage);
     var startingIndex = Math.max(currentPage - 2, 1);
     const lastItem = Math.min(currentPage + 2, pageCount);
     while (startingIndex > 0 && lastItem - startingIndex < 5) {

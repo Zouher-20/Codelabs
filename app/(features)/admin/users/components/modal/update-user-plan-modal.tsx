@@ -1,5 +1,4 @@
 'use client';
-
 import { planType } from '@/app/@types/plan';
 import Input from '@/app/components/globals/form/input';
 import IconRenderer from '@/app/components/globals/icon';
@@ -10,10 +9,10 @@ const UpdateUserPlanModal = ({
     planValues
 }: {
     plan: planType;
-    planValues: (val: planType) => void;
+    planValues?: (val: planType) => void;
 }) => {
     const onSubmit = () => {
-        planValues(values);
+        if (planValues !== null) planValues!(values);
         (document.getElementById('update-user-plan-modal') as HTMLDialogElement).close();
     };
     const { values, handleChange, handleSubmit } = useFormik({

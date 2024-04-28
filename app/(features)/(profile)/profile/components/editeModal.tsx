@@ -20,9 +20,7 @@ const EditModal = ({ userInfo }: { userInfo: userInfo }) => {
         bio: textField,
         location: textField
     });
-    const onSubmit = () => {
-        console.log(values);
-    };
+    const onSubmit = () => {};
     const { values, errors, touched, handleChange, handleSubmit, handleBlur } = useFormik({
         initialValues: {
             name: userInfo.name,

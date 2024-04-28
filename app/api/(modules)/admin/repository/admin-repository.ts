@@ -1,5 +1,5 @@
 import { db } from '@/app/api/core/db/db';
-import { DIFFICULTTYPE } from '@prisma/client';
+import { DIFFICULTTYPE, TAGTYPE } from '@prisma/client';
 
 class AdminRepository {
     static async findManyUser(payload: {
@@ -40,7 +40,11 @@ class AdminRepository {
                 ...args
             }
         });
-        const userCount = await db.user.count();
+        const userCount = await db.user.count({
+            where: {
+                ...args
+            }
+        });
         return {
             user: { users },
             userCount: userCount
@@ -61,7 +65,7 @@ class AdminRepository {
         };
     }
 
-    static async addTag(tag: string) {
+    static async addTag(tag: string, tagType: TAGTYPE | null) {
         const existingTag = await db.tag.findUnique({
             where: {
                 tagename: tag
@@ -74,7 +78,8 @@ class AdminRepository {
 
         const newTag = await db.tag.create({
             data: {
-                tagename: tag
+                tagename: tag,
+                tagtype: tagType ?? TAGTYPE.normal
             }
         });
 
@@ -111,7 +116,7 @@ class AdminRepository {
             where,
             include: {
                 ChallengeParticipation: true,
-                broketag: {
+                tagMorph: {
                     include: {
                         tag: true
                     }

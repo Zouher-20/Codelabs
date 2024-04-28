@@ -62,11 +62,9 @@ export default function UserDropDown() {
                     onClick={() => {
                         signOut()
                             .then(() => {
-                                router.push('/auth');
+                                router.push('/login');
                             })
-                            .catch(e => {
-                                console.log(e);
-                            });
+                            .catch(e => {});
                     }}
                 >
                     <a className="flex items-center gap-2 text-error">

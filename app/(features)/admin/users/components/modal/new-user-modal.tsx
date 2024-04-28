@@ -1,3 +1,4 @@
+'use client';
 import Button from '@/app/components/globals/form/button';
 import Input from '@/app/components/globals/form/input';
 import IconRenderer from '@/app/components/globals/icon';
@@ -26,7 +27,6 @@ const NewUserModel = () => {
 
     const onSubmit = (values: FormValues) => {
         (document.getElementById('new-user-modal') as HTMLDialogElement).close();
-        console.log(values);
     };
 
     return (
