@@ -116,7 +116,7 @@ class AdminRepository {
             where,
             include: {
                 ChallengeParticipation: true,
-                broketag: {
+                tagMorph: {
                     include: {
                         tag: true
                     }
