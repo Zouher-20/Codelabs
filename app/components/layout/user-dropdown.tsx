@@ -18,7 +18,8 @@ export default function UserDropDown() {
             setUser({
                 id: session?.id as string,
                 email: session?.email as string,
-                name: session?.username as string
+                name: session?.username as string,
+                role: session?.role as string
             });
         }
     }
@@ -52,7 +53,10 @@ export default function UserDropDown() {
                 className="menu dropdown-content z-[1] mt-4 w-52 rounded-box bg-base-100  p-2 shadow"
             >
                 <li>
-                    <Link href={'/profile'} className="flex items-center gap-2">
+                    <Link
+                        href={user?.role == 'ADMIN' ? '/admin/profile' : '/profile'}
+                        className="flex items-center gap-2"
+                    >
                         <IconRenderer fontSize={16} icon="solar:user-outline" />
                         <div>Profile</div>
                     </Link>

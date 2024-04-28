@@ -1,5 +1,4 @@
 import { db } from '@/app/api/core/db/db';
-import bcrypt from 'bcrypt';
 
 class AuthRepository {
     // static async forgetPassword(req: Request) {
@@ -48,7 +47,7 @@ class AuthRepository {
         if (!requestingUser) {
             throw new Error('User not found');
         }
-        const passwordMatch = await bcrypt.compare(payload.password, requestingUser.password);
+        const passwordMatch = payload.password === requestingUser.password;
         if (!passwordMatch) {
             throw new Error('Incorrect password');
         } else {
