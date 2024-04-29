@@ -1,15 +1,18 @@
+import Button from '@/app/components/globals/form/button';
 import CodeLabTable, { GenericTableModel } from '../../components/table/generic-tabel';
 
 export default function UsersTable({
     currentPage,
     onPageChange,
     pageCount,
-    users
+    users,
+    deleteUserButtonClicked
 }: {
     currentPage: number;
     onPageChange: ({ index }: { index: number }) => void;
     pageCount: number;
     users: Array<UserTableType>;
+    deleteUserButtonClicked: (user: UserTableType) => void;
 }) {
     function TableItem({ item, index }: { item: UserTableType; index: number }) {
         return (
@@ -20,6 +23,13 @@ export default function UsersTable({
                 <td>{item.labs} Labs</td>
                 <td>{item.role}</td>
                 <td>{item.plan}</td>
+                <td>
+                    <Button
+                        label="Delete"
+                        color="error"
+                        onClick={() => deleteUserButtonClicked(item)}
+                    />
+                </td>
             </tr>
         );
     }
