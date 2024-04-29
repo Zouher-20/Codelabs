@@ -23,7 +23,10 @@ export const register = async (payload: RegisterUserInput) => {
     if (existUserByEmail) {
         throw new Error('User already registerd');
     }
-
+    const existUserByName = await UsersRepository.find({ username: name });
+    if (existUserByName) {
+        throw new Error('username already in use');
+    }
     const existuserVerified = await VeryfiedRepository.find({ email });
 
     if (existuserVerified && existuserVerified.otp === otp) {
