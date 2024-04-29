@@ -9,7 +9,8 @@
     "lint": "next lint",
     "prettier": "prettier --write .",
     "db:push": "prisma db push --schema=./app/api/prisma/schema.prisma",
-    "db:studio": "prisma studio --schema=./app/api/prisma/schema.prisma"
+    "db:studio": "prisma studio --schema=./app/api/prisma/schema.prisma",
+    "db:migrate": "npx prisma migrate dev --schema=./app/api/prisma/schema.prisma"
   },
   "dependencies": {
     "@monaco-editor/react": "^4.6.0",
