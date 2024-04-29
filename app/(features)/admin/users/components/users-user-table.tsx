@@ -1,7 +1,9 @@
 'use client';
 import { findUsers } from '@/app/api/(modules)/admin/service/action';
+import { CustomToaster } from '@/app/components/toast/custom-toaster';
 import { useEffect, useState } from 'react';
 import UserViewHeader from './headea';
+import DeleteUserModal from './modal/delete-user-modal';
 import UsersTable, { UserTableType } from './user-table';
 
 export function UserViewUserTable({ pageSize }: { pageSize: number }) {
@@ -10,6 +12,7 @@ export function UserViewUserTable({ pageSize }: { pageSize: number }) {
     const [totalPageCount, setTotalPageCount] = useState(0);
     const [loading, setLoading] = useState(true);
     const [searchWord, setSearchWord] = useState('');
+    const [modalUserId, setModalUserId] = useState('');
 
     useEffect(() => {
         getUser({ newSearchWord: searchWord });
@@ -65,11 +68,26 @@ export function UserViewUserTable({ pageSize }: { pageSize: number }) {
             ) : (
                 <UsersTable
                     users={users}
-                    pageCount={totalPageCount}
+                    pageCount={totalPageCount / pageSize}
                     currentPage={currentPage}
                     onPageChange={onPageChange}
+                    deleteUserButtonClicked={user => {
+                        setModalUserId(user.id);
+                        if (document) {
+                            (
+                                document.getElementById('delete-user-modal') as HTMLFormElement
+                            )?.showModal();
+                        }
+                    }}
                 />
             )}
+            <DeleteUserModal
+                userId={modalUserId}
+                callback={() => {
+                    getUser({ newSearchWord: searchWord });
+                }}
+            />
+            <CustomToaster />
         </div>
     );
 }

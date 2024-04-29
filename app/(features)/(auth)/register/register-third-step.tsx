@@ -1,8 +1,10 @@
 import { getSession, register, signIn } from '@/app/api/(modules)/auth/service/actions';
+import { CustomToaster } from '@/app/components/toast/custom-toaster';
 import { password, textField } from '@/app/schemas';
 import { ROLE } from '@prisma/client';
 import { useFormik } from 'formik';
 import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 import { object } from 'yup';
 import Input from '../../../components/globals/form/input';
 
@@ -51,7 +53,9 @@ export function RegisterThirdStep({
                         }
                     }
                 }
-            } catch (e) {}
+            } catch (e: any) {
+                toast.error(e.message);
+            }
         });
     }
 
@@ -93,6 +97,7 @@ export function RegisterThirdStep({
                     back
                 </div>
             </div>
+            <CustomToaster />
         </form>
     );
 }
