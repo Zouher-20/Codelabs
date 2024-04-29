@@ -1,5 +1,8 @@
+'use client';
 import * as yup from 'yup';
 
+import { MyOptionType } from '@/app/@types/select';
+import { getTag } from '@/app/api/(modules)/admin/service/action';
 import Button from '@/app/components/globals/form/button';
 import Input from '@/app/components/globals/form/input';
 import Select from '@/app/components/globals/form/select/select';
@@ -8,8 +11,29 @@ import RadioOption from '@/app/components/globals/form/type-multi-select/radio-o
 import IconRenderer from '@/app/components/globals/icon';
 import { types } from '@/app/constants/types';
 import { Field, Form, Formik } from 'formik';
+import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 
 const NewClassLabModal = () => {
+    const [tOptions, setTOptions] = useState<Array<MyOptionType>>([]); // Assuming initialTagOptions exists
+    useEffect(() => {
+        getTags();
+    }, []);
+    const getTags = async () => {
+        try {
+            const res = await getTag({ page: 1, pageSize: 100 });
+            setTOptions(
+                res.tags.map<MyOptionType>(e => {
+                    return {
+                        value: e.id,
+                        label: e.tagename
+                    };
+                })
+            );
+        } catch (error: any) {
+            toast.error(error.message);
+        }
+    };
     interface FormValues {
         name: string;
         option: string;
@@ -71,7 +95,7 @@ const NewClassLabModal = () => {
                                     <Field
                                         className="mb-4"
                                         name="tags"
-                                        options={[]}
+                                        options={tOptions}
                                         component={Select}
                                         placeholder="Select multi tags..."
                                         isMulti={true}
