@@ -1,5 +1,7 @@
 export interface UserProjectInput {
-    name: string;
-    description: string;
-    tagNames: string[];
+    name?: string;
+    description?: string;
+    tagId: string[];
+    jsonFile: string;
+    templateId?: string;
 }
