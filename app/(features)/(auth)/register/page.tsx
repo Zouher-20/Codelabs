@@ -13,10 +13,26 @@ function Register() {
     const { steps, currentStepIndex, step, isFirstStep, isLastStep, back, next } = useMultistepForm(
         [
             <RegisterFirstStep nextPageCallback={onSubmit} key={1} />,
-            <RegisterSecondStep nextPageCallback={onSubmit} email={email} key={2} />,
-            <RegisterThirdStep nextPageCallback={onSubmit} email={email} otp={otp} key={3} />
+
+            <RegisterSecondStep
+                nextPageCallback={onSubmit}
+                onBack={getBack}
+                email={email}
+                key={2}
+            />,
+            <RegisterThirdStep
+                nextPageCallback={onSubmit}
+                onBack={getBack}
+                email={email}
+                otp={otp}
+                key={3}
+            />
         ]
     );
+
+    async function getBack() {
+        back();
+    }
 
     async function onSubmit(callback: Function) {
         try {
