@@ -73,7 +73,7 @@ model Verified {
   id     String  @id @default(cuid())
   email  String  @unique
   otp    Int
-  user   User?   @relation(fields: [userId], references: [id])
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String? @unique
 }
 
@@ -81,14 +81,14 @@ model Feedback {
   id       String  @id @default(cuid())
   Feedback String?
   userId   String  @unique
-  user     User    @relation(fields: [userId], references: [id])
+  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model EditorConfig {
   id     String  @id @default(cuid())
   config String?
   userId String  @unique
-  user   User    @relation(fields: [userId], references: [id])
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Plan {
@@ -104,7 +104,7 @@ model FeaturePlan {
   id     Int      @id @default(autoincrement())
   name   NAMEPLAN
   value  Int
-  plan   Plan     @relation(fields: [planId], references: [id])
+  plan   Plan     @relation(fields: [planId], references: [id], onDelete: Cascade)
   planId String
 }
 
@@ -116,7 +116,7 @@ model ClassProject {
   Lab            Lab[]
   createdAt      DateTime         @default(now())
   classRomId     String
-  classRom       ClassRom         @relation(fields: [classRomId], references: [id])
+  classRom       ClassRom         @relation(fields: [classRomId], references: [id], onDelete: Cascade)
   FeedbackProjct FeedbackProjct[]
   TagMorph       TagMorph[]
 }
@@ -126,8 +126,8 @@ model PlanSubscription {
 
   userId String @unique
   planId String
-  user   User   @relation(fields: [userId], references: [id])
-  plan   Plan   @relation(fields: [planId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan   Plan   @relation(fields: [planId], references: [id], onDelete: Cascade)
 }
 
 model ClassRom {
@@ -144,17 +144,17 @@ model Tag {
 }
 
 model TagMorph {
-  id            String       @id @default(cuid())
+  id            String        @id @default(cuid())
   tagId         String
-  tag           Tag          @relation(fields: [tagId], references: [id])
-  userprojectId String
-  userproject   UserProject  @relation(fields: [userprojectId], references: [id])
+  tag           Tag           @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  userprojectId String?
+  userproject   UserProject?  @relation(fields: [userprojectId], references: [id], onDelete: Cascade)
   challengeId   String
-  challenge     Challenge    @relation(fields: [challengeId], references: [id])
-  classId       String
-  class         ClassProject @relation(fields: [classId], references: [id])
-  blogId        String
-  blog          Blog         @relation(fields: [blogId], references: [id])
+  challenge     Challenge     @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  classId       String?
+  class         ClassProject? @relation(fields: [classId], references: [id], onDelete: Cascade)
+  blogId        String?
+  blog          Blog?         @relation(fields: [blogId], references: [id], onDelete: Cascade)
 }
 
 model Challenge {
@@ -173,8 +173,8 @@ model Challenge {
 
 model ChallengeParticipation {
   id          String    @id @default(cuid())
-  challenge   Challenge @relation(fields: [challengeId], references: [id])
-  user        User      @relation(fields: [userId], references: [id])
+  challenge   Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   challengeId String
   userId      String
   Lab         Lab[]
@@ -183,21 +183,20 @@ model ChallengeParticipation {
 model Lab {
   id                       String                 @id @default(cuid())
   tamblateId               Int                    @unique
-  tamblate                 Tamblate               @relation(fields: [tamblateId], references: [id])
+  tamblate                 Tamblate               @relation(fields: [tamblateId], references: [id], onDelete: Cascade)
   jsonFile                 String
   userprojectId            String
   classProjectId           String
   challengeParticipationId String
-  challengeParticipation   ChallengeParticipation @relation(fields: [challengeParticipationId], references: [id])
-  classProject             ClassProject           @relation(fields: [classProjectId], references: [id])
-  userproject              UserProject            @relation(fields: [userprojectId], references: [id])
+  challengeParticipation   ChallengeParticipation @relation(fields: [challengeParticipationId], references: [id], onDelete: Cascade)
+  classProject             ClassProject           @relation(fields: [classProjectId], references: [id], onDelete: Cascade)
+  userproject              UserProject            @relation(fields: [userprojectId], references: [id], onDelete: Cascade)
 }
 
 model UserProject {
   id          String     @id @default(cuid())
   userId      String
-  user        User       @relation(fields: [userId], references: [id])
-  type        String
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   name        String?
   description String?
   Star        Star[]
@@ -216,7 +215,7 @@ model Tamblate {
 model Blog {
   id       String     @id @default(cuid())
   userId   String
-  user     User       @relation(fields: [userId], references: [id])
+  user     User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   contant  String?
   imageUrl String?
   status   Boolean    @default(false)
@@ -231,9 +230,9 @@ model Star {
   userId        String
   userprojectId String
   blogId        String
-  blog          Blog        @relation(fields: [blogId], references: [id])
-  userproject   UserProject @relation(fields: [userprojectId], references: [id])
-  user          User        @relation(fields: [userId], references: [id])
+  blog          Blog        @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  userproject   UserProject @relation(fields: [userprojectId], references: [id], onDelete: Cascade)
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Comment {
@@ -242,24 +241,24 @@ model Comment {
   userId        String
   userprojectId String
   blogId        String
-  blog          Blog        @relation(fields: [blogId], references: [id])
-  userproject   UserProject @relation(fields: [userprojectId], references: [id])
-  user          User        @relation(fields: [userId], references: [id])
+  blog          Blog        @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  userproject   UserProject @relation(fields: [userprojectId], references: [id], onDelete: Cascade)
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model MemberClass {
   id             String           @id @default(cuid())
   classRomId     String
-  classRom       ClassRom         @relation(fields: [classRomId], references: [id])
+  classRom       ClassRom         @relation(fields: [classRomId], references: [id], onDelete: Cascade)
   userId         String
-  user           User             @relation(fields: [userId], references: [id])
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   FeedbackProjct FeedbackProjct[]
 }
 
 model FeedbackProjct {
   id             String       @id @default(cuid())
   classProjectId String
-  classProject   ClassProject @relation(fields: [classProjectId], references: [id])
+  classProject   ClassProject @relation(fields: [classProjectId], references: [id], onDelete: Cascade)
   memberClassId  String
-  memberClass    MemberClass  @relation(fields: [memberClassId], references: [id])
+  memberClass    MemberClass  @relation(fields: [memberClassId], references: [id], onDelete: Cascade)
 }

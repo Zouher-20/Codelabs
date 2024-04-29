@@ -30,5 +30,5 @@ export interface ChallengeInput {
     startedAt: Date;
     description: string;
     resources: string;
-    tagNames: string[];
+    tagId: string[];
 }
