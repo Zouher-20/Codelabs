@@ -13,12 +13,12 @@ export default function UsersTable({
 }) {
     function TableItem({ item, index }: { item: UserTableType; index: number }) {
         return (
-            <tr className={`my-3 ${index % 2 == 0 ? 'bg-base-300' : ''}`}>
-                <th>{item.id}</th>
+            <tr className={`my-3 ${index % 2 == 0 ? 'bg-base-300' : ''}`} key={item.id}>
                 <td>{item.name}</td>
                 <td>{item.email}</td>
                 <td>{item.classes} classes</td>
                 <td>{item.labs} Labs</td>
+                <td>{item.role}</td>
                 <td>{item.plan}</td>
             </tr>
         );
@@ -35,12 +35,11 @@ export default function UsersTable({
         tableHeader: (
             <thead>
                 <tr>
-                    <th></th>
-                    <th>Users</th>
                     <th>Name</th>
                     <th>Email</th>
                     <th>Classes</th>
                     <th>Labs</th>
+                    <th>Role</th>
                     <th>Plan</th>
                 </tr>
             </thead>
@@ -49,10 +48,12 @@ export default function UsersTable({
 }
 
 export interface UserTableType extends GenericTableModel {
-    id: number;
+    id: string;
     name: string;
     email: string;
     plan: string;
     classes: number;
+    role: string;
     labs: number;
+    createdAt: Date;
 }

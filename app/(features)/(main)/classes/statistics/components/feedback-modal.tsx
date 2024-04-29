@@ -8,9 +8,7 @@ const FeedbackModal = () => {
     const onClose = () => {
         (document.getElementById('feedback-modal') as HTMLDialogElement).close();
     };
-    const onMessageSent = () => {
-        console.log(feedbackMessage);
-    };
+    const onMessageSent = () => {};
     var feedbacks: Array<FeedbackType> = [
         {
             id: 1,

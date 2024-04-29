@@ -6,7 +6,6 @@ import Select from '@/app/components/globals/form/select/select';
 import Textarea from '@/app/components/globals/form/text-area';
 import RadioOption from '@/app/components/globals/form/type-multi-select/radio-option';
 import IconRenderer from '@/app/components/globals/icon';
-import { tagOptions } from '@/app/constants/tag-options';
 import { types } from '@/app/constants/types';
 import { Field, Form, Formik } from 'formik';
 
@@ -32,7 +31,6 @@ const NewClassLabModal = () => {
 
     const onSubmit = (values: FormValues) => {
         (document.getElementById('new-lab-modal') as HTMLDialogElement).close();
-        console.log(values);
     };
 
     return (
@@ -73,7 +71,7 @@ const NewClassLabModal = () => {
                                     <Field
                                         className="mb-4"
                                         name="tags"
-                                        options={tagOptions}
+                                        options={[]}
                                         component={Select}
                                         placeholder="Select multi tags..."
                                         isMulti={true}

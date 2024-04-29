@@ -1,5 +1,4 @@
 'use client';
-
 import { useState } from 'react';
 import AuthCardComponent from '../components/auth-card';
 import { RegisterFirstStep } from './register-first-step';

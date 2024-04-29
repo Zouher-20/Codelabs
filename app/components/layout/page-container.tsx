@@ -8,15 +8,12 @@ export default function PageContainer({
 }>) {
     return (
         <div className="flex items-start">
-            <Sidebar
-                children={
-                    <div className="flex flex-col">
-                        <Navbar />
-                        {children}
-                    </div>
-                }
-                sidebarItems={UserSiteSidebarItem}
-            />
+            <Sidebar sidebarItems={UserSiteSidebarItem}>
+                <div className="flex flex-col">
+                    <Navbar />
+                    {children}
+                </div>
+            </Sidebar>
         </div>
     );
 }

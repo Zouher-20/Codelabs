@@ -92,12 +92,12 @@ model EditorConfig {
 }
 
 model Plan {
-  id               String            @id @default(cuid())
-  type             String?
-  price            String?
+  id               String             @id @default(cuid())
+  name             String
+  price            Int
   duration         DateTime?
   FeaturePlan      FeaturePlan[]
-  PlanSubscription PlanSubscription?
+  PlanSubscription PlanSubscription[]
 }
 
 model FeaturePlan {
@@ -118,14 +118,14 @@ model ClassProject {
   classRomId     String
   classRom       ClassRom         @relation(fields: [classRomId], references: [id])
   FeedbackProjct FeedbackProjct[]
-  tagMorph       TagMorph[]
+  TagMorph       TagMorph[]
 }
 
 model PlanSubscription {
   id String @id @default(cuid())
 
   userId String @unique
-  planId String @unique
+  planId String
   user   User   @relation(fields: [userId], references: [id])
   plan   Plan   @relation(fields: [planId], references: [id])
 }
@@ -140,7 +140,7 @@ model Tag {
   id       String     @id @default(cuid())
   tagename String     @unique
   tagtype  TAGTYPE?
-  tagMorph TagMorph[]
+  TagMorph TagMorph[]
 }
 
 model TagMorph {
@@ -160,24 +160,15 @@ model TagMorph {
 model Challenge {
   id                     String                   @id @default(cuid())
   name                   String
-  duration               DateTime?
   isComplete             Boolean
   difficulty             DIFFICULTTYPE
-  type                   String
-  description            String
-  endAt                  DateTime
-  startedAt              DateTime
+  description            String?
+  resources              String?
+  endAt                  DateTime?
+  startedAt              DateTime?
   createdAt              DateTime                 @default(now())
   ChallengeParticipation ChallengeParticipation[]
-  Attachment             Attachment[]
-  tagMorph               TagMorph[]
-}
-
-model Attachment {
-  id          Int       @id @default(autoincrement())
-  challengeId String
-  path        String
-  challenge   Challenge @relation(fields: [challengeId], references: [id])
+  TagMorph               TagMorph[]
 }
 
 model ChallengeParticipation {
@@ -212,7 +203,7 @@ model UserProject {
   Star        Star[]
   Comment     Comment[]
   Lab         Lab[]
-  tagMorph    TagMorph[]
+  TagMorph    TagMorph[]
 }
 
 model Tamblate {
@@ -232,7 +223,7 @@ model Blog {
   title    String?
   Star     Star[]
   Comment  Comment[]
-  tagMorph TagMorph[]
+  TagMorph TagMorph[]
 }
 
 model Star {

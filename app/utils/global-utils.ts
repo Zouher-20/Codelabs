@@ -22,4 +22,8 @@ export default class GlobalUtils {
     static isNullOrUndefined(value: unknown) {
         return value === null || value === undefined;
     }
+
+    static enumToArray<T>(enumLike: T): string[] {
+        return Object.values(enumLike as object);
+    }
 }

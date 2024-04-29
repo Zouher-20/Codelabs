@@ -1,77 +1,67 @@
-"use client"
-
-import * as yup from 'yup';
+'use client';
+import { MyOptionType } from '@/app/@types/select';
+import { tag } from '@/app/@types/tag';
+import { getTag } from '@/app/api/(modules)/admin/service/action';
+import CodeLabsQuill from '@/app/components/globals/codelabs-quill';
 import Button from '@/app/components/globals/form/button';
 import Input from '@/app/components/globals/form/input';
-import { Field, Form, Formik, useFormik } from 'formik';
-import 'react-quill/dist/quill.snow.css'; // Import Quill styles
-import "./styles.css";
-import { textField } from '@/app/schemas';
-import { useMemo, useState } from 'react';
-import dynamic from 'next/dynamic';
-import { tagOptions } from '@/app/constants/tag-options';
 import Select from '@/app/components/globals/form/select/select';
-import AddTagModal from '../../components/tags-modal';
 import IconRenderer from '@/app/components/globals/icon';
+import { CustomToaster } from '@/app/components/toast/custom-toaster';
+import { textField } from '@/app/schemas';
+import { Field, Form, Formik } from 'formik';
+import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
+import 'react-quill/dist/quill.snow.css'; // Import Quill styles
+import * as yup from 'yup';
+import AddTagModal from '../../components/tags-modal';
+import './styles.css';
 
 const AddChallenge = ({ params }: { params: { id: number } }) => {
-
-    const QuillEditor = useMemo(() => dynamic(() => import('react-quill'), { ssr: false }), []);
-    const [tOptions, setTOptions] = useState(tagOptions); // Assuming initialTagOptions exists
-
-    const quillModules = {
-        toolbar: [
-            [{ header: [1, 2, 3, false] }],
-            ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-            [{ list: 'ordered' }, { list: 'bullet' }],
-            ['link', 'image'],
-            [{ align: [] }],
-            [{ color: [] }],
-            ['code-block'],
-            ['clean']
-        ]
+    const [tOptions, setTOptions] = useState<Array<MyOptionType>>([]); // Assuming initialTagOptions exists
+    useEffect(() => {
+        getTags();
+    }, []);
+    const getTags = async () => {
+        try {
+            const res = await getTag({ page: 1, pageSize: 100 });
+            setTOptions(
+                res.tags.map<MyOptionType>(e => {
+                    return {
+                        value: e.id,
+                        label: e.tagename
+                    };
+                })
+            );
+        } catch (error: any) {
+            toast.error(error.message);
+        }
     };
-    const quillFormats = [
-        'header',
-        'bold',
-        'italic',
-        'underline',
-        'strike',
-        'blockquote',
-        'list',
-        'bullet',
-        'link',
-        'image',
-        'align',
-        'color',
-        'code-block'
-    ];
     type FormValues = {
-        name: string,
-        difficulty: string,
-        duration: string,
-        tags: string[],
-        description: string,
-        resources: string,
-    }
-    type tag = { name: string, tagType: string }
+        name: string;
+        difficulty: string;
+        duration: string;
+        tags: string[];
+        description: string;
+        resources: string;
+    };
 
     let createChallenge: boolean = false;
     let defaultValues: FormValues;
-    console.log(params.id)
     if (params.id) {
         //get challenge details
-        createChallenge = false
+        createChallenge = false;
         defaultValues = {
             name: 'name',
             difficulty: 'hard',
             duration: 'duration',
             tags: ['button', 'input'],
-            description: "It's the final week of the Notifications challenge! Last week, we gave some love to the most unloveable type of notifications: error messages. Check out the Pens from week three in our #CodePenChallenge: Error Messages collection. This week, we'll gather up all kinds of notifications into one convenient place with a Notification Center 💁‍♂️ Our starter template includes a simple social notification center that opens & closes to reveal the notifications. It's not very stylish or user-friendly — yet. That's your challenge! We'll have lots of ideas and resources to help you tackle this challenge. And, as always, the template is just a starting point. Feel free to add or remove elements, change the content, or dismiss the whole thing and start over from scratch.",
-            resources: "It's the final week of the Notifications challenge! Last week, we gave some love to the most unloveable type of notifications: error messages. Check out the Pens from week three in our #CodePenChallenge: Error Messages collection. This week, we'll gather up all kinds of notifications into one convenient place with a Notification Center 💁‍♂️ Our starter template includes a simple social notification center that opens & closes to reveal the notifications. It's not very stylish or user-friendly — yet. That's your challenge! We'll have lots of ideas and resources to help you tackle this challenge. And, as always, the template is just a starting point. Feel free to add or remove elements, change the content, or dismiss the whole thing and start over from scratch.",
+            description:
+                "It's the final week of the Notifications challenge! Last week, we gave some love to the most unloveable type of notifications: error messages. Check out the Pens from week three in our #CodePenChallenge: Error Messages collection. This week, we'll gather up all kinds of notifications into one convenient place with a Notification Center 💁‍♂️ Our starter template includes a simple social notification center that opens & closes to reveal the notifications. It's not very stylish or user-friendly — yet. That's your challenge! We'll have lots of ideas and resources to help you tackle this challenge. And, as always, the template is just a starting point. Feel free to add or remove elements, change the content, or dismiss the whole thing and start over from scratch.",
+            resources:
+                "It's the final week of the Notifications challenge! Last week, we gave some love to the most unloveable type of notifications: error messages. Check out the Pens from week three in our #CodePenChallenge: Error Messages collection. This week, we'll gather up all kinds of notifications into one convenient place with a Notification Center 💁‍♂️ Our starter template includes a simple social notification center that opens & closes to reveal the notifications. It's not very stylish or user-friendly — yet. That's your challenge! We'll have lots of ideas and resources to help you tackle this challenge. And, as always, the template is just a starting point. Feel free to add or remove elements, change the content, or dismiss the whole thing and start over from scratch."
         };
-    }
-    else {
+    } else {
         createChallenge = true;
         defaultValues = {
             name: '',
@@ -79,30 +69,30 @@ const AddChallenge = ({ params }: { params: { id: number } }) => {
             duration: '',
             tags: [],
             description: '',
-            resources: '',
-        }
+            resources: ''
+        };
     }
     const validationSchema = yup.object().shape({
         name: textField,
         difficulty: textField,
-        duration: textField,
+        duration: textField
     });
     const onSubmit = (values: FormValues) => {
-        // if (createChallenge)add challenge 
-        //or Update exist challenge 
-        console.log('createChallenge', createChallenge, values);
+        // if (createChallenge)add challenge
+        //or Update exist challenge
     };
     const openModal = () => {
-        if (document)
-            (document.getElementById('add-tag-modal') as HTMLDialogElement).showModal()
-    }
+        if (document) (document.getElementById('add-tag-modal') as HTMLDialogElement).showModal();
+    };
     const handleTag = (tag: tag) => {
-        const newtag = { value: tag.name, label: tag.name }
-        setTOptions([...tagOptions, newtag]);
-    }
+        const newtag: MyOptionType = { value: tag.id, label: tag.tagename };
+        setTOptions([...tOptions, newtag]);
+    };
     return (
-        <div className="p-6 flex flex-col gap-6">
-            <h1 className="text-4xl font-bold text-white">{createChallenge ? 'Create Challenge' : 'Update Challenge'}</h1>
+        <div className="flex flex-col gap-6 p-6">
+            <h1 className="text-4xl font-bold text-white">
+                {createChallenge ? 'Create Challenge' : 'Update Challenge'}
+            </h1>
             <Formik
                 initialValues={defaultValues}
                 onSubmit={(values: FormValues) => {
@@ -111,63 +101,75 @@ const AddChallenge = ({ params }: { params: { id: number } }) => {
                 validationSchema={validationSchema}
             >
                 {props => (
-                    <Form className="flex flex-col md:grid md:grid-cols-2 gap-4 w-3/4 self-center">
-                        <div className='flex flex-col gap-4'>
-                            <label className=' capitalize'>name</label>
+                    <Form className="flex w-3/4 flex-col gap-4 self-center md:grid md:grid-cols-2">
+                        <div className="flex flex-col gap-4">
+                            <label className=" capitalize">name</label>
                             <Input
-                                id='name'
-                                name='name'
-                                type='text'
-                                placeholder='name'
-                                icon='solar:user-bold'
+                                id="name"
+                                name="name"
+                                type="text"
+                                placeholder="name"
+                                icon="solar:user-bold"
                                 value={props.values.name}
                                 onBlur={props.handleBlur}
                                 onChange={props.handleChange}
-                                errors={props.errors.name && props.touched.name
-                                    ? props.errors.name
-                                    : null}
+                                errors={
+                                    props.errors.name && props.touched.name
+                                        ? props.errors.name
+                                        : null
+                                }
                             />
                         </div>
-                        <div className='flex flex-col gap-4'>
-                            <label className=' capitalize'>Difficulty</label>
+                        <div className="flex flex-col gap-4">
+                            <label className=" capitalize">Difficulty</label>
                             <Input
-                                id='difficulty'
-                                name='difficulty'
-                                type='text'
-                                placeholder='difficulty'
-                                icon='solar:bonfire-line-duotone'
+                                id="difficulty"
+                                name="difficulty"
+                                type="text"
+                                placeholder="difficulty"
+                                icon="solar:bonfire-line-duotone"
                                 value={props.values.difficulty}
                                 onBlur={props.handleBlur}
                                 onChange={props.handleChange}
-                                errors={props.errors.difficulty && props.touched.difficulty
-                                    ? props.errors.difficulty
-                                    : null}
+                                errors={
+                                    props.errors.difficulty && props.touched.difficulty
+                                        ? props.errors.difficulty
+                                        : null
+                                }
                             />
                         </div>
-                        <div className='flex flex-col gap-4'>
-                            <label className=' capitalize'>Duration</label>
+                        <div className="flex flex-col gap-4">
+                            <label className=" capitalize">Duration</label>
                             <Input
-                                id='duration'
-                                name='duration'
-                                type='text'
-                                placeholder='duration'
-                                icon='solar:clock-square-bold-duotone'
+                                id="duration"
+                                name="duration"
+                                type="text"
+                                placeholder="duration"
+                                icon="solar:clock-square-bold-duotone"
                                 value={props.values.duration}
                                 onBlur={props.handleBlur}
                                 onChange={props.handleChange}
-                                errors={props.errors.duration && props.touched.duration
-                                    ? props.errors.duration
-                                    : null}
+                                errors={
+                                    props.errors.duration && props.touched.duration
+                                        ? props.errors.duration
+                                        : null
+                                }
                             />
                         </div>
-                        <div className='flex flex-col gap-4'>
-                            <label className=' capitalize flex gap-4'>Tags
+                        <div className="flex flex-col gap-4">
+                            <label className=" flex gap-4 capitalize">
+                                Tags
                                 <label
-                                    className='btn btn-xs rounded-md bg-base-300 tooltip tooltip-right tooltip-primary'
+                                    className="btn btn-xs tooltip tooltip-right tooltip-primary rounded-md bg-base-300"
                                     data-tip="Add New Tag"
                                     onClick={openModal}
                                 >
-                                    <IconRenderer icon={'ic:baseline-plus'} className='text-primary ' width={24} height={24}></IconRenderer>
+                                    <IconRenderer
+                                        icon={'ic:baseline-plus'}
+                                        className="text-primary "
+                                        width={24}
+                                        height={24}
+                                    ></IconRenderer>
                                 </label>
                             </label>
                             <Field
@@ -188,38 +190,39 @@ const AddChallenge = ({ params }: { params: { id: number } }) => {
                             />
                         </div>
                         <div className="divider col-span-2 h-0"></div>
-                        <div className='col-span-2'>
+                        <div className="col-span-2">
                             <label>Description</label>
-                            <QuillEditor
+                            <CodeLabsQuill
+                                onChange={e => {
+                                    props.values.description = e;
+                                }}
                                 value={props.values.description}
-                                onChange={(value: string) => {
-                                    props.values.description = value
-                                }}
-                                modules={quillModules}
-                                formats={quillFormats}
-                                className='mt-4'
                             />
                         </div>
-                        <div className='col-span-2'>
+                        <div className="col-span-2">
                             <label>Resources</label>
-                            <QuillEditor
-                                value={props.values.resources}
+                            <CodeLabsQuill
                                 onChange={(value: string) => {
-                                    props.values.resources = value
+                                    props.values.resources = value;
                                 }}
-                                modules={quillModules}
-                                formats={quillFormats}
-                                className='mt-4'
+                                value={props.values.resources}
                             />
                         </div>
-                        <span className='flex col-start-2 justify-end'>
-                            <Button onClick={() => props.validateForm()} style="w-fit" color="any" label="Continue" type="submit" />
+                        <span className="col-start-2 flex justify-end">
+                            <Button
+                                onClick={() => props.validateForm()}
+                                style="w-fit"
+                                color="any"
+                                label="Continue"
+                                type="submit"
+                            />
                         </span>
                     </Form>
                 )}
             </Formik>
-            <AddTagModal tag={(tag: tag) => handleTag(tag)} />
-        </div >
+            <AddTagModal newTagCallbackFunction={(tag: tag) => handleTag(tag)} />
+            <CustomToaster />
+        </div>
     );
 };
 

@@ -1,4 +1,5 @@
 import { db } from '@/app/api/core/db/db';
+import { DIFFICULTTYPE, TAGTYPE } from '@prisma/client';
 
 class AdminRepository {
     static async findManyUser(payload: {
@@ -39,7 +40,11 @@ class AdminRepository {
                 ...args
             }
         });
-        const userCount = await db.user.count();
+        const userCount = await db.user.count({
+            where: {
+                ...args
+            }
+        });
         return {
             user: { users },
             userCount: userCount
@@ -60,7 +65,7 @@ class AdminRepository {
         };
     }
 
-    static async addTag(tag: string) {
+    static async addTag(tag: string, tagType: TAGTYPE | null) {
         const existingTag = await db.tag.findUnique({
             where: {
                 tagename: tag
@@ -73,11 +78,126 @@ class AdminRepository {
 
         const newTag = await db.tag.create({
             data: {
-                tagename: tag
+                tagename: tag,
+                tagtype: tagType ?? TAGTYPE.normal
             }
         });
 
         return newTag;
+    }
+
+    static async findManyChallenge(payload: {
+        page: number;
+        pageSize: number;
+        tagName?: string;
+        challengeType?: DIFFICULTTYPE;
+    }) {
+        const skip = (payload.page - 1) * payload.pageSize;
+
+        let where = {};
+
+        if (payload.tagName || payload.challengeType) {
+            const filter: any = {};
+
+            if (payload.tagName) {
+                filter.tagMorph = { some: { tag: { tagename: payload.tagName } } };
+            }
+
+            if (payload.challengeType) {
+                filter.difficulty = payload.challengeType;
+            }
+
+            where = { ...where, ...filter };
+        }
+
+        const challenges = await db.challenge.findMany({
+            take: payload.pageSize,
+            skip: skip,
+            where,
+            include: {
+                ChallengeParticipation: true,
+                broketag: {
+                    include: {
+                        tag: true
+                    }
+                }
+            }
+        });
+
+        const challengeCount = await db.challenge.count(where);
+
+        return {
+            challenges,
+            challengeCount
+        };
+    }
+    static async getDifficultChallenge() {
+        const typeChallenge = Object.values(DIFFICULTTYPE);
+        return typeChallenge;
+    }
+
+    static async deleteUser(payload: { userId: string }) {
+        const requestingUser = await db.user.findUnique({
+            where: {
+                id: payload.userId
+            }
+        });
+        if (!requestingUser) {
+            throw new Error('User not found');
+        }
+        await db.user.deleteMany({
+            where: {
+                id: payload.userId
+            }
+        });
+    }
+
+    static async addChallenge(payload: {
+        name: string;
+        difficulty: DIFFICULTTYPE;
+        endAt: Date;
+        startedAt: Date;
+        description: string;
+        resources: string;
+        tagNames: string[];
+    }) {
+        const newChallenge = await db.challenge.create({
+            data: {
+                name: payload.name,
+                description: payload.description,
+                resources: payload.resources,
+                endAt: payload.endAt,
+                startedAt: payload.startedAt,
+                difficulty: payload.difficulty,
+                isComplete: false
+            }
+        });
+
+        // 2. Retrieve tags based on the provided tagNames
+        const tags = await db.tag.findMany({
+            where: {
+                tagename: {
+                    in: payload.tagNames
+                }
+            }
+        });
+
+        if (tags.length !== payload.tagNames.length) {
+            throw new Error(`One or more tags not found.`);
+        }
+
+        const tagMorphCreatePromises = tags.map(tag =>
+            db.tagMorph.create({
+                data: {
+                    tagId: tag.id,
+                    challengeId: newChallenge.id
+                }
+            })
+        );
+
+        await Promise.all(tagMorphCreatePromises);
+
+        return newChallenge;
     }
 }
 

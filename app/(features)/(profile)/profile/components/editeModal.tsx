@@ -10,7 +10,6 @@ export type userInfo = {
     name?: string;
     email?: string;
     bio?: string;
-    location?: string;
     position?: string;
 };
 const EditModal = ({ userInfo }: { userInfo: userInfo }) => {
@@ -18,17 +17,15 @@ const EditModal = ({ userInfo }: { userInfo: userInfo }) => {
         name: textField,
         email: email,
         bio: textField,
-        location: textField
+        position: textField
     });
-    const onSubmit = () => {
-        console.log(values);
-    };
+    const onSubmit = () => {};
     const { values, errors, touched, handleChange, handleSubmit, handleBlur } = useFormik({
         initialValues: {
             name: userInfo.name,
             email: userInfo.email,
             bio: userInfo.bio ? userInfo.bio : '',
-            location: userInfo.location ? userInfo.location : ''
+            position: userInfo.position ? userInfo.position : ''
         },
         validationSchema: validationSchema,
         onSubmit
@@ -60,7 +57,7 @@ const EditModal = ({ userInfo }: { userInfo: userInfo }) => {
                                               ? 'solar:user-bold'
                                               : key == 'bio'
                                                 ? 'mingcute:user-info-fill'
-                                                : 'mdi:location'
+                                                : 'mdi:position'
                                     }
                                     value={values[key as keyof typeof userInfo]}
                                     onBlur={handleBlur}

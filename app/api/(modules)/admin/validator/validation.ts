@@ -27,18 +27,14 @@ class AdminValidator {
         const error = BaseValidation.validate(reqBody, {
             tag: z.string()
         });
-        console.log('sssssssssssssssssssssssssssssss');
         throw error;
-        console.log('sssssssssssssssssssssssssssssssss');
     }
 
     static futchtagValidator(reqBody: any) {
         const error = BaseValidation.validate(reqBody, {
             tag: z.string()
         });
-        console.log('sssssssssssssssssssssssssssssss');
         throw error;
-        console.log('sssssssssssssssssssssssssssssssss');
     }
 }
 

@@ -29,7 +29,7 @@ export function RegisterFirstStep({
                     return values.email;
                 });
             } catch (err: any) {
-                toast.error(err);
+                toast.error(err.message);
             }
         }
     });
