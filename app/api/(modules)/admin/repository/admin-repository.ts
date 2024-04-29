@@ -116,7 +116,7 @@ class AdminRepository {
             where,
             include: {
                 ChallengeParticipation: true,
-                broketag: {
+                TagMorph: {
                     include: {
                         tag: true
                     }
@@ -159,7 +159,7 @@ class AdminRepository {
         startedAt: Date;
         description: string;
         resources: string;
-        tagNames: string[];
+        tagId: string[];
     }) {
         const newChallenge = await db.challenge.create({
             data: {
@@ -176,13 +176,13 @@ class AdminRepository {
         // 2. Retrieve tags based on the provided tagNames
         const tags = await db.tag.findMany({
             where: {
-                tagename: {
-                    in: payload.tagNames
+                id: {
+                    in: payload.tagId
                 }
             }
         });
 
-        if (tags.length !== payload.tagNames.length) {
+        if (tags.length !== payload.tagId.length) {
             throw new Error(`One or more tags not found.`);
         }
 
