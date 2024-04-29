@@ -3,5 +3,5 @@ export interface UserProjectInput {
     description?: string;
     tagId: string[];
     jsonFile: string;
-    templateId?: string;
+    templateId?: string | null;
 }

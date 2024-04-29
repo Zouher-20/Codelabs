@@ -8,7 +8,7 @@ class UserProjectRepository {
             description?: string;
             tagId: string[];
             jsonFile: string;
-            templateId?: string;
+            templateId?: string | null;
         },
         userId: string
     ) {
@@ -41,14 +41,11 @@ class UserProjectRepository {
         );
 
         if (hasLabsPlan && countMyUserProject < userPlan.plan.FeaturePlan[0].value) {
-            // Create Tamblate if it doesn't exist
-            let tamblateId = payload.templateId;
-
             // Create Lab record and associate it with the new user project
             const newLab = await db.lab.create({
                 data: {
                     jsonFile: payload.jsonFile,
-                    tamblateId: tamblateId
+                    tamblateId: payload.templateId
                 }
             });
 
@@ -82,7 +79,7 @@ class UserProjectRepository {
                 db.tagMorph.create({
                     data: {
                         tagId: tag.id,
-                        challengeId: newUserProject.id
+                        userprojectId: newUserProject.id
                     }
                 })
             );

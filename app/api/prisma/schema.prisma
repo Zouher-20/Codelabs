@@ -149,8 +149,8 @@ model TagMorph {
   tag           Tag           @relation(fields: [tagId], references: [id], onDelete: Cascade)
   userprojectId String?
   userproject   UserProject?  @relation(fields: [userprojectId], references: [id], onDelete: Cascade)
-  challengeId   String
-  challenge     Challenge     @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  challengeId   String?
+  challenge     Challenge?     @relation(fields: [challengeId], references: [id], onDelete: Cascade)
   classId       String?
   class         ClassProject? @relation(fields: [classId], references: [id], onDelete: Cascade)
   blogId        String?
@@ -182,8 +182,8 @@ model ChallengeParticipation {
 
 model Lab {
   id                       String                  @id @default(cuid())
-  tamblateId               String?
-  tamblate                 Tamblate?               @relation(fields: [tamblateId], references: [id], onDelete: Cascade)
+  tamblateId               String?                 // Nullable tamblateId
+  tamblate                 Tamblate?               @relation(fields: [tamblateId], references: [id], onDelete: SetNull) // onDelete: SetNull
   jsonFile                 String
   userprojectId            String?
   classProjectId           String?
@@ -191,6 +191,13 @@ model Lab {
   challengeParticipation   ChallengeParticipation? @relation(fields: [challengeParticipationId], references: [id], onDelete: Cascade)
   classProject             ClassProject?           @relation(fields: [classProjectId], references: [id], onDelete: Cascade)
   userproject              UserProject?            @relation(fields: [userprojectId], references: [id], onDelete: Cascade)
+}
+
+model Tamblate {
+  id            String @id @default(cuid())
+  nameTemplate  String
+  imageTemplate String
+  labs          Lab[]  // Changed to plural `labs`
 }
 
 model UserProject {
@@ -205,12 +212,6 @@ model UserProject {
   TagMorph    TagMorph[]
 }
 
-model Tamblate {
-  id            String @id @default(cuid())
-  nameTemplate  String
-  imageTemplate String
-  Lab           Lab[]
-}
 
 model Blog {
   id       String     @id @default(cuid())

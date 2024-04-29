@@ -3,6 +3,7 @@ import * as yup from 'yup';
 
 import { MyOptionType } from '@/app/@types/select';
 import { getTag } from '@/app/api/(modules)/admin/service/action';
+import { addUserProject } from '@/app/api/(modules)/user-project/services/action';
 import Button from '@/app/components/globals/form/button';
 import Input from '@/app/components/globals/form/input';
 import Select from '@/app/components/globals/form/select/select';
@@ -53,8 +54,21 @@ const NewClassLabModal = () => {
         description: yup.string().required('Required')
     });
 
-    const onSubmit = (values: FormValues) => {
-        (document.getElementById('new-lab-modal') as HTMLDialogElement).close();
+    const onSubmit = async (values: FormValues) => {
+        try {
+            await addUserProject({
+                jsonFile: '',
+                tagId: values.tags,
+                description: values.description,
+                name: values.name,
+                templateId: null
+            });
+            (document.getElementById('new-lab-modal') as HTMLDialogElement).close();
+        } catch (error: any) {
+            console.log(error.message);
+            console.log('dasgdsgds');
+            toast.error(error.message);
+        }
     };
 
     return (
