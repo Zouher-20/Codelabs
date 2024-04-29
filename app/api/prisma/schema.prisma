@@ -181,16 +181,16 @@ model ChallengeParticipation {
 }
 
 model Lab {
-  id                       String                 @id @default(cuid())
-  tamblateId               Int                    @unique
-  tamblate                 Tamblate               @relation(fields: [tamblateId], references: [id], onDelete: Cascade)
+  id                       String                  @id @default(cuid())
+  tamblateId               String?
+  tamblate                 Tamblate?               @relation(fields: [tamblateId], references: [id], onDelete: Cascade)
   jsonFile                 String
-  userprojectId            String
-  classProjectId           String
-  challengeParticipationId String
-  challengeParticipation   ChallengeParticipation @relation(fields: [challengeParticipationId], references: [id], onDelete: Cascade)
-  classProject             ClassProject           @relation(fields: [classProjectId], references: [id], onDelete: Cascade)
-  userproject              UserProject            @relation(fields: [userprojectId], references: [id], onDelete: Cascade)
+  userprojectId            String?
+  classProjectId           String?
+  challengeParticipationId String?
+  challengeParticipation   ChallengeParticipation? @relation(fields: [challengeParticipationId], references: [id], onDelete: Cascade)
+  classProject             ClassProject?           @relation(fields: [classProjectId], references: [id], onDelete: Cascade)
+  userproject              UserProject?            @relation(fields: [userprojectId], references: [id], onDelete: Cascade)
 }
 
 model UserProject {
@@ -206,10 +206,10 @@ model UserProject {
 }
 
 model Tamblate {
-  id            Int    @id @default(autoincrement())
+  id            String @id @default(cuid())
   nameTemplate  String
   imageTemplate String
-  Lab           Lab?
+  Lab           Lab[]
 }
 
 model Blog {
