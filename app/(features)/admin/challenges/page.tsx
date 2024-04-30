@@ -5,67 +5,92 @@ import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import ChallengeTable, { challengeTableType } from './components/table/challenge-table'
 import Link from 'next/link';
+import { getChallenge } from '@/app/api/(modules)/admin/service/action';
+import toast from 'react-hot-toast';
 
 const Challenges = () => {
     const [currentPage, updateCurrentPage] = useState(0);
     const currentParams = useSearchParams();
-    var challenges: Array<challengeTableType> = [
-        {
-            id: 1,
-            name: 'Challenge',
-            difficulty: 'Hard',
-            duration: '2 weeks',
-            createdAt: 'April 22/4/204',
-            tags: [{ name: 'clc-notification-center', tagType: 'challenges' }, { name: 'clc--center', tagType: 'challenges' }],
-            isComplete: false
-        },
-        {
-            id: 2,
-            name: 'Challenge',
-            difficulty: 'Hard',
-            duration: '2 weeks',
-            createdAt: 'April 22/4/204',
-            tags: [{ name: 'clc-notification-center', tagType: 'challenges' },
-            { name: 'clc-notification-center', tagType: 'challenges' },
-            { name: 'clc-notification-center', tagType: 'challenges' },
-            ],
-            isComplete: true
-        },
-        {
-            id: 3,
-            name: 'Challenge',
-            difficulty: 'Hard',
-            duration: '2 weeks',
-            createdAt: 'April 22/4/204',
-            tags: [{ name: 'clc-notification-center', tagType: 'challenges' },],
-            isComplete: true
-        },
-        {
-            id: 4,
-            name: 'Challenge',
-            difficulty: 'Hard',
-            duration: '2 weeks',
-            tags: [{ name: 'clc-notification-center', tagType: 'challenges' }, { name: 'clc--center', tagType: 'challenges' }],
-            createdAt: 'April 22/4/204',
-            isComplete: true
-        },
-        {
-            id: 5,
-            name: 'Challenge',
-            difficulty: 'Hard',
-            duration: '2 weeks',
-            tags: [{ name: 'clc-notification-center', tagType: 'challenges' }, { name: 'clc--center', tagType: 'challenges' }],
-            createdAt: 'April 22/4/204',
-            isComplete: true
-        }
-    ];
     const [selectedChallenges, setSelectedChallenges] = useState<Array<challengeTableType>>([]);
+    const [challenges, setChallenges] = useState<Array<challengeTableType>>([]);
     const pageSize = 4;
 
+    var date = new Date()
+
+    var testData: Array<challengeTableType> = [
+        {
+            id: '1',
+            name: 'Challenge',
+            difficulty: 'Medium',
+            startedAt: date,
+            endAt: date,
+            createdAt: date,
+            isComplete: false,
+            description: null,
+            resources: null
+        },
+        {
+            id: '2',
+            name: 'Challenge',
+            difficulty: 'Medium',
+            startedAt: date,
+            endAt: date,
+            createdAt: date,
+            isComplete: false,
+            description: null,
+            resources: null
+        }, {
+            id: '3',
+            name: 'Challenge',
+            difficulty: 'Medium',
+            startedAt: date,
+            endAt: date,
+            createdAt: date,
+            isComplete: false,
+            description: null,
+            resources: null
+        }, {
+            id: '4',
+            name: 'Challenge',
+            difficulty: 'Medium',
+            startedAt: date,
+            endAt: date,
+            createdAt: date,
+            isComplete: false,
+            description: null,
+            resources: null
+        },
+        {
+            id: '5',
+            name: 'Challenge',
+            difficulty: 'Medium',
+            startedAt: date,
+            endAt: date,
+            createdAt: date,
+            isComplete: false,
+            description: null,
+            resources: null
+        },
+    ];
+
     useEffect(() => {
+        getChallenges();
         const id = Number(currentParams.get('id') ?? '1');
         onPageChange({ index: id });
     }, []);
+
+    const getChallenges = async () => {
+        try {
+            const res = await getChallenge({ page: 1, pageSize: 100 });
+            setChallenges(res.challenges);
+            setSelectedChallenges(res.challenges)
+        } catch (error: any) {
+            toast.error(error.message);
+        }
+        setChallenges(testData);
+        setSelectedChallenges(testData);
+    };
+
     const onPageChange = ({ index }: { index: number }) => {
         updateCurrentPage(index);
         setSelectedChallenges([
@@ -93,12 +118,15 @@ const Challenges = () => {
     }
     return <div className="flex flex-col gap-2 px-6">
         <Header />
-        <ChallengeTable
-            challenges={selectedChallenges}
-            pageCount={Math.ceil(challenges.length / pageSize)}
-            currentPage={currentPage}
-            onPageChange={onPageChange}
-        />
+        {challenges.length > 0 ?
+            <ChallengeTable
+                challenges={selectedChallenges}
+                pageCount={Math.ceil(challenges.length / pageSize)}
+                currentPage={currentPage}
+                onPageChange={onPageChange}
+            /> :
+            <span className='font-bold text-center'>There is no challenge to display</span>
+        }
     </div>
 }
 

@@ -1,7 +1,7 @@
-import Button from '@/app/components/globals/form/button';
 import CodeLabTable, { GenericTableModel } from './generic-tabel';
 import IconRenderer from '@/app/components/globals/icon';
 import Link from 'next/link';
+import { DIFFICULTTYPE } from '@prisma/client';
 
 export default function ClassesTable({
     currentPage,
@@ -21,18 +21,10 @@ export default function ClassesTable({
                     <IconRenderer className='text-primary' icon={"solar:medal-star-line-duotone"} width={52} height={52} />
                     <div className='flex flex-col self-center'>
                         <span  >{item.name}</span>
-                        <span >{item.createdAt}</span>
+                        <span >{item.createdAt.toString()}</span>
                     </div>
                 </th>
-                <td>{item.duration} </td>
-                <td >
-                    {item.tags.map((tag, index) => (
-                        <span key={index}>
-                            {tag.name}<br />
-                        </span>
-                    ))
-                    }
-                </td>
+                <td>{(item.startedAt?.toString())} </td>
                 <td>{item.isComplete ? "complete" : "working"}</td>
                 <td>{item.difficulty}</td>
                 <td>
@@ -56,8 +48,7 @@ export default function ClassesTable({
             <thead>
                 <tr >
                     <th>Challenges</th>
-                    <th>Duration</th>
-                    <th>Tags</th>
+                    <th>Start At</th>
                     <th>State</th>
                     <th>Difficulty</th>
                     <th></th>
@@ -68,13 +59,13 @@ export default function ClassesTable({
 }
 
 export interface challengeTableType extends GenericTableModel {
-    id: number;
+    id: string;
     name: string;
-    duration: string;
-    difficulty: string;
     isComplete: boolean;
-    createdAt: string;
-    description?: string;
-    resources?: string;
-    tags: Array<{ name: string; tagType: string }>;
+    difficulty: DIFFICULTTYPE;
+    endAt: Date | null;
+    startedAt: Date | null;
+    createdAt: Date;
+    description: string | null;
+    resources: string | null;
 }

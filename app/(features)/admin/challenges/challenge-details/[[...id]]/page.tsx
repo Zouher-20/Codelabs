@@ -1,7 +1,8 @@
 'use client';
+
 import { MyOptionType } from '@/app/@types/select';
 import { tag } from '@/app/@types/tag';
-import { getTag } from '@/app/api/(modules)/admin/service/action';
+import { getChallenge, getTag } from '@/app/api/(modules)/admin/service/action';
 import CodeLabsQuill from '@/app/components/globals/codelabs-quill';
 import Button from '@/app/components/globals/form/button';
 import Input from '@/app/components/globals/form/input';
@@ -12,16 +13,52 @@ import { textField } from '@/app/schemas';
 import { Field, Form, Formik } from 'formik';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import 'react-quill/dist/quill.snow.css'; // Import Quill styles
 import * as yup from 'yup';
 import AddTagModal from '../../components/tags-modal';
 import './styles.css';
+import { DIFFICULTTYPE } from '@prisma/client';
+import { challengeType } from '@/app/@types/challenge';
 
 const AddChallenge = ({ params }: { params: { id: number } }) => {
+
+    let date = new Date();
+    let createChallenge: boolean = false;
     const [tOptions, setTOptions] = useState<Array<MyOptionType>>([]); // Assuming initialTagOptions exists
+    const [defaultValues, setDefaultValues] = useState<challengeType>(
+        {
+            id: '',
+            name: '',
+            isComplete: false,
+            difficulty: 'Medium',
+            endAt: date,
+            startedAt: date,
+            createdAt: date,
+            description: null,
+            resources: null,
+            tags: []
+        }
+    );
+    const testData = {
+        id: '1',
+        name: 'Challenge',
+        difficulty: 'Medium',
+        startedAt: date,
+        endAt: date,
+        createdAt: date,
+        isComplete: false,
+        description: null,
+        resources: null
+    }
+
     useEffect(() => {
         getTags();
+        console.log('params.id', params.id);
+        if (params.id) {
+            getChallengesByID(params.id);
+            createChallenge = false;
+        } else createChallenge = true;
     }, []);
+
     const getTags = async () => {
         try {
             const res = await getTag({ page: 1, pageSize: 100 });
@@ -37,47 +74,24 @@ const AddChallenge = ({ params }: { params: { id: number } }) => {
             toast.error(error.message);
         }
     };
-    type FormValues = {
-        name: string;
-        difficulty: string;
-        duration: string;
-        tags: string[];
-        description: string;
-        resources: string;
+
+    const getChallengesByID = async (id: number) => {
+        try {
+            const res = await getChallenge({ page: 1, pageSize: 100 });
+            // setDefaultValues(res.challenges);
+        } catch (error: any) {
+            toast.error(error.message);
+        }
+        setDefaultValues({ ...testData, tags: ['bdkawd'] });
     };
 
-    let createChallenge: boolean = false;
-    let defaultValues: FormValues;
-    if (params.id) {
-        //get challenge details
-        createChallenge = false;
-        defaultValues = {
-            name: 'name',
-            difficulty: 'hard',
-            duration: 'duration',
-            tags: ['button', 'input'],
-            description:
-                "It's the final week of the Notifications challenge! Last week, we gave some love to the most unloveable type of notifications: error messages. Check out the Pens from week three in our #CodePenChallenge: Error Messages collection. This week, we'll gather up all kinds of notifications into one convenient place with a Notification Center 💁‍♂️ Our starter template includes a simple social notification center that opens & closes to reveal the notifications. It's not very stylish or user-friendly — yet. That's your challenge! We'll have lots of ideas and resources to help you tackle this challenge. And, as always, the template is just a starting point. Feel free to add or remove elements, change the content, or dismiss the whole thing and start over from scratch.",
-            resources:
-                "It's the final week of the Notifications challenge! Last week, we gave some love to the most unloveable type of notifications: error messages. Check out the Pens from week three in our #CodePenChallenge: Error Messages collection. This week, we'll gather up all kinds of notifications into one convenient place with a Notification Center 💁‍♂️ Our starter template includes a simple social notification center that opens & closes to reveal the notifications. It's not very stylish or user-friendly — yet. That's your challenge! We'll have lots of ideas and resources to help you tackle this challenge. And, as always, the template is just a starting point. Feel free to add or remove elements, change the content, or dismiss the whole thing and start over from scratch."
-        };
-    } else {
-        createChallenge = true;
-        defaultValues = {
-            name: '',
-            difficulty: '',
-            duration: '',
-            tags: [],
-            description: '',
-            resources: ''
-        };
-    }
     const validationSchema = yup.object().shape({
         name: textField,
         difficulty: textField,
         duration: textField
     });
-    const onSubmit = (values: FormValues) => {
+
+    const onSubmit = (values: challengeType) => {
         // if (createChallenge)add challenge
         //or Update exist challenge
     };
@@ -88,6 +102,7 @@ const AddChallenge = ({ params }: { params: { id: number } }) => {
         const newtag: MyOptionType = { value: tag.id, label: tag.tagename };
         setTOptions([...tOptions, newtag]);
     };
+
     return (
         <div className="flex flex-col gap-6 p-6">
             <h1 className="text-4xl font-bold text-white">
@@ -95,7 +110,7 @@ const AddChallenge = ({ params }: { params: { id: number } }) => {
             </h1>
             <Formik
                 initialValues={defaultValues}
-                onSubmit={(values: FormValues) => {
+                onSubmit={(values: challengeType) => {
                     onSubmit(values);
                 }}
                 validationSchema={validationSchema}

@@ -1,11 +1,12 @@
 export interface challengeType {
-    id: number;
+    id: string;
     name: string;
-    duration: string;
-    difficulty: string;
     isComplete: boolean;
-    createdAt: string;
-    description: string;
-    resources: string;
-    tags: [{ name: string; tagType: string }];
+    difficulty: DIFFICULTTYPE;
+    endAt: Date | null;
+    startedAt: Date | null;
+    createdAt: Date;
+    description: string | null;
+    resources: string | null;
+    tags: string[];
 }
