@@ -193,6 +193,13 @@ model Lab {
   userproject              UserProject?            @relation(fields: [userprojectId], references: [id], onDelete: Cascade)
 }
 
+model Tamblate {
+  id            String @id @default(cuid())
+  nameTemplate  String
+  imageTemplate String
+  Lab           Lab[]
+}
+
 model UserProject {
   id          String     @id @default(cuid())
   userId      String
