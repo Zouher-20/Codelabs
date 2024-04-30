@@ -150,7 +150,7 @@ model TagMorph {
   userprojectId String?
   userproject   UserProject?  @relation(fields: [userprojectId], references: [id], onDelete: Cascade)
   challengeId   String?
-  challenge     Challenge?     @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  challenge     Challenge?    @relation(fields: [challengeId], references: [id], onDelete: Cascade)
   classId       String?
   class         ClassProject? @relation(fields: [classId], references: [id], onDelete: Cascade)
   blogId        String?
@@ -182,7 +182,7 @@ model ChallengeParticipation {
 
 model Lab {
   id                       String                  @id @default(cuid())
-  tamblateId               String?                 // Nullable tamblateId
+  tamblateId               String? // Nullable tamblateId
   tamblate                 Tamblate?               @relation(fields: [tamblateId], references: [id], onDelete: SetNull) // onDelete: SetNull
   jsonFile                 String
   userprojectId            String?
@@ -197,7 +197,7 @@ model Tamblate {
   id            String @id @default(cuid())
   nameTemplate  String
   imageTemplate String
-  labs          Lab[]  // Changed to plural `labs`
+  Lab           Lab[]
 }
 
 model UserProject {
@@ -211,7 +211,6 @@ model UserProject {
   Lab         Lab[]
   TagMorph    TagMorph[]
 }
-
 
 model Blog {
   id       String     @id @default(cuid())

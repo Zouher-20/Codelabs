@@ -89,31 +89,35 @@ class AdminRepository {
     static async findManyChallenge(payload: {
         page: number;
         pageSize: number;
-        tagName?: string;
+        name?: string;
         challengeType?: DIFFICULTTYPE;
     }) {
         const skip = (payload.page - 1) * payload.pageSize;
 
-        let where = {};
-
-        if (payload.tagName || payload.challengeType) {
-            const filter: any = {};
-
-            if (payload.tagName) {
-                filter.tagMorph = { some: { tag: { tagename: payload.tagName } } };
-            }
-
-            if (payload.challengeType) {
-                filter.difficulty = payload.challengeType;
-            }
-
-            where = { ...where, ...filter };
+        let args = {};
+        if (payload.name && payload.challengeType) {
+            args = {
+                AND: [
+                    {
+                        name: { contains: payload.name }
+                    },
+                    { difficulty: payload.challengeType }
+                ]
+            };
+        } else if (payload.challengeType) {
+            args = {
+                difficulty: payload.challengeType
+            };
+        } else if (payload.name) {
+            args = { name: { contains: payload.name } };
         }
 
         const challenges = await db.challenge.findMany({
             take: payload.pageSize,
             skip: skip,
-            where,
+            where: {
+                ...args
+            },
             include: {
                 ChallengeParticipation: true,
                 TagMorph: {
@@ -124,7 +128,11 @@ class AdminRepository {
             }
         });
 
-        const challengeCount = await db.challenge.count(where);
+        const challengeCount = await db.challenge.count({
+            where: {
+                ...args
+            }
+        });
 
         return {
             challenges,

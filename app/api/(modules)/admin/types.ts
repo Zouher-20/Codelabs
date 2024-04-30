@@ -15,7 +15,7 @@ export interface UsersPaginationInput {
 export interface ChallengePaginationInput {
     page: number;
     pageSize: number;
-    tagName?: string;
+    name?: string;
     challengeType?: DIFFICULTTYPE;
 }
 
