@@ -1,4 +1,4 @@
-import { DIFFICULTTYPE } from '@prisma/client';
+import { DIFFICULTTYPE, NAMEPLAN } from '@prisma/client';
 
 export interface TagPaginationInput {
     page: number;
@@ -31,4 +31,13 @@ export interface ChallengeInput {
     description: string;
     resources: string;
     tagId: string[];
+}
+
+export interface PlanInput {
+    title: string;
+    subtitle: string;
+    endAt: Date;
+    price: number;
+    featurePlans: { name: NAMEPLAN; value: number }[];
+    name: string;
 }
