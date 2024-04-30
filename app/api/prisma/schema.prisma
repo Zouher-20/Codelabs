@@ -183,7 +183,6 @@ model ChallengeParticipation {
 model Lab {
   id                       String                  @id @default(cuid())
   tamblateId               String?
-  tamblate                 Tamblate?               @relation(fields: [tamblateId], references: [id], onDelete: Cascade)
   jsonFile                 String
   userprojectId            String?
   classProjectId           String?
@@ -191,6 +190,7 @@ model Lab {
   challengeParticipation   ChallengeParticipation? @relation(fields: [challengeParticipationId], references: [id], onDelete: Cascade)
   classProject             ClassProject?           @relation(fields: [classProjectId], references: [id], onDelete: Cascade)
   userproject              UserProject?            @relation(fields: [userprojectId], references: [id], onDelete: Cascade)
+  Tamblate                 Tamblate?               @relation(fields: [tamblateId], references: [id])
 }
 
 model UserProject {

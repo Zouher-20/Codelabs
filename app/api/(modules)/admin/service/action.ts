@@ -85,7 +85,7 @@ export const addChallenge = async (payload: ChallengeInput) => {
 
 export const getChallenge = async (payload: ChallengePaginationInput) => {
     try {
-        const { page, pageSize, tagName, challengeType } = payload;
+        const { page, pageSize, name, challengeType } = payload;
         const session = await getSession();
         if (session?.role === ROLE.ADMIN) {
             return AdminRepository.findManyChallenge(payload);
