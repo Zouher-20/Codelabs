@@ -14,9 +14,18 @@ import { types } from '@/app/constants/types';
 import { Field, Form, Formik } from 'formik';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import { CustomToaster } from '../toast/custom-toaster';
+interface FormValues {
+    name: string;
+    option: string;
+    description: string;
+    tags: string[];
+}
 
-const NewClassLabModal = () => {
-    const [tOptions, setTOptions] = useState<Array<MyOptionType>>([]); // Assuming initialTagOptions exists
+const NewLabModal = () => {
+    const [tOptions, setTOptions] = useState<Array<MyOptionType>>([]);
+    const [templateId, setTemplateId] = useState<string | null>(null);
+
     useEffect(() => {
         getTags();
     }, []);
@@ -35,12 +44,6 @@ const NewClassLabModal = () => {
             toast.error(error.message);
         }
     };
-    interface FormValues {
-        name: string;
-        option: string;
-        description: string;
-        tags: string[];
-    }
 
     const defaultValues: FormValues = {
         name: '',
@@ -61,12 +64,13 @@ const NewClassLabModal = () => {
                 tagId: values.tags,
                 description: values.description,
                 name: values.name,
-                templateId: null
+                templateId: templateId
             });
-            (document.getElementById('new-lab-modal') as HTMLDialogElement).close();
+            toast.success('lab created successfully');
+            setTimeout(function () {
+                (document.getElementById('new-lab-modal') as HTMLDialogElement).close();
+            }, 1000);
         } catch (error: any) {
-            console.log(error.message);
-            console.log('dasgdsgds');
             toast.error(error.message);
         }
     };
@@ -158,8 +162,9 @@ const NewClassLabModal = () => {
                     )}
                 </Formik>
             </div>
+            <CustomToaster />
         </dialog>
     );
 };
 
-export default NewClassLabModal;
+export default NewLabModal;
