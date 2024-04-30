@@ -34,10 +34,13 @@ export interface ChallengeInput {
 }
 
 export interface PlanInput {
-    title: string;
     subtitle: string;
-    endAt: Date;
+    duration: string;
     price: number;
     featurePlans: { name: NAMEPLAN; value: number }[];
     name: string;
+}
+
+export interface PlanPaginationInput {
+    planId: string;
 }

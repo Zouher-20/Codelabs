@@ -1,13 +1,30 @@
 import { ROLE } from '@prisma/client';
 import { getSession } from '../../../auth/service/actions';
-import { PlanInput } from '../../types';
+import { PlanInput, PlanPaginationInput } from '../../types';
 import AdminPlanRepository from '../repository/admin-plan-repository';
 
-export const getChallenge = async (payload: PlanInput) => {
-    const { title, subtitle, endAt, price, featurePlans } = payload;
+export const addPlan = async (payload: PlanInput) => {
+    const { subtitle, duration, price, featurePlans } = payload;
     const session = await getSession();
     if (session?.role === ROLE.ADMIN) {
         return AdminPlanRepository.createPlan(payload);
+    } else {
+        throw new Error('Access denied: You are not an admin.');
+    }
+};
+
+export const getPlan = async () => {
+    const session = await getSession();
+    if (session?.role === ROLE.ADMIN) {
+        return AdminPlanRepository.getPlan();
+    } else {
+        throw new Error('Access denied: You are not an admin.');
+    }
+};
+export const deletePlan = async (payload: PlanPaginationInput) => {
+    const session = await getSession();
+    if (session?.role === ROLE.ADMIN) {
+        return AdminPlanRepository.deletePlan(payload);
     } else {
         throw new Error('Access denied: You are not an admin.');
     }
