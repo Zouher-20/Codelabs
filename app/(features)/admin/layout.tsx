@@ -2,7 +2,6 @@
 
 import Navbar from '@/app/components/layout/navbar';
 import Sidebar from '@/app/components/layout/sidebar';
-import NewLabModel from '@/app/components/modals/new-lab';
 import { AdminSiteSidebarItem } from '@/app/constants/sidebar-item';
 
 export default function AuthPage({
@@ -18,7 +17,6 @@ export default function AuthPage({
                     {children}
                 </div>
             </Sidebar>
-            <NewLabModel />
         </div>
     );
 }
