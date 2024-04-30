@@ -3,17 +3,15 @@ import { NAMEPLAN } from '@prisma/client';
 
 class AdminPlanRepository {
     static async createPlan(payload: {
-        title: string;
         subtitle: string;
-        endAt: Date;
+        duration: string;
         price: number;
         featurePlans: { name: NAMEPLAN; value: number }[];
         name: string;
     }) {
         const newPlan = await db.plan.create({
             data: {
-                title: payload.title,
-                endAt: payload.endAt,
+                duration: payload.duration,
                 subtitle: payload.subtitle,
                 price: payload.price,
                 name: payload.name,
@@ -30,6 +28,31 @@ class AdminPlanRepository {
         });
 
         return newPlan;
+    }
+
+    static async getPlan() {
+        const myPlans = await db.plan.findMany({
+            include: {
+                FeaturePlan: true
+            }
+        });
+
+        return myPlans;
+    }
+    static async deletePlan(payload: { planId: string }) {
+        const plan = await db.plan.findUnique({
+            where: {
+                id: payload.planId
+            }
+        });
+        if (!plan) {
+            throw new Error('Plan is not found');
+        }
+        await db.plan.delete({
+            where: {
+                id: plan.id
+            }
+        });
     }
 }
 

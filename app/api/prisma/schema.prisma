@@ -92,13 +92,12 @@ model EditorConfig {
 }
 
 model Plan {
-  id        String    @id @default(cuid())
+  id        String   @id @default(cuid())
   name      String
   price     Int
-  endAt     DateTime?
+  duration  String?
   subtitle  String
-  title     String
-  createdAt DateTime  @default(now())
+  createdAt DateTime @default(now())
 
   FeaturePlan      FeaturePlan[]
   PlanSubscription PlanSubscription[]
