@@ -1,12 +1,17 @@
-'use client'
+'use client';
 
 import { planType } from '@/app/@types/plan';
 import Input from '@/app/components/globals/form/input';
 import IconRenderer from '@/app/components/globals/icon';
 import { useFormik } from 'formik';
 
-const UpdatePlan = ({ plan, planValues }: { plan: planType, planValues: (val: planType) => void }) => {
-
+const UpdatePlan = ({
+    plan,
+    planValues
+}: {
+    plan: planType;
+    planValues: (val: planType) => void;
+}) => {
     const onSubmit = () => {
         planValues(values);
         (document.getElementById('update-plan-modal') as HTMLDialogElement).close();
@@ -28,74 +33,92 @@ const UpdatePlan = ({ plan, planValues }: { plan: planType, planValues: (val: pl
     };
     return (
         <dialog id="update-plan-modal" className="modal">
-            <div className="modal-box flex flex-col gap-4 w-8/12 max-w-3xl p-8" >
+            <div className="modal-box flex w-8/12 max-w-3xl flex-col gap-4 p-8">
                 <form className="flex gap-2" method="dialog">
-                    <button ><IconRenderer fontSize={24} icon="solar:arrow-left-linear" /></button>
-                    <h3 className="font-bold text-2xl slef-center">{plan.title} Plan</h3>
+                    <button>
+                        <IconRenderer fontSize={24} icon="solar:arrow-left-linear" />
+                    </button>
+                    <h3 className="slef-center text-2xl font-bold">{plan.title} Plan</h3>
                 </form>
-                <form className='flex flex-col gap-2' onSubmit={handleSubmit}>
-                    <div className='flex gap-6'>
-                        <span className='w-full min-w-24'></span>
+                <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
+                    <div className="flex gap-6">
+                        <span className="w-full min-w-24"></span>
                         <span>Unlimited</span>
-                        <span className='min-w-72'>Number</span>
+                        <span className="min-w-72">Number</span>
                     </div>
                     {plan.features.map((feature, index) => (
-                        <div key={index} className='flex gap-12 '>
-                            <span className='w-full min-w-24'>{feature.name}</span>
+                        <div key={index} className="flex gap-12 ">
+                            <span className="w-full min-w-24">{feature.name}</span>
                             <input
                                 type="checkbox"
-                                className="checkbox checkbox-primary rounded-sm mt-1"
-                                checked={values.features[index].value < ('0' as unknown as number) ? true : false}
-                                onChange={(event) => {
+                                className="checkbox-primary checkbox mt-1 rounded-sm"
+                                checked={
+                                    values.features[index].value < ('0' as unknown as number)
+                                        ? true
+                                        : false
+                                }
+                                onChange={event => {
                                     event.target.checked
                                         ? handleChange(`features[${index}].value`)('-1')
-                                        : handleChange(`features[${index}].value`)('0')
+                                        : handleChange(`features[${index}].value`)('0');
                                 }}
                             />
-                            {feature.name != 'participate'
-                                ?
+                            {feature.name != 'participate' ? (
                                 <Input
                                     id={feature.name}
                                     name={feature.name}
-                                    type='number'
+                                    type="number"
                                     placeholder={feature.name}
                                     disabled={values.features[index].value < 0 ? true : false}
-                                    value={values.features[index].value == -1 || values.features[index].value == 0 ? values.features[index].name : values.features[index].value as unknown as string}
-                                    onChange={(event) => handleInputChange(index, event)}
-                                /> : <div className='flex w-full'></div>
-                            }
+                                    value={
+                                        values.features[index].value == -1 ||
+                                        values.features[index].value == 0
+                                            ? values.features[index].name
+                                            : (values.features[index].value as unknown as string)
+                                    }
+                                    onChange={event => handleInputChange(index, event)}
+                                />
+                            ) : (
+                                <div className="flex w-full"></div>
+                            )}
                         </div>
                     ))}
-                    <div className='flex gap-12 mt-8'>
-                        <span className='w-full min-w-24'>Price</span>
-                        <div className=' relative'>
+                    <div className="mt-8 flex gap-12">
+                        <span className="w-full min-w-24">Price</span>
+                        <div className=" relative">
                             <input
                                 type="checkbox"
-                                className="checkbox checkbox-primary rounded-sm mt-1"
+                                className="checkbox-primary checkbox mt-1 rounded-sm"
                                 checked={values.price < 0 ? true : false}
-                                onChange={(event) => {
+                                onChange={event => {
                                     event.target.checked
                                         ? handleChange(`price`)('-1')
-                                        : handleChange(`price`)('0')
+                                        : handleChange(`price`)('0');
                                 }}
                             />
-                            <span className='absolute -top-7 -left-1 '>Free</span>
+                            <span className="absolute -left-1 -top-7 ">Free</span>
                         </div>
                         <Input
-                            id='price'
-                            name='price'
-                            type='number'
-                            placeholder='price'
+                            id="price"
+                            name="price"
+                            type="number"
+                            placeholder="price"
                             disabled={values.price < 0 ? true : false}
-                            value={values.price == -1 || values.price == 0 ? 'price' : values.price as unknown as string}
-                            onChange={(event) => handleChange(`price`)(event.target.value)}
+                            value={
+                                values.price == -1 || values.price == 0
+                                    ? 'price'
+                                    : (values.price as unknown as string)
+                            }
+                            onChange={event => handleChange(`price`)(event.target.value)}
                         />
                     </div>
-                    <button type='submit' className='btn btn-primary self-end'>Update</button>
+                    <button type="submit" className="btn btn-primary self-end">
+                        Update
+                    </button>
                 </form>
             </div>
-        </dialog >
+        </dialog>
     );
-}
+};
 
 export default UpdatePlan;

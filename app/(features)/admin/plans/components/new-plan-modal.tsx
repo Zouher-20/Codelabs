@@ -1,14 +1,33 @@
 'use client';
 
 import { planType } from '@/app/@types/plan';
+import { createPlan } from '@/app/api/(modules)/admin/plan/service/action';
+import Button from '@/app/components/globals/form/button';
 import Input from '@/app/components/globals/form/input';
 import IconRenderer from '@/app/components/globals/icon';
 import { NAMEPLAN } from '@prisma/client';
 import { useFormik } from 'formik';
+import { useState } from 'react';
+import toast from 'react-hot-toast';
 
 const NewPlanModal = () => {
+    const [loading, setLoading] = useState(false);
     const onSubmit = () => {
-        (document.getElementById('new-plan-modal') as HTMLDialogElement).close();
+        setLoading(true);
+        try {
+            createPlan({
+                featurePlans: values.features,
+                title: values.title,
+                subtitle: values.subtitle,
+                price: Number(values.price),
+                endAt: Date.now()
+            });
+            (document.getElementById('new-plan-modal') as HTMLDialogElement).close();
+        } catch (error: any) {
+            toast.error(error.message);
+        } finally {
+            setLoading(false);
+        }
     };
     const { values, handleChange, handleSubmit } = useFormik<planType>({
         enableReinitialize: true,
@@ -17,9 +36,9 @@ const NewPlanModal = () => {
             subtitle: '',
             duration: '',
             price: 0,
-            features: Object.values(NAMEPLAN).map<{ name: string; value: number }>(e => {
+            features: Object.values(NAMEPLAN).map<{ name: NAMEPLAN; value: number }>(e => {
                 return {
-                    name: e.toString(),
+                    name: e,
                     value: 0
                 };
             })
@@ -41,6 +60,39 @@ const NewPlanModal = () => {
                     <h3 className="slef-center text-2xl font-bold">Add Plan</h3>
                 </form>
                 <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
+                    <div className="flex gap-12 ">
+                        <span className="w-full min-w-24">Plan name</span>
+                        <Input
+                            id="title"
+                            name="title"
+                            type="text"
+                            placeholder="name"
+                            value={values.title}
+                            onChange={handleChange}
+                        />
+                    </div>
+                    <div className="flex gap-12 ">
+                        <span className="w-full min-w-24">Plan description</span>
+                        <Input
+                            id="subtitle"
+                            name="subtitle"
+                            type="text"
+                            placeholder="description"
+                            value={values.subtitle}
+                            onChange={handleChange}
+                        />
+                    </div>
+                    <div className="flex gap-12 ">
+                        <span className="w-full min-w-24">Plan description</span>
+                        <Input
+                            id="duration"
+                            name="duration"
+                            type="number"
+                            placeholder="duration in days"
+                            value={values.duration}
+                            onChange={handleChange}
+                        />
+                    </div>
                     <div className="flex gap-6">
                         <span className="w-full min-w-24"></span>
                         <span>Unlimited</span>
@@ -124,9 +176,7 @@ const NewPlanModal = () => {
                             onChange={event => handleChange(`price`)(event.target.value)}
                         />
                     </div>
-                    <button type="submit" className="btn btn-primary self-end">
-                        Create
-                    </button>
+                    <Button label="+ New Lab" color="any" type="submit" loading={loading} />
                 </form>
             </div>
         </dialog>
