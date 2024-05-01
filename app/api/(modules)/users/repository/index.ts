@@ -22,7 +22,7 @@ class UsersRepository {
         const requestedPlan = GlobalUtils.isNullOrUndefined(planId)
             ? await db.plan.findFirst({
                   where: {
-                      price: 0
+                      price: -1
                   }
               })
             : await db.plan.findUnique({
