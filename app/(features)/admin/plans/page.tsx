@@ -1,6 +1,5 @@
 'use client';
 import { planType } from '@/app/@types/plan';
-import { getPlan } from '@/app/api/(modules)/admin/plan/service/action';
 import PlanCard from '@/app/components/cards/plan-card';
 import Button from '@/app/components/globals/form/button';
 import { useEffect, useState } from 'react';
@@ -9,9 +8,7 @@ import NewPlanModal from './components/new-plan-modal';
 const Plans = () => {
     const [plans, setCurrentPlans] = useState<Array<planType>>([]);
     useEffect(() => {}, []);
-    const getPlanFromServer = async () => {
-        re
-    };
+    const getPlanFromServer = async () => {};
     const clickHandler = (plan: planType, type: number) => {
         if (document) {
             (document.getElementById('update-plan-modal') as HTMLFormElement)?.showModal();
