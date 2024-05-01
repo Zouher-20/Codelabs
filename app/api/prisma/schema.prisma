@@ -93,7 +93,7 @@ model EditorConfig {
 
 model Plan {
   id        String   @id @default(cuid())
-  name      String
+  name      String?
   price     Int
   duration  String?
   subtitle  String

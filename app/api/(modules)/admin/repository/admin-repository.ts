@@ -6,12 +6,12 @@ class AdminRepository {
         page: number;
         pageSize: number;
         searchWord?: string;
-        date?: Date;
+        planName?: string;
     }) {
         const skip = (payload.page - 1) * payload.pageSize;
 
         let args = {};
-        if (payload.searchWord && payload.date) {
+        if (payload.searchWord && payload.planName) {
             args = {
                 AND: [
                     {
@@ -20,7 +20,15 @@ class AdminRepository {
                             { username: { contains: payload.searchWord } }
                         ]
                     },
-                    { createdAt: payload.date }
+                    {
+                        PlanSubscription: {
+                            some: {
+                                plan: {
+                                    name: payload.planName
+                                }
+                            }
+                        }
+                    }
                 ]
             };
         } else if (payload.searchWord) {
@@ -30,27 +38,48 @@ class AdminRepository {
                     { username: { contains: payload.searchWord } }
                 ]
             };
-        } else if (payload.date) {
-            args = { createdAt: payload.date };
+        } else if (payload.planName) {
+            args = {
+                PlanSubscription: {
+                    some: {
+                        plan: {
+                            name: payload.planName
+                        }
+                    }
+                }
+            };
         }
         const users = await db.user.findMany({
             take: payload.pageSize,
             skip: skip,
             where: {
                 ...args
+            },
+            include: {
+                PlanSubscription: {
+                    include: {
+                        plan: true
+                    }
+                }
             }
         });
+
         const userCount = await db.user.count({
             where: {
                 ...args
             }
         });
+
         return {
             user: { users },
             userCount: userCount
         };
     }
 
+    static async getPlanName() {
+        const plansName = await db.plan.findMany();
+        return plansName;
+    }
     static async findManyTag(payload: { page: number; pageSize: number; tagName?: string }) {
         const skip = (payload.page - 1) * payload.pageSize;
         const tags = await db.tag.findMany({
