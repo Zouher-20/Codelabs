@@ -80,8 +80,6 @@ const Plans = () => {
     };
     const onEditPlan = async (plan: planType | null) => {
         try {
-            console.log(plan?.features);
-            console.log('sdagdsgsd');
             await editPlan({
                 planId: plan?.id ?? '',
                 duration: plan?.duration ?? '',
