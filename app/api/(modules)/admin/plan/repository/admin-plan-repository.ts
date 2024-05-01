@@ -58,12 +58,12 @@ class AdminPlanRepository {
 
         const updateFeaturePlanPromises = payload.featurePlans.map(async feature => {
             const existingFeaturePlan = existingPlan.FeaturePlan.find(
-                fp => fp.name === feature.name
+                fp => fp.name === feature.name && fp.planId === payload.planId
             );
             if (existingFeaturePlan) {
                 await db.featurePlan.update({
                     where: { id: existingFeaturePlan.id },
-                    data: { value: feature.value }
+                    data: { value: Number(feature.value) }
                 });
             } else {
                 throw new Error(' Featuer Plan is not found');
@@ -77,7 +77,7 @@ class AdminPlanRepository {
             data: {
                 subtitle: payload.subtitle,
                 duration: payload.duration,
-                price: payload.price,
+                price: Number(payload.price),
                 name: payload.name
             }
         });

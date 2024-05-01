@@ -1,7 +1,10 @@
 export interface planType {
-    title: string;
+    id: string;
+    name: string;
+    price: number;
+    duration: string | null;
     subtitle: string;
-    duration: string;
-    price: number ;
-    features: Array<{ name: string; value: number }>;
+    title: string;
+    createdAt?: Date;
+    features: Array<{ name: NAMEPLAN; value: number }>;
 }
