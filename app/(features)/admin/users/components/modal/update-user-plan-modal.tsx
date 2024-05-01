@@ -1,28 +1,37 @@
 'use client';
+
 import { planType } from '@/app/@types/plan';
 import Input from '@/app/components/globals/form/input';
 import IconRenderer from '@/app/components/globals/icon';
 import { useFormik } from 'formik';
 
-const UpdateUserPlanModal = ({
+const UpdateUsePlanModal = ({
     plan,
-    planValues
+    onEditPlan
 }: {
-    plan: planType;
-    planValues?: (val: planType) => void;
+    plan: planType | null;
+    onEditPlan: (val: planType | null) => void;
 }) => {
     const onSubmit = () => {
-        if (planValues !== null) planValues!(values);
+        onEditPlan({
+            createdAt: plan?.createdAt,
+            duration: values.duration,
+            features: values.features,
+            id: plan?.id ?? '',
+            name: values.title,
+            price: values.price,
+            subtitle: values.subtitle
+        });
         (document.getElementById('update-user-plan-modal') as HTMLDialogElement).close();
     };
     const { values, handleChange, handleSubmit } = useFormik({
         enableReinitialize: true,
         initialValues: {
-            title: plan.title,
-            subtitle: plan.subtitle,
-            duration: plan.duration,
-            price: plan.price,
-            features: plan.features
+            title: plan?.name ?? '',
+            subtitle: plan?.subtitle ?? '',
+            duration: plan?.duration ?? '',
+            price: plan?.price ?? 0,
+            features: plan?.features ?? []
         },
         onSubmit
     });
@@ -37,22 +46,55 @@ const UpdateUserPlanModal = ({
                     <button>
                         <IconRenderer fontSize={24} icon="solar:arrow-left-linear" />
                     </button>
-                    <h3 className="slef-center text-2xl font-bold">{plan.title} Plan</h3>
+                    <h3 className="slef-center text-2xl font-bold">{plan?.name} Plan</h3>
                 </form>
                 <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
+                    <div className="flex gap-12 ">
+                        <span className="w-full min-w-24">Plan name</span>
+                        <Input
+                            id="title"
+                            name="title"
+                            type="text"
+                            placeholder="name"
+                            value={values.title}
+                            onChange={handleChange}
+                        />
+                    </div>
+                    <div className="flex gap-12 ">
+                        <span className="w-full min-w-24">Plan description</span>
+                        <Input
+                            id="subtitle"
+                            name="subtitle"
+                            type="text"
+                            placeholder="description"
+                            value={values.subtitle}
+                            onChange={handleChange}
+                        />
+                    </div>
+                    <div className="flex gap-12 ">
+                        <span className="w-full min-w-24">Plan description</span>
+                        <Input
+                            id="duration"
+                            name="duration"
+                            type="number"
+                            placeholder="duration in days"
+                            value={values.duration}
+                            onChange={handleChange}
+                        />
+                    </div>
                     <div className="flex gap-6">
                         <span className="w-full min-w-24"></span>
                         <span>Unlimited</span>
                         <span className="min-w-72">Number</span>
                     </div>
-                    {plan.features.map((feature, index) => (
+                    {plan?.features.map((feature, index) => (
                         <div key={index} className="flex gap-12 ">
                             <span className="w-full min-w-24">{feature.name}</span>
                             <input
                                 type="checkbox"
                                 className="checkbox-primary checkbox mt-1 rounded-sm"
                                 checked={
-                                    values.features[index].value < ('0' as unknown as number)
+                                    values.features[index]?.value < ('0' as unknown as number)
                                         ? true
                                         : false
                                 }
@@ -68,12 +110,12 @@ const UpdateUserPlanModal = ({
                                     name={feature.name}
                                     type="number"
                                     placeholder={feature.name}
-                                    disabled={values.features[index].value < 0 ? true : false}
+                                    disabled={values.features[index]?.value < 0 ? true : false}
                                     value={
-                                        values.features[index].value == -1 ||
-                                        values.features[index].value == 0
+                                        values.features[index]?.value == -1 ||
+                                        values.features[index]?.value == 0
                                             ? values.features[index].name
-                                            : (values.features[index].value as unknown as string)
+                                            : (values.features[index]?.value as unknown as string)
                                     }
                                     onChange={event => handleInputChange(index, event)}
                                 />
@@ -120,4 +162,4 @@ const UpdateUserPlanModal = ({
     );
 };
 
-export default UpdateUserPlanModal;
+export default UpdateUsePlanModal;

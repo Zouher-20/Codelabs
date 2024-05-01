@@ -1,3 +1,4 @@
+import { planType } from '@/app/@types/plan';
 import Button from '@/app/components/globals/form/button';
 import CodeLabTable, { GenericTableModel } from '../../components/table/generic-tabel';
 
@@ -22,7 +23,7 @@ export default function UsersTable({
                 <td>{item.classes} classes</td>
                 <td>{item.labs} Labs</td>
                 <td>{item.role}</td>
-                <td>{item.plan}</td>
+                <td>{item.plan.name}</td>
                 <td>
                     <Button
                         label="Delete"
@@ -61,7 +62,7 @@ export interface UserTableType extends GenericTableModel {
     id: string;
     name: string;
     email: string;
-    plan: string;
+    plan: planType;
     classes: number;
     role: string;
     labs: number;

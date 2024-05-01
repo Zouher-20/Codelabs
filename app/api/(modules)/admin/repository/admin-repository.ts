@@ -22,10 +22,8 @@ class AdminRepository {
                     },
                     {
                         PlanSubscription: {
-                            some: {
-                                plan: {
-                                    name: payload.planName
-                                }
+                            plan: {
+                                name: payload.planName
                             }
                         }
                     }
@@ -41,10 +39,8 @@ class AdminRepository {
         } else if (payload.planName) {
             args = {
                 PlanSubscription: {
-                    some: {
-                        plan: {
-                            name: payload.planName
-                        }
+                    plan: {
+                        name: payload.planName
                     }
                 }
             };

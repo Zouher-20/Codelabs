@@ -4,7 +4,6 @@ export interface planType {
     price: number;
     duration: string | null;
     subtitle: string;
-    title: string;
     createdAt?: Date;
     features: Array<{ name: NAMEPLAN; value: number }>;
 }

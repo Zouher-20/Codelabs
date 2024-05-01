@@ -6,11 +6,15 @@ import IconRenderer from '@/app/components/globals/icon';
 const UserViewHeader = ({
     onFieldChanged,
     searchWord,
-    onFieldSubmited
+    plans,
+    selectedSearchPlan,
+    onChangeSearchPlan
 }: {
     searchWord: string;
     onFieldChanged: (searchWord: string) => void;
-    onFieldSubmited: () => void;
+    onChangeSearchPlan: (searchWord: string) => void;
+    plans: Array<string>;
+    selectedSearchPlan: string;
 }) => {
     function toggleModal() {
         if (document) {
@@ -35,20 +39,27 @@ const UserViewHeader = ({
                         onChange={e => {
                             onFieldChanged(e.target.value);
                         }}
-                        onSubmit={() => onFieldSubmited()}
                     />
                 </span>
-                <div className="dropdown">
+                <div className="dropdown mr-auto">
                     <summary tabIndex={0} className=" btn flex h-[35px] min-h-[35px]">
-                        Date
+                        {selectedSearchPlan == '' ? 'Plan' : selectedSearchPlan}
                         <IconRenderer width={24} height={24} icon={'solar:alt-arrow-down-linear'} />
                     </summary>
                     <ul
                         tabIndex={0}
                         className="menu dropdown-content z-[1] ml-4 mt-2 w-52 rounded-box bg-base-100 p-2 shadow"
                     >
-                        <li></li>
-                        <li></li>
+                        <li>
+                            <a onClick={() => onChangeSearchPlan('')}>All</a>
+                        </li>
+                        {plans.map((e, index) => {
+                            return (
+                                <li key={index}>
+                                    <a onClick={() => onChangeSearchPlan(e)}>{e}</a>
+                                </li>
+                            );
+                        })}
                     </ul>
                 </div>
             </div>

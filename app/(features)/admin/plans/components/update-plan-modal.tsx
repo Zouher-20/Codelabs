@@ -20,15 +20,14 @@ const UpdatePlan = ({
             id: plan?.id ?? '',
             name: values.title,
             price: values.price,
-            subtitle: values.subtitle,
-            title: values.title
+            subtitle: values.subtitle
         });
         (document.getElementById('update-plan-modal') as HTMLDialogElement).close();
     };
     const { values, handleChange, handleSubmit } = useFormik({
         enableReinitialize: true,
         initialValues: {
-            title: plan?.title ?? '',
+            title: plan?.name ?? '',
             subtitle: plan?.subtitle ?? '',
             duration: plan?.duration ?? '',
             price: plan?.price ?? 0,
@@ -47,7 +46,7 @@ const UpdatePlan = ({
                     <button>
                         <IconRenderer fontSize={24} icon="solar:arrow-left-linear" />
                     </button>
-                    <h3 className="slef-center text-2xl font-bold">{plan?.title} Plan</h3>
+                    <h3 className="slef-center text-2xl font-bold">{plan?.name} Plan</h3>
                 </form>
                 <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
                     <div className="flex gap-12 ">
