@@ -1,10 +1,11 @@
+'use server';
+
 import { ROLE } from '@prisma/client';
 import { getSession } from '../../../auth/service/actions';
 import { PlanInput, PlanPaginationInput } from '../../types';
 import AdminPlanRepository from '../repository/admin-plan-repository';
 
 export const addPlan = async (payload: PlanInput) => {
-    const { subtitle, duration, price, featurePlans } = payload;
     const session = await getSession();
     if (session?.role === ROLE.ADMIN) {
         return AdminPlanRepository.createPlan(payload);

@@ -1,35 +1,53 @@
 'use client';
 
 import { planType } from '@/app/@types/plan';
-import { createPlan } from '@/app/api/(modules)/admin/plan/service/action';
+import { addPlan } from '@/app/api/(modules)/admin/plan/service/action';
 import Button from '@/app/components/globals/form/button';
 import Input from '@/app/components/globals/form/input';
 import IconRenderer from '@/app/components/globals/icon';
+import { CustomToaster } from '@/app/components/toast/custom-toaster';
 import { NAMEPLAN } from '@prisma/client';
 import { useFormik } from 'formik';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 
-const NewPlanModal = () => {
+const NewPlanModal = ({ onPlanAdded }: { onPlanAdded: (plan: planType) => void }) => {
     const [loading, setLoading] = useState(false);
-    const onSubmit = () => {
+    const onSubmit = async () => {
         setLoading(true);
         try {
-            createPlan({
-                featurePlans: values.features,
-                title: values.title,
+            const res = await addPlan({
+                featurePlans: values.features.map(e => {
+                    return { name: e.name, value: Number(e.value) };
+                }),
+                name: values.title,
                 subtitle: values.subtitle,
                 price: Number(values.price),
-                endAt: Date.now()
+                duration: (values.duration ?? 0).toString()
             });
-            (document.getElementById('new-plan-modal') as HTMLDialogElement).close();
+            toast.success('plan create successfully');
+            setTimeout(() => {
+                onPlanAdded({
+                    createdAt: res.createdAt,
+                    duration: res.duration,
+                    features: values.features.map(e => {
+                        return { name: e.name, value: Number(e.value) };
+                    }),
+                    id: res.id,
+                    name: res.name,
+                    price: res.price,
+                    subtitle: res.subtitle,
+                    title: res.name
+                });
+                (document.getElementById('new-plan-modal') as HTMLDialogElement).close();
+            }, 1000);
         } catch (error: any) {
             toast.error(error.message);
         } finally {
             setLoading(false);
         }
     };
-    const { values, handleChange, handleSubmit } = useFormik<planType>({
+    const { values, handleChange, handleSubmit } = useFormik({
         enableReinitialize: true,
         initialValues: {
             title: '',
@@ -179,6 +197,7 @@ const NewPlanModal = () => {
                     <Button label="+ New Lab" color="any" type="submit" loading={loading} />
                 </form>
             </div>
+            <CustomToaster />
         </dialog>
     );
 };
