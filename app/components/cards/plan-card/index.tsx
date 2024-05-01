@@ -6,17 +6,21 @@ const PlanCard = ({
     plan,
     active,
     isAdmin,
-    onClick
+    onEditClicked,
+    onDeleteClicked,
+    onMainButtonClicked
 }: {
     plan: planType;
     active?: boolean;
     isAdmin?: boolean;
-    onClick?: () => void;
+    onEditClicked?: () => void;
+    onDeleteClicked?: () => void;
+    onMainButtonClicked?: () => void;
 }) => {
     return (
         <div
             className={
-                'flex min-w-72 flex-col gap-4 rounded-3xl  border-2 border-base-100 p-5 ' +
+                'flex min-w-72 max-w-80 flex-col gap-4  rounded-3xl border-2 border-base-100 p-5' +
                 (active ? 'bg-base-100' : '')
             }
         >
@@ -26,16 +30,29 @@ const PlanCard = ({
                     fontSize={33}
                     icon="solar:link-circle-line-duotone"
                 />
-                <IconRenderer
-                    onClick={onClick}
-                    className={
-                        'self-center hover:opacity-65  ' +
-                        (isAdmin ? '' : 'hidden ') +
-                        (active ? 'text-white' : 'text-primary')
-                    }
-                    fontSize={28}
-                    icon="solar:pen-2-bold-duotone"
-                />
+                <div className="flex">
+                    {isAdmin ? (
+                        <div className="flex">
+                            <IconRenderer
+                                onClick={onDeleteClicked}
+                                className={'self-center text-red-500 hover:opacity-65'}
+                                fontSize={28}
+                                icon="solar:trash-bin-2-bold-duotone"
+                            />
+                            <div className="w-4"></div>
+                        </div>
+                    ) : null}
+                    <IconRenderer
+                        onClick={onEditClicked}
+                        className={
+                            'self-center hover:opacity-65  ' +
+                            (isAdmin ? '' : 'hidden ') +
+                            (active ? 'text-white' : 'text-primary')
+                        }
+                        fontSize={28}
+                        icon="solar:pen-2-bold-duotone"
+                    />
+                </div>
             </div>
             <div className="grid">
                 <p className="text-2xl text-white">{plan.title}</p>
@@ -49,8 +66,9 @@ const PlanCard = ({
             </div>
             <Button
                 disabled={active ? true : false}
-                label={active ? 'my plan' : 'start now'}
+                label={isAdmin ? 'Details' : active ? 'my plan' : 'start now'}
                 color={active ? 'basic' : 'outline'}
+                onClick={onMainButtonClicked}
             />
             <div className="flex flex-col gap-3">{Advantages(plan, active)}</div>
         </div>

@@ -6,7 +6,7 @@ const Button = ({ label, style, color, type, disabled, onClick, loading }: butto
     const fill = 'bg-base-100';
     const error = 'bg-red-600 opacity-70 text-white hover:opacity-100 hover:bg-red-600';
     return loading ? (
-        'loading'
+        <span className="loading loading-spinner loading-lg"></span>
     ) : (
         <button
             type={type}

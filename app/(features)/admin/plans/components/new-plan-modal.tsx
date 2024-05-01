@@ -25,22 +25,19 @@ const NewPlanModal = ({ onPlanAdded }: { onPlanAdded: (plan: planType) => void }
                 price: Number(values.price),
                 duration: (values.duration ?? 0).toString()
             });
-            toast.success('plan create successfully');
-            setTimeout(() => {
-                onPlanAdded({
-                    createdAt: res.createdAt,
-                    duration: res.duration,
-                    features: values.features.map(e => {
-                        return { name: e.name, value: Number(e.value) };
-                    }),
-                    id: res.id,
-                    name: res.name,
-                    price: res.price,
-                    subtitle: res.subtitle,
-                    title: res.name
-                });
-                (document.getElementById('new-plan-modal') as HTMLDialogElement).close();
-            }, 1000);
+            onPlanAdded({
+                createdAt: res.createdAt,
+                duration: res.duration,
+                features: values.features.map(e => {
+                    return { name: e.name, value: Number(e.value) };
+                }),
+                id: res.id,
+                name: res.name,
+                price: res.price,
+                subtitle: res.subtitle,
+                title: res.name
+            });
+            (document.getElementById('new-plan-modal') as HTMLDialogElement).close();
         } catch (error: any) {
             toast.error(error.message);
         } finally {
@@ -70,7 +67,7 @@ const NewPlanModal = ({ onPlanAdded }: { onPlanAdded: (plan: planType) => void }
     };
     return (
         <dialog id="new-plan-modal" className="modal">
-            <div className="modal-box flex w-8/12 max-w-3xl flex-col gap-4 p-8">
+            <div className="modal-box flex w-8/12 max-w-3xl flex-col gap-4 p-8 ">
                 <form className="flex gap-2" method="dialog">
                     <button>
                         <IconRenderer fontSize={24} icon="solar:arrow-left-linear" />
@@ -194,7 +191,15 @@ const NewPlanModal = ({ onPlanAdded }: { onPlanAdded: (plan: planType) => void }
                             onChange={event => handleChange(`price`)(event.target.value)}
                         />
                     </div>
-                    <Button label="+ New Lab" color="any" type="submit" loading={loading} />
+                    <div className="flex w-full justify-end">
+                        <Button
+                            label="Submit"
+                            color="any"
+                            type="submit"
+                            loading={loading}
+                            style="w-32"
+                        />
+                    </div>
                 </form>
             </div>
             <CustomToaster />
