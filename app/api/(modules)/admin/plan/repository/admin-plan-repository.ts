@@ -89,11 +89,16 @@ class AdminPlanRepository {
         const plan = await db.plan.findUnique({
             where: {
                 id: payload.planId
-            }
+            },
+            include: { PlanSubscription: true }
         });
         if (!plan) {
             throw new Error('Plan is not found');
         }
+        if (plan.PlanSubscription.length > 0) {
+            throw new Error('Cannot delete plan with active subscriptions');
+        }
+
         await db.plan.delete({
             where: {
                 id: plan.id
