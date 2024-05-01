@@ -18,15 +18,18 @@ const SelectField = ({
     useEffect(() => setIsMounted(true), []);
 
     const onChange = (option: type.ValueType<type.MyOptionType | type.MyOptionType[]>) => {
-        form.setFieldValue(
-            field.name,
-            (option as type.MyOptionType[]).map((item: type.MyOptionType) => item.value)
-        );
+        form.setFieldValue(field.name, (
+            isMulti ? (option as type.MyOptionType[]).map((item: type.MyOptionType) => item.value)
+                : (option as type.MyOptionType).value))
     };
 
     const getValue = () => {
-        if (options) return options.filter((option: any) => field.value.indexOf(option.value) >= 0);
-        else return isMulti ? [] : ('' as any);
+        if (isMulti) {
+            if (options) return options.filter((option: any) => field.value.indexOf(option.value) >= 0);
+            else return [];
+        }
+        else return options.filter((option: any) => field.value.indexOf(option.value) >= 0)
+        // else return { value: field.value, label: field.value };
     };
 
     return isMounted ? (
@@ -89,6 +92,10 @@ const selectStyle = (errors: string | null) => {
             borderColor: '#50FA7B',
             backgroundColor: '#282C2B'
         }),
+        singleValue: baseStyles => ({
+            ...baseStyles,
+            color: 'white',
+        }),
         multiValue: baseStyles => ({
             ...baseStyles,
             color: '#50FA7B',
@@ -118,10 +125,10 @@ const selectStyle = (errors: string | null) => {
             backgroundColor: state.isDisabled
                 ? undefined
                 : state.isSelected
-                  ? '#1D231C'
-                  : state.isFocused
                     ? '#1D231C'
-                    : undefined,
+                    : state.isFocused
+                        ? '#1D231C'
+                        : undefined,
             ':active': {
                 ...baseStyles[':active'],
                 backgroundColor: !state.isDisabled

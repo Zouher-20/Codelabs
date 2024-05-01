@@ -1,11 +1,11 @@
+import { DIFFICULTTYPE } from '@prisma/client';
+
 export interface challengeType {
-    id: number;
     name: string;
-    duration: string;
-    difficulty: string;
-    isComplete: boolean;
-    createdAt: string;
+    difficulty: DIFFICULTTYPE;
+    endAt: Date;
+    startedAt: Date;
     description: string;
     resources: string;
-    tags: [{ name: string; tagType: string }];
+    tagId: string[];
 }
