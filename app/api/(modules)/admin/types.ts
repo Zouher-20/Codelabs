@@ -44,3 +44,12 @@ export interface PlanInput {
 export interface PlanPaginationInput {
     planId: string;
 }
+
+export interface editPlanInput {
+    planId: string;
+    subtitle: string;
+    duration: string;
+    price: number;
+    featurePlans: { name: NAMEPLAN; value: number }[];
+    name: string;
+}

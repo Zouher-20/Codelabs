@@ -39,6 +39,52 @@ class AdminPlanRepository {
 
         return myPlans;
     }
+    static async editPlan(payload: {
+        planId: string;
+        subtitle: string;
+        duration: string;
+        price: number;
+        featurePlans: { name: NAMEPLAN; value: number }[];
+        name: string;
+    }) {
+        const existingPlan = await db.plan.findUnique({
+            where: { id: payload.planId },
+            include: { FeaturePlan: true }
+        });
+
+        if (!existingPlan) {
+            throw new Error('Plan is not found');
+        }
+
+        const updateFeaturePlanPromises = payload.featurePlans.map(async feature => {
+            const existingFeaturePlan = existingPlan.FeaturePlan.find(
+                fp => fp.name === feature.name
+            );
+            if (existingFeaturePlan) {
+                await db.featurePlan.update({
+                    where: { id: existingFeaturePlan.id },
+                    data: { value: feature.value }
+                });
+            } else {
+                throw new Error(' Featuer Plan is not found');
+            }
+        });
+
+        await Promise.all(updateFeaturePlanPromises);
+
+        const updatedPlan = await db.plan.update({
+            where: { id: payload.planId },
+            data: {
+                subtitle: payload.subtitle,
+                duration: payload.duration,
+                price: payload.price,
+                name: payload.name
+            }
+        });
+
+        return updatedPlan;
+    }
+
     static async deletePlan(payload: { planId: string }) {
         const plan = await db.plan.findUnique({
             where: {
