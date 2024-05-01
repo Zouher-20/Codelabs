@@ -1,7 +1,7 @@
 'use client';
 import { MyOptionType } from '@/app/@types/select';
 import { tag } from '@/app/@types/tag';
-import { getTag } from '@/app/api/(modules)/admin/service/action';
+import { addChallenge, getChallenge, getTag } from '@/app/api/(modules)/admin/service/action';
 import CodeLabsQuill from '@/app/components/globals/codelabs-quill';
 import Button from '@/app/components/globals/form/button';
 import Input from '@/app/components/globals/form/input';
@@ -16,13 +16,43 @@ import 'react-quill/dist/quill.snow.css'; // Import Quill styles
 import * as yup from 'yup';
 import AddTagModal from '../../components/tags-modal';
 import './styles.css';
+import { challengeType } from '@/app/@types/challenge';
+import CodeLabDatePicker from '@/app/components/globals/form/input/date-picker';
+import { useRouter } from 'next/navigation';
 
 const AddChallenge = ({ params }: { params: { id: number } }) => {
-    const [tOptions, setTOptions] = useState<Array<MyOptionType>>([]); // Assuming initialTagOptions exists
+    const router = useRouter();
+    let isUpdate: boolean = false;
+    let date = new Date();
+    const [startDate, setStartDate] = useState(new Date());
+    const [endDate, setEndDate] = useState(new Date());
+    const [tOptions, setTOptions] = useState<Array<MyOptionType>>([]);
+    const [defaultValues, setDefaultValues] = useState<challengeType>(
+        {
+            name: '',
+            difficulty: 'Medium',
+            endAt: date,
+            startedAt: date,
+            description: '',
+            resources: '',
+            tagId: []
+        }
+    );
+    let difficultyOptions = [
+        { label: 'easy', value: 'easy' },
+        { label: 'difficult', value: 'difficult' },
+        { label: 'Medium', value: 'Medium' }
+    ]
     useEffect(() => {
-        getTags();
+        gettagId();
+        console.log('params.id', params.id);
+        if (params.id) {
+            getChallengesByID(params.id);
+            isUpdate = true;
+        } else isUpdate = false;
     }, []);
-    const getTags = async () => {
+
+    const gettagId = async () => {
         try {
             const res = await getTag({ page: 1, pageSize: 100 });
             setTOptions(
@@ -37,65 +67,50 @@ const AddChallenge = ({ params }: { params: { id: number } }) => {
             toast.error(error.message);
         }
     };
-    type FormValues = {
-        name: string;
-        difficulty: string;
-        duration: string;
-        tags: string[];
-        description: string;
-        resources: string;
+    const getChallengesByID = async (id: number) => {
+        try {
+            const res = await getChallenge({ page: 1, pageSize: 100 });
+            // setDefaultValues(res.challenges);
+        } catch (error: any) {
+            toast.error(error.message);
+        }
     };
 
-    let createChallenge: boolean = false;
-    let defaultValues: FormValues;
-    if (params.id) {
-        //get challenge details
-        createChallenge = false;
-        defaultValues = {
-            name: 'name',
-            difficulty: 'hard',
-            duration: 'duration',
-            tags: ['button', 'input'],
-            description:
-                "It's the final week of the Notifications challenge! Last week, we gave some love to the most unloveable type of notifications: error messages. Check out the Pens from week three in our #CodePenChallenge: Error Messages collection. This week, we'll gather up all kinds of notifications into one convenient place with a Notification Center 💁‍♂️ Our starter template includes a simple social notification center that opens & closes to reveal the notifications. It's not very stylish or user-friendly — yet. That's your challenge! We'll have lots of ideas and resources to help you tackle this challenge. And, as always, the template is just a starting point. Feel free to add or remove elements, change the content, or dismiss the whole thing and start over from scratch.",
-            resources:
-                "It's the final week of the Notifications challenge! Last week, we gave some love to the most unloveable type of notifications: error messages. Check out the Pens from week three in our #CodePenChallenge: Error Messages collection. This week, we'll gather up all kinds of notifications into one convenient place with a Notification Center 💁‍♂️ Our starter template includes a simple social notification center that opens & closes to reveal the notifications. It's not very stylish or user-friendly — yet. That's your challenge! We'll have lots of ideas and resources to help you tackle this challenge. And, as always, the template is just a starting point. Feel free to add or remove elements, change the content, or dismiss the whole thing and start over from scratch."
-        };
-    } else {
-        createChallenge = true;
-        defaultValues = {
-            name: '',
-            difficulty: '',
-            duration: '',
-            tags: [],
-            description: '',
-            resources: ''
-        };
-    }
+    const createChallenge = async (values: challengeType) => {
+        try {
+            const res = await addChallenge(values);
+            return res;
+        } catch (error: any) {
+            toast.error(error.message);
+        }
+    };
+
     const validationSchema = yup.object().shape({
         name: textField,
-        difficulty: textField,
-        duration: textField
     });
-    const onSubmit = (values: FormValues) => {
-        // if (createChallenge)add challenge
-        //or Update exist challenge
+
+    const onSubmit = (values: challengeType) => {
+        let res = createChallenge(values)
+        if (res != undefined) router.push('/admin/challenges')
     };
+
     const openModal = () => {
         if (document) (document.getElementById('add-tag-modal') as HTMLDialogElement).showModal();
     };
+
     const handleTag = (tag: tag) => {
         const newtag: MyOptionType = { value: tag.id, label: tag.tagename };
         setTOptions([...tOptions, newtag]);
     };
+
     return (
         <div className="flex flex-col gap-6 p-6">
             <h1 className="text-4xl font-bold text-white">
-                {createChallenge ? 'Create Challenge' : 'Update Challenge'}
+                {isUpdate ? 'Create Challenge' : 'Update Challenge'}
             </h1>
             <Formik
                 initialValues={defaultValues}
-                onSubmit={(values: FormValues) => {
+                onSubmit={(values: challengeType) => {
                     onSubmit(values);
                 }}
                 validationSchema={validationSchema}
@@ -122,15 +137,19 @@ const AddChallenge = ({ params }: { params: { id: number } }) => {
                         </div>
                         <div className="flex flex-col gap-4">
                             <label className=" capitalize">Difficulty</label>
-                            <Input
-                                id="difficulty"
+                            <Field
+                                className="mb-4"
                                 name="difficulty"
-                                type="text"
-                                placeholder="difficulty"
-                                icon="solar:bonfire-line-duotone"
-                                value={props.values.difficulty}
-                                onBlur={props.handleBlur}
-                                onChange={props.handleChange}
+                                options={difficultyOptions}
+                                component={Select}
+                                placeholder="Select a difficulty..."
+                                isMulti={false}
+                                validate={(value: string) => {
+
+                                    console.log(value)
+                                    value ? 'Required' : undefined
+                                }
+                                }
                                 errors={
                                     props.errors.difficulty && props.touched.difficulty
                                         ? props.errors.difficulty
@@ -139,26 +158,24 @@ const AddChallenge = ({ params }: { params: { id: number } }) => {
                             />
                         </div>
                         <div className="flex flex-col gap-4">
-                            <label className=" capitalize">Duration</label>
-                            <Input
-                                id="duration"
-                                name="duration"
-                                type="text"
-                                placeholder="duration"
-                                icon="solar:clock-square-bold-duotone"
-                                value={props.values.duration}
-                                onBlur={props.handleBlur}
-                                onChange={props.handleChange}
-                                errors={
-                                    props.errors.duration && props.touched.duration
-                                        ? props.errors.duration
-                                        : null
-                                }
+                            <label className=" capitalize">start At</label>
+                            <CodeLabDatePicker
+                                icon="solar:sort-by-time-bold-duotone"
+                                date={startDate}
+                                onChange={e => setStartDate(e)}
+                            />
+                        </div>
+                        <div className="flex flex-col gap-4">
+                            <label className=" capitalize">end At</label>
+                            <CodeLabDatePicker
+                                icon="solar:sort-by-time-bold-duotone"
+                                date={endDate}
+                                onChange={e => setEndDate(e)}
                             />
                         </div>
                         <div className="flex flex-col gap-4">
                             <label className=" flex gap-4 capitalize">
-                                Tags
+                                tag
                                 <label
                                     className="btn btn-xs tooltip tooltip-right tooltip-primary rounded-md bg-base-300"
                                     data-tip="Add New Tag"
@@ -166,7 +183,7 @@ const AddChallenge = ({ params }: { params: { id: number } }) => {
                                 >
                                     <IconRenderer
                                         icon={'ic:baseline-plus'}
-                                        className="text-primary "
+                                        className="text-primary"
                                         width={24}
                                         height={24}
                                     ></IconRenderer>
@@ -174,17 +191,17 @@ const AddChallenge = ({ params }: { params: { id: number } }) => {
                             </label>
                             <Field
                                 className="mb-4"
-                                name="tags"
+                                name="tagId"
                                 options={tOptions}
                                 component={Select}
-                                placeholder="Select multi tags..."
+                                placeholder="Select multi tagId..."
                                 isMulti={true}
                                 validate={(value: Array<any>) =>
                                     value.length == 0 ? 'Required' : undefined
                                 }
                                 errors={
-                                    props.errors.tags && props.touched.tags
-                                        ? props.errors.tags
+                                    props.errors.tagId && props.touched.tagId
+                                        ? props.errors.tagId
                                         : null
                                 }
                             />
