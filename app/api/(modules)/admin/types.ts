@@ -53,3 +53,13 @@ export interface editPlanInput {
     featurePlans: { name: NAMEPLAN; value: number }[];
     name: string;
 }
+
+export interface deleteChallengeInput {
+    challengeId: string[];
+}
+
+export interface challengeDetailsInput {
+    page: number;
+    pageSize: number;
+    challengeId: string;
+}
