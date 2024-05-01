@@ -1,6 +1,6 @@
 'use client';
 import { planType } from '@/app/@types/plan';
-import { deletePlan, getPlan } from '@/app/api/(modules)/admin/plan/service/action';
+import { deletePlan, editPlan, getPlan } from '@/app/api/(modules)/admin/plan/service/action';
 import PlanCard from '@/app/components/cards/plan-card';
 import Button from '@/app/components/globals/form/button';
 import { ManageState } from '@/app/components/page-state/state_manager';
@@ -78,6 +78,38 @@ const Plans = () => {
             toast.error(error.message);
         }
     };
+    const onEditPlan = async (plan: planType | null) => {
+        try {
+            console.log(plan?.features);
+            console.log('sdagdsgsd');
+            await editPlan({
+                planId: plan?.id ?? '',
+                duration: plan?.duration ?? '',
+                featurePlans: plan?.features ?? [],
+                name: plan?.name ?? '',
+                price: plan?.price ?? 0,
+                subtitle: plan?.subtitle ?? ''
+            });
+            const updatedPlans = plans.map((item: planType) => {
+                if (item.id === plan?.id) {
+                    return {
+                        ...item,
+                        duration: plan?.duration ?? item.duration,
+                        features: plan?.features ?? item.features,
+                        name: plan?.name ?? item.name,
+                        price: plan?.price ?? item.price,
+                        subtitle: plan?.subtitle ?? item.subtitle
+                    };
+                }
+                return item;
+            });
+
+            setCurrentPlans(updatedPlans);
+            toast.success('Plan Edited Successfully');
+        } catch (error: any) {
+            toast.error(error.message);
+        }
+    };
     return (
         <div className="flex flex-col justify-center gap-8 p-6">
             <div className="flex w-full justify-between">
@@ -102,7 +134,7 @@ const Plans = () => {
                     loading={loading}
                 />
             </div>
-            <UpdatePlan plan={selectedPlan} planValues={(val: planType) => {}} />
+            <UpdatePlan plan={selectedPlan} onEditPlan={onEditPlan} />
             <DeletePlanModal plan={selectedPlan} onDelete={onDeletePlan} />
             <NewPlanModal onPlanAdded={onPlanAdded} />
             <CustomToaster />

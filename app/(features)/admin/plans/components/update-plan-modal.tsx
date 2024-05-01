@@ -7,13 +7,22 @@ import { useFormik } from 'formik';
 
 const UpdatePlan = ({
     plan,
-    planValues
+    onEditPlan
 }: {
     plan: planType | null;
-    planValues: (val: planType) => void;
+    onEditPlan: (val: planType | null) => void;
 }) => {
     const onSubmit = () => {
-        // planValues(values);
+        onEditPlan({
+            createdAt: plan?.createdAt,
+            duration: values.duration,
+            features: values.features,
+            id: plan?.id ?? '',
+            name: values.title,
+            price: values.price,
+            subtitle: values.subtitle,
+            title: values.title
+        });
         (document.getElementById('update-plan-modal') as HTMLDialogElement).close();
     };
     const { values, handleChange, handleSubmit } = useFormik({
