@@ -10,7 +10,7 @@ export interface UsersPaginationInput {
     page: number;
     pageSize: number;
     searchWord?: string;
-    date?: Date;
+    planName?: string;
 }
 export interface ChallengePaginationInput {
     page: number;

@@ -12,17 +12,20 @@ import {
 } from '../types';
 
 export const findUsers = async (payload: UsersPaginationInput) => {
-    try {
-        const { page, pageSize, searchWord, date } = payload;
-        const session = await getSession();
-        if (session?.role === ROLE.ADMIN) {
-            return AdminRepository.findManyUser(payload);
-        } else {
-            throw new Error('Access denied: You are not an admin.');
-        }
-    } catch (err) {
-        console.error('An error occurred:', err);
-        throw new Error('An error occurred while fetching users.');
+    const { page, pageSize, searchWord, planName } = payload;
+    const session = await getSession();
+    if (session?.role === ROLE.ADMIN) {
+        return AdminRepository.findManyUser(payload);
+    } else {
+        throw new Error('Access denied: You are not an admin.');
+    }
+};
+export const getplanName = async () => {
+    const session = await getSession();
+    if (session?.role === ROLE.ADMIN) {
+        return AdminRepository.getPlanName();
+    } else {
+        throw new Error('Access denied: You are not an admin.');
     }
 };
 export const addTag = async (tag: string) => {
