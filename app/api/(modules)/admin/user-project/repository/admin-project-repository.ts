@@ -41,8 +41,6 @@ class AdminProjectRepository {
             take: payload.pageSize,
             skip: skip,
             include: {
-                Comment: true,
-                Star: true,
                 user: true
             },
             where: {
