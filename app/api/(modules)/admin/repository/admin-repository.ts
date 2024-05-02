@@ -76,11 +76,13 @@ class AdminRepository {
         const labs = await db.userProject.count();
         const challenges = await db.challenge.count();
         const classes = await db.classProject.count();
+        const blogs = await db.blog.count();
         return {
             users,
             labs,
             challenges,
-            classes
+            classes,
+            blogs
         };
     }
     static async getPlanName() {
