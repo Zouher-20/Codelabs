@@ -2,6 +2,7 @@
 import { getlab } from '@/app/api/(modules)/admin/user-project/service/action';
 import { ManageState } from '@/app/components/page-state/state_manager';
 import { CustomToaster } from '@/app/components/toast/custom-toaster';
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import DiscoverHeader from './components/header';
@@ -9,6 +10,7 @@ import LabTable, { LabTableType } from './components/lab-table';
 import { AdminDiscoverStatisticsComponent } from './components/statistics-container';
 
 const Users = () => {
+    const params = useSearchParams();
     const pageSize = 10;
     const [labs, setLabs] = useState<Array<LabTableType>>([]);
     const [currentPage, updateCurrentPage] = useState(1);
@@ -18,20 +20,22 @@ const Users = () => {
     const [searchWord, setSearchWord] = useState('');
 
     useEffect(() => {
-        getUser({ newSearchWord: searchWord });
+        const pageNumber = Number(params.get('id'));
+        updateCurrentPage(pageNumber);
+        getUser({ newSearchWord: searchWord, page: pageNumber });
     }, []);
-    const getUser = async ({ newSearchWord }: { newSearchWord: string }) => {
+    const getUser = async ({ newSearchWord, page }: { newSearchWord: string; page: number }) => {
         setLoading(true);
         setError(null);
         try {
             const lab = await getlab({
-                page: currentPage,
+                page: page,
                 pageSize: pageSize,
                 nameLab: newSearchWord
             });
-            setTotalPageCount(10);
+            setTotalPageCount(lab.totalCount);
             setLabs(
-                lab.map(e => {
+                lab.projects.map(e => {
                     return {
                         id: e.id,
                         name: e.name,
@@ -57,7 +61,7 @@ const Users = () => {
     };
     const onPageChange = ({ index }: { index: number }) => {
         updateCurrentPage(index);
-        getUser({ newSearchWord: searchWord });
+        getUser({ newSearchWord: searchWord, page: index });
     };
     return (
         <div className="flex flex-col gap-2 p-6">
@@ -69,14 +73,14 @@ const Users = () => {
                         setSearchWord(e);
                         updateCurrentPage(1);
                         setTotalPageCount(0);
-                        getUser({ newSearchWord: e });
+                        getUser({ newSearchWord: e, page: 1 });
                     }}
                 />
                 <ManageState
                     empty={labs.length == 0}
                     error={error}
                     errorAndEmptyCallback={() => {
-                        getUser({ newSearchWord: searchWord });
+                        getUser({ newSearchWord: searchWord, page: currentPage });
                     }}
                     loading={loading}
                     loadedState={

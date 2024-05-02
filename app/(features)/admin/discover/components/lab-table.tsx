@@ -19,7 +19,11 @@ export default function LabTable({
         return (
             <tr className={`my-3 ${index % 2 == 0 ? 'bg-base-300' : ''}`} key={item.id}>
                 <td>{item.name}</td>
-                <td>{item.description}</td>
+                <td>
+                    {item.description.length > 20
+                        ? item.description.slice(0, 20) + ' ....'
+                        : item.description}
+                </td>
                 <td>{item.commentCount} Comments</td>
                 <td>{item.starCount} Stars</td>
                 <td>{item.user.name}</td>
