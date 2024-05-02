@@ -42,6 +42,14 @@ export const addTag = async (tag: string) => {
         throw new Error('An error occurred while adding a tag.');
     }
 };
+export const getStatisticsAdmin = async () => {
+    const session = await getSession();
+    if (session?.role === ROLE.ADMIN) {
+        return AdminRepository.getStatisticsAdmin();
+    } else {
+        throw new Error('Access denied: You are not an admin.');
+    }
+};
 export const getTag = async (payload: TagPaginationInput) => {
     try {
         return AdminRepository.findManyTag(payload);
