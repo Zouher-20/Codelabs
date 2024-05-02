@@ -20,7 +20,7 @@ const Users = () => {
     const [searchWord, setSearchWord] = useState('');
 
     useEffect(() => {
-        const pageNumber = Number(params.get('id'));
+        var pageNumber = Number(params.get('id') ?? '1');
         updateCurrentPage(pageNumber);
         getUser({ newSearchWord: searchWord, page: pageNumber });
     }, []);
