@@ -208,6 +208,7 @@ model UserProject {
   userId      String
   user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   name        String?
+  createdAt   DateTime   @default(now())
   description String?
   Star        Star[]
   Comment     Comment[]
