@@ -1,5 +1,5 @@
 'use client';
-import { findUsers } from '@/app/api/(modules)/admin/service/action';
+import { getlab } from '@/app/api/(modules)/admin/user-project/service/action';
 import { ManageState } from '@/app/components/page-state/state_manager';
 import { CustomToaster } from '@/app/components/toast/custom-toaster';
 import { useEffect, useState } from 'react';
@@ -24,26 +24,27 @@ const Users = () => {
         setLoading(true);
         setError(null);
         try {
-            const lab = await findUsers({
+            const lab = await getlab({
                 page: currentPage,
                 pageSize: pageSize,
-                searchWord: newSearchWord
+                nameLab: newSearchWord
             });
-            setTotalPageCount(lab.userCount);
+            setTotalPageCount(10);
             setLabs(
-                lab.user.users.map(e => {
+                lab.map(e => {
                     return {
                         id: e.id,
-                        name: e.username,
-                        commentCount: 1,
-                        description: 'description',
-                        starCount: 1,
+                        name: e.name,
+                        commentCount: e.commentCount,
+                        description: e.description,
+                        starCount: e.starCount,
                         user: {
-                            email: e.email,
-                            id: e.id,
-                            name: e.username
-                        },
-                        createdAt: e.createdAt
+                            email: e.user.email,
+                            id: e.user.id,
+                            name: e.user.username,
+                            image: e.user.userImage,
+                            role: e.user.role
+                        }
                     } as LabTableType;
                 })
             );
