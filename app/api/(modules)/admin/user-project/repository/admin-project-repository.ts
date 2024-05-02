@@ -41,8 +41,6 @@ class AdminProjectRepository {
             take: payload.pageSize,
             skip: skip,
             include: {
-                Comment: true,
-                Star: true,
                 user: true
             },
             where: {
@@ -68,7 +66,16 @@ class AdminProjectRepository {
             })
         );
 
-        return projectsWithCounts;
+        const totalCount = await db.userProject.count({
+            where: {
+                ...args
+            }
+        });
+
+        return {
+            projects: projectsWithCounts,
+            totalCount: totalCount
+        };
     }
 }
 
