@@ -10,7 +10,7 @@ import DiscoverHeader from './components/header';
 import LabTable, { LabTableType } from './components/lab-table';
 import { AdminDiscoverStatisticsComponent } from './components/statistics-container';
 
-const Users = () => {
+const Discover = () => {
     const params = useSearchParams();
     const pageSize = 10;
     const [labs, setLabs] = useState<Array<LabTableType>>([]);
@@ -146,4 +146,4 @@ const Users = () => {
     );
 };
 
-export default Users;
+export default Discover;
