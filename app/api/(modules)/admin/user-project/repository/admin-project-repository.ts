@@ -68,7 +68,16 @@ class AdminProjectRepository {
             })
         );
 
-        return projectsWithCounts;
+        const totalCount = await db.userProject.count({
+            where: {
+                ...args
+            }
+        });
+
+        return {
+            projects: projectsWithCounts,
+            totalCount: totalCount
+        };
     }
 }
 
