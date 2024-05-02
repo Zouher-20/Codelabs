@@ -1,5 +1,5 @@
 'use client';
-import { getStatisticsAdmin } from '@/app/api/(modules)/admin/service/action';
+import { getStatisticsAdmin, getTag } from '@/app/api/(modules)/admin/service/action';
 import { getlab } from '@/app/api/(modules)/admin/user-project/service/action';
 import { ManageState } from '@/app/components/page-state/state_manager';
 import { CustomToaster } from '@/app/components/toast/custom-toaster';
@@ -19,6 +19,8 @@ const Discover = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [searchWord, setSearchWord] = useState('');
+    const [serverTags, setServerTags] = useState<Array<string>>([]);
+    const [selectedSearchTag, setSelectedSearchTag] = useState<string>('');
     const [statistics, setStatistics] = useState<{
         blogs: number;
         challenges: number;
@@ -30,17 +32,39 @@ const Discover = () => {
     useEffect(() => {
         var pageNumber = Number(params.get('id') ?? '1');
         updateCurrentPage(pageNumber);
-        getUser({ newSearchWord: searchWord, page: pageNumber });
+        getLabs({ newSearchWord: searchWord, page: pageNumber, tagName: selectedSearchTag });
         getServerStatistics();
+        getTags();
     }, []);
-    const getUser = async ({ newSearchWord, page }: { newSearchWord: string; page: number }) => {
+    const getTags = async () => {
+        try {
+            const res = await getTag({ page: 1, pageSize: 100 });
+            setServerTags(
+                res.tags.map<string>(e => {
+                    return e.tagename;
+                })
+            );
+        } catch (error: any) {
+            toast.error(error.message);
+        }
+    };
+    const getLabs = async ({
+        newSearchWord,
+        page,
+        tagName
+    }: {
+        newSearchWord: string;
+        page: number;
+        tagName: string;
+    }) => {
         setLoading(true);
         setError(null);
         try {
             const lab = await getlab({
                 page: page,
                 pageSize: pageSize,
-                nameLab: newSearchWord
+                nameLab: newSearchWord,
+                tagName: tagName
             });
             setTotalPageCount(lab.totalCount);
             setLabs(
@@ -78,7 +102,13 @@ const Discover = () => {
     };
     const onPageChange = ({ index }: { index: number }) => {
         updateCurrentPage(index);
-        getUser({ newSearchWord: searchWord, page: index });
+        getLabs({ newSearchWord: searchWord, page: index, tagName: selectedSearchTag });
+    };
+    const onChangeSearchTag = (selectedTag: string) => {
+        updateCurrentPage(1);
+        setTotalPageCount(0);
+        setSelectedSearchTag(selectedTag);
+        getLabs({ newSearchWord: searchWord, tagName: selectedTag, page: 1 });
     };
     return (
         <div className="flex flex-col gap-2 p-6">
@@ -119,14 +149,21 @@ const Discover = () => {
                         setSearchWord(e);
                         updateCurrentPage(1);
                         setTotalPageCount(0);
-                        getUser({ newSearchWord: e, page: 1 });
+                        getLabs({ newSearchWord: e, page: 1, tagName: selectedSearchTag });
                     }}
+                    onChangeSearchTag={onChangeSearchTag}
+                    selectedSearchTag={selectedSearchTag}
+                    tags={serverTags}
                 />
                 <ManageState
                     empty={labs.length == 0}
                     error={error}
                     errorAndEmptyCallback={() => {
-                        getUser({ newSearchWord: searchWord, page: currentPage });
+                        getLabs({
+                            newSearchWord: searchWord,
+                            page: currentPage,
+                            tagName: selectedSearchTag
+                        });
                     }}
                     loading={loading}
                     loadedState={

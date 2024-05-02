@@ -17,8 +17,10 @@ class AdminProjectRepository {
                     },
                     {
                         TagMorph: {
-                            tag: {
-                                tagename: { contains: payload.tagName }
+                            some: {
+                                tag: {
+                                    tagename: payload.tagName
+                                }
                             }
                         }
                     }
@@ -31,8 +33,10 @@ class AdminProjectRepository {
         } else if (payload.tagName) {
             args = {
                 TagMorph: {
-                    tag: {
-                        tagename: { contains: payload.tagName }
+                    some: {
+                        tag: {
+                            tagename: payload.tagName
+                        }
                     }
                 }
             };
