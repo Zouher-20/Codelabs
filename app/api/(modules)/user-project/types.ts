@@ -12,3 +12,16 @@ export interface GetUserProjectInput {
     nameLab?: string;
     tagName?: string;
 }
+
+export interface AddCommentUserProjectLabInput {
+    userProjectId: string;
+    comment: string;
+}
+export interface GetCommentUserProjectLabInput {
+    page: number;
+    pageSize: number;
+    userProjectId: string;
+}
+export interface GetDetailsUserProjectLabInput {
+    userProjectId: string;
+}

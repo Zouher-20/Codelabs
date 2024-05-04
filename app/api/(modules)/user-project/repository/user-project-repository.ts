@@ -259,6 +259,88 @@ class UserProjectRepository {
             totalCount: totalCount
         };
     }
+
+    static async getCommentUserProjectLab(payload: {
+        page: number;
+        pageSize: number;
+        userProjectId: string;
+    }) {
+        const skip = (payload.page - 1) * payload.pageSize;
+
+        const lab = await db.userProject.findUnique({
+            where: {
+                id: payload.userProjectId
+            }
+        });
+        if (!lab) {
+            throw new Error('lab is not found');
+        }
+        const comment = await db.comment.findMany({
+            take: payload.pageSize,
+            skip: skip,
+            where: {
+                userprojectId: payload.userProjectId
+            },
+            include: {
+                user: true
+            }
+        });
+        return comment;
+    }
+
+    static async getDetailsUserProjectLab(payload: { userProjectId: string }) {
+        const lab = await db.userProject.findUnique({
+            where: {
+                id: payload.userProjectId
+            },
+            include: {
+                user: true,
+                TagMorph: {
+                    include: {
+                        tag: true
+                    }
+                },
+                Lab: true
+            }
+        });
+        if (!lab) {
+            throw new Error('lab is not found');
+        }
+
+        const commentCount = await db.comment.count({
+            where: { userprojectId: payload.userProjectId }
+        });
+
+        const starCount = await db.star.count({
+            where: { userprojectId: payload.userProjectId }
+        });
+        return {
+            lab,
+            commentCount: commentCount,
+            starCount: starCount
+        };
+    }
+    static async addCommentUserProjectLab(
+        payload: { userProjectId: string; comment: string },
+        userId: string
+    ) {
+        const lab = await db.userProject.findUnique({
+            where: {
+                id: payload.userProjectId
+            }
+        });
+        if (!lab) {
+            throw new Error('lab is not found');
+        }
+
+        await db.comment.create({
+            data: {
+                userId: userId,
+                comment: payload.comment,
+                userprojectId: payload.userProjectId
+            }
+        });
+    }
 }
 
 export default UserProjectRepository;
