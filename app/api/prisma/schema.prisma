@@ -240,14 +240,14 @@ model Star {
 }
 
 model Comment {
-  id            String      @id @default(cuid())
+  id            String       @id @default(cuid())
   comment       String
   userId        String
-  userprojectId String
-  blogId        String
-  blog          Blog        @relation(fields: [blogId], references: [id], onDelete: Cascade)
-  userproject   UserProject @relation(fields: [userprojectId], references: [id], onDelete: Cascade)
-  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userprojectId String?
+  blogId        String?
+  blog          Blog?        @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  userproject   UserProject? @relation(fields: [userprojectId], references: [id], onDelete: Cascade)
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model MemberClass {
