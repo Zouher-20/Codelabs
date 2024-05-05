@@ -2,6 +2,7 @@
 
 import Sidebar from '@/app/components/layout/sidebar';
 import { UserSiteSidebarItem } from '@/app/constants/sidebar-item';
+import React from 'react';
 
 export default function AuthPage({
     children

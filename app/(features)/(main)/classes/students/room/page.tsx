@@ -13,31 +13,31 @@ export default function ClassLabPage() {
             id: 1,
             feedback:
                 'Purus lorem dolor dolor euismod lorem facilisi amet arcu mi. Dui amet massa sociis volutpat viverra donec augue sit. Suscipit elementum eget rhoncus sed facilisis nisi. Orci facilisis at fermentum vitae pellentesque. Fermentum nisl aliquam rhoncus ipsum fames est augue.',
-            user: { id: 1, name: 'majd' }
+            user: { email: 'alshalabi211@gmai.com', id: '1', name: 'majd' }
         },
         {
             id: 2,
             feedback:
                 'Purus lorem dolor dolor euismod lorem facilisi amet arcu mi. Dui amet massa sociis volutpat viverra donec augue sit. Suscipit elementum eget rhoncus sed facilisis nisi. Orci facilisis at fermentum vitae pellentesque. Fermentum nisl aliquam rhoncus ipsum fames est augue.',
-            user: { id: 1, name: 'majd' }
+            user: { email: 'alshalabi211@gmai.com', id: '1', name: 'majd' }
         },
         {
             id: 3,
             feedback:
                 'Purus lorem dolor dolor euismod lorem facilisi amet arcu mi. Dui amet massa sociis volutpat viverra donec augue sit. Suscipit elementum eget rhoncus sed facilisis nisi. Orci facilisis at fermentum vitae pellentesque. Fermentum nisl aliquam rhoncus ipsum fames est augue.',
-            user: { id: 2, name: 'majd2' }
+            user: { email: 'alshalabi211@gmai.com', id: '2', name: 'majd2' }
         },
         {
             id: 4,
             feedback:
                 'Purus lorem dolor dolor euismod lorem facilisi amet arcu mi. Dui amet massa sociis volutpat viverra donec augue sit. Suscipit elementum eget rhoncus sed facilisis nisi. Orci facilisis at fermentum vitae pellentesque. Fermentum nisl aliquam rhoncus ipsum fames est augue.',
-            user: { id: 1, name: 'majd' }
+            user: { email: 'alshalabi211@gmai.com', id: '1', name: 'majd' }
         },
         {
             id: 5,
             feedback:
                 'Purus lorem dolor dolor euismod lorem facilisi amet arcu mi. Dui amet massa sociis volutpat viverra donec augue sit. Suscipit elementum eget rhoncus sed facilisis nisi. Orci facilisis at fermentum vitae pellentesque. Fermentum nisl aliquam rhoncus ipsum fames est augue.',
-            user: { id: 3, name: 'majd3' }
+            user: { email: 'alshalabi211@gmai.com', id: '3', name: 'majd3' }
         }
     ];
     const onFeedbackClicked = () => {
@@ -63,13 +63,13 @@ export default function ClassLabPage() {
                         vehicula id at interdum."
                 className="room name"
                 classType="type"
-                teacher={{ name: 'majd', id: 1 }}
+                teacher={{ name: 'majd', id: '1', email: 'alshalabi211@gmai.com' }}
             />
             <div className="flex gap-2 max-md:flex-wrap">
                 <FeedbackComponent feedbacks={feedbacks} onClick={onFeedbackClicked} />
                 <CloneLabComponent buttonText="Clone To Start Coding" onButtonClick={() => {}} />
             </div>
-            <FeedbackModal />
+            <FeedbackModal comments={[]} />
         </div>
     );
 }

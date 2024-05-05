@@ -30,7 +30,7 @@ const Discover = () => {
     } | null>(null);
 
     useEffect(() => {
-        var pageNumber = Number(params.get('id') ?? '1');
+        const pageNumber = Number(params.get('id') ?? '1');
         updateCurrentPage(pageNumber);
         getLabs({ newSearchWord: searchWord, page: pageNumber, tagName: selectedSearchTag });
         getServerStatistics();
