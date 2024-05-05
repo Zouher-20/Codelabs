@@ -221,7 +221,6 @@ model Blog {
   userId   String
   user     User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   contant  String?
-  imageUrl String?
   status   Boolean    @default(false)
   title    String?
   Star     Star[]

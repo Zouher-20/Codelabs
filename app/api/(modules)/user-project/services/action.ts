@@ -1,5 +1,6 @@
 'use server';
 
+import { deleteMyCommentUserProjectLabInput } from '@/app/api/(modules)/admin/types';
 import { getSession } from '../../auth/service/actions';
 import UserProjectRepository from '../repository/user-project-repository';
 import {
@@ -34,4 +35,12 @@ export const getDetailsUserProjectLab = async (payload: GetDetailsUserProjectLab
 };
 export const getCommentUserProjectLab = async (payload: GetCommentUserProjectLabInput) => {
     return UserProjectRepository.getCommentUserProjectLab(payload);
+};
+
+export const deleteMyCommentUserProjectLab = async (
+    payload: deleteMyCommentUserProjectLabInput
+) => {
+    const session = await getSession();
+    const userId = session?.id;
+    return UserProjectRepository.deleteMyCommentUserProjectLab(payload, userId);
 };
