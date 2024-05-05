@@ -1,5 +1,5 @@
 import { InteractionType } from '@/app/@types/Interaction';
-import IconRenderer from '../icon';
+import Interaction from '@/app/components/globals/lab/interaction';
 import Lab from './lab';
 
 const interactions = [
@@ -12,7 +12,7 @@ const interactions = [
 const InteractionsLab = ({ react }: { react: Array<number> }) => {
     return (
         <Lab>
-            <div className="absolute bottom-4 z-20 flex flex-wrap gap-1 px-2 text-xs  w-full">
+            <div className="absolute bottom-4 z-20 flex w-full flex-wrap gap-1 px-2  text-xs">
                 {interactions.map((interaction: InteractionType, index: number) =>
                     Interaction({
                         icon: interaction.icon,
@@ -27,12 +27,3 @@ const InteractionsLab = ({ react }: { react: Array<number> }) => {
 };
 
 export default InteractionsLab;
-
-function Interaction({ icon, number, style, key }: InteractionType) {
-    return (
-        <section key={key} className="flex gap-1 rounded-md bg-base-100 p-2">
-            <IconRenderer className={'self-center ' + style} fontSize={16} icon={icon} />
-            <p>{number}</p>
-        </section>
-    );
-}

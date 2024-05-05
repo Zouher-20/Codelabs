@@ -1,11 +1,15 @@
+import { LabTableType } from '@/app/(features)/admin/discover/components/lab-table';
 import LabCard from '@/app/components/globals/lab/lab-card';
 import { Icon } from '@iconify/react/dist/iconify.js';
+
 export default function LabListComponent({
     labs,
-    title
+    title,
+    onLabClicked
 }: {
-    labs: Array<LabModel>;
+    labs: Array<LabTableType>;
     title: string;
+    onLabClicked: (lab: LabTableType) => void;
 }) {
     return (
         <div>
@@ -21,8 +25,8 @@ export default function LabListComponent({
             <div className="carousel relative w-full rounded-box">
                 <div className="carousel-item">
                     {labs.map((e, index) => (
-                        <div className="px-1" key={e.title + `${index}`}>
-                            <LabCard title={e.title ?? ''} />
+                        <div className="px-1" key={e.name + `${index}`}>
+                            <LabCard lab={e} onLabClicked={onLabClicked} />
                         </div>
                     ))}
                 </div>
