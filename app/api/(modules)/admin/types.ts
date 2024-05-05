@@ -70,3 +70,6 @@ export interface ProjectInput {
     nameLab?: string;
     tagName?: string;
 }
+export interface deleteMyCommentUserProjectLabInput {
+    commentId: string;
+}

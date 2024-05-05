@@ -92,6 +92,23 @@ class UserProjectRepository {
         }
     }
 
+    static async deleteMyCommentUserProjectLab(
+        payload: {
+            commentId: string;
+        },
+        userId: string
+    ) {
+        const myComment = await db.comment.findUnique({
+            where: { id: payload.commentId, userId: userId }
+        });
+        if (!myComment) {
+            throw new Error('your comment was deleted or this comment its not yours');
+        }
+        await db.comment.delete({
+            where: { id: payload.commentId }
+        });
+    }
+
     static async getUserProjectsLab(payload: {
         page: number;
         pageSize: number;
@@ -285,7 +302,15 @@ class UserProjectRepository {
                 user: true
             }
         });
-        return comment;
+        const countOfComment = await db.comment.count({
+            where: {
+                userprojectId: payload.userProjectId
+            }
+        });
+        return {
+            comment,
+            countOfComment: countOfComment
+        };
     }
 
     static async getDetailsUserProjectLab(payload: { userProjectId: string }) {
