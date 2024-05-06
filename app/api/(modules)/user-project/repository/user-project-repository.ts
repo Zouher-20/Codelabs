@@ -170,12 +170,15 @@ class UserProjectRepository {
         });
     }
 
-    static async getUserProjectsLab(payload: {
-        page: number;
-        pageSize: number;
-        nameLab?: string;
-        tagName?: string;
-    }) {
+    static async getUserProjectsLab(
+        payload: {
+            page: number;
+            pageSize: number;
+            nameLab?: string;
+            tagName?: string;
+        },
+        userId: string
+    ) {
         const skip = (payload.page - 1) * payload.pageSize;
         let args = {};
 
@@ -207,16 +210,21 @@ class UserProjectRepository {
                 }
             };
         }
+
         const myProjects = await db.userProject.findMany({
             take: payload.pageSize,
             skip: skip,
             orderBy: { createdAt: 'desc' },
             include: {
-                user: true
+                user: true,
+                Lab: true,
+                TagMorph: {
+                    include: {
+                        tag: true
+                    }
+                }
             },
-            where: {
-                ...args
-            }
+            where: { ...args }
         });
 
         const projectsWithCounts = await Promise.all(
@@ -229,18 +237,33 @@ class UserProjectRepository {
                     where: { userprojectId: project.id }
                 });
 
+                const starredProjectsIds = (
+                    await db.star.findMany({
+                        where: {
+                            userId: userId,
+                            userprojectId: {
+                                in: myProjects.map(project => project.id)
+                            }
+                        },
+                        select: {
+                            userprojectId: true
+                        }
+                    })
+                ).map(star => star.userprojectId);
+
+                const hasStarred = starredProjectsIds.includes(project.id);
+
                 return {
                     ...project,
                     commentCount,
-                    starCount
+                    starCount,
+                    hasStarred
                 };
             })
         );
 
         const totalCount = await db.userProject.count({
-            where: {
-                ...args
-            }
+            where: { ...args }
         });
 
         return {
@@ -248,12 +271,16 @@ class UserProjectRepository {
             totalCount: totalCount
         };
     }
-    static async getTrendingUserProjectsLab(payload: {
-        page: number;
-        pageSize: number;
-        nameLab?: string;
-        tagName?: string;
-    }) {
+
+    static async getTrendingUserProjectsLab(
+        payload: {
+            page: number;
+            pageSize: number;
+            nameLab?: string;
+            tagName?: string;
+        },
+        userId: string
+    ) {
         const skip = (payload.page - 1) * payload.pageSize;
         let args = {};
 
@@ -285,6 +312,7 @@ class UserProjectRepository {
                 }
             };
         }
+
         const myProjects = await db.userProject.findMany({
             take: payload.pageSize,
             skip: skip,
@@ -301,11 +329,15 @@ class UserProjectRepository {
                 }
             ],
             include: {
-                user: true
+                user: true,
+                Lab: true,
+                TagMorph: {
+                    include: {
+                        tag: true
+                    }
+                }
             },
-            where: {
-                ...args
-            }
+            where: { ...args }
         });
 
         const projectsWithCounts = await Promise.all(
@@ -318,18 +350,33 @@ class UserProjectRepository {
                     where: { userprojectId: project.id }
                 });
 
+                const starredProjectsIds = (
+                    await db.star.findMany({
+                        where: {
+                            userId: userId,
+                            userprojectId: {
+                                in: myProjects.map(project => project.id)
+                            }
+                        },
+                        select: {
+                            userprojectId: true
+                        }
+                    })
+                ).map(star => star.userprojectId);
+
+                const hasStarred = starredProjectsIds.includes(project.id);
+
                 return {
                     ...project,
                     commentCount,
-                    starCount
+                    starCount,
+                    hasStarred
                 };
             })
         );
 
         const totalCount = await db.userProject.count({
-            where: {
-                ...args
-            }
+            where: { ...args }
         });
 
         return {

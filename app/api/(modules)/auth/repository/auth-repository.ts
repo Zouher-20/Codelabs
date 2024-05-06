@@ -37,6 +37,7 @@ class AuthRepository {
     //         });
     //     }
     // }
+
     static async deleteMyAccount(payload: { password: string }, userId: string) {
         const requestingUser = await db.user.findUnique({
             where: {
