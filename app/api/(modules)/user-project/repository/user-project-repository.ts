@@ -421,7 +421,7 @@ class UserProjectRepository {
         };
     }
 
-    static async getDetailsUserProjectLab(payload: { userProjectId: string }) {
+    static async getDetailsUserProjectLab(payload: { userProjectId: string }, userId: string) {
         const lab = await db.userProject.findUnique({
             where: {
                 id: payload.userProjectId
@@ -436,8 +436,9 @@ class UserProjectRepository {
                 Lab: true
             }
         });
+
         if (!lab) {
-            throw new Error('lab is not found');
+            throw new Error('Lab is not found');
         }
 
         const commentCount = await db.comment.count({
@@ -447,12 +448,22 @@ class UserProjectRepository {
         const starCount = await db.star.count({
             where: { userprojectId: payload.userProjectId }
         });
+
+        const isStarred = await db.star.findMany({
+            where: {
+                userId: userId,
+                userprojectId: payload.userProjectId
+            }
+        });
+
         return {
             lab,
-            commentCount: commentCount,
-            starCount: starCount
+            commentCount,
+            starCount,
+            isStarred: !!isStarred
         };
     }
+
     static async addCommentUserProjectLab(
         payload: { userProjectId: string; comment: string },
         userId: string
