@@ -38,7 +38,9 @@ export const addCommentUserProjectLab = async (payload: AddCommentUserProjectLab
 };
 
 export const getDetailsUserProjectLab = async (payload: GetDetailsUserProjectLabInput) => {
-    return UserProjectRepository.getDetailsUserProjectLab(payload);
+    const session = await getSession();
+    const userId = session?.id;
+    return UserProjectRepository.getDetailsUserProjectLab(payload, userId);
 };
 export const getCommentUserProjectLab = async (payload: GetCommentUserProjectLabInput) => {
     return UserProjectRepository.getCommentUserProjectLab(payload);
