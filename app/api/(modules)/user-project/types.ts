@@ -25,3 +25,16 @@ export interface GetCommentUserProjectLabInput {
 export interface GetDetailsUserProjectLabInput {
     userProjectId: string;
 }
+
+export interface AddAndDeleteStarUserProjectInput {
+    userProjectId: string;
+    action: boolean;
+}
+export interface DeleteMyUserProjectInput {
+    userProjectId: string;
+}
+
+export interface userProjectStaredInput {
+    page: number;
+    pageSize: number;
+}
