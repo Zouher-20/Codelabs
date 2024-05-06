@@ -1,7 +1,7 @@
 import { userType } from './user';
 
 export interface FeedbackType {
-    id: number;
+    id: string;
     feedback: string;
     user: userType;
 }

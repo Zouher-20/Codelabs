@@ -32,10 +32,9 @@ const NewPlanModal = ({ onPlanAdded }: { onPlanAdded: (plan: planType) => void }
                     return { name: e.name, value: Number(e.value) };
                 }),
                 id: res.id,
-                name: res.name,
+                name: res.name ?? '',
                 price: res.price,
-                subtitle: res.subtitle,
-                title: res.name
+                subtitle: res.subtitle
             });
             (document.getElementById('new-plan-modal') as HTMLDialogElement).close();
         } catch (error: any) {

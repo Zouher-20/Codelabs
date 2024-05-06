@@ -1,23 +1,102 @@
 'use client';
 
+import { LabTableType } from '@/app/(features)/admin/discover/components/lab-table';
+import { getlab } from '@/app/api/(modules)/admin/user-project/service/action';
+import { getTrendingUserProjectsLab } from '@/app/api/(modules)/user-project/services/action';
+import { ManageState } from '@/app/components/page-state/state_manager';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import HomeButtons from './components/home-buttons';
-import LabListComponent, { LabModel } from './components/lab-list-component';
+import LabListComponent from './components/lab-list-component';
 
 export default function DiscoverPage() {
-    var labs: Array<LabModel> = [
-        { title: 'A new code Lab Sidebar' },
-        { title: 'a unique appbar' },
-        { title: 'button' },
-        { title: 'text' },
-        { title: 'new font style' },
-        { title: 'new font style2' },
-        { title: 'new font style3' }
-    ];
+    const pageSize = 10;
+    const [trendingLabs, setTrendingLabs] = useState<Array<LabTableType>>([]);
+    const [labs, setLabs] = useState<Array<LabTableType>>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const route = useRouter();
+    useEffect(() => {
+        fetchDataFromServer();
+    }, []);
+    const fetchDataFromServer = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            await getLabs();
+            await getServerTrending();
+        } catch (e: any) {
+            setError(e.message);
+            toast.error(e.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+    const getServerTrending = async () => {
+        const lab = await getTrendingUserProjectsLab({ page: 1, pageSize: pageSize });
+        setTrendingLabs(
+            lab.projects.map(e => {
+                return {
+                    id: e.id,
+                    name: e.name,
+                    commentCount: e.commentCount,
+                    description: e.description,
+                    starCount: e.starCount,
+                    user: {
+                        email: e.user.email,
+                        id: e.user.id,
+                        name: e.user.username,
+                        image: e.user.userImage,
+                        role: e.user.role
+                    }
+                } as LabTableType;
+            })
+        );
+    };
+    const getLabs = async () => {
+        const lab = await getlab({
+            pageSize: pageSize,
+            page: 1
+        });
+        setLabs(
+            lab.projects.map(e => {
+                return {
+                    id: e.id,
+                    name: e.name,
+                    commentCount: e.commentCount,
+                    description: e.description,
+                    starCount: e.starCount,
+                    user: {
+                        email: e.user.email,
+                        id: e.user.id,
+                        name: e.user.username,
+                        image: e.user.userImage,
+                        role: e.user.role
+                    }
+                } as LabTableType;
+            })
+        );
+    };
+
+    const onLabClicked = (lab: LabTableType) => {
+        const params = {
+            id: lab.id
+        };
+        const queryString = new URLSearchParams(params).toString();
+        route.push('/discover/details' + '?' + queryString);
+    };
     return (
         <div className="px-3 py-5">
             <div className="flex gap-5 max-md:flex-col">
                 <HomeButtons
-                    onButtonClick={() => {}}
+                    onButtonClick={() => {
+                        if (document) {
+                            (
+                                document.getElementById('new-lab-modal') as HTMLFormElement
+                            )?.showModal();
+                        }
+                    }}
                     color="primary"
                     title="Create new lab"
                     icon="solar:test-tube-minimalistic-bold-duotone"
@@ -32,9 +111,33 @@ export default function DiscoverPage() {
                 ></HomeButtons>
             </div>
             <div className="h-3"></div>
-            <LabListComponent labs={labs} title="Recently worked on"></LabListComponent>
-            <div className="h-3"></div>
-            <LabListComponent labs={labs} title="Trending"></LabListComponent>
+            <ManageState
+                loading={loading}
+                error={error}
+                errorAndEmptyCallback={() => {
+                    fetchDataFromServer();
+                }}
+                loadedState={
+                    <>
+                        <LabListComponent
+                            labs={labs}
+                            title="Recently worked on"
+                            onLabClicked={e => {
+                                onLabClicked(e);
+                            }}
+                        />
+                        <div className="h-3" />
+                        <LabListComponent
+                            labs={trendingLabs}
+                            title="Trending"
+                            onLabClicked={e => {
+                                onLabClicked(e);
+                            }}
+                        />
+                    </>
+                }
+                empty={labs.length == 0}
+            />
         </div>
     );
 }

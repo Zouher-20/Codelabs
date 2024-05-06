@@ -10,11 +10,11 @@ import StudentList from '../components/student_list';
 
 export default function ClassLabPage() {
     var students: Array<userType> = [
-        { id: '1', name: 'majd1' },
-        { id: '2', name: 'majd2' },
-        { id: '3', name: 'majd3' },
-        { id: '4', name: 'majd4' },
-        { id: '5', name: 'majd5' }
+        { id: '1', email: 'alshalabi211@gmail.com', name: 'majd1' },
+        { id: '2', email: 'alshalabi211@gmail.com', name: 'majd2' },
+        { id: '3', email: 'alshalabi211@gmail.com', name: 'majd3' },
+        { id: '4', email: 'alshalabi211@gmail.com', name: 'majd4' },
+        { id: '5', email: 'alshalabi211@gmail.com', name: 'majd5' }
     ];
     var labs: Array<LabModel> = [
         { title: 'majd', id: 1 },

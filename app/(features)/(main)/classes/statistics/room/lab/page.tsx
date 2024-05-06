@@ -7,36 +7,36 @@ import { FeedbackComponent } from '../../../students/room/components/feed-back';
 import FeedbackModal from '../../components/feedback-modal';
 
 export default function ClassLabPage() {
-    var feedbacks: Array<FeedbackType> = [
+    const feedbacks: Array<FeedbackType> = [
         {
             id: 1,
             feedback:
                 'Purus lorem dolor dolor euismod lorem facilisi amet arcu mi. Dui amet massa sociis volutpat viverra donec augue sit. Suscipit elementum eget rhoncus sed facilisis nisi. Orci facilisis at fermentum vitae pellentesque. Fermentum nisl aliquam rhoncus ipsum fames est augue.',
-            user: { id: 1, name: 'majd' }
+            user: { id: '1', name: 'majd', email: 'alshalabi211@gmail.com' }
         },
         {
             id: 2,
             feedback:
                 'Purus lorem dolor dolor euismod lorem facilisi amet arcu mi. Dui amet massa sociis volutpat viverra donec augue sit. Suscipit elementum eget rhoncus sed facilisis nisi. Orci facilisis at fermentum vitae pellentesque. Fermentum nisl aliquam rhoncus ipsum fames est augue.',
-            user: { id: 1, name: 'majd' }
+            user: { id: '2', name: 'majd', email: 'alshalabi211@gmail.com' }
         },
         {
             id: 3,
             feedback:
                 'Purus lorem dolor dolor euismod lorem facilisi amet arcu mi. Dui amet massa sociis volutpat viverra donec augue sit. Suscipit elementum eget rhoncus sed facilisis nisi. Orci facilisis at fermentum vitae pellentesque. Fermentum nisl aliquam rhoncus ipsum fames est augue.',
-            user: { id: 2, name: 'majd2' }
+            user: { id: '3', name: 'majd2', email: 'alshalabi211@gmail.com' }
         },
         {
             id: 4,
             feedback:
                 'Purus lorem dolor dolor euismod lorem facilisi amet arcu mi. Dui amet massa sociis volutpat viverra donec augue sit. Suscipit elementum eget rhoncus sed facilisis nisi. Orci facilisis at fermentum vitae pellentesque. Fermentum nisl aliquam rhoncus ipsum fames est augue.',
-            user: { id: 1, name: 'majd' }
+            user: { id: '4', name: 'majd', email: 'alshalabi211@gmail.com' }
         },
         {
             id: 5,
             feedback:
                 'Purus lorem dolor dolor euismod lorem facilisi amet arcu mi. Dui amet massa sociis volutpat viverra donec augue sit. Suscipit elementum eget rhoncus sed facilisis nisi. Orci facilisis at fermentum vitae pellentesque. Fermentum nisl aliquam rhoncus ipsum fames est augue.',
-            user: { id: 3, name: 'majd3' }
+            user: { id: '5', name: 'majd3', email: 'alshalabi211@gmail.com' }
         }
     ];
 
@@ -65,7 +65,7 @@ export default function ClassLabPage() {
                 <FeedbackComponent feedbacks={feedbacks} onClick={onFeedbackClicked} />
                 <CloneLabComponent buttonText="view lab" onButtonClick={handleLabClick} />
             </div>
-            <FeedbackModal />
+            <FeedbackModal comments={[]} />
         </div>
     );
 }

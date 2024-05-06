@@ -14,7 +14,7 @@ export default function HomeButtons({
     icon: string;
     onButtonClick: MouseEventHandler<HTMLDivElement>;
 }) {
-    var borderColor = `border-${color}`;
+    const borderColor = `border-${color}`;
     return (
         <div
             onClick={onButtonClick}
