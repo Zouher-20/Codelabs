@@ -21,11 +21,15 @@ export const addUserProject = async (payload: UserProjectInput) => {
 };
 
 export const getUserProjectsLab = async (payload: GetUserProjectInput) => {
-    return UserProjectRepository.getUserProjectsLab(payload);
+    const session = await getSession();
+    const userId = session?.id;
+    return UserProjectRepository.getUserProjectsLab(payload, userId);
 };
 
 export const getTrendingUserProjectsLab = async (payload: GetUserProjectInput) => {
-    return UserProjectRepository.getTrendingUserProjectsLab(payload);
+    const session = await getSession();
+    const userId = session?.id;
+    return UserProjectRepository.getTrendingUserProjectsLab(payload, userId);
 };
 export const addCommentUserProjectLab = async (payload: AddCommentUserProjectLabInput) => {
     const session = await getSession();
