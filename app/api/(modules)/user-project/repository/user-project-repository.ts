@@ -92,6 +92,67 @@ class UserProjectRepository {
         }
     }
 
+    static async getStarredUserProjects(
+        payload: { page: number; pageSize: number },
+        userId: string
+    ) {
+        const skip = (payload.page - 1) * payload.pageSize;
+
+        const starredUserProjects = await db.userProject.findMany({
+            where: {
+                Star: {
+                    some: {
+                        userId: userId
+                    }
+                }
+            },
+            include: {
+                user: true
+            },
+            skip: skip,
+            take: payload.pageSize
+        });
+
+        const starredUserProjectCount = await db.userProject.count({
+            where: {
+                Star: {
+                    some: {
+                        userId: userId
+                    }
+                }
+            }
+        });
+
+        const starCountsPerProject = await Promise.all(
+            starredUserProjects.map(async project => {
+                const count = await db.star.count({
+                    where: {
+                        userprojectId: project.id
+                    }
+                });
+                return count;
+            })
+        );
+
+        const commentCountsPerProject = await Promise.all(
+            starredUserProjects.map(async project => {
+                const count = await db.comment.count({
+                    where: {
+                        userprojectId: project.id
+                    }
+                });
+                return count;
+            })
+        );
+
+        return {
+            starredUserProjects,
+            starredUserProjectCount,
+            starCountsPerProject,
+            commentCountsPerProject
+        };
+    }
+
     static async deleteMyCommentUserProjectLab(
         payload: {
             commentId: string;
@@ -365,6 +426,72 @@ class UserProjectRepository {
                 userprojectId: payload.userProjectId
             }
         });
+    }
+    static async addAndDeleteStarUserProjectLab(
+        payload: {
+            userProjectId: string;
+            action: boolean;
+        },
+        userId: string
+    ) {
+        const existingStar = await db.star.findFirst({
+            where: {
+                userId: userId,
+                userprojectId: payload.userProjectId
+            }
+        });
+
+        if (payload.action) {
+            if (existingStar) {
+                throw new Error('You have already starred this user project.');
+            }
+
+            const newStar = await db.star.create({
+                data: {
+                    userId: userId,
+                    userprojectId: payload.userProjectId
+                }
+            });
+
+            return newStar;
+        } else {
+            if (!existingStar) {
+                throw new Error('You not have starred this user project.');
+            }
+            const deletedStar = await db.star.deleteMany({
+                where: {
+                    userId: userId,
+                    userprojectId: payload.userProjectId
+                }
+            });
+
+            return deletedStar;
+        }
+    }
+
+    static async deleteMyUserProjectLab(
+        payload: {
+            userProjectId: string;
+        },
+        userId: string
+    ) {
+        const myUserProject = await db.userProject.findUnique({
+            where: {
+                id: payload.userProjectId,
+                userId: userId
+            }
+        });
+        if (!myUserProject) {
+            throw new Error('you dont have lab or this lab not yours');
+        }
+        const deleteMyLab = await db.userProject.deleteMany({
+            where: {
+                id: myUserProject.id,
+                userId: myUserProject.userId
+            }
+        });
+
+        return deleteMyLab;
     }
 }
 

@@ -4,11 +4,14 @@ import { deleteMyCommentUserProjectLabInput } from '@/app/api/(modules)/admin/ty
 import { getSession } from '../../auth/service/actions';
 import UserProjectRepository from '../repository/user-project-repository';
 import {
+    AddAndDeleteStarUserProjectInput,
     AddCommentUserProjectLabInput,
+    DeleteMyUserProjectInput,
     GetCommentUserProjectLabInput,
     GetDetailsUserProjectLabInput,
     GetUserProjectInput,
-    UserProjectInput
+    UserProjectInput,
+    userProjectStaredInput
 } from '../types';
 
 export const addUserProject = async (payload: UserProjectInput) => {
@@ -43,4 +46,22 @@ export const deleteMyCommentUserProjectLab = async (
     const session = await getSession();
     const userId = session?.id;
     return UserProjectRepository.deleteMyCommentUserProjectLab(payload, userId);
+};
+
+export const addAndDeleteStarUserProjectLab = async (payload: AddAndDeleteStarUserProjectInput) => {
+    const session = await getSession();
+    const userId = session?.id;
+    return UserProjectRepository.addAndDeleteStarUserProjectLab(payload, userId);
+};
+
+export const deleteMyUserProjectLab = async (payload: DeleteMyUserProjectInput) => {
+    const session = await getSession();
+    const userId = session?.id;
+    return UserProjectRepository.deleteMyUserProjectLab(payload, userId);
+};
+
+export const getStarredUserProjects = async (payload: userProjectStaredInput) => {
+    const session = await getSession();
+    const userId = session?.id;
+    return UserProjectRepository.getStarredUserProjects(payload, userId);
 };
