@@ -84,7 +84,25 @@ class AdminProjectRepository {
         };
     }
 
-    static async getTrendingUserProjectsLab(payload: {
+    static async deleteUserProjectLab(payload: { userProjectId: string }) {
+        const userProject = await db.userProject.findUnique({
+            where: {
+                id: payload.userProjectId
+            }
+        });
+        if (!userProject) {
+            throw new Error('there are no user projects or this project was deleted ');
+        }
+        const deleteLab = await db.userProject.deleteMany({
+            where: {
+                id: userProject.id
+            }
+        });
+
+        return deleteLab;
+    }
+
+    static async getTrendingUserProjects(payload: {
         page: number;
         pageSize: number;
         nameLab?: string;
