@@ -1,6 +1,5 @@
 'use server';
 
-import { ProjectInput } from '../../types';
 import { ROLE } from '@prisma/client';
 import { getSession } from '../../../auth/service/actions';
 import { DeleteUserProjectInput, ProjectInput } from '../../types';
