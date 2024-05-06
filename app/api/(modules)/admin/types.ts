@@ -73,3 +73,7 @@ export interface ProjectInput {
 export interface deleteMyCommentUserProjectLabInput {
     commentId: string;
 }
+
+export interface DeleteUserProjectInput {
+    userProjectId: string;
+}
