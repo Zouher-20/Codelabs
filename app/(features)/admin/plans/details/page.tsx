@@ -1,17 +1,15 @@
 'use client';
-import { planType } from '@/app/@types/plan';
-import { findUsers, getplanName } from '@/app/api/(modules)/admin/service/action';
+import PlanDetailsHeader from '@/app/(features)/admin/plans/details/components/header';
+import DeleteUserModal from '@/app/(features)/admin/users/components/modal/delete-user-modal';
+import UsersTable, { UserTableType } from '@/app/(features)/admin/users/components/user-table';
+import { findUsers } from '@/app/api/(modules)/admin/service/action';
 import { ManageState } from '@/app/components/page-state/state_manager';
 import { CustomToaster } from '@/app/components/toast/custom-toaster';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import UserViewHeader from './components/headea';
-import DeleteUserModal from './components/modal/delete-user-modal';
-import UpdateUserPlanModal from './components/modal/update-user-plan-modal';
-import UsersTable, { UserTableType } from './components/user-table';
 
-const Users = () => {
+const PlanDetails = () => {
     const pageSize = 10;
     const params = useSearchParams();
     const [users, setUsers] = useState<Array<UserTableType>>([]);
@@ -21,24 +19,14 @@ const Users = () => {
     const [error, setError] = useState<string | null>(null);
     const [searchWord, setSearchWord] = useState('');
     const [modalUserId, setModalUserId] = useState('');
-    const [currentPlan, setCurrentPlan] = useState<planType | null>(null);
-    const [serverPlans, setServerPlans] = useState<Array<string>>([]);
-    const [selectedSearchPlan, setSelectedSearchPlan] = useState<string>('');
-
+    const [planName, setPlanName] = useState('');
     useEffect(() => {
-        var pageNumber = Number(params.get('id') ?? '1');
+        const pageNumber = Number(params.get('id') ?? '1');
+        const plan = params.get('plan') ?? '';
+        setPlanName(plan);
         updateCurrentPage(pageNumber);
-        getUser({ newSearchWord: searchWord, planText: selectedSearchPlan, page: pageNumber });
-        getServerPlanNames();
+        getUser({ newSearchWord: searchWord, planText: plan, page: pageNumber });
     }, []);
-    const getServerPlanNames = async () => {
-        try {
-            const res = await getplanName();
-            setServerPlans(res.map<string>(e => e.name ?? ''));
-        } catch (error: any) {
-            toast.error(error.message);
-        }
-    };
     const getUser = async ({
         newSearchWord,
         planText,
@@ -89,28 +77,20 @@ const Users = () => {
     };
     const onPageChange = ({ index }: { index: number }) => {
         updateCurrentPage(index);
-        getUser({ newSearchWord: searchWord, planText: selectedSearchPlan, page: index });
-    };
-    const onChangeSearchPlan = (planText: string) => {
-        updateCurrentPage(1);
-        setTotalPageCount(0);
-        setSelectedSearchPlan(planText);
-        getUser({ newSearchWord: searchWord, planText: planText, page: currentPage });
+        getUser({ newSearchWord: searchWord, planText: planName, page: index });
     };
     return (
         <div className="flex flex-col gap-2 p-6">
             <div className="flex flex-col">
-                <UserViewHeader
-                    onChangeSearchPlan={onChangeSearchPlan}
-                    selectedSearchPlan={selectedSearchPlan}
+                <PlanDetailsHeader
+                    planName={planName}
                     searchWord={searchWord}
-                    onFieldChanged={e => {
+                    onFieldChanged={(e: string) => {
                         setSearchWord(e);
                         updateCurrentPage(1);
                         setTotalPageCount(0);
-                        getUser({ newSearchWord: e, planText: selectedSearchPlan, page: 1 });
+                        getUser({ newSearchWord: e, planText: planName, page: 1 });
                     }}
-                    plans={serverPlans}
                 />
                 <ManageState
                     empty={users.length == 0}
@@ -118,7 +98,7 @@ const Users = () => {
                     errorAndEmptyCallback={() => {
                         getUser({
                             newSearchWord: searchWord,
-                            planText: selectedSearchPlan,
+                            planText: planName,
                             page: currentPage
                         });
                     }}
@@ -147,16 +127,15 @@ const Users = () => {
                     callback={() => {
                         getUser({
                             newSearchWord: searchWord,
-                            planText: selectedSearchPlan,
+                            planText: planName,
                             page: currentPage
                         });
                     }}
                 />
                 <CustomToaster />
-                <UpdateUserPlanModal plan={currentPlan} onEditPlan={() => {}} />
             </div>
         </div>
     );
 };
 
-export default Users;
+export default PlanDetails;

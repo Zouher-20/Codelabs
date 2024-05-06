@@ -3,7 +3,7 @@ import { getStatisticsAdmin, getTag } from '@/app/api/(modules)/admin/service/ac
 import { getlab } from '@/app/api/(modules)/admin/user-project/service/action';
 import { ManageState } from '@/app/components/page-state/state_manager';
 import { CustomToaster } from '@/app/components/toast/custom-toaster';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import DiscoverHeader from './components/header';
@@ -28,7 +28,7 @@ const Discover = () => {
         labs: number;
         users: number;
     } | null>(null);
-
+    const route = useRouter();
     useEffect(() => {
         const pageNumber = Number(params.get('id') ?? '1');
         updateCurrentPage(pageNumber);
@@ -110,6 +110,15 @@ const Discover = () => {
         setSelectedSearchTag(selectedTag);
         getLabs({ newSearchWord: searchWord, tagName: selectedTag, page: 1 });
     };
+    const onDetailsClicked = (lab: LabTableType) => {
+        const params = {
+            id: lab.id
+        };
+        const queryString = new URLSearchParams(params).toString();
+        route.push('/admin/discover/details' + '?' + queryString);
+
+        return;
+    };
     return (
         <div className="flex flex-col gap-2 p-6">
             {statistics ? (
@@ -172,7 +181,9 @@ const Discover = () => {
                             pageCount={totalPageCount / pageSize}
                             currentPage={currentPage}
                             onPageChange={onPageChange}
-                            detailsClicked={() => {}}
+                            detailsClicked={lab => {
+                                onDetailsClicked(lab);
+                            }}
                         />
                     }
                 />

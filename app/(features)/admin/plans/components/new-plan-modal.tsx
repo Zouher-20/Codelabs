@@ -97,7 +97,7 @@ const NewPlanModal = ({ onPlanAdded }: { onPlanAdded: (plan: planType) => void }
                         />
                     </div>
                     <div className="flex gap-12 ">
-                        <span className="w-full min-w-24">Plan description</span>
+                        <span className="w-full min-w-24">duration</span>
                         <Input
                             id="duration"
                             name="duration"

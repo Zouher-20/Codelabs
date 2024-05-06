@@ -15,7 +15,7 @@ const UpdatePlan = ({
     const onSubmit = () => {
         onEditPlan({
             createdAt: plan?.createdAt,
-            duration: values.duration,
+            duration: values.duration.toString(),
             features: values.features,
             id: plan?.id ?? '',
             name: values.title,
@@ -72,7 +72,7 @@ const UpdatePlan = ({
                         />
                     </div>
                     <div className="flex gap-12 ">
-                        <span className="w-full min-w-24">Plan description</span>
+                        <span className="w-full min-w-24">duration</span>
                         <Input
                             id="duration"
                             name="duration"
