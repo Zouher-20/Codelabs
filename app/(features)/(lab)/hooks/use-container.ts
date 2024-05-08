@@ -3,6 +3,7 @@ export enum PackageManagerType {
     Yarn = 'yarn',
     PNPM = 'pnpm'
 }
+import GlobalUtils from '@/app/utils/global-utils';
 import { FileNode, FileSystemTree, WebContainer } from '@webcontainer/api';
 import { useEffect, useRef, useState } from 'react';
 import { Terminal } from 'xterm';
@@ -26,13 +27,8 @@ export function useContainer(projectFiles: FileSystemTree) {
             if (isBooted) {
                 throw 'web container is already booted';
             }
-            webcontainerInstance.current = await WebContainer.boot().then(container => {
-                setIsBooted(true);
-                return container;
-            });
-
             const terminalEl: HTMLDivElement | null = document.querySelector('#terminal');
-            if (terminalEl) {
+            if (terminalEl && GlobalUtils.isNullOrUndefined(terminalInstance.current)) {
                 terminalInstance.current = new Terminal({
                     convertEol: true
                 });
@@ -40,6 +36,10 @@ export function useContainer(projectFiles: FileSystemTree) {
             } else {
                 throw 'Terminal element error';
             }
+            webcontainerInstance.current = await WebContainer.boot().then(container => {
+                setIsBooted(true);
+                return container;
+            });
 
             return Promise.resolve();
         } catch (err) {
@@ -55,7 +55,7 @@ export function useContainer(projectFiles: FileSystemTree) {
             }
 
             await webcontainerInstance.current.mount(projectFiles);
-            const indexjs = (projectFiles['index.js'] as FileNode).file.contents;
+            const indexjs = (projectFiles['package.json'] as FileNode).file.contents;
             setEditor(indexjs as string);
         } catch (err) {
             console.warn('__ CONTAINER ERROR __ : ' + err);

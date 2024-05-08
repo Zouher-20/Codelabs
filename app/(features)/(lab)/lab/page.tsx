@@ -1,9 +1,43 @@
 'use client';
 import Editor from '@monaco-editor/react';
 import 'xterm/css/xterm.css';
+import FileTree from '../components/file-tree';
+import { TreeContextProvider } from '../components/tree-context';
 import { useContainer } from '../hooks/use-container';
-import { files } from './files';
-
+// import { files } from './files';
+const files = {
+    myproject: {
+        directory: {
+            'foo.js': {
+                file: {
+                    contents: 'const x = 1;'
+                }
+            },
+            '.envrc': {
+                file: {
+                    contents: 'ENVIRONMENT=staging'
+                }
+            },
+            test: {
+                directory: {
+                    'foo.js': {
+                        file: {
+                            contents: 'const x = 1;'
+                        }
+                    },
+                    '.envrc': {
+                        file: {
+                            contents: 'ENVIRONMENT=staging'
+                        }
+                    }
+                }
+            }
+        }
+    },
+    emptyFolder: {
+        directory: {}
+    }
+};
 export default function Lab() {
     const { editor, setEditor } = useContainer(files);
     const handleEditorChange = (value?: string) => {
@@ -11,9 +45,15 @@ export default function Lab() {
             setEditor(value);
         }
     };
+
     return (
-        <div>
-            <div className="grid min-h-screen grid-cols-2">
+        <div className="flex">
+            <div className="w-1/6">
+                <TreeContextProvider>
+                    <FileTree tree={files} />
+                </TreeContextProvider>
+            </div>
+            <div className="grid min-h-screen w-5/6 grid-cols-2">
                 <div className="editor w-full">
                     <Editor
                         className="h-full w-full rounded-lg"
