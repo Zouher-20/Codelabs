@@ -97,7 +97,6 @@ class UserProjectRepository {
         userId: string
     ) {
         const skip = (payload.page - 1) * payload.pageSize;
-
         const starredUserProjects = await db.userProject.findMany({
             where: {
                 Star: {
@@ -122,34 +121,30 @@ class UserProjectRepository {
                 }
             }
         });
-
-        const starCountsPerProject = await Promise.all(
+        const starredUserProjectsWithCounts = await Promise.all(
             starredUserProjects.map(async project => {
-                const count = await db.star.count({
+                const starCount = await db.star.count({
                     where: {
                         userprojectId: project.id
                     }
                 });
-                return count;
-            })
-        );
 
-        const commentCountsPerProject = await Promise.all(
-            starredUserProjects.map(async project => {
-                const count = await db.comment.count({
+                const commentCount = await db.comment.count({
                     where: {
                         userprojectId: project.id
                     }
                 });
-                return count;
+
+                return {
+                    ...project,
+                    starCount,
+                    commentCount
+                };
             })
         );
-
         return {
-            starredUserProjects,
-            starredUserProjectCount,
-            starCountsPerProject,
-            commentCountsPerProject
+            starredUserProjects: starredUserProjectsWithCounts,
+            starredUserProjectCount
         };
     }
 

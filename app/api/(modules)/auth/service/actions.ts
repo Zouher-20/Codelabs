@@ -6,7 +6,12 @@ import { cookies } from 'next/headers';
 import UsersRepository from '../../users/repository';
 import VeryfiedRepository from '../../verified/repository/verified-repository';
 import AuthRepository from '../repository/auth-repository';
-import { AdminRegisterInput, DeleteMyAccountInput, RegisterUserInput } from '../types';
+import {
+    AdminRegisterInput,
+    AllUserInformationInput,
+    DeleteMyAccountInput,
+    RegisterUserInput
+} from '../types';
 import AuthValidator from '../validator/validation';
 
 export const register = async (payload: RegisterUserInput) => {
@@ -143,4 +148,10 @@ export const deleteMyAccount = async (payload: DeleteMyAccountInput) => {
 export const getCurrentUser = async () => {
     const session = await getSession();
     return await UsersRepository.find({ id: session.id });
+};
+
+export const getAllUserInformation = async (payload: AllUserInformationInput) => {
+    const session = await getSession();
+    const userId = session?.id;
+    return await AuthRepository.getAllUserInformation(payload, userId);
 };

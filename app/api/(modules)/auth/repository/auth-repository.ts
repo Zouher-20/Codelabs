@@ -38,6 +38,77 @@ class AuthRepository {
     //     }
     // }
 
+    static async getAllUserInformation(
+        payload: {
+            blogPage: number;
+            blogPageSize: number;
+            challengePage: number;
+            challengePageSize: number;
+            userProjectPage: number;
+            userProjectPageSize: number;
+        },
+        userId: string
+    ) {
+        const existingUser = await db.user.findUnique({
+            where: {
+                id: userId
+            },
+            include: {
+                PlanSubscription: {
+                    include: {
+                        plan: {
+                            include: {
+                                FeaturePlan: true
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        if (!existingUser) {
+            throw new Error('User not found');
+        }
+
+        const blogSkip = (payload.blogPage - 1) * payload.blogPageSize;
+        const challengeSkip = (payload.challengePage - 1) * payload.challengePageSize;
+        const userProjectSkip = (payload.userProjectPage - 1) * payload.userProjectPageSize;
+
+        const blogs = await db.blog.findMany({
+            where: {
+                userId: userId
+            },
+            take: payload.blogPageSize,
+            skip: blogSkip
+        });
+
+        const challenges = await db.challengeParticipation.findMany({
+            where: {
+                userId: userId
+            },
+            take: payload.challengePageSize,
+            skip: challengeSkip,
+            include: {
+                challenge: true
+            }
+        });
+
+        const userProjects = await db.userProject.findMany({
+            where: {
+                userId: userId
+            },
+            take: payload.userProjectPageSize,
+            skip: userProjectSkip
+        });
+
+        return {
+            user: existingUser,
+            blogs: blogs,
+            challenges: challenges.map(challengeParticipation => challengeParticipation.challenge),
+            userProjects: userProjects
+        };
+    }
+
     static async deleteMyAccount(payload: { password: string }, userId: string) {
         const requestingUser = await db.user.findUnique({
             where: {

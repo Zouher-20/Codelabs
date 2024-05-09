@@ -14,3 +14,12 @@ export interface AdminRegisterInput {
 export interface DeleteMyAccountInput {
     password: string;
 }
+
+export interface AllUserInformationInput {
+    blogPage: number;
+    blogPageSize: number;
+    challengePage: number;
+    challengePageSize: number;
+    userProjectPage: number;
+    userProjectPageSize: number;
+}
