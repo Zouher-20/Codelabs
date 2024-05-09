@@ -4,7 +4,7 @@ import CodeLabContainer from '@/app/(features)/(main)/classes/components/contain
 import CloneLabComponent from '@/app/(features)/(main)/classes/students/room/components/clone-lab-component';
 import { FeedbackComponent } from '@/app/(features)/(main)/classes/students/room/components/feed-back';
 import CommentModal from '@/app/(features)/(main)/discover/components/comment-modal';
-import { LabTableType } from '@/app/(features)/admin/discover/components/lab-table';
+import { LabTableType } from '@/app/(features)/admin/(admin-feature)/discover/components/lab-table';
 import { InteractionType } from '@/app/@types/Interaction';
 import { FeedbackType } from '@/app/@types/feedback';
 import { getSession } from '@/app/api/(modules)/auth/service/actions';

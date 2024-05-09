@@ -1,4 +1,4 @@
-import { LabTableType } from '@/app/(features)/admin/discover/components/lab-table';
+import { LabTableType } from '@/app/(features)/admin/(admin-feature)/discover/components/lab-table';
 import LabCard from '@/app/components/globals/lab/lab-card';
 import { Icon } from '@iconify/react/dist/iconify.js';
 

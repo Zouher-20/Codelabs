@@ -1,7 +1,9 @@
 'use client';
-import PlanDetailsHeader from '@/app/(features)/admin/plans/details/components/header';
-import DeleteUserModal from '@/app/(features)/admin/users/components/modal/delete-user-modal';
-import UsersTable, { UserTableType } from '@/app/(features)/admin/users/components/user-table';
+import PlanDetailsHeader from '@/app/(features)/admin/(admin-feature)/plans/details/components/header';
+import DeleteUserModal from '@/app/(features)/admin/(admin-feature)/users/components/modal/delete-user-modal';
+import UsersTable, {
+    UserTableType
+} from '@/app/(features)/admin/(admin-feature)/users/components/user-table';
 import { findUsers } from '@/app/api/(modules)/admin/service/action';
 import { ManageState } from '@/app/components/page-state/state_manager';
 import { CustomToaster } from '@/app/components/toast/custom-toaster';
