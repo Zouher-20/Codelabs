@@ -33,6 +33,7 @@ export default function CommentListComponent({
     return new CodeLabList<FeedbackType>({
         currentPage: currentPage,
         items: comments,
+        wrap: false,
         onChangePage: ({ page }: { page: number }) => onPageChange({ index: page }),
         pageCount: pageCount,
         itemBuilder: ({ item, index }: { item: FeedbackType; index: number }) => {

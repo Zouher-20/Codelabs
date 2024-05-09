@@ -8,18 +8,21 @@ export default class CodeLabList<T> {
     items: Array<T>;
     pageCount: number;
     currentPage: number;
+    wrap: boolean;
 
     constructor({
         itemBuilder,
         onChangePage,
         pageCount,
         currentPage,
-        items
+        items,
+        wrap
     }: {
         onChangePage: ({ page }: { page: number }) => void;
         itemBuilder: ({ item, index }: { item: T; index: number }) => JSX.Element;
         pageCount: number;
         currentPage: number;
+        wrap?: boolean;
         items: Array<T>;
     }) {
         this.builder = itemBuilder;
@@ -27,13 +30,20 @@ export default class CodeLabList<T> {
         this.pageCount = pageCount;
         this.currentPage = currentPage;
         this.items = items;
+        this.wrap = wrap ?? false;
         this.pageCount = Math.ceil(pageCount);
     }
 
     build() {
         return (
             <div className="flex flex-col items-end gap-4">
-                <div className="w-full overflow-x-auto">
+                <div
+                    className={
+                        this.wrap
+                            ? 'flex w-full flex-wrap justify-center gap-1 overflow-x-auto'
+                            : 'w-full flex-wrap overflow-x-auto'
+                    }
+                >
                     {this.items.map((item, index) => {
                         return this.builder({ item, index });
                     })}

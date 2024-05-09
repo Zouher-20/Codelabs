@@ -5,11 +5,15 @@ import { Icon } from '@iconify/react/dist/iconify.js';
 export default function LabListComponent({
     labs,
     title,
-    onLabClicked
+    onLabClicked,
+    onLabInteractionClicked,
+    onMoreClicked
 }: {
     labs: Array<LabTableType>;
     title: string;
+    onMoreClicked: () => void;
     onLabClicked: (lab: LabTableType) => void;
+    onLabInteractionClicked: ({ lab, index }: { lab: LabTableType; index: number }) => void;
 }) {
     return (
         <div>
@@ -17,8 +21,9 @@ export default function LabListComponent({
                 <h1 className="text-2xl">{title}</h1>
                 <div className="w-1"></div>
                 <Icon
+                    onClick={onMoreClicked}
                     icon="solar:round-arrow-right-up-bold-duotone"
-                    className="size-5 text-primary"
+                    className="size-5 text-primary hover:cursor-pointer"
                 />
             </div>
             <div className="h-3"></div>
@@ -26,7 +31,16 @@ export default function LabListComponent({
                 <div className="carousel-item">
                     {labs.map((e, index) => (
                         <div className="px-1" key={e.name + `${index}`}>
-                            <LabCard lab={e} onLabClicked={onLabClicked} />
+                            <LabCard
+                                onInteractionClicked={interactionIndex => {
+                                    onLabInteractionClicked({
+                                        index: interactionIndex,
+                                        lab: labs[index]
+                                    });
+                                }}
+                                lab={e}
+                                onLabClicked={onLabClicked}
+                            />
                         </div>
                     ))}
                 </div>

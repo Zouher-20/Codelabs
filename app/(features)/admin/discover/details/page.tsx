@@ -16,6 +16,7 @@ import {
 import Interaction from '@/app/components/globals/lab/interaction';
 import UserAvatar from '@/app/components/globals/user-avatar';
 import { ManageState } from '@/app/components/page-state/state_manager';
+import { interactions } from '@/app/constants/interactions';
 import { Icon } from '@iconify/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -174,10 +175,3 @@ export default function LabDetails() {
         </div>
     );
 }
-
-const interactions = [
-    { icon: 'solar:heart-angle-bold', style: 'text-error' },
-    { icon: 'solar:share-circle-bold-duotone', style: 'text-secondary' },
-    { icon: 'solar:eye-bold-duotone', style: 'text-warning' },
-    { icon: 'solar:chat-line-bold', style: 'text-info' }
-];

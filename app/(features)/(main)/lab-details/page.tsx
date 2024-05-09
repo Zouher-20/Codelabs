@@ -9,12 +9,15 @@ import { InteractionType } from '@/app/@types/Interaction';
 import { FeedbackType } from '@/app/@types/feedback';
 import { getSession } from '@/app/api/(modules)/auth/service/actions';
 import {
+    addAndDeleteStarUserProjectLab,
     getCommentUserProjectLab,
     getDetailsUserProjectLab
 } from '@/app/api/(modules)/user-project/services/action';
 import Interaction from '@/app/components/globals/lab/interaction';
 import UserAvatar from '@/app/components/globals/user-avatar';
 import { ManageState } from '@/app/components/page-state/state_manager';
+import { CustomToaster } from '@/app/components/toast/custom-toaster';
+import { interactions } from '@/app/constants/interactions';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -56,6 +59,7 @@ export default function LabDetails() {
         setLab({
             id: res.lab.id,
             name: res.lab.name ?? '',
+            isStared: res.isStarred,
             createdAt: res.lab.createdAt ?? '',
             commentCount: res.commentCount,
             starCount: res.starCount,
@@ -98,6 +102,34 @@ export default function LabDetails() {
         getLabComment({ id: params.get('id') ?? '' });
         setLab({ ...lab!, commentCount: (lab?.commentCount ?? 0) + addedValue });
     };
+    const onInteractionClicked = async (index: number) => {
+        try {
+            if (index == 0) {
+                const action = !(lab?.isStared ?? false);
+                await addAndDeleteStarUserProjectLab({
+                    userProjectId: lab?.id ?? '',
+                    action: action
+                });
+                if (action) {
+                    toast.success('add star done successfully');
+                    setLab({
+                        ...lab!,
+                        starCount: (lab?.starCount ?? 0) + 1,
+                        isStared: true
+                    });
+                } else {
+                    toast.success('star removed successfully');
+                    setLab({
+                        ...lab!,
+                        starCount: (lab?.starCount ?? 0) - 1,
+                        isStared: false
+                    });
+                }
+            }
+        } catch (e: any) {
+            toast.error(e.message);
+        }
+    };
     return (
         <div className="flex min-h-[550px] flex-col gap-2 p-3">
             <ManageState
@@ -125,6 +157,11 @@ export default function LabDetails() {
                                             (interaction: InteractionType, index: number) =>
                                                 Interaction({
                                                     icon: interaction.icon,
+                                                    isSelected:
+                                                        (index == 0 && lab?.isStared) || index != 0,
+                                                    onClick: () => {
+                                                        onInteractionClicked(index);
+                                                    },
                                                     number:
                                                         index == 0
                                                             ? lab?.starCount
@@ -151,14 +188,8 @@ export default function LabDetails() {
                 }
                 empty={false}
             />
+            <CustomToaster />
             <CommentModal myId={myId} lab={lab} open={open} onCommentChange={onCommentChange} />
         </div>
     );
 }
-
-const interactions = [
-    { icon: 'solar:heart-angle-bold', style: 'text-error' },
-    { icon: 'solar:share-circle-bold-duotone', style: 'text-secondary' },
-    { icon: 'solar:eye-bold-duotone', style: 'text-warning' },
-    { icon: 'solar:chat-line-bold', style: 'text-info' }
-];
