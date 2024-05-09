@@ -10,31 +10,31 @@ import { FeedbackComponent } from './components/feed-back';
 export default function ClassLabPage() {
     var feedbacks: Array<FeedbackType> = [
         {
-            id: 1,
+            id: '1',
             feedback:
                 'Purus lorem dolor dolor euismod lorem facilisi amet arcu mi. Dui amet massa sociis volutpat viverra donec augue sit. Suscipit elementum eget rhoncus sed facilisis nisi. Orci facilisis at fermentum vitae pellentesque. Fermentum nisl aliquam rhoncus ipsum fames est augue.',
             user: { email: 'alshalabi211@gmai.com', id: '1', name: 'majd' }
         },
         {
-            id: 2,
+            id: '2',
             feedback:
                 'Purus lorem dolor dolor euismod lorem facilisi amet arcu mi. Dui amet massa sociis volutpat viverra donec augue sit. Suscipit elementum eget rhoncus sed facilisis nisi. Orci facilisis at fermentum vitae pellentesque. Fermentum nisl aliquam rhoncus ipsum fames est augue.',
             user: { email: 'alshalabi211@gmai.com', id: '1', name: 'majd' }
         },
         {
-            id: 3,
+            id: '3',
             feedback:
                 'Purus lorem dolor dolor euismod lorem facilisi amet arcu mi. Dui amet massa sociis volutpat viverra donec augue sit. Suscipit elementum eget rhoncus sed facilisis nisi. Orci facilisis at fermentum vitae pellentesque. Fermentum nisl aliquam rhoncus ipsum fames est augue.',
             user: { email: 'alshalabi211@gmai.com', id: '2', name: 'majd2' }
         },
         {
-            id: 4,
+            id: '4',
             feedback:
                 'Purus lorem dolor dolor euismod lorem facilisi amet arcu mi. Dui amet massa sociis volutpat viverra donec augue sit. Suscipit elementum eget rhoncus sed facilisis nisi. Orci facilisis at fermentum vitae pellentesque. Fermentum nisl aliquam rhoncus ipsum fames est augue.',
             user: { email: 'alshalabi211@gmai.com', id: '1', name: 'majd' }
         },
         {
-            id: 5,
+            id: '5',
             feedback:
                 'Purus lorem dolor dolor euismod lorem facilisi amet arcu mi. Dui amet massa sociis volutpat viverra donec augue sit. Suscipit elementum eget rhoncus sed facilisis nisi. Orci facilisis at fermentum vitae pellentesque. Fermentum nisl aliquam rhoncus ipsum fames est augue.',
             user: { email: 'alshalabi211@gmai.com', id: '3', name: 'majd3' }

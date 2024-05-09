@@ -1,7 +1,7 @@
 'use client';
 
 import LabListComponent from '@/app/(features)/(main)/stared/components/lab_list';
-import { LabTableType } from '@/app/(features)/admin/discover/components/lab-table';
+import { LabTableType } from '@/app/(features)/admin/(admin-feature)/discover/components/lab-table';
 import { getUserProjectsLab } from '@/app/api/(modules)/user-project/services/action';
 import Input from '@/app/components/globals/form/input';
 import { ManageState } from '@/app/components/page-state/state_manager';

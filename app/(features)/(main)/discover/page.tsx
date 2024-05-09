@@ -1,6 +1,6 @@
 'use client';
 
-import { LabTableType } from '@/app/(features)/admin/discover/components/lab-table';
+import { LabTableType } from '@/app/(features)/admin/(admin-feature)/discover/components/lab-table';
 import {
     getTrendingUserProjectsLab,
     getUserProjectsLab
