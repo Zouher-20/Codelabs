@@ -10,12 +10,14 @@ import { FeedbackType } from '@/app/@types/feedback';
 import { deleteUserProjectAdmin } from '@/app/api/(modules)/admin/user-project/service/action';
 import { getSession } from '@/app/api/(modules)/auth/service/actions';
 import {
+    addAndDeleteStarUserProjectLab,
     getCommentUserProjectLab,
     getDetailsUserProjectLab
 } from '@/app/api/(modules)/user-project/services/action';
 import Interaction from '@/app/components/globals/lab/interaction';
 import UserAvatar from '@/app/components/globals/user-avatar';
 import { ManageState } from '@/app/components/page-state/state_manager';
+import { CustomToaster } from '@/app/components/toast/custom-toaster';
 import { interactions } from '@/app/constants/interactions';
 import { Icon } from '@iconify/react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -58,6 +60,7 @@ export default function LabDetails() {
         const res = await getDetailsUserProjectLab({ userProjectId: id });
         setLab({
             id: res.lab.id,
+            isStared: res.isStarred,
             name: res.lab.name ?? '',
             createdAt: res.lab.createdAt ?? '',
             commentCount: res.commentCount,
@@ -110,6 +113,34 @@ export default function LabDetails() {
             toast.error(e.message);
         }
     };
+    const onInteractionClicked = async (index: number) => {
+        try {
+            if (index == 0) {
+                const action = !(lab?.isStared ?? false);
+                await addAndDeleteStarUserProjectLab({
+                    userProjectId: lab?.id ?? '',
+                    action: action
+                });
+                if (action) {
+                    toast.success('add star done successfully');
+                    setLab({
+                        ...lab!,
+                        starCount: (lab?.starCount ?? 0) + 1,
+                        isStared: true
+                    });
+                } else {
+                    toast.success('star removed successfully');
+                    setLab({
+                        ...lab!,
+                        starCount: (lab?.starCount ?? 0) - 1,
+                        isStared: false
+                    });
+                }
+            }
+        } catch (e: any) {
+            toast.error(e.message);
+        }
+    };
     return (
         <div className="flex min-h-[550px] flex-col gap-2 p-3">
             <ManageState
@@ -145,6 +176,11 @@ export default function LabDetails() {
                                             (interaction: InteractionType, index: number) =>
                                                 Interaction({
                                                     icon: interaction.icon,
+                                                    isSelected:
+                                                        (index == 0 && lab?.isStared) || index != 0,
+                                                    onClick: () => {
+                                                        onInteractionClicked(index);
+                                                    },
                                                     number:
                                                         index == 0
                                                             ? lab?.starCount
@@ -171,6 +207,7 @@ export default function LabDetails() {
                 }
                 empty={false}
             />
+            <CustomToaster />
             <CommentModal myId={myId} lab={lab} open={open} onCommentChange={onCommentChange} />
         </div>
     );
