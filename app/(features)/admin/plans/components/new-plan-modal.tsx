@@ -32,10 +32,9 @@ const NewPlanModal = ({ onPlanAdded }: { onPlanAdded: (plan: planType) => void }
                     return { name: e.name, value: Number(e.value) };
                 }),
                 id: res.id,
-                name: res.name,
+                name: res.name ?? '',
                 price: res.price,
-                subtitle: res.subtitle,
-                title: res.name
+                subtitle: res.subtitle
             });
             (document.getElementById('new-plan-modal') as HTMLDialogElement).close();
         } catch (error: any) {
@@ -98,7 +97,7 @@ const NewPlanModal = ({ onPlanAdded }: { onPlanAdded: (plan: planType) => void }
                         />
                     </div>
                     <div className="flex gap-12 ">
-                        <span className="w-full min-w-24">Plan description</span>
+                        <span className="w-full min-w-24">duration</span>
                         <Input
                             id="duration"
                             name="duration"

@@ -3,22 +3,17 @@
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import Challenge from './components/cards/challenge';
-import PlanCard from './components/cards/plan-card';
-import UserPlanCard from './components/cards/user-plan-card';
 import Button from './components/globals/form/button';
 import Input from './components/globals/form/input';
 import MultiSelectForm from './components/globals/form/select/useSelect';
 import Textarea from './components/globals/form/text-area';
 import RadioOption from './components/globals/form/type-multi-select/radio-option';
 import ClassLab from './components/globals/lab/class-lab';
-import InteractionsLab from './components/globals/lab/interactions-lab';
 import Lab from './components/globals/lab/lab';
-import LabCard from './components/globals/lab/lab-card';
 import SubmittedLab from './components/globals/lab/submitted-lab';
 import PageContainer from './components/layout/page-container';
 import CircleChart from './components/statistics/circle';
 import RadialChart from './components/statistics/radial';
-import { basicPlan, plusPlan, premiumPlan } from './constants/plans';
 import { types } from './constants/types';
 import { email, password, textField } from './schemas';
 
@@ -37,7 +32,7 @@ export default function Home() {
 
     return (
         <PageContainer>
-            <div className="grid gap-4 p-8">
+            <div className="grid gap-4 p-8 ">
                 <div className="flex gap-4">
                     <Button onClick={HandleClick} label="basic" color="basic" />
                     <Button onClick={HandleClick} label="outline" color="outline" />
@@ -69,16 +64,8 @@ export default function Home() {
                         Submit
                     </button>
                 </form>
-                <div className="flex gap-4">
-                    <PlanCard plan={basicPlan} />
-                    <PlanCard plan={plusPlan} active={true} />
-                    <PlanCard plan={premiumPlan} />
-                </div>
-                <UserPlanCard plan={basicPlan} />
                 <div className="flex flex-wrap gap-2">
                     <Lab />
-                    <InteractionsLab react={[754, 213, 30, 84]} />
-                    <LabCard title="A new code Lab Sidebar" />
                     <ClassLab name="Class lab name" type="Type" />
                     <SubmittedLab />
                 </div>

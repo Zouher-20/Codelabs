@@ -3,6 +3,7 @@ import { planType } from '@/app/@types/plan';
 import { findUsers, getplanName } from '@/app/api/(modules)/admin/service/action';
 import { ManageState } from '@/app/components/page-state/state_manager';
 import { CustomToaster } from '@/app/components/toast/custom-toaster';
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import UserViewHeader from './components/headea';
@@ -12,6 +13,7 @@ import UsersTable, { UserTableType } from './components/user-table';
 
 const Users = () => {
     const pageSize = 10;
+    const params = useSearchParams();
     const [users, setUsers] = useState<Array<UserTableType>>([]);
     const [currentPage, updateCurrentPage] = useState(1);
     const [totalPageCount, setTotalPageCount] = useState(0);
@@ -24,33 +26,33 @@ const Users = () => {
     const [selectedSearchPlan, setSelectedSearchPlan] = useState<string>('');
 
     useEffect(() => {
-        getUser({ newSearchWord: searchWord, planText: selectedSearchPlan });
+        var pageNumber = Number(params.get('id') ?? '1');
+        updateCurrentPage(pageNumber);
+        getUser({ newSearchWord: searchWord, planText: selectedSearchPlan, page: pageNumber });
         getServerPlanNames();
     }, []);
     const getServerPlanNames = async () => {
         try {
             const res = await getplanName();
-            setServerPlans(
-                res.map(e => {
-                    return e.name;
-                })
-            );
+            setServerPlans(res.map<string>(e => e.name ?? ''));
         } catch (error: any) {
             toast.error(error.message);
         }
     };
     const getUser = async ({
         newSearchWord,
-        planText
+        planText,
+        page
     }: {
         newSearchWord: string;
         planText: string;
+        page: number;
     }) => {
         setLoading(true);
         setError(null);
         try {
             const user = await findUsers({
-                page: currentPage,
+                page: page,
                 pageSize: pageSize,
                 planName: planText === '' ? undefined : planText,
                 searchWord: newSearchWord
@@ -87,13 +89,13 @@ const Users = () => {
     };
     const onPageChange = ({ index }: { index: number }) => {
         updateCurrentPage(index);
-        getUser({ newSearchWord: searchWord, planText: selectedSearchPlan });
+        getUser({ newSearchWord: searchWord, planText: selectedSearchPlan, page: index });
     };
     const onChangeSearchPlan = (planText: string) => {
         updateCurrentPage(1);
         setTotalPageCount(0);
         setSelectedSearchPlan(planText);
-        getUser({ newSearchWord: searchWord, planText: planText });
+        getUser({ newSearchWord: searchWord, planText: planText, page: currentPage });
     };
     return (
         <div className="flex flex-col gap-2 p-6">
@@ -106,7 +108,7 @@ const Users = () => {
                         setSearchWord(e);
                         updateCurrentPage(1);
                         setTotalPageCount(0);
-                        getUser({ newSearchWord: e, planText: selectedSearchPlan });
+                        getUser({ newSearchWord: e, planText: selectedSearchPlan, page: 1 });
                     }}
                     plans={serverPlans}
                 />
@@ -114,7 +116,11 @@ const Users = () => {
                     empty={users.length == 0}
                     error={error}
                     errorAndEmptyCallback={() => {
-                        getUser({ newSearchWord: searchWord, planText: selectedSearchPlan });
+                        getUser({
+                            newSearchWord: searchWord,
+                            planText: selectedSearchPlan,
+                            page: currentPage
+                        });
                     }}
                     loading={loading}
                     loadedState={
@@ -139,7 +145,11 @@ const Users = () => {
                 <DeleteUserModal
                     userId={modalUserId}
                     callback={() => {
-                        getUser({ newSearchWord: searchWord, planText: selectedSearchPlan });
+                        getUser({
+                            newSearchWord: searchWord,
+                            planText: selectedSearchPlan,
+                            page: currentPage
+                        });
                     }}
                 />
                 <CustomToaster />

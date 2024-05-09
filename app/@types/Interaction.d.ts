@@ -3,4 +3,6 @@ export interface InteractionType {
     number?: number;
     style?: string;
     key?: number;
+    isSelected?: boolean;
+    onClick?: () => void;
 }

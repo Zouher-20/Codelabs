@@ -1,6 +1,7 @@
 import { buttonType } from '@/app/@types/button';
 
 const Button = ({ label, style, color, type, disabled, onClick, loading }: buttonType) => {
+    const yellow = 'bg-secondary text-black hover:bg-base-100 hover:text-white';
     const basic = ' bg-white text-black hover:bg-base-100 hover:text-white';
     const outlin = 'bg-base-300 text-white border-1 border-white hover:bg-white hover:text-black';
     const fill = 'bg-base-100';
@@ -10,7 +11,7 @@ const Button = ({ label, style, color, type, disabled, onClick, loading }: butto
     ) : (
         <button
             type={type}
-            disabled={disabled ? true : false}
+            disabled={!!disabled}
             onClick={onClick}
             className={
                 'btn min-w-24 ' +

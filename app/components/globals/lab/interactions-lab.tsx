@@ -1,21 +1,28 @@
+import { LabTableType } from '@/app/(features)/admin/discover/components/lab-table';
 import { InteractionType } from '@/app/@types/Interaction';
-import IconRenderer from '../icon';
+import Interaction from '@/app/components/globals/lab/interaction';
+import { interactions } from '@/app/constants/interactions';
 import Lab from './lab';
 
-const interactions = [
-    { icon: 'solar:heart-angle-bold', style: 'text-error' },
-    { icon: 'solar:share-circle-bold-duotone', style: 'text-secondary' },
-    { icon: 'solar:eye-bold-duotone', style: 'text-warning' },
-    { icon: 'solar:chat-line-bold', style: 'text-info' }
-];
-
-const InteractionsLab = ({ react }: { react: Array<number> }) => {
+const InteractionsLab = ({
+    react,
+    lab,
+    onInteractionClicked
+}: {
+    onInteractionClicked: (index: number) => void;
+    lab: LabTableType;
+    react: Array<number>;
+}) => {
     return (
         <Lab>
-            <div className="absolute bottom-4 z-20 flex flex-wrap gap-1 px-2 text-xs  w-full">
+            <div className="absolute bottom-4 z-20 flex w-full flex-wrap gap-1 px-2  text-xs">
                 {interactions.map((interaction: InteractionType, index: number) =>
                     Interaction({
                         icon: interaction.icon,
+                        onClick: () => {
+                            onInteractionClicked(index);
+                        },
+                        isSelected: (index == 0 && lab.isStared) || index != 0,
                         number: react ? react[index] : 0,
                         style: interaction.style,
                         key: index
@@ -27,12 +34,3 @@ const InteractionsLab = ({ react }: { react: Array<number> }) => {
 };
 
 export default InteractionsLab;
-
-function Interaction({ icon, number, style, key }: InteractionType) {
-    return (
-        <section key={key} className="flex gap-1 rounded-md bg-base-100 p-2">
-            <IconRenderer className={'self-center ' + style} fontSize={16} icon={icon} />
-            <p>{number}</p>
-        </section>
-    );
-}

@@ -5,6 +5,7 @@ import PlanCard from '@/app/components/cards/plan-card';
 import Button from '@/app/components/globals/form/button';
 import { ManageState } from '@/app/components/page-state/state_manager';
 import { CustomToaster } from '@/app/components/toast/custom-toaster';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import DeletePlanModal from './components/delete-plan-modal';
@@ -16,6 +17,8 @@ const Plans = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [selectedPlan, setSelectedPlan] = useState<planType | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const router = useRouter();
+
     useEffect(() => {
         getPlanFromServer();
     }, []);
@@ -33,10 +36,9 @@ const Plans = () => {
                             return { name: feature.name, value: feature.value };
                         }),
                         id: e.id,
-                        name: e.name,
+                        name: e.name ?? '',
                         price: e.price,
-                        subtitle: e.subtitle,
-                        title: e.name
+                        subtitle: e.subtitle ?? ''
                     };
                 })
             );
@@ -108,6 +110,12 @@ const Plans = () => {
             toast.error(error.message);
         }
     };
+    const onDetailsClicked = (plan: planType) => {
+        const queryString = new URLSearchParams({
+            plan: plan.name
+        }).toString();
+        router.push('/admin/plans/details' + '?' + queryString);
+    };
     return (
         <div className="flex flex-col justify-center gap-8 p-6">
             <div className="flex w-full justify-between">
@@ -127,6 +135,9 @@ const Plans = () => {
                             onDeleteClicked={() => openDeletePlan(e)}
                             onEditClicked={() => clickHandler(e)}
                             isAdmin={true}
+                            onMainButtonClicked={() => {
+                                onDetailsClicked(e);
+                            }}
                         />
                     ))}
                     loading={loading}

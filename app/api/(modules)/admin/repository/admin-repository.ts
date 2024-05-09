@@ -59,7 +59,6 @@ class AdminRepository {
                 }
             }
         });
-
         const userCount = await db.user.count({
             where: {
                 ...args
@@ -72,6 +71,20 @@ class AdminRepository {
         };
     }
 
+    static async getStatisticsAdmin() {
+        const users = await db.user.count();
+        const labs = await db.userProject.count();
+        const challenges = await db.challenge.count();
+        const classes = await db.classProject.count();
+        const blogs = await db.blog.count();
+        return {
+            users,
+            labs,
+            challenges,
+            classes,
+            blogs
+        };
+    }
     static async getPlanName() {
         const plansName = await db.plan.findMany();
         return plansName;

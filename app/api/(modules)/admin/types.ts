@@ -63,3 +63,17 @@ export interface challengeDetailsInput {
     pageSize: number;
     challengeId: string;
 }
+
+export interface ProjectInput {
+    page: number;
+    pageSize: number;
+    nameLab?: string;
+    tagName?: string;
+}
+export interface deleteMyCommentUserProjectLabInput {
+    commentId: string;
+}
+
+export interface DeleteUserProjectInput {
+    userProjectId: string;
+}

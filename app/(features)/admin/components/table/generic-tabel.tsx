@@ -31,6 +31,7 @@ export default class CodeLabTable<T extends GenericTableModel> {
         this.currentPage = currentPage;
         this.tableHeader = tableHeader;
         this.items = items;
+        this.pageCount = Math.ceil(pageCount);
     }
     build() {
         return (

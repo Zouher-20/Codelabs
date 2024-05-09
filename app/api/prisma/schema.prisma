@@ -172,6 +172,7 @@ model Challenge {
   createdAt              DateTime                 @default(now())
   ChallengeParticipation ChallengeParticipation[]
   TagMorph               TagMorph[]
+  Star                   Star[]
 }
 
 model ChallengeParticipation {
@@ -208,6 +209,7 @@ model UserProject {
   userId      String
   user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   name        String?
+  createdAt   DateTime   @default(now())
   description String?
   Star        Star[]
   Comment     Comment[]
@@ -216,37 +218,39 @@ model UserProject {
 }
 
 model Blog {
-  id       String     @id @default(cuid())
-  userId   String
-  user     User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  contant  String?
-  imageUrl String?
-  status   Boolean    @default(false)
-  title    String?
-  Star     Star[]
-  Comment  Comment[]
-  TagMorph TagMorph[]
+  id        String     @id @default(cuid())
+  userId    String
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  contant   String?
+  status    Boolean    @default(false)
+  createdAt DateTime   @default(now())
+  title     String?
+  Star      Star[]
+  Comment   Comment[]
+  TagMorph  TagMorph[]
 }
 
 model Star {
-  id            String      @id @default(cuid())
+  id            String       @id @default(cuid())
   userId        String
-  userprojectId String
-  blogId        String
-  blog          Blog        @relation(fields: [blogId], references: [id], onDelete: Cascade)
-  userproject   UserProject @relation(fields: [userprojectId], references: [id], onDelete: Cascade)
-  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userprojectId String?
+  blogId        String?
+  challengeId   String?
+  challenge     Challenge?   @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  blog          Blog?        @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  userproject   UserProject? @relation(fields: [userprojectId], references: [id], onDelete: Cascade)
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Comment {
-  id            String      @id @default(cuid())
+  id            String       @id @default(cuid())
   comment       String
   userId        String
-  userprojectId String
-  blogId        String
-  blog          Blog        @relation(fields: [blogId], references: [id], onDelete: Cascade)
-  userproject   UserProject @relation(fields: [userprojectId], references: [id], onDelete: Cascade)
-  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userprojectId String?
+  blogId        String?
+  blog          Blog?        @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  userproject   UserProject? @relation(fields: [userprojectId], references: [id], onDelete: Cascade)
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model MemberClass {
