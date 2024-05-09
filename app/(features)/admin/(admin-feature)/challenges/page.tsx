@@ -31,6 +31,7 @@ const Challenges = () => {
         const searchFn = async () => {
             if (debouncedSearch) {
                 const res = await getChallenge({ challengeType: (difficulty as DIFFICULTTYPE), name: debouncedSearch[0], page: 1, pageSize: 100 });
+                setChallenges(res.challenges);
                 setSelectedChallenges(res.challenges);
             }
         };
@@ -40,6 +41,7 @@ const Challenges = () => {
     useEffect(() => {
         const fn = async () => {
             const res = await getChallenge({ name: debouncedSearch[0], challengeType: (difficulty as DIFFICULTTYPE), page: 1, pageSize: 100 });
+            setChallenges(res.challenges)
             setSelectedChallenges(res.challenges);
         };
         fn()
