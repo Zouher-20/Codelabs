@@ -114,7 +114,6 @@ model FeaturePlan {
 model ClassProject {
   id             String           @id @default(cuid())
   name           String
-  type           String
   descraption    String
   Lab            Lab[]
   createdAt      DateTime         @default(now())
@@ -135,6 +134,9 @@ model PlanSubscription {
 
 model ClassRom {
   id           String         @id @default(cuid())
+  name         String
+  type         String
+  description  String
   ClassProject ClassProject[]
   MemberClass  MemberClass[]
 }
@@ -260,6 +262,7 @@ model MemberClass {
   userId         String
   user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   FeedbackProjct FeedbackProjct[]
+  isTeacher      Boolean
 }
 
 model FeedbackProjct {
