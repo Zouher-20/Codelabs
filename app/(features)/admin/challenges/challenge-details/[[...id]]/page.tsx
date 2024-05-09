@@ -19,18 +19,19 @@ import './styles.css';
 import { challengeType } from '@/app/@types/challenge';
 import CodeLabDatePicker from '@/app/components/globals/form/input/date-picker';
 import { useRouter } from 'next/navigation';
+import { deleteChallenge, getDetailsChallenge } from '@/app/api/(modules)/admin/challenge/services/action';
 
-const AddChallenge = ({ params }: { params: { id: number } }) => {
+const AddChallenge = ({ params }: { params: { id: string } }) => {
     const router = useRouter();
-    let isUpdate: boolean = false;
     let date = new Date();
+    const [isUpdate, setIsUpdate] = useState<boolean>(false);
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState(new Date());
     const [tOptions, setTOptions] = useState<Array<MyOptionType>>([]);
     const [defaultValues, setDefaultValues] = useState<challengeType>(
         {
             name: '',
-            difficulty: 'Medium',
+            difficulty: 'easy',
             endAt: date,
             startedAt: date,
             description: '',
@@ -45,11 +46,10 @@ const AddChallenge = ({ params }: { params: { id: number } }) => {
     ]
     useEffect(() => {
         gettagId();
-        console.log('params.id', params.id);
         if (params.id) {
-            getChallengesByID(params.id);
-            isUpdate = true;
-        } else isUpdate = false;
+            getChallengesByID(params.id[0]);
+            setIsUpdate(true);
+        } else setIsUpdate(false);
     }, []);
 
     const gettagId = async () => {
@@ -67,10 +67,24 @@ const AddChallenge = ({ params }: { params: { id: number } }) => {
             toast.error(error.message);
         }
     };
-    const getChallengesByID = async (id: number) => {
+    const getChallengesByID = async (id: string) => {
         try {
-            const res = await getChallenge({ page: 1, pageSize: 100 });
-            // setDefaultValues(res.challenges);
+            const res = await getDetailsChallenge({ challengeId: id, page: 1, pageSize: 100 });
+            let data = {
+                id: res.challenge?.id ? res.challenge?.id : '',
+                name: res.challenge?.name ? res.challenge?.name : '',
+                difficulty: res.challenge?.difficulty ? res.challenge?.difficulty : 'easy',
+                endAt: res.challenge?.endAt ? res.challenge?.endAt : date,
+                startedAt: res.challenge?.startedAt ? res.challenge?.startedAt : date,
+                description: res.challenge?.description ? res.challenge?.description : '',
+                resources: res.challenge?.resources ? res.challenge?.resources : '',
+                tagId: res.challenge?.TagMorph ? res.challenge?.TagMorph.map((tag) => tag.tagId) : [],
+                isComplete: res.challenge?.isComplete,
+                createdAt: res.challenge?.createdAt,
+            }
+            setStartDate(res.challenge?.startedAt ? res.challenge?.startedAt : date)
+            setEndDate(res.challenge?.endAt ? res.challenge?.endAt : date)
+            setDefaultValues(data);
         } catch (error: any) {
             toast.error(error.message);
         }
@@ -78,7 +92,17 @@ const AddChallenge = ({ params }: { params: { id: number } }) => {
 
     const createChallenge = async (values: challengeType) => {
         try {
+            values.startedAt = startDate;
+            values.endAt = endDate
             const res = await addChallenge(values);
+            return res;
+        } catch (error: any) {
+            toast.error(error.message);
+        }
+    };
+    const deleteChallengeByID = async () => {
+        try {
+            const res = await deleteChallenge({ challengeId: [`${params.id[0]}`] });
             return res;
         } catch (error: any) {
             toast.error(error.message);
@@ -90,8 +114,18 @@ const AddChallenge = ({ params }: { params: { id: number } }) => {
     });
 
     const onSubmit = (values: challengeType) => {
-        let res = createChallenge(values)
-        if (res != undefined) router.push('/admin/challenges')
+        if (isUpdate) {
+            let res = deleteChallengeByID()
+            if (res != undefined) {
+                router.push('/admin/challenges')
+            }
+        }
+        else {
+            let res = createChallenge(values)
+            if (res != undefined) {
+                router.push('/admin/challenges')
+            }
+        }
     };
 
     const openModal = () => {
@@ -106,7 +140,7 @@ const AddChallenge = ({ params }: { params: { id: number } }) => {
     return (
         <div className="flex flex-col gap-6 p-6">
             <h1 className="text-4xl font-bold text-white">
-                {isUpdate ? 'Create Challenge' : 'Update Challenge'}
+                {isUpdate ? 'Challenge Details' : 'Create Challenge'}
             </h1>
             <Formik
                 initialValues={defaultValues}
@@ -114,6 +148,7 @@ const AddChallenge = ({ params }: { params: { id: number } }) => {
                     onSubmit(values);
                 }}
                 validationSchema={validationSchema}
+                enableReinitialize
             >
                 {props => (
                     <Form className="flex w-3/4 flex-col gap-4 self-center md:grid md:grid-cols-2">
@@ -145,8 +180,6 @@ const AddChallenge = ({ params }: { params: { id: number } }) => {
                                 placeholder="Select a difficulty..."
                                 isMulti={false}
                                 validate={(value: string) => {
-
-                                    console.log(value)
                                     value ? 'Required' : undefined
                                 }
                                 }
@@ -226,13 +259,23 @@ const AddChallenge = ({ params }: { params: { id: number } }) => {
                             />
                         </div>
                         <span className="col-start-2 flex justify-end">
-                            <Button
-                                onClick={() => props.validateForm()}
-                                style="w-fit"
-                                color="any"
-                                label="Continue"
-                                type="submit"
-                            />
+                            {isUpdate
+                                ? <Button
+                                    onClick={() => props.validateForm()}
+                                    style="w-fit"
+                                    color="error"
+                                    label="Delete"
+                                    type="submit"
+                                />
+                                : <Button
+                                    onClick={() => props.validateForm()}
+                                    style="w-fit"
+                                    color="any"
+                                    label="Continue"
+                                    type="submit"
+                                />
+
+                            }
                         </span>
                     </Form>
                 )}
