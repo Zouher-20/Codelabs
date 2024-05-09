@@ -446,7 +446,7 @@ class UserProjectRepository {
             where: { userprojectId: payload.userProjectId }
         });
 
-        const isStarred = await db.star.findMany({
+        const isStarred = await db.star.findFirst({
             where: {
                 userId: userId,
                 userprojectId: payload.userProjectId
@@ -457,7 +457,7 @@ class UserProjectRepository {
             lab,
             commentCount,
             starCount,
-            isStarred: !!isStarred
+            isStarred: isStarred != null
         };
     }
 
@@ -482,6 +482,7 @@ class UserProjectRepository {
             }
         });
     }
+
     static async addAndDeleteStarUserProjectLab(
         payload: {
             userProjectId: string;

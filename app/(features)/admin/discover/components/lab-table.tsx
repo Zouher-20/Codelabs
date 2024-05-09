@@ -61,6 +61,7 @@ export interface LabTableType extends GenericTableModel {
     name: string;
     description: string;
     commentCount: number;
+    isStared: boolean;
     starCount: number;
     createdAt?: Date;
     user: userType;

@@ -2,7 +2,7 @@
 
 import LabListComponent from '@/app/(features)/(main)/stared/components/lab_list';
 import { LabTableType } from '@/app/(features)/admin/discover/components/lab-table';
-import { getStarredUserProjects } from '@/app/api/(modules)/user-project/services/action';
+import { getTrendingUserProjectsLab } from '@/app/api/(modules)/user-project/services/action';
 import Input from '@/app/components/globals/form/input';
 import { ManageState } from '@/app/components/page-state/state_manager';
 import { useRouter } from 'next/navigation';
@@ -25,13 +25,13 @@ export default function StaredPage() {
         setLoading(true);
         setError(null);
         try {
-            const res = await getStarredUserProjects({
-                searchWord: searchWord,
+            const res = await getTrendingUserProjectsLab({
+                nameLab: searchWord,
                 page: page,
                 pageSize: pageSize
             });
             setLabs(
-                res.starredUserProjects.map<LabTableType>((e: any) => {
+                res.projects.map<LabTableType>((e: any) => {
                     return {
                         ...e,
                         user: {
@@ -43,11 +43,11 @@ export default function StaredPage() {
                         },
                         commentCount: e.commentCount,
                         starCount: e.starCount,
-                        isStared: true
+                        isStared: e.hasStarred
                     };
                 })
             );
-            setTotalItemCount(res.starredUserProjectCount);
+            setTotalItemCount(res.totalCount);
         } catch (e: any) {
             setError(e.message);
             toast.error(e.message);
@@ -67,7 +67,7 @@ export default function StaredPage() {
     return (
         <div className="flex flex-col">
             <div className="flex flex-col gap-8 px-6 py-2">
-                <h1 className="text-4xl font-bold text-white">My Labs</h1>
+                <h1 className="text-4xl font-bold text-white">Trending</h1>
 
                 <div className="flex gap-8">
                     <span>

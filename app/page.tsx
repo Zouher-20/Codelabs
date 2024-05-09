@@ -9,7 +9,6 @@ import MultiSelectForm from './components/globals/form/select/useSelect';
 import Textarea from './components/globals/form/text-area';
 import RadioOption from './components/globals/form/type-multi-select/radio-option';
 import ClassLab from './components/globals/lab/class-lab';
-import InteractionsLab from './components/globals/lab/interactions-lab';
 import Lab from './components/globals/lab/lab';
 import SubmittedLab from './components/globals/lab/submitted-lab';
 import PageContainer from './components/layout/page-container';
@@ -67,7 +66,6 @@ export default function Home() {
                 </form>
                 <div className="flex flex-wrap gap-2">
                     <Lab />
-                    <InteractionsLab react={[754, 213, 30, 84]} />
                     <ClassLab name="Class lab name" type="Type" />
                     <SubmittedLab />
                 </div>

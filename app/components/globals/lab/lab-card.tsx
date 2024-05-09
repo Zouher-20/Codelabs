@@ -4,10 +4,12 @@ import InteractionsLab from './interactions-lab';
 
 const LabCard = ({
     lab,
-    onLabClicked
+    onLabClicked,
+    onInteractionClicked
 }: {
     lab: LabTableType;
     onLabClicked: (lab: LabTableType) => void;
+    onInteractionClicked: (index: number) => void;
 }) => {
     return (
         <div
@@ -16,7 +18,11 @@ const LabCard = ({
                 onLabClicked(lab);
             }}
         >
-            <InteractionsLab react={[lab.starCount, 213, 30, lab.commentCount]} />
+            <InteractionsLab
+                onInteractionClicked={onInteractionClicked}
+                lab={lab}
+                react={[lab.starCount, 213, 30, lab.commentCount]}
+            />
             <div className="px-4">
                 <p className="text-sm">{lab.name}</p>
                 <UserAvatar user={lab.user} />
