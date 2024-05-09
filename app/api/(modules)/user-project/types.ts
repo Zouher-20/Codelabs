@@ -37,4 +37,10 @@ export interface DeleteMyUserProjectInput {
 export interface userProjectStaredInput {
     page: number;
     pageSize: number;
+    searchWord?: string;
+}
+export interface MyUserProjectInput {
+    page: number;
+    pageSize: number;
+    searchWord?: string;
 }
