@@ -13,11 +13,11 @@ import StudentList from './components/student_list';
 
 export default function StatisticsPage() {
     var students: Array<userType> = [
-        { id: 1, name: 'majd1' },
-        { id: 2, name: 'majd2' },
-        { id: 3, name: 'majd3' },
-        { id: 4, name: 'majd4' },
-        { id: 5, name: 'majd5' }
+        { email: 'alshalabi211@gmail.com', id: '1', name: 'majd1' },
+        { email: 'alshalabi211@gmail.com', id: '2', name: 'majd2' },
+        { email: 'alshalabi211@gmail.com', id: '3', name: 'majd3' },
+        { email: 'alshalabi211@gmail.com', id: '4', name: 'majd4' },
+        { email: 'alshalabi211@gmail.com', id: '5', name: 'majd5' }
     ];
     var rooms: Array<RoomType> = [
         { title: 'majd', id: 1 },
@@ -70,13 +70,17 @@ export default function StatisticsPage() {
             </div>
             <div className="flex w-full gap-2 max-lg:flex-wrap">
                 <div className="w-full xl:w-1/4">
-                    <StudentList students={students} title="Students" height='20.5rem'></StudentList>
+                    <StudentList
+                        students={students}
+                        title="Students"
+                        height="20.5rem"
+                    ></StudentList>
                 </div>
                 <div className="w-full xl:w-3/4">
                     <CodeLabContainer height="20.5rem">
                         <div className="w-full p-3">
                             <RoomListComponent
-                            title='Rooms'
+                                title="Rooms"
                                 rooms={rooms}
                                 onLabClicked={handleLabClick}
                             ></RoomListComponent>
