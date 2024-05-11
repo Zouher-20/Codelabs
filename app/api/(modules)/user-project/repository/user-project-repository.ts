@@ -93,13 +93,14 @@ class UserProjectRepository {
     }
 
     static async getStarredUserProjects(
-        payload: { page: number; pageSize: number },
+        payload: { page: number; pageSize: number; searchWord?: string },
         userId: string
     ) {
         const skip = (payload.page - 1) * payload.pageSize;
-
         const starredUserProjects = await db.userProject.findMany({
+            orderBy: { createdAt: 'desc' },
             where: {
+                name: { contains: payload.searchWord },
                 Star: {
                     some: {
                         userId: userId
@@ -122,34 +123,30 @@ class UserProjectRepository {
                 }
             }
         });
-
-        const starCountsPerProject = await Promise.all(
+        const starredUserProjectsWithCounts = await Promise.all(
             starredUserProjects.map(async project => {
-                const count = await db.star.count({
+                const starCount = await db.star.count({
                     where: {
                         userprojectId: project.id
                     }
                 });
-                return count;
-            })
-        );
 
-        const commentCountsPerProject = await Promise.all(
-            starredUserProjects.map(async project => {
-                const count = await db.comment.count({
+                const commentCount = await db.comment.count({
                     where: {
                         userprojectId: project.id
                     }
                 });
-                return count;
+
+                return {
+                    ...project,
+                    starCount,
+                    commentCount
+                };
             })
         );
-
         return {
-            starredUserProjects,
-            starredUserProjectCount,
-            starCountsPerProject,
-            commentCountsPerProject
+            starredUserProjects: starredUserProjectsWithCounts,
+            starredUserProjectCount
         };
     }
 
@@ -449,7 +446,7 @@ class UserProjectRepository {
             where: { userprojectId: payload.userProjectId }
         });
 
-        const isStarred = await db.star.findMany({
+        const isStarred = await db.star.findFirst({
             where: {
                 userId: userId,
                 userprojectId: payload.userProjectId
@@ -460,7 +457,7 @@ class UserProjectRepository {
             lab,
             commentCount,
             starCount,
-            isStarred: !!isStarred
+            isStarred: isStarred != null
         };
     }
 
@@ -485,6 +482,7 @@ class UserProjectRepository {
             }
         });
     }
+
     static async addAndDeleteStarUserProjectLab(
         payload: {
             userProjectId: string;
@@ -550,6 +548,95 @@ class UserProjectRepository {
         });
 
         return deleteMyLab;
+    }
+
+    static async getMyUserProjectsLab(
+        payload: {
+            page: number;
+            pageSize: number;
+            searchWord?: string;
+        },
+        userId: string
+    ) {
+        const skip = (payload.page - 1) * payload.pageSize;
+
+        const existingUser = await db.user.findUnique({
+            where: {
+                id: userId
+            }
+        });
+        if (!existingUser) {
+            throw new Error('user not found');
+        }
+
+        let args = {};
+        if (payload.searchWord) {
+            args = {
+                name: { contains: payload.searchWord }
+            };
+        }
+        const myProjects = await db.userProject.findMany({
+            take: payload.pageSize,
+            skip: skip,
+            orderBy: { createdAt: 'desc' },
+            include: {
+                user: true,
+                Lab: true,
+                TagMorph: {
+                    include: {
+                        tag: true
+                    }
+                }
+            },
+            where: {
+                ...args,
+                userId: existingUser.id
+            }
+        });
+
+        const projectsWithCounts = await Promise.all(
+            myProjects.map(async project => {
+                const commentCount = await db.comment.count({
+                    where: { userprojectId: project.id }
+                });
+
+                const starCount = await db.star.count({
+                    where: { userprojectId: project.id }
+                });
+
+                const starredProjectsIds = (
+                    await db.star.findMany({
+                        where: {
+                            userId: userId,
+                            userprojectId: {
+                                in: myProjects.map(project => project.id)
+                            }
+                        },
+                        select: {
+                            userprojectId: true
+                        }
+                    })
+                ).map(star => star.userprojectId);
+
+                const hasStarred = starredProjectsIds.includes(project.id);
+
+                return {
+                    ...project,
+                    commentCount,
+                    starCount,
+                    hasStarred
+                };
+            })
+        );
+
+        const totalCount = await db.userProject.count({
+            where: { ...args }
+        });
+
+        return {
+            projects: projectsWithCounts,
+            totalCount: totalCount
+        };
     }
 }
 

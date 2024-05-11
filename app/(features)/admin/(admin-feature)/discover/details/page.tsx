@@ -4,18 +4,21 @@ import CodeLabContainer from '@/app/(features)/(main)/classes/components/contain
 import CloneLabComponent from '@/app/(features)/(main)/classes/students/room/components/clone-lab-component';
 import { FeedbackComponent } from '@/app/(features)/(main)/classes/students/room/components/feed-back';
 import CommentModal from '@/app/(features)/(main)/discover/components/comment-modal';
-import { LabTableType } from '@/app/(features)/admin/discover/components/lab-table';
+import { LabTableType } from '@/app/(features)/admin/(admin-feature)/discover/components/lab-table';
 import { InteractionType } from '@/app/@types/Interaction';
 import { FeedbackType } from '@/app/@types/feedback';
 import { deleteUserProjectAdmin } from '@/app/api/(modules)/admin/user-project/service/action';
 import { getSession } from '@/app/api/(modules)/auth/service/actions';
 import {
+    addAndDeleteStarUserProjectLab,
     getCommentUserProjectLab,
     getDetailsUserProjectLab
 } from '@/app/api/(modules)/user-project/services/action';
 import Interaction from '@/app/components/globals/lab/interaction';
 import UserAvatar from '@/app/components/globals/user-avatar';
 import { ManageState } from '@/app/components/page-state/state_manager';
+import { CustomToaster } from '@/app/components/toast/custom-toaster';
+import { interactions } from '@/app/constants/interactions';
 import { Icon } from '@iconify/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -57,6 +60,7 @@ export default function LabDetails() {
         const res = await getDetailsUserProjectLab({ userProjectId: id });
         setLab({
             id: res.lab.id,
+            isStared: res.isStarred,
             name: res.lab.name ?? '',
             createdAt: res.lab.createdAt ?? '',
             commentCount: res.commentCount,
@@ -109,6 +113,34 @@ export default function LabDetails() {
             toast.error(e.message);
         }
     };
+    const onInteractionClicked = async (index: number) => {
+        try {
+            if (index == 0) {
+                const action = !(lab?.isStared ?? false);
+                await addAndDeleteStarUserProjectLab({
+                    userProjectId: lab?.id ?? '',
+                    action: action
+                });
+                if (action) {
+                    toast.success('add star done successfully');
+                    setLab({
+                        ...lab!,
+                        starCount: (lab?.starCount ?? 0) + 1,
+                        isStared: true
+                    });
+                } else {
+                    toast.success('star removed successfully');
+                    setLab({
+                        ...lab!,
+                        starCount: (lab?.starCount ?? 0) - 1,
+                        isStared: false
+                    });
+                }
+            }
+        } catch (e: any) {
+            toast.error(e.message);
+        }
+    };
     return (
         <div className="flex min-h-[550px] flex-col gap-2 p-3">
             <ManageState
@@ -144,6 +176,11 @@ export default function LabDetails() {
                                             (interaction: InteractionType, index: number) =>
                                                 Interaction({
                                                     icon: interaction.icon,
+                                                    isSelected:
+                                                        (index == 0 && lab?.isStared) || index != 0,
+                                                    onClick: () => {
+                                                        onInteractionClicked(index);
+                                                    },
                                                     number:
                                                         index == 0
                                                             ? lab?.starCount
@@ -170,14 +207,8 @@ export default function LabDetails() {
                 }
                 empty={false}
             />
+            <CustomToaster />
             <CommentModal myId={myId} lab={lab} open={open} onCommentChange={onCommentChange} />
         </div>
     );
 }
-
-const interactions = [
-    { icon: 'solar:heart-angle-bold', style: 'text-error' },
-    { icon: 'solar:share-circle-bold-duotone', style: 'text-secondary' },
-    { icon: 'solar:eye-bold-duotone', style: 'text-warning' },
-    { icon: 'solar:chat-line-bold', style: 'text-info' }
-];

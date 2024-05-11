@@ -8,4 +8,6 @@ export interface challengeType {
     description: string;
     resources: string;
     tagId: string[];
+    isComplete?: boolean;
+    createdAt?: Date;
 }

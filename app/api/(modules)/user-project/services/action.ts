@@ -10,6 +10,7 @@ import {
     GetCommentUserProjectLabInput,
     GetDetailsUserProjectLabInput,
     GetUserProjectInput,
+    MyUserProjectInput,
     UserProjectInput,
     userProjectStaredInput
 } from '../types';
@@ -70,4 +71,9 @@ export const getStarredUserProjects = async (payload: userProjectStaredInput) =>
     const session = await getSession();
     const userId = session?.id;
     return UserProjectRepository.getStarredUserProjects(payload, userId);
+};
+export const getMyUserProject = async (payload: MyUserProjectInput) => {
+    const session = await getSession();
+    const userId = session?.id;
+    return UserProjectRepository.getMyUserProjectsLab(payload, userId);
 };

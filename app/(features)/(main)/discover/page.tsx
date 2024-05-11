@@ -1,8 +1,10 @@
 'use client';
 
-import { LabTableType } from '@/app/(features)/admin/discover/components/lab-table';
-import { getlab } from '@/app/api/(modules)/admin/user-project/service/action';
-import { getTrendingUserProjectsLab } from '@/app/api/(modules)/user-project/services/action';
+import { LabTableType } from '@/app/(features)/admin/(admin-feature)/discover/components/lab-table';
+import {
+    getTrendingUserProjectsLab,
+    getUserProjectsLab
+} from '@/app/api/(modules)/user-project/services/action';
 import { ManageState } from '@/app/components/page-state/state_manager';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -40,6 +42,7 @@ export default function DiscoverPage() {
                 return {
                     id: e.id,
                     name: e.name,
+                    isStared: e.hasStarred,
                     commentCount: e.commentCount,
                     description: e.description,
                     starCount: e.starCount,
@@ -55,7 +58,7 @@ export default function DiscoverPage() {
         );
     };
     const getLabs = async () => {
-        const lab = await getlab({
+        const lab = await getUserProjectsLab({
             pageSize: pageSize,
             page: 1
         });
@@ -64,6 +67,7 @@ export default function DiscoverPage() {
                 return {
                     id: e.id,
                     name: e.name,
+                    isStared: e.hasStarred,
                     commentCount: e.commentCount,
                     description: e.description,
                     starCount: e.starCount,
@@ -84,8 +88,13 @@ export default function DiscoverPage() {
             id: lab.id
         };
         const queryString = new URLSearchParams(params).toString();
-        route.push('/discover/details' + '?' + queryString);
+        route.push('/lab-details' + '?' + queryString);
     };
+
+    const onMoreClicked = (trending: boolean) => {
+        route.push(`/discover/${trending ? 'trending' : 'recently'}`);
+    };
+
     return (
         <div className="px-3 py-5">
             <div className="flex gap-5 max-md:flex-col">
@@ -120,15 +129,23 @@ export default function DiscoverPage() {
                 loadedState={
                     <>
                         <LabListComponent
+                            onMoreClicked={() => {
+                                onMoreClicked(false);
+                            }}
                             labs={labs}
                             title="Recently worked on"
                             onLabClicked={e => {
                                 onLabClicked(e);
                             }}
+                            onLabInteractionClicked={() => {}}
                         />
                         <div className="h-3" />
                         <LabListComponent
                             labs={trendingLabs}
+                            onMoreClicked={() => {
+                                onMoreClicked(true);
+                            }}
+                            onLabInteractionClicked={() => {}}
                             title="Trending"
                             onLabClicked={e => {
                                 onLabClicked(e);

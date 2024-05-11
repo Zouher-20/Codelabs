@@ -1,6 +1,6 @@
+import Avatar from '@/app/(features)/(profile)/profile/components/avatar';
+import PersonalInfo from '@/app/(features)/(profile)/profile/components/personal-info';
 import { userType } from '@/app/@types/user';
-import Avatar from '../../(profile)/profile/components/avatar';
-import PersonalInfo from '../../(profile)/profile/components/personal-info';
 
 const user: userType = {
     name: 'User name',

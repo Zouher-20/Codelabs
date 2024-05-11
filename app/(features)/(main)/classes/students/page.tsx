@@ -7,13 +7,14 @@ import CodeLabContainer from '../components/container';
 import ClassDescriptionComponent from '../statistics/components/class-description';
 import RoomListComponent from '../statistics/components/room_list';
 import StudentList from '../statistics/components/student_list';
+
 export default function ClassLabPage() {
     var students: Array<userType> = [
-        { id: 1, name: 'majd1' },
-        { id: 2, name: 'majd2' },
-        { id: 3, name: 'majd3' },
-        { id: 4, name: 'majd4' },
-        { id: 5, name: 'majd5' }
+        { id: '1', name: 'majd1', email: 'majd@gmail.com' },
+        { id: '2', name: 'majd2', email: 'majd@gmail.com' },
+        { id: '3', name: 'majd3', email: 'majd@gmail.com' },
+        { id: '4', name: 'majd4', email: 'majd@gmail.com' },
+        { id: '5', name: 'majd5', email: 'majd@gmail.com' }
     ];
     var rooms: Array<RoomType> = [
         { title: 'majd', id: 1 },

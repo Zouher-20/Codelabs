@@ -7,13 +7,13 @@ import Select from '@/app/components/globals/form/select/select';
 import Textarea from '@/app/components/globals/form/text-area';
 import RadioOption from '@/app/components/globals/form/type-multi-select/radio-option';
 import IconRenderer from '@/app/components/globals/icon';
-import { tagOptions } from '@/app/constants/tag-options';
 import { types } from '@/app/constants/types';
 import { Field, Form, Formik } from 'formik';
 import { useState } from 'react';
 
 const NewClassLabModal = () => {
     const [startDate, setStartDate] = useState(new Date());
+
     interface FormValues {
         name: string;
         option: string;
@@ -75,7 +75,7 @@ const NewClassLabModal = () => {
                                     <Field
                                         className="mb-4"
                                         name="tags"
-                                        options={tagOptions}
+                                        options={[]}
                                         component={Select}
                                         placeholder="Select multi tags..."
                                         isMulti={true}
