@@ -24,7 +24,7 @@ export function useContainer(projectFiles: FileSystemTree) {
 
     async function bootContainer() {
         try {
-            if (isBooted) {
+            if (isBooted || webcontainerInstance.current) {
                 throw 'web container is already booted';
             }
             const terminalEl: HTMLDivElement | null = document.querySelector('#terminal');

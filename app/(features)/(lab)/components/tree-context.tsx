@@ -1,13 +1,35 @@
-import { PropsWithChildren, createContext, useContext, useReducer } from 'react';
+import { FileSystemTree } from '@webcontainer/api';
+import { get, set, unset } from 'lodash';
+import { Dispatch, PropsWithChildren, createContext, useContext, useReducer } from 'react';
+import TreeHelper from '../lab/tree-helper';
+export interface FileTreeState {
+    nodes: FileSystemTree;
+    activeFile: string[];
+    activeFolder: string[];
+}
+export const FileTreeContext = createContext<FileTreeState>({
+    nodes: {},
+    activeFile: [],
+    activeFolder: []
+});
 
-export const FileTreeContext = createContext(null);
-export const FileTreeDispatchContext = createContext(null);
-export function TreeContextProvider({ children }: PropsWithChildren) {
-    const [tasks, dispatch] = useReducer(treeReducer, [], () => {});
+export const FileTreeDispatchContext = createContext<Dispatch<ITreeAction> | null>(null);
+var setFileCb: CallableFunction;
+export function TreeContextProvider({
+    children,
+    nodes,
+    setFile
+}: PropsWithChildren<{ nodes: FileSystemTree; setFile: CallableFunction }>) {
+    setFileCb = setFile;
+    const [fileTreeState, dispatch] = useReducer(treeReducer, {
+        nodes,
+        activeFile: [],
+        activeFolder: []
+    } as never);
 
     return (
         <>
-            <FileTreeContext.Provider value={tasks}>
+            <FileTreeContext.Provider value={fileTreeState}>
                 <FileTreeDispatchContext.Provider value={dispatch}>
                     {children}
                 </FileTreeDispatchContext.Provider>
@@ -26,17 +48,89 @@ export function useTreeDispatch() {
 
 export enum TreeReducerActionType {
     FOLDER_CLOSE,
-    FOLDER_OPEN,
-    FILE_ACTIVATE
+    FILE_ACTIVATE,
+    FOLDER_ACTIVATE,
+    NODE_DELETE,
+    FOLDER_CREATE,
+    FILE_CREATE
 }
 
-export function treeReducer(treePath, action) {
-    switch (action.type) {
+interface IFileActivateAction {
+    type: TreeReducerActionType.FILE_ACTIVATE;
+    payload: string[];
+}
+
+interface IFolderActivateAction {
+    type: TreeReducerActionType.FOLDER_ACTIVATE;
+    payload: string[];
+}
+
+interface INodeDeleteAction {
+    type: TreeReducerActionType.NODE_DELETE;
+    payload: string[];
+}
+interface IFileCreateAction {
+    type: TreeReducerActionType.FILE_CREATE;
+    payload: string[];
+}
+interface IFolderCreateAction {
+    type: TreeReducerActionType.FOLDER_CREATE;
+    payload: string[];
+}
+
+type ITreeAction =
+    | IFileActivateAction
+    | IFolderActivateAction
+    | INodeDeleteAction
+    | IFileCreateAction
+    | IFolderCreateAction;
+
+export function treeReducer(fileTreeSate: FileTreeState, { type, payload }: ITreeAction) {
+    switch (type) {
         case TreeReducerActionType.FILE_ACTIVATE: {
-            // logic
+            if (setFileCb)
+                setFileCb(
+                    get(fileTreeSate.nodes, TreeHelper.getStringPath(payload) + '.file.contents')
+                );
+            return {
+                activeFolder: fileTreeSate.activeFolder,
+                activeFile: payload,
+                nodes: fileTreeSate.nodes
+            };
+        }
+        case TreeReducerActionType.FOLDER_ACTIVATE: {
+            return {
+                activeFolder: payload,
+                activeFile: fileTreeSate.activeFile,
+                nodes: fileTreeSate.nodes
+            };
+        }
+        case TreeReducerActionType.NODE_DELETE: {
+            unset(fileTreeSate.nodes, TreeHelper.getStringPath(payload));
+            return {
+                activeFolder: fileTreeSate.activeFolder,
+                activeFile: ['package.json'],
+                nodes: fileTreeSate.nodes
+            };
+        }
+        case TreeReducerActionType.FOLDER_CREATE: {
+            set(fileTreeSate.nodes, TreeHelper.getStringPath(payload), { directory: {} });
+            return {
+                activeFolder: fileTreeSate.activeFolder,
+                activeFile: fileTreeSate.activeFile,
+                nodes: fileTreeSate.nodes
+            };
+        }
+        case TreeReducerActionType.FILE_CREATE: {
+            set(fileTreeSate.nodes, TreeHelper.getStringPath(payload), { file: { contents: '' } });
+            return {
+                activeFolder: fileTreeSate.activeFolder,
+                activeFile: payload,
+                nodes: fileTreeSate.nodes
+            };
         }
         default: {
-            throw Error('Unknown action: ' + action.type);
+            throw Error('Unknown action: ' + type);
         }
     }
 }
