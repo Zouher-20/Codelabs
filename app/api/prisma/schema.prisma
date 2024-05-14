@@ -117,8 +117,8 @@ model ClassProject {
   descraption    String
   Lab            Lab[]
   createdAt      DateTime         @default(now())
-  classRomId     String
-  classRom       ClassRom         @relation(fields: [classRomId], references: [id], onDelete: Cascade)
+  romId String?
+  rom   Rom?   @relation(fields: [romId], references: [id], onDelete: Cascade)
   FeedbackProjct FeedbackProjct[]
   TagMorph       TagMorph[]
 }
@@ -131,14 +131,23 @@ model PlanSubscription {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   plan   Plan   @relation(fields: [planId], references: [id], onDelete: Cascade)
 }
+model Rom {
+  id           String         @id @default(cuid())
+  name         String
+  type         String
+  description  String
+  classRomId String?
+  classRom   ClassRom?   @relation(fields: [classRomId], references: [id], onDelete: Cascade)
+  ClassProject ClassProject[]
 
+}
 model ClassRom {
   id           String         @id @default(cuid())
   name         String
   type         String
   description  String
-  ClassProject ClassProject[]
   MemberClass  MemberClass[]
+  Rom          Rom[]
 }
 
 model Tag {

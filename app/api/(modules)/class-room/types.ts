@@ -14,3 +14,17 @@ export interface getMyClassesInput {
     pageSize: number;
     searchWord?: string;
 }
+
+export interface GetClassRomByIdInput {
+    classRomId: string;
+}
+export interface GetRomInClassInput {
+    romePage: number;
+    romPageSize: number;
+    classRomId: string;
+}
+export interface GetUserInClassInput {
+    classRomId: string;
+    userPage: number;
+    userPageSize: number;
+}
