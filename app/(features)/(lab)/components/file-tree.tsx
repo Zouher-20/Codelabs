@@ -1,3 +1,4 @@
+'use client';
 import GlobalUtils from '@/app/utils/global-utils';
 import { DirectoryNode, FileNode, FileSystemTree } from '@webcontainer/api';
 import FileItem from './file-item';

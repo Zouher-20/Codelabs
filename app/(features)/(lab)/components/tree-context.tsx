@@ -1,30 +1,31 @@
+'use client';
 import { FileSystemTree } from '@webcontainer/api';
-import { get, set, unset } from 'lodash';
+import { set, unset } from 'lodash';
 import { Dispatch, PropsWithChildren, createContext, useContext, useReducer } from 'react';
 import TreeHelper from '../lab/tree-helper';
 export interface FileTreeState {
     nodes: FileSystemTree;
     activeFile: string[];
     activeFolder: string[];
+    activeFileName?: string;
 }
 export const FileTreeContext = createContext<FileTreeState>({
     nodes: {},
-    activeFile: [],
-    activeFolder: []
+    activeFile: ['package.json'],
+    activeFolder: [],
+    activeFileName: 'package.json'
 });
 
 export const FileTreeDispatchContext = createContext<Dispatch<ITreeAction> | null>(null);
-var setFileCb: CallableFunction;
 export function TreeContextProvider({
     children,
-    nodes,
-    setFile
-}: PropsWithChildren<{ nodes: FileSystemTree; setFile: CallableFunction }>) {
-    setFileCb = setFile;
+    nodes
+}: PropsWithChildren<{ nodes: FileSystemTree }>) {
     const [fileTreeState, dispatch] = useReducer(treeReducer, {
         nodes,
-        activeFile: [],
-        activeFolder: []
+        activeFile: ['package.json'],
+        activeFolder: [],
+        activeFileName: 'package.json'
     } as never);
 
     return (
@@ -88,21 +89,20 @@ type ITreeAction =
 export function treeReducer(fileTreeSate: FileTreeState, { type, payload }: ITreeAction) {
     switch (type) {
         case TreeReducerActionType.FILE_ACTIVATE: {
-            if (setFileCb)
-                setFileCb(
-                    get(fileTreeSate.nodes, TreeHelper.getStringPath(payload) + '.file.contents')
-                );
+            // if (setFileCb) setFileCb(get(fileTreeSate.nodes, TreeHelper.getParsedPath(payload)));
             return {
                 activeFolder: fileTreeSate.activeFolder,
                 activeFile: payload,
-                nodes: fileTreeSate.nodes
+                nodes: fileTreeSate.nodes,
+                activeFileName: [...payload].pop()
             };
         }
         case TreeReducerActionType.FOLDER_ACTIVATE: {
             return {
                 activeFolder: payload,
                 activeFile: fileTreeSate.activeFile,
-                nodes: fileTreeSate.nodes
+                nodes: fileTreeSate.nodes,
+                activeFileName: fileTreeSate.activeFileName
             };
         }
         case TreeReducerActionType.NODE_DELETE: {
@@ -110,23 +110,28 @@ export function treeReducer(fileTreeSate: FileTreeState, { type, payload }: ITre
             return {
                 activeFolder: fileTreeSate.activeFolder,
                 activeFile: ['package.json'],
-                nodes: fileTreeSate.nodes
+                nodes: fileTreeSate.nodes,
+                activeFileName: 'package.json'
             };
         }
         case TreeReducerActionType.FOLDER_CREATE: {
-            set(fileTreeSate.nodes, TreeHelper.getStringPath(payload), { directory: {} });
+            set(fileTreeSate.nodes, TreeHelper.getParsedPath(payload, false), { directory: {} });
             return {
                 activeFolder: fileTreeSate.activeFolder,
                 activeFile: fileTreeSate.activeFile,
-                nodes: fileTreeSate.nodes
+                nodes: fileTreeSate.nodes,
+                activeFileName: fileTreeSate.activeFileName
             };
         }
         case TreeReducerActionType.FILE_CREATE: {
-            set(fileTreeSate.nodes, TreeHelper.getStringPath(payload), { file: { contents: '' } });
+            set(fileTreeSate.nodes, TreeHelper.getParsedPath(payload, false), {
+                file: { contents: '' }
+            });
             return {
                 activeFolder: fileTreeSate.activeFolder,
                 activeFile: payload,
-                nodes: fileTreeSate.nodes
+                nodes: fileTreeSate.nodes,
+                activeFileName: payload.pop()
             };
         }
         default: {

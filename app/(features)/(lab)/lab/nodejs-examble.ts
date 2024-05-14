@@ -31,5 +31,15 @@ app.listen(port, () => {
   }
 }`
         }
+    },
+    test: {
+        directory: {
+            'index.js': {
+                file: {
+                    contents: `
+tesat`
+                }
+            }
+        }
     }
 };

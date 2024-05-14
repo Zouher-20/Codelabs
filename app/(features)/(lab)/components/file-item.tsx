@@ -32,13 +32,15 @@ export default function FileItem({ name, node }: { name: string; node: FileNode 
             >
                 <IconRenderer className="text-info" icon="solar:file-bold-duotone" />
                 {name}
-                <div className="action-btns ml-auto gap-1">
-                    <IconRenderer
-                        onClick={handleDelete}
-                        className="cursor-pointer text-error"
-                        icon="solar:trash-bin-minimalistic-bold"
-                    />
-                </div>
+                {name !== 'package.json' && (
+                    <div className="action-btns ml-auto gap-1">
+                        <IconRenderer
+                            onClick={handleDelete}
+                            className="cursor-pointer text-error"
+                            icon="solar:trash-bin-minimalistic-bold"
+                        />
+                    </div>
+                )}
             </div>
         </>
     );
