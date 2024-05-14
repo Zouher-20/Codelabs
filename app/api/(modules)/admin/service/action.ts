@@ -91,11 +91,7 @@ export const getChallenge = async (payload: ChallengePaginationInput) => {
     try {
         const { page, pageSize, name, challengeType } = payload;
         const session = await getSession();
-        if (session?.role === ROLE.ADMIN) {
-            return AdminRepository.findManyChallenge(payload);
-        } else {
-            throw new Error('Access denied: You are not an admin.');
-        }
+        return AdminRepository.findManyChallenge(payload);
     } catch (error) {
         console.error('An error occurred:', error);
         throw new Error('An error occurred while fetching challenges.');
