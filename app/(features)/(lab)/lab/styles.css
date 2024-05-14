@@ -1,0 +1,6 @@
+.node-item:hover > .action-btns {
+    display: flex;
+}
+.action-btns {
+    display: none;
+}

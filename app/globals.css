@@ -10,6 +10,10 @@ body {
     min-height: calc(100vh - 4.25rem);
 }
 
+summary::marker {
+    content: '';
+}
+
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
