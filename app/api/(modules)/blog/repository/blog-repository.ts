@@ -20,7 +20,7 @@ class BlogRepository {
     }
 
     static async addBlog(
-        payload: { content: string; title: string; tagId: string[] },
+        payload: { content: string; title: string; photo?: string },
         userId: string
     ) {
         const countMyBlog = await db.blog.count({
@@ -55,59 +55,33 @@ class BlogRepository {
                 data: {
                     contant: payload.content,
                     title: payload.title,
-                    userId: userId
+                    userId: userId,
+                    photo: payload.photo
                 }
             });
-
-            const tags = await db.tag.findMany({
-                where: {
-                    id: {
-                        in: payload.tagId
-                    }
-                }
-            });
-
-            if (tags.length !== payload.tagId.length) {
-                throw new Error(`One or more tags not found.`);
-            }
-
-            const tagMorphCreatePromises = tags.map(tag =>
-                db.tagMorph.create({
-                    data: {
-                        tagId: tag.id,
-                        blogId: myBlog.id
-                    }
-                })
-            );
-
-            await Promise.all(tagMorphCreatePromises);
-
             return myBlog;
         } else {
             throw new Error('User does not have access to create more blogs.');
         }
     }
-    static async getBlog(payload: {
+
+    static async getBlogByCreatedAt(payload: {
         page: number;
         pageSize: number;
-        tagName: string;
-        blogTitle: string;
+        blogTitle?: string;
+        blogContent?: string;
     }) {
         const skip = (payload.page - 1) * payload.pageSize;
         let args = {};
 
-        if (payload.blogTitle && payload.tagName) {
+        if (payload.blogTitle && payload.blogContent) {
             args = {
                 AND: [
                     {
                         title: { contains: payload.blogTitle }
                     },
                     {
-                        TagMorph: {
-                            tag: {
-                                tagename: { contains: payload.tagName }
-                            }
-                        }
+                        contant: { contains: payload.blogContent }
                     }
                 ]
             };
@@ -115,13 +89,9 @@ class BlogRepository {
             args = {
                 title: { contains: payload.blogTitle }
             };
-        } else if (payload.tagName) {
+        } else if (payload.blogContent) {
             args = {
-                TagMorph: {
-                    tag: {
-                        tagename: { contains: payload.tagName }
-                    }
-                }
+                contant: { contains: payload.blogContent }
             };
         }
         const myBlogs = await db.blog.findMany({
@@ -169,24 +139,20 @@ class BlogRepository {
     static async getTrendingBlog(payload: {
         page: number;
         pageSize: number;
-        tagName: string;
-        blogTitle: string;
+        blogTitle?: string;
+        blogContent?: string;
     }) {
         const skip = (payload.page - 1) * payload.pageSize;
         let args = {};
 
-        if (payload.blogTitle && payload.tagName) {
+        if (payload.blogTitle && payload.blogContent) {
             args = {
                 AND: [
                     {
                         title: { contains: payload.blogTitle }
                     },
                     {
-                        TagMorph: {
-                            tag: {
-                                tagename: { contains: payload.tagName }
-                            }
-                        }
+                        contant: { contains: payload.blogContent }
                     }
                 ]
             };
@@ -194,15 +160,12 @@ class BlogRepository {
             args = {
                 title: { contains: payload.blogTitle }
             };
-        } else if (payload.tagName) {
+        } else if (payload.blogContent) {
             args = {
-                TagMorph: {
-                    tag: {
-                        tagename: { contains: payload.tagName }
-                    }
-                }
+                contant: { contains: payload.blogContent }
             };
         }
+
         const myBlogs = await db.blog.findMany({
             take: payload.pageSize,
             skip: skip,
@@ -256,12 +219,31 @@ class BlogRepository {
         };
     }
 
+    static async deleteMyBlog(payload: { blogId: string }, userId: string) {
+        const myBlog = await db.blog.findUnique({
+            where: {
+                userId: userId,
+                id: payload.blogId
+            }
+        });
+
+        if (!myBlog) {
+            throw new Error('blog is not found or was deleted please refresh again');
+        }
+        return await db.blog.delete({
+            where: {
+                id: myBlog.id,
+                userId: userId
+            }
+        });
+    }
+
     static async editBlog(
         payload: {
             content: string;
             title: string;
-            tagId: string[];
             blogId: string;
+            photo?: string;
         },
         userId: string
     ) {
@@ -282,46 +264,13 @@ class BlogRepository {
             },
             data: {
                 contant: payload.content,
-                title: payload.title
+                title: payload.title,
+                photo: payload.photo
             },
             include: {
-                user: true,
-                TagMorph: {
-                    include: {
-                        tag: true
-                    }
-                }
+                user: true
             }
         });
-
-        const tags = await db.tag.findMany({
-            where: {
-                id: {
-                    in: payload.tagId
-                }
-            }
-        });
-
-        if (tags.length !== payload.tagId.length) {
-            throw new Error('One or more tags not found.');
-        }
-
-        await db.tagMorph.deleteMany({
-            where: {
-                blogId: updatedBlog.id
-            }
-        });
-
-        const tagMorphCreatePromises = tags.map(tag =>
-            db.tagMorph.create({
-                data: {
-                    tagId: tag.id,
-                    blogId: updatedBlog.id
-                }
-            })
-        );
-
-        await Promise.all(tagMorphCreatePromises);
 
         const commentCount = await db.comment.count({
             where: { blogId: updatedBlog.id }
@@ -336,9 +285,62 @@ class BlogRepository {
         };
     }
 
+    static async getAllBlog(payload: {
+        page: number;
+        pageSize: number;
+        blogTitle?: string;
+        blogContent?: string;
+    }) {
+        const skip = (payload.page - 1) * payload.pageSize;
+
+        const myBlogs = await db.blog.findMany({
+            take: payload.pageSize,
+            skip: skip,
+            orderBy: [
+                {
+                    Comment: {
+                        _count: Prisma.SortOrder.desc
+                    }
+                },
+                {
+                    Star: {
+                        _count: Prisma.SortOrder.desc
+                    }
+                }
+            ],
+            include: {
+                user: true
+            }
+        });
+
+        const myBlogsWithCounts = await Promise.all(
+            myBlogs.map(async blog => {
+                const commentCount = await db.comment.count({
+                    where: { blogId: blog.id }
+                });
+
+                const starCount = await db.star.count({
+                    where: { blogId: blog.id }
+                });
+
+                return {
+                    ...blog,
+                    commentCount,
+                    starCount
+                };
+            })
+        );
+
+        const totalCount = await db.blog.count();
+
+        return {
+            projects: myBlogsWithCounts,
+            totalCount: totalCount
+        };
+    }
+
     static async addBlogComment(payload: { blogId: string; comment: string }) {}
     static async getCommentBlog(payload: { blogId: string; page: number; pageSize: number }) {}
-    static async deleteMyBlog(payload: { blogId: string }) {}
     static async addStarBlog(payload: { blogId: string }) {}
     static async getDetailsBlog(payload: { blogId: string }) {}
     static async deleteMyCommentInBlog(payload: { commentId: string }) {}

@@ -169,8 +169,6 @@ model TagMorph {
   challenge     Challenge?    @relation(fields: [challengeId], references: [id], onDelete: Cascade)
   classId       String?
   class         ClassProject? @relation(fields: [classId], references: [id], onDelete: Cascade)
-  blogId        String?
-  blog          Blog?         @relation(fields: [blogId], references: [id], onDelete: Cascade)
 }
 
 model Challenge {
@@ -235,11 +233,11 @@ model Blog {
   userId    String
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   contant   String?
+  photo     String?
   createdAt DateTime   @default(now())
   title     String?
   Star      Star[]
   Comment   Comment[]
-  TagMorph  TagMorph[]
 }
 
 model Star {
