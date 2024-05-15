@@ -4,7 +4,7 @@ export enum PackageManagerType {
     PNPM = 'pnpm'
 }
 import GlobalUtils from '@/app/utils/global-utils';
-import { FileNode, FileSystemTree, WebContainer } from '@webcontainer/api';
+import { FileSystemTree, WebContainer } from '@webcontainer/api';
 import { useEffect, useRef, useState } from 'react';
 import { Terminal } from 'xterm';
 
@@ -30,7 +30,10 @@ export function useContainer(projectFiles: FileSystemTree) {
             const terminalEl: HTMLDivElement | null = document.querySelector('#terminal');
             if (terminalEl && GlobalUtils.isNullOrUndefined(terminalInstance.current)) {
                 terminalInstance.current = new Terminal({
-                    convertEol: true
+                    convertEol: true,
+                    theme: {
+                        background: '#100F13'
+                    }
                 });
                 terminalInstance.current.open(terminalEl);
             } else {
@@ -48,15 +51,13 @@ export function useContainer(projectFiles: FileSystemTree) {
         }
     }
 
-    async function mountFiles() {
+    async function mountFiles(newTree?: FileSystemTree) {
         try {
             if (!webcontainerInstance.current) {
                 throw 'no web container booted';
             }
 
-            await webcontainerInstance.current.mount(projectFiles);
-            const indexjs = (projectFiles['package.json'] as FileNode).file.contents;
-            setEditor(indexjs as string);
+            await webcontainerInstance.current.mount(newTree || projectFiles);
         } catch (err) {
             console.warn('__ CONTAINER ERROR __ : ' + err);
         }
@@ -126,9 +127,16 @@ export function useContainer(projectFiles: FileSystemTree) {
             });
         } catch (err) {}
     }
+
+    function writeFile(path: string[], contents: string) {
+        const writePath = '/' + path.join('/');
+        webcontainerInstance.current?.fs.writeFile(writePath, contents);
+    }
     useEffect(() => {
         const setupContainer = async () => {
             if (!webcontainerInstance.current) {
+                setBooting(true);
+
                 await bootContainer().then(async () => {
                     await mountFiles().then(async () => {
                         setIsMounted(true);
@@ -136,6 +144,7 @@ export function useContainer(projectFiles: FileSystemTree) {
                         await installDependancies(pkgManagerType).then(async code => {
                             if (code === 0) {
                                 await runDevServer();
+                                setBooting(false);
                             }
                         });
                     });
@@ -157,6 +166,7 @@ export function useContainer(projectFiles: FileSystemTree) {
         runningServer,
         serverReady,
         editor,
-        setEditor
+        setEditor,
+        writeFile
     };
 }

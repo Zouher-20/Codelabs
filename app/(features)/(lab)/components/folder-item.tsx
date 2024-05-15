@@ -4,16 +4,15 @@ import { DirectoryNode } from '@webcontainer/api';
 import { useContext, useState } from 'react';
 import FileTree from './file-tree';
 import PathContextProvider, { PathContext } from './path-context';
-import { TreeReducerActionType, useTree, useTreeDispatch } from './tree-context';
+import { TreeReducerActionType, useTreeDispatch } from './tree-context';
 
 export default function FolderItem({ name, node }: { name: string; node: DirectoryNode }) {
     const [isOpen, setOpen] = useState(false);
     const path = useContext(PathContext);
     const dispatch = useTreeDispatch();
-    const treeState = useTree();
     const changeOpenState = () => {
         setOpen(!isOpen);
-        if (dispatch)
+        if (dispatch && name !== 'root')
             dispatch({
                 type: TreeReducerActionType.FOLDER_ACTIVATE,
                 payload: [...path, name]
@@ -37,7 +36,7 @@ export default function FolderItem({ name, node }: { name: string; node: Directo
     };
 
     return (
-        <PathContextProvider value={[...path, name]}>
+        <PathContextProvider value={name === 'root' ? path : [...path, name]}>
             <details>
                 <summary
                     className="node-item flex w-full select-none items-center gap-2 px-0.5 hover:bg-base-300  hover:underline"
