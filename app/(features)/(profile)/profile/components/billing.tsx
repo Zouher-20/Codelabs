@@ -1,13 +1,12 @@
+import { planType } from '@/app/@types/plan';
 import UserPlanCard from '@/app/components/cards/user-plan-card';
-import { basicPlan, plusPlan, premiumPlan } from '@/app/constants/plans';
 import Link from 'next/link';
 
-const Billing = ({ plan }: { plan: string }) => {
-    const userPlan = plan == 'basic' ? basicPlan : plan == 'plus' ? plusPlan : premiumPlan;
+const Billing = ({ plan }: { plan: planType }) => {
     return (
         <div className="flex gap-4 max-md:flex-col">
             <div className="w-fit">
-                <UserPlanCard plan={userPlan} />
+                <UserPlanCard plan={plan} />
             </div>
             <div className="flex flex-col justify-center  gap-4 rounded-3xl border-2 border-base-100 p-4">
                 <h3 className="text-4xl">

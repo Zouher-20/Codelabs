@@ -1,14 +1,12 @@
 "use client"
 
-import { userType } from "@/app/@types/user";
 import IconRenderer from "@/app/components/globals/icon";
 import Image from "next/image";
 import { useRef, useState } from "react";
 
-const Avatar = ({ user }: { user: userType }) => {
+const Avatar = ({ user }: { user: { username: string, userimage: string } }) => {
 
-    const { name, image } = user
-    const [imageFile, setImageFile] = useState(image)
+    const [imageFile, setImageFile] = useState(user.userimage)
     const hiddenFileInput = useRef<HTMLInputElement>(null);
 
     const handleClick = () => {
@@ -41,7 +39,7 @@ const Avatar = ({ user }: { user: userType }) => {
                 />
             </div>
             <section className="self-center flex flex-col">
-                <span className="text-lg ">{name}</span>
+                <span className="text-lg ">{user.username}</span>
                 <span onClick={handleClick} className="relative flex gap-1  text-gray-500 cursor-pointer">
                     <IconRenderer className="self-end cursor-pointer" height={18} width={18} icon='basil:edit-outline' />
                     <button style={{ cursor: 'pointer', font: 'inherit', }} >

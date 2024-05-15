@@ -14,6 +14,7 @@ const HeaderImage = () => {
             }
         }}
         autoplay
+        loop
     >
     </DotLottiePlayer>
 }
