@@ -2,7 +2,7 @@ import { planType } from '@/app/@types/plan';
 import IconRenderer from '../../globals/icon';
 
 const UserPlanCard = ({ plan, active }: { plan: planType; active?: boolean }) => {
-    const { title, subtitle, price, duration } = plan;
+
     return (
         <div
             className={
@@ -19,14 +19,14 @@ const UserPlanCard = ({ plan, active }: { plan: planType; active?: boolean }) =>
                 <div className="text-xl">Current Plan</div>
             </div>
             <div className="grid">
-                <p className="text-2xl text-white">{title}</p>
-                <p className="text-gray-400">{subtitle}</p>
+                <p className="text-2xl text-white">{plan.name}</p>
+                <p className="text-gray-400">{plan.subtitle}</p>
             </div>
             <div className="grid gap-1">
                 <p className={'text-4xl font-bold ' + (active ? 'text-white' : 'text-primary')}>
-                    {price > 0 ? '$' + price : 'Free'}
+                    {plan.price > 0 ? '$' + plan.price : 'Free'}
                 </p>
-                <p>{duration}</p>
+                <p>{plan.duration}</p>
             </div>
         </div>
     );

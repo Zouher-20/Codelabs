@@ -1,12 +1,12 @@
 'use client';
-import { userType } from '@/app/@types/user';
+
 import { CustomToaster } from '@/app/components/toast/custom-toaster';
 import DeleteAccountModal from './delete-modal';
-import EditModal, { userInfo } from './edit-modal';
+import EditModal from './edit-modal';
 
-const PersonalInfo = ({ user }: { user: userType }) => {
-    const { name, email, bio, position } = user;
-    const userInfo: userInfo = { name, email, bio, position };
+const PersonalInfo = ({ user }: { user: { username: string, email: string } }) => {
+
+    const userInfo = { name: user.username, email: user.email, bio: 'Bio', position: 'Developber' };
 
     function toggleModal() {
         if (document) {
