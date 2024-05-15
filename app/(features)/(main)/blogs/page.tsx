@@ -5,8 +5,28 @@ import HeaderImage from './components/header-image';
 const blogs = [
     {
         id: 1,
+        title: 'Dive into the World of Reacts',
+        createdAt: '2024/4/12',
+        image: `/images/blogs/react-world.webp`,
+        description: ''
+    },
+    {
+        id: 1,
+        title: 'Dive into the World of React JS: Building Dynamic User InterfacesDive into the World of React JS: Building Dynamic User InterfacesDive into the World of React JS: Building Dynamic User InterfacesDive into the World of React JS: Building Dynamic User InterfacesDive into the World of React JS: Building Dynamic User Interfaces',
+        createdAt: '2024/4/12',
+        image: '',
+        description: ''
+    }, {
+        id: 1,
         title: 'Dive into the World of React JS: Building Dynamic User Interfaces',
         createdAt: '2024/4/12',
+        image: `/images/blogs/react.jpg`,
+        description: ''
+    }, {
+        id: 1,
+        title: 'Dive into the World of React JS: Building Dynamic User Interfaces',
+        createdAt: '2024/4/12',
+        image: `/images/blogs/react-world.webp`,
         description: ''
     }
 ];
