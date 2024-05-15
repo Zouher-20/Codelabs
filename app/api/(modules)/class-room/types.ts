@@ -28,3 +28,17 @@ export interface GetUserInClassInput {
     userPage: number;
     userPageSize: number;
 }
+export interface AddRomInClassInput {
+    classRomId: string;
+    description?: string;
+    name?: string;
+    type?: string;
+}
+
+export interface AddUsersInClassInput {
+    classRomId: string;
+    userIds: string[];
+}
+export interface GetClassRomForStudentsByIdInput {
+    classRomId: string;
+}

@@ -2,7 +2,179 @@ import { db } from '@/app/api/core/db/db';
 import { NAMEPLAN } from '@prisma/client';
 
 class ClassRoomRepository {
-    // if my creation
+    static async addRomInClass(
+        payload: {
+            classRomId: string;
+            description?: string;
+            name?: string;
+            type?: string;
+        },
+        userId: string
+    ) {
+        const myClass = await db.classRom.findFirst({
+            where: {
+                MemberClass: {
+                    some: {
+                        userId: userId,
+                        isTeacher: true
+                    }
+                }
+            }
+        });
+
+        if (!myClass) {
+            throw new Error('No class found');
+        }
+
+        const userPlan = await db.planSubscription.findUnique({
+            where: {
+                userId: userId
+            },
+            include: {
+                plan: {
+                    include: {
+                        FeaturePlan: true
+                    }
+                }
+            }
+        });
+        const countMyRomInClassRoom = await db.rom.count({
+            where: {
+                classRomId: payload.classRomId
+            }
+        });
+
+        if (!userPlan) {
+            throw new Error('User does not have a plan subscription.');
+        }
+
+        const hasLabsPlan = userPlan.plan.FeaturePlan.some(
+            featurePlan => featurePlan.name === NAMEPLAN.romsInClass
+        );
+
+        if (hasLabsPlan && countMyRomInClassRoom < userPlan.plan.FeaturePlan[0].value) {
+            await db.rom.create({
+                data: {
+                    classRomId: payload.classRomId,
+                    type: payload.type ?? '',
+                    name: payload.name ?? '',
+                    description: payload.description ?? ''
+                }
+            });
+
+            return { message: 'Rom added to class successfully' };
+        } else {
+            throw new Error('Rom limit reached for this class.');
+        }
+    }
+
+    static async addUsersInClass(
+        payload: {
+            classRomId: string;
+            userIds: string[];
+        },
+        userId: string
+    ) {
+        const myClass = await db.classRom.findFirst({
+            where: {
+                MemberClass: {
+                    some: {
+                        userId: userId,
+                        isTeacher: true
+                    }
+                }
+            }
+        });
+
+        if (!myClass) {
+            throw new Error('No class found');
+        }
+
+        const userPlan = await db.planSubscription.findUnique({
+            where: {
+                userId: userId
+            },
+            include: {
+                plan: {
+                    include: {
+                        FeaturePlan: true
+                    }
+                }
+            }
+        });
+
+        if (!userPlan) {
+            throw new Error('User does not have a plan subscription.');
+        }
+
+        const featurePlan = userPlan.plan.FeaturePlan.find(
+            featurePlan => featurePlan.name === NAMEPLAN.studentsInClass
+        );
+
+        if (!featurePlan || typeof featurePlan.value !== 'number') {
+            throw new Error('Invalid plan or plan does not support adding students.');
+        }
+
+        const studentLimit = featurePlan.value;
+
+        const countMyStudentsInClassRoom = await db.memberClass.count({
+            where: {
+                classRomId: payload.classRomId
+            }
+        });
+
+        const availableSlots = studentLimit - countMyStudentsInClassRoom;
+
+        if (availableSlots <= 0) {
+            throw new Error('Student limit reached for this class.');
+        }
+
+        if (payload.userIds.length > availableSlots) {
+            throw new Error('Not enough available slots to add all users.');
+        }
+
+        // Add each user in the userIds list to the class
+        for (const studentId of payload.userIds) {
+            await db.memberClass.create({
+                data: {
+                    classRomId: payload.classRomId,
+                    userId: studentId,
+                    isTeacher: false
+                }
+            });
+        }
+
+        return { message: 'Users added to class successfully' };
+    }
+
+    // if Iam student
+    static async getClassRomForStudentsById(
+        payload: {
+            classRomId: string;
+        },
+        userId: string
+    ) {
+        const myClassRom = await db.classRom.findUnique({
+            where: {
+                id: payload.classRomId,
+                MemberClass: {
+                    some: {
+                        userId: userId
+                    }
+                }
+            }
+        });
+
+        if (!myClassRom) {
+            throw new Error('class Rom not found');
+        }
+
+        return {
+            myClassRom
+        };
+    }
+
+    // if Iam creation
     static async getClassRomById(
         payload: {
             classRomId: string;
@@ -30,7 +202,7 @@ class ClassRoomRepository {
         };
     }
 
-    // if my creation
+    // if Iam creation or Iam student
     static async getUserInClass(
         payload: { userPage: number; userPageSize: number; classRomId: string },
         userId: string
@@ -41,8 +213,7 @@ class ClassRoomRepository {
                 id: payload.classRomId,
                 MemberClass: {
                     some: {
-                        userId: userId,
-                        isTeacher: true
+                        userId: userId
                     }
                 }
             }
@@ -74,7 +245,7 @@ class ClassRoomRepository {
         };
     }
 
-    // if my creation
+    // if Iam  creation or Iam student
     static async getRomInClass(
         payload: {
             romePage: number;
@@ -89,8 +260,7 @@ class ClassRoomRepository {
                 id: payload.classRomId,
                 MemberClass: {
                     some: {
-                        userId: userId,
-                        isTeacher: true
+                        userId: userId
                     }
                 }
             }

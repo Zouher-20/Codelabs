@@ -4,10 +4,14 @@ import { getSession } from '@/app/api/(modules)/auth/service/actions';
 import classRoomRepository from '@/app/api/(modules)/class-room/repository/class-room-repository';
 import {
     AddClassRoomInput,
+    AddRomInClassInput,
+    AddUsersInClassInput,
     getClassesByMeInput,
     GetClassRomByIdInput,
+    GetClassRomForStudentsByIdInput,
     getMyClassesInput,
-    GetRomInClassInput, GetUserInClassInput
+    GetRomInClassInput,
+    GetUserInClassInput
 } from '@/app/api/(modules)/class-room/types';
 
 export const addClassRoom = async (payload: AddClassRoomInput) => {
@@ -44,4 +48,21 @@ export const getRomInClass = async (payload: GetRomInClassInput) => {
     const session = await getSession();
     const userId = session?.id;
     return classRoomRepository.getRomInClass(payload, userId);
+};
+
+export const addRomInClass = async (payload: AddRomInClassInput) => {
+    const session = await getSession();
+    const userId = session?.id;
+    return classRoomRepository.addRomInClass(payload, userId);
+};
+
+export const addUsersInClass = async (payload: AddUsersInClassInput) => {
+    const session = await getSession();
+    const userId = session?.id;
+    return classRoomRepository.addUsersInClass(payload, userId);
+};
+export const getClassRomForStudentsById = async (payload: GetClassRomForStudentsByIdInput) => {
+    const session = await getSession();
+    const userId = session?.id;
+    return classRoomRepository.getClassRomForStudentsById(payload, userId);
 };

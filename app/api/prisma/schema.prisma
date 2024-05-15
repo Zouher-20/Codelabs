@@ -28,8 +28,9 @@ enum NAMEPLAN {
   labs
   classes
   studentsInClass
-  labsInClass
   challenge
+  romsInClass
+  blogs
 }
 
 enum PLANTYPE {
@@ -52,6 +53,7 @@ model User {
   password               String
   role                   ROLE
   createdAt              DateTime                 @default(now())
+  //pos
   typeUser               String?
   userImage              String?
   planEndDate            DateTime?
@@ -233,7 +235,6 @@ model Blog {
   userId    String
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   contant   String?
-  status    Boolean    @default(false)
   createdAt DateTime   @default(now())
   title     String?
   Star      Star[]
