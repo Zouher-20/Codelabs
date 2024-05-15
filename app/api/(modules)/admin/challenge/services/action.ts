@@ -7,11 +7,7 @@ import AdminChallengeRepository from '../repository/admin-challenge-repositoy';
 export const getDetailsChallenge = async (payload: challengeDetailsInput) => {
     const { page, pageSize, challengeId } = payload;
     const session = await getSession();
-    if (session?.role === ROLE.ADMIN) {
-        return AdminChallengeRepository.getDetailsChallenge(payload);
-    } else {
-        throw new Error('Access denied: You are not an admin.');
-    }
+    return AdminChallengeRepository.getDetailsChallenge(payload);
 };
 
 export const deleteChallenge = async (payload: deleteChallengeInput) => {

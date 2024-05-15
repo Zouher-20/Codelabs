@@ -20,12 +20,15 @@ const Challenges = () => {
     const [challenges, setChallenges] = useState<Array<challengeTableType>>([]);
     const pageSize = 4;
     const debouncedSearch = useDebounce(searchValue, 1000)
+    const [isDelete, setIsDelete] = useState(false);
+
 
     useEffect(() => {
         getChallenges();
         const id = Number(currentParams.get('id') ?? '1');
         onPageChange({ index: id });
-    }, []);
+        setIsDelete(false);
+    }, [isDelete]);
 
     useEffect(() => {
         const searchFn = async () => {
@@ -96,6 +99,7 @@ const Challenges = () => {
                 pageCount={Math.ceil(challenges.length / pageSize)}
                 currentPage={currentPage}
                 onPageChange={onPageChange}
+                isDelete={(value) => setIsDelete(value)}
             /> :
             <span className='font-bold text-center'>There is no challenge to display</span>
         }
