@@ -1,5 +1,7 @@
 import dynamic from 'next/dynamic';
 import { useMemo } from 'react';
+import 'react-quill/dist/quill.snow.css';
+import '@/app/components/globals/quillStyle.css'
 
 export default function CodeLabsQuill({
     onChange,
@@ -43,7 +45,7 @@ export default function CodeLabsQuill({
             onChange={onChange}
             modules={quillModules}
             formats={quillFormats}
-            className="mt-4"
+            className="mt-2"
         />
     );
 }

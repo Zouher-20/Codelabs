@@ -12,10 +12,9 @@ import { textField } from '@/app/schemas';
 import { Field, Form, Formik } from 'formik';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import 'react-quill/dist/quill.snow.css'; // Import Quill styles
 import * as yup from 'yup';
 import AddTagModal from '../../components/tags-modal';
-import './styles.css';
+import '@/app/components/globals/quillStyle.css';
 import { challengeType } from '@/app/@types/challenge';
 import CodeLabDatePicker from '@/app/components/globals/form/input/date-picker';
 import { useRouter } from 'next/navigation';
