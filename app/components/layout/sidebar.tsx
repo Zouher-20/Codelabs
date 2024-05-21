@@ -4,31 +4,28 @@ import { Url } from 'next/dist/shared/lib/router/router';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-export default function Sidebar({
-    children,
-    sidebarItems
-}: Readonly<{
-    children: React.ReactNode;
-    sidebarItems: Array<SideBarItemType>;
-}>) {
+
+export default function Sidebar({ children, sidebarItems }:
+    Readonly<{
+        children: React.ReactNode;
+        sidebarItems: Array<SideBarItemType>;
+    }>) {
     const router = usePathname();
 
-    const MenuItem = ({
-        icon,
-        name,
-        route
-    }: {
+    const MenuItem = ({ icon, name, route }: {
         icon: React.ReactNode | undefined;
         name: String | undefined;
         route: Url | undefined;
     }) => {
+
         if (name == null || route == null || icon == null) {
             return <div className="h-10"></div>;
         }
-        // Highlight menu item based on currently displayed route
+
         const colorClass = router.includes(route.toString())
             ? 'text-primary'
             : 'text-white/50 hover:text-white';
+
         const background = router.includes(route.toString()) ? 'bg-base-100' : '';
 
         return (
@@ -69,6 +66,12 @@ export default function Sidebar({
                                 ></MenuItem>
                             ))}
                         </ul>
+                        <div className={(router.includes('/blogs') ? 'block' : 'hidden') + ' mt-auto mb-8'}>
+                            <Link
+                                href={'/blogs/add-blog'}
+                                className="btn btn-outline w-full text-primary"
+                            >Add Your Blog Now !</Link>
+                        </div>
                     </nav>
                 </div>
             </div>
