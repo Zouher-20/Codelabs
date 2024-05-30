@@ -69,29 +69,13 @@ class BlogRepository {
         page: number;
         pageSize: number;
         blogTitle?: string;
-        blogContent?: string;
     }) {
         const skip = (payload.page - 1) * payload.pageSize;
         let args = {};
 
-        if (payload.blogTitle && payload.blogContent) {
-            args = {
-                AND: [
-                    {
-                        title: { contains: payload.blogTitle }
-                    },
-                    {
-                        contant: { contains: payload.blogContent }
-                    }
-                ]
-            };
-        } else if (payload.blogTitle) {
+        if (payload.blogTitle) {
             args = {
                 title: { contains: payload.blogTitle }
-            };
-        } else if (payload.blogContent) {
-            args = {
-                contant: { contains: payload.blogContent }
             };
         }
         const myBlogs = await db.blog.findMany({
@@ -136,33 +120,13 @@ class BlogRepository {
         };
     }
 
-    static async getTrendingBlog(payload: {
-        page: number;
-        pageSize: number;
-        blogTitle?: string;
-        blogContent?: string;
-    }) {
+    static async getTrendingBlog(payload: { page: number; pageSize: number; blogTitle?: string }) {
         const skip = (payload.page - 1) * payload.pageSize;
         let args = {};
 
-        if (payload.blogTitle && payload.blogContent) {
-            args = {
-                AND: [
-                    {
-                        title: { contains: payload.blogTitle }
-                    },
-                    {
-                        contant: { contains: payload.blogContent }
-                    }
-                ]
-            };
-        } else if (payload.blogTitle) {
+        if (payload.blogTitle) {
             args = {
                 title: { contains: payload.blogTitle }
-            };
-        } else if (payload.blogContent) {
-            args = {
-                contant: { contains: payload.blogContent }
             };
         }
 
@@ -285,14 +249,15 @@ class BlogRepository {
         };
     }
 
-    static async getAllBlog(payload: {
-        page: number;
-        pageSize: number;
-        blogTitle?: string;
-        blogContent?: string;
-    }) {
+    static async getAllBlog(payload: { page: number; pageSize: number; blogTitle?: string }) {
         const skip = (payload.page - 1) * payload.pageSize;
+        let args = {};
 
+        if (payload.blogTitle) {
+            args = {
+                title: { contains: payload.blogTitle }
+            };
+        }
         const myBlogs = await db.blog.findMany({
             take: payload.pageSize,
             skip: skip,
@@ -310,6 +275,9 @@ class BlogRepository {
             ],
             include: {
                 user: true
+            },
+            where: {
+                ...args
             }
         });
 
@@ -339,10 +307,46 @@ class BlogRepository {
         };
     }
 
+    static async getDetailsBlog(payload: { blogId: string }, userId: string) {
+        const blog = await db.blog.findUnique({
+            where: {
+                id: payload.blogId
+            },
+            include: {
+                user: true
+            }
+        });
+
+        if (!blog) {
+            throw new Error('Lab is not found');
+        }
+
+        const commentCount = await db.comment.count({
+            where: { blogId: payload.blogId }
+        });
+
+        const starCount = await db.star.count({
+            where: { blogId: payload.blogId }
+        });
+
+        const isStarred = await db.star.findFirst({
+            where: {
+                userId: userId,
+                blogId: payload.blogId
+            }
+        });
+
+        return {
+            blog,
+            commentCount,
+            starCount,
+            isStarred: isStarred != null
+        };
+    }
+
     static async addBlogComment(payload: { blogId: string; comment: string }) {}
     static async getCommentBlog(payload: { blogId: string; page: number; pageSize: number }) {}
     static async addStarBlog(payload: { blogId: string }) {}
-    static async getDetailsBlog(payload: { blogId: string }) {}
     static async deleteMyCommentInBlog(payload: { commentId: string }) {}
 }
 export default BlogRepository;

@@ -12,6 +12,9 @@ export interface UsersPaginationInput {
     searchWord?: string;
     planName?: string;
 }
+export interface deleteAnyBlogInput {
+    blogId: string;
+}
 export interface ChallengePaginationInput {
     page: number;
     pageSize: number;
@@ -76,4 +79,10 @@ export interface deleteMyCommentUserProjectLabInput {
 
 export interface DeleteUserProjectInput {
     userProjectId: string;
+}
+
+export interface getLabsInChallengeInput {
+    challengeId: string;
+    pageSize: number;
+    page: number;
 }
