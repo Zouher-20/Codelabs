@@ -1,6 +1,54 @@
 import { db } from '@/app/api/core/db/db';
 
 class AdminChallengeRepository {
+    static async getAllLabInChallengeDetails(payload: {
+        challengeId: string;
+        pageSize: number;
+        page: number;
+    }) {
+        const skip = (payload.page - 1) * payload.pageSize;
+
+        const challenge = await db.challenge.findUnique({
+            where: {
+                id: payload.challengeId
+            }
+        });
+
+        if (!challenge) {
+            throw new Error('Challenge not found');
+        }
+
+        const labsInChallenge = await db.lab.findMany({
+            take: payload.pageSize,
+            skip: skip,
+            include: {
+                tamblate: true
+            },
+            where: {
+                challengeParticipation: {
+                    challengeId: challenge.id
+                }
+            }
+        });
+
+        if (!labsInChallenge || labsInChallenge.length === 0) {
+            throw new Error('There are no labs for this challenge');
+        }
+
+        const totalCount = await db.lab.count({
+            where: {
+                challengeParticipation: {
+                    challengeId: challenge.id
+                }
+            }
+        });
+
+        return {
+            labsInChallenge: labsInChallenge,
+            totalCount: totalCount
+        };
+    }
+
     static async getDetailsChallenge(payload: {
         page: number;
         pageSize: number;

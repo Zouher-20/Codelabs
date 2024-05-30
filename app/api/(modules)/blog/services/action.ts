@@ -8,6 +8,7 @@ import {
     EditBlogInput,
     GetAllBlogs,
     GetBlogByCreatedAtInput,
+    GetDetailsBlogInput,
     GetTrendingBlogInput
 } from '@/app/api/(modules)/blog/type';
 
@@ -34,4 +35,10 @@ export const getTrendingBlog = async (payload: GetTrendingBlogInput) => {
 };
 export const getAllBlog = async (payload: GetAllBlogs) => {
     return BlogRepository.getAllBlog(payload);
+};
+
+export const getDetailsBlog = async (payload: GetDetailsBlogInput) => {
+    const session = await getSession();
+    const userId = session?.id;
+    return BlogRepository.getDetailsBlog(payload, userId);
 };
