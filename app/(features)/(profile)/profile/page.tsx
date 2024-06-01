@@ -3,19 +3,16 @@ import Avatar from './components/avatar';
 import Billing from './components/billing';
 import PersonalInfo from './components/personal-info';
 import Statistics from './components/statistics';
+import { getSession } from '@/app/api/(modules)/auth/service/actions';
 
-const user: userType = {
-    name: 'User name',
-    email: 'username903@gmail.com',
-    image: null,
-    id: '1',
-    plan: 'plus',
-    bio: 'A few word about you',
-    position: 'Developer',
-    labs: 4,
-    classes: 1
-};
-const Profile = () => {
+
+async function getData() {
+    const user = await getSession()
+    if (user) return user
+}
+const Profile = async () => {
+
+    const user = await getData()
     const tabs = [
         { name: 'Personal informatio', component: <PersonalInfo user={user} /> },
         { name: 'Billing', component: <Billing plan={user.plan ?? ''} /> },
