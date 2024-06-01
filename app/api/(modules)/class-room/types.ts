@@ -42,3 +42,9 @@ export interface AddUsersInClassInput {
 export interface GetClassRomForStudentsByIdInput {
     classRomId: string;
 }
+
+export interface GetAllUserAndSearchInput {
+    page: number;
+    pageSize: number;
+    searchWord: string;
+}
