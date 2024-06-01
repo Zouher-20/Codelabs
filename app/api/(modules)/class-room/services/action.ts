@@ -6,6 +6,7 @@ import {
     AddClassRoomInput,
     AddRomInClassInput,
     AddUsersInClassInput,
+    GetAllUserAndSearchInput,
     getClassesByMeInput,
     GetClassRomByIdInput,
     GetClassRomForStudentsByIdInput,
@@ -65,4 +66,9 @@ export const getClassRomForStudentsById = async (payload: GetClassRomForStudents
     const session = await getSession();
     const userId = session?.id;
     return classRoomRepository.getClassRomForStudentsById(payload, userId);
+};
+
+//For add user In rom
+export const getAllUserAndSearch = async (payload: GetAllUserAndSearchInput) => {
+    return classRoomRepository.getAllUserAndSearch(payload);
 };

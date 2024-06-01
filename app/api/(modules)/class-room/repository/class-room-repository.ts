@@ -2,6 +2,30 @@ import { db } from '@/app/api/core/db/db';
 import { NAMEPLAN } from '@prisma/client';
 
 class ClassRoomRepository {
+    static async getAllUserAndSearch(payload: {
+        page: number;
+        pageSize: number;
+        searchWord: string;
+    }) {
+        const userSkip = (payload.page - 1) * payload.pageSize;
+        const users = await db.user.findMany({
+            take: payload.page,
+            skip: userSkip,
+            where: {
+                username: { contains: payload.searchWord }
+            }
+        });
+        const userCount = await db.user.count({
+            where: {
+                username: { contains: payload.searchWord }
+            }
+        });
+        return {
+            usres: users,
+            userCount: userCount
+        };
+    }
+
     static async addRomInClass(
         payload: {
             classRomId: string;
