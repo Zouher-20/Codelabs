@@ -312,6 +312,7 @@ class ClassRoomRepository {
             romCountInClassRom: romCountInClassRom
         };
     }
+
     static async getClassCreateByMe(
         payload: {
             page: number;
@@ -472,4 +473,5 @@ class ClassRoomRepository {
         }
     }
 }
+
 export default ClassRoomRepository;

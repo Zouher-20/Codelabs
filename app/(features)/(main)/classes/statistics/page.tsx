@@ -214,7 +214,11 @@ export default function StatisticsPage() {
                 empty={false}
             />
 
-            <AddStudentModal initialUser={[]} isOpen={isStudentModelOpen} />
+            <AddStudentModal
+                initialUser={users}
+                isOpen={isStudentModelOpen}
+                classId={classInfo?.id ?? ''}
+            />
             <NewClassLabModal />
         </div>
     );
