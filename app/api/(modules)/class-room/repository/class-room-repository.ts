@@ -9,7 +9,7 @@ class ClassRoomRepository {
     }) {
         const userSkip = (payload.page - 1) * payload.pageSize;
         const users = await db.user.findMany({
-            take: payload.page,
+            take: payload.pageSize,
             skip: userSkip,
             where: {
                 username: { contains: payload.searchWord }
@@ -149,7 +149,7 @@ class ClassRoomRepository {
 
         const availableSlots = studentLimit - countMyStudentsInClassRoom;
 
-        if (availableSlots <= 0) {
+        if (availableSlots <= 0 && studentLimit != -1) {
             throw new Error('Student limit reached for this class.');
         }
 
