@@ -1,4 +1,4 @@
-import { userType } from '@/app/@types/user';
+import { ClassRoomUserType, userType } from '@/app/@types/user';
 import Input from '@/app/components/globals/form/input';
 import UserAvatar from '@/app/components/globals/user-avatar';
 import { Icon } from '@iconify/react/dist/iconify.js';
@@ -61,21 +61,27 @@ const UserSelectedItemsList = ({
     );
 };
 
-const AddStudentModal = ({ initialUser }: { initialUser: Array<userType> }) => {
-    const [users, setUsers] = useState<Array<userType>>([]);
+const AddStudentModal = ({
+    initialUser,
+    isOpen
+}: {
+    initialUser: Array<ClassRoomUserType>;
+    isOpen: boolean;
+}) => {
+    const [users, setUsers] = useState<Array<ClassRoomUserType>>([]);
     const [filterWord, setFilterWord] = useState<string>('');
-    const [selectedItem, setSelectedItem] = useState<Array<userType>>([]);
+    const [selectedItem, setSelectedItem] = useState<Array<ClassRoomUserType>>([]);
 
     const onSubmit = () => {
         const filteredUsers = initialUser.filter(e => {
-            return e.name?.includes(filterWord);
+            return e.id?.includes(filterWord);
         });
         setUsers(filteredUsers);
     };
 
     useEffect(() => {
         setUsers([...initialUser]);
-    }, []);
+    }, [isOpen]);
 
     function checkIfSelected(index: number): boolean {
         var result = false;
@@ -86,6 +92,7 @@ const AddStudentModal = ({ initialUser }: { initialUser: Array<userType> }) => {
         });
         return result;
     }
+
     return (
         <dialog id="add-student-modal" className="modal">
             <div className="modal-box w-1/2 justify-center max-md:w-11/12">
