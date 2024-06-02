@@ -145,6 +145,7 @@ export default function LabsPage() {
 
             <NewClassModal
                 onClassAddedCallback={() => {
+                    fetchData();
                     toast.success('class added successfully');
                 }}
             />

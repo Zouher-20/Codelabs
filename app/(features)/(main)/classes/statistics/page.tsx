@@ -11,8 +11,10 @@ import {
 import { EmptyState } from '@/app/components/page-state/empty';
 import { LoadingState } from '@/app/components/page-state/loading';
 import { ManageState } from '@/app/components/page-state/state_manager';
+import { CustomToaster } from '@/app/components/toast/custom-toaster';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import CodeLabContainer from '../components/container';
 import NewClassLabModal from './components/add_lab_modal';
 import AddStudentModal from './components/add_student_modal';
@@ -67,7 +69,7 @@ export default function StatisticsPage() {
     const getClassStudentsById = async ({ id }: { id: string }) => {
         setUserLoading(true);
         try {
-            const res = await getUserInClass({ classRomId: id, userPage: 1, userPageSize: 10 });
+            const res = await getUserInClass({ classRomId: id, userPage: 1, userPageSize: 100 });
             setUsers(
                 res.memberClassInClassRom.map<ClassRoomUserType>(value => {
                     return {
@@ -218,8 +220,14 @@ export default function StatisticsPage() {
                 initialUser={users}
                 isOpen={isStudentModelOpen}
                 classId={classInfo?.id ?? ''}
+                addCallbackFunction={() => {
+                    const id = currentParams.get('id') ?? '-1';
+                    getClassStudentsById({ id });
+                    toast.success('students added successfully');
+                }}
             />
             <NewClassLabModal />
+            <CustomToaster />
         </div>
     );
 }

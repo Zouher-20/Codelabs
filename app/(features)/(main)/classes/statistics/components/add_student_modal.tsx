@@ -46,11 +46,13 @@ const UserSelectedItemsList = ({
 const AddStudentModal = ({
     initialUser,
     isOpen,
-    classId
+    classId,
+    addCallbackFunction
 }: {
     initialUser: Array<ClassRoomUserType>;
     isOpen: boolean;
     classId: string;
+    addCallbackFunction: Function;
 }) => {
     const [users, setUsers] = useState<Array<ClassRoomUserType>>([]);
     const [filterWord, setFilterWord] = useState<string>('');
@@ -99,6 +101,7 @@ const AddStudentModal = ({
                 classRomId: classId,
                 userIds: selectedItem.map(value => value.id)
             });
+            addCallbackFunction();
             (document.getElementById('add-student-modal') as HTMLDialogElement).close();
         } catch (e: any) {
             toast.error(e.message);
@@ -107,6 +110,7 @@ const AddStudentModal = ({
         }
     };
     useEffect(() => {
+        setSelectedItem([]);
         fetchUserFromServer();
     }, [isOpen, page, filterWord]);
 
