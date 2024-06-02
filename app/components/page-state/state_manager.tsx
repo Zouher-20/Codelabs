@@ -7,20 +7,24 @@ export function ManageState({
     error,
     errorAndEmptyCallback,
     loadedState,
-    empty
+    empty,
+    customEmptyPage,
+    customLoadingPage
 }: {
     loading: boolean;
     error: string | null;
     errorAndEmptyCallback: () => void;
     loadedState: React.ReactNode;
     empty: boolean;
+    customEmptyPage?: React.ReactNode;
+    customLoadingPage?: React.ReactNode;
 }) {
     return loading ? (
-        <LoadingState />
+        customLoadingPage ?? <LoadingState />
     ) : error ? (
         <ErrorState text={error} callback={errorAndEmptyCallback} />
     ) : empty ? (
-        <EmptyState />
+        customEmptyPage ?? <EmptyState />
     ) : (
         loadedState
     );

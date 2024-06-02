@@ -1,4 +1,4 @@
-import { userType } from '@/app/@types/user';
+import { ClassRoomUserType } from '@/app/@types/user';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import { MouseEventHandler } from 'react';
 import CodeLabContainer from '../../components/container';
@@ -9,7 +9,7 @@ export default function StudentList({
     height = '19rem',
     withCheck = false
 }: {
-    students: Array<userType>;
+    students: Array<ClassRoomUserType>;
     title: string;
     height?: string;
     withCheck?: boolean;
@@ -19,7 +19,7 @@ export default function StudentList({
         onClick,
         checked
     }: {
-        studentModel: userType;
+        studentModel: ClassRoomUserType;
         checked: boolean;
         onClick?: MouseEventHandler<HTMLDivElement>;
     }) {
@@ -45,9 +45,7 @@ export default function StudentList({
             </div>
         );
     }
-    if (students.length == 0) {
-        return <></>;
-    }
+
     return (
         <CodeLabContainer height={height} minWidth="64">
             <div className="flex w-full flex-col p-2">

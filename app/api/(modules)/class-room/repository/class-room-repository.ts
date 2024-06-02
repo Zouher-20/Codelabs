@@ -153,7 +153,7 @@ class ClassRoomRepository {
             throw new Error('Student limit reached for this class.');
         }
 
-        if (payload.userIds.length > availableSlots) {
+        if (payload.userIds.length > availableSlots && studentLimit != -1) {
             throw new Error('Not enough available slots to add all users.');
         }
 
@@ -251,7 +251,7 @@ class ClassRoomRepository {
             where: {
                 classRomId: myClassRom.id
             },
-            take: payload.userPage,
+            take: payload.userPageSize,
             skip: userSkip,
             include: {
                 user: true
@@ -312,6 +312,7 @@ class ClassRoomRepository {
             romCountInClassRom: romCountInClassRom
         };
     }
+
     static async getClassCreateByMe(
         payload: {
             page: number;
@@ -472,4 +473,5 @@ class ClassRoomRepository {
         }
     }
 }
+
 export default ClassRoomRepository;

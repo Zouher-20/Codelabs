@@ -1,5 +1,6 @@
 'use server';
 
+'use server';
 import { getSession } from '@/app/api/(modules)/auth/service/actions';
 import classRoomRepository from '@/app/api/(modules)/class-room/repository/class-room-repository';
 import {
