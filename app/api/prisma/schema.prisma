@@ -53,7 +53,7 @@ model User {
   password               String
   role                   ROLE
   createdAt              DateTime                 @default(now())
-  //pos
+  // pos
   typeUser               String?
   userImage              String?
   planEndDate            DateTime?
@@ -119,8 +119,8 @@ model ClassProject {
   descraption    String
   Lab            Lab[]
   createdAt      DateTime         @default(now())
-  romId String?
-  rom   Rom?   @relation(fields: [romId], references: [id], onDelete: Cascade)
+  romId          String?
+  rom            Rom?             @relation(fields: [romId], references: [id], onDelete: Cascade)
   FeedbackProjct FeedbackProjct[]
   TagMorph       TagMorph[]
 }
@@ -133,23 +133,25 @@ model PlanSubscription {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   plan   Plan   @relation(fields: [planId], references: [id], onDelete: Cascade)
 }
+
 model Rom {
   id           String         @id @default(cuid())
   name         String
   type         String
   description  String
-  classRomId String?
-  classRom   ClassRom?   @relation(fields: [classRomId], references: [id], onDelete: Cascade)
+  endAt        DateTime
+  classRomId   String?
+  classRom     ClassRom?      @relation(fields: [classRomId], references: [id], onDelete: Cascade)
   ClassProject ClassProject[]
-
 }
+
 model ClassRom {
-  id           String         @id @default(cuid())
-  name         String
-  type         String
-  description  String
-  MemberClass  MemberClass[]
-  Rom          Rom[]
+  id          String        @id @default(cuid())
+  name        String
+  type        String
+  description String
+  MemberClass MemberClass[]
+  Rom         Rom[]
 }
 
 model Tag {
@@ -229,12 +231,12 @@ model UserProject {
 }
 
 model Blog {
-  id        String     @id @default(cuid())
+  id        String    @id @default(cuid())
   userId    String
-  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   contant   String?
   photo     String?
-  createdAt DateTime   @default(now())
+  createdAt DateTime  @default(now())
   title     String?
   Star      Star[]
   Comment   Comment[]

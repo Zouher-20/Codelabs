@@ -1,5 +1,6 @@
 import { db } from '@/app/api/core/db/db';
 import { NAMEPLAN } from '@prisma/client';
+import { DateTime } from 'next-auth/providers/kakao';
 
 class ClassRoomRepository {
     static async getAllUserAndSearch(payload: {
@@ -31,6 +32,7 @@ class ClassRoomRepository {
             classRomId: string;
             description?: string;
             name?: string;
+            endAt: DateTime;
             type?: string;
         },
         userId: string
@@ -82,6 +84,7 @@ class ClassRoomRepository {
                     classRomId: payload.classRomId,
                     type: payload.type ?? '',
                     name: payload.name ?? '',
+                    endAt: payload.endAt,
                     description: payload.description ?? ''
                 }
             });
@@ -470,6 +473,88 @@ class ClassRoomRepository {
         } else {
             throw new Error('User does not have access to create more classRoom.');
         }
+    }
+
+    static async getClassRomStatistics(
+        payload: {
+            classRomId: string;
+        },
+        userId: string
+    ) {
+        const myClass = await db.classRom.findFirst({
+            where: {
+                MemberClass: {
+                    some: {
+                        userId: userId,
+                        isTeacher: true
+                    }
+                }
+            }
+        });
+
+        if (!myClass) {
+            throw new Error('No class found');
+        }
+
+        const romCountInClassRom = await db.rom.count({
+            where: {
+                classRomId: myClass.id
+            }
+        });
+
+        const userPlan = await db.planSubscription.findUnique({
+            where: {
+                userId: userId
+            },
+            include: {
+                plan: {
+                    include: {
+                        FeaturePlan: true
+                    }
+                }
+            }
+        });
+
+        if (!userPlan) {
+            throw new Error('User does not have a plan subscription.');
+        }
+
+        const studentsFeaturePlan = userPlan.plan.FeaturePlan.find(
+            featurePlan => featurePlan.name === NAMEPLAN.studentsInClass
+        );
+
+        if (!studentsFeaturePlan || typeof studentsFeaturePlan.value !== 'number') {
+            throw new Error('Invalid plan or plan does not support adding students.');
+        }
+
+        const romsFeaturePlan = userPlan.plan.FeaturePlan.find(
+            featurePlan => featurePlan.name === NAMEPLAN.romsInClass
+        );
+
+        if (!romsFeaturePlan || typeof romsFeaturePlan.value !== 'number') {
+            throw new Error('Invalid plan or plan does not support adding ROMs.');
+        }
+
+        const studentLimit = studentsFeaturePlan.value;
+        const romLimit = romsFeaturePlan.value;
+
+        const countMyStudentsInClassRoom = await db.memberClass.count({
+            where: {
+                classRomId: payload.classRomId
+            }
+        });
+
+        const availableStudentSlots = studentLimit - countMyStudentsInClassRoom;
+        const availableRomSlots = romLimit - romCountInClassRom;
+
+        return {
+            numberOfStudents: countMyStudentsInClassRoom,
+            numberOfRoms: romCountInClassRom,
+            remainingStudentSlots: availableStudentSlots,
+            remainingRomSlots: availableRomSlots,
+            totalRoms: romLimit,
+            totalStudents: studentLimit
+        };
     }
 }
 export default ClassRoomRepository;
