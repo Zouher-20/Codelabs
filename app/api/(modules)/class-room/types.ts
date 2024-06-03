@@ -54,3 +54,8 @@ export interface GetAllUserAndSearchInput {
 export interface GetClassRomStatistics {
     classRomId: string;
 }
+export interface GetStudentsStatisticsSubmittedInput {
+    page: number;
+    pageSize: number;
+    romId: string;
+}
