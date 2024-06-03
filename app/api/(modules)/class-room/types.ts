@@ -59,3 +59,11 @@ export interface GetStudentsStatisticsSubmittedInput {
     pageSize: number;
     romId: string;
 }
+export interface GetRomByIdInput {
+    romId: string;
+}
+export interface GetLabsSubmittedInRomInput {
+    romId: string;
+    pageSize: number;
+    page: number;
+}
