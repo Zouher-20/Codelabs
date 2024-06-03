@@ -1,3 +1,4 @@
+'use client';
 import Button from '../globals/form/button';
 
 export function ErrorState({ text, callback }: { text: string | undefined; callback: () => void }) {

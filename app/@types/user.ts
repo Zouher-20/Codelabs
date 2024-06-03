@@ -10,3 +10,18 @@ export interface userType {
     classes?: number;
     role?: string;
 }
+
+export interface ClassRoomUserType {
+    name: string;
+    id: string;
+    email: string;
+    image?: string | null;
+    isTeacher: boolean;
+    selected?: UserState;
+}
+
+export enum UserState {
+    selected,
+    notSelected,
+    alreadySelected
+}

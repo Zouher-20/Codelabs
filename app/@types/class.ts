@@ -1,4 +1,6 @@
 export interface classType {
     title: string;
-    id: number;
+    id: string;
+    description?: string;
+    type?: string;
 }
