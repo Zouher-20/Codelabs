@@ -1,3 +1,5 @@
+import { DateTime } from 'next-auth/providers/kakao';
+
 export interface AddClassRoomInput {
     name?: string;
     description?: string;
@@ -32,6 +34,7 @@ export interface AddRomInClassInput {
     classRomId: string;
     description?: string;
     name?: string;
+    endAt: DateTime;
     type?: string;
 }
 
@@ -47,4 +50,7 @@ export interface GetAllUserAndSearchInput {
     page: number;
     pageSize: number;
     searchWord: string;
+}
+export interface GetClassRomStatistics {
+    classRomId: string;
 }

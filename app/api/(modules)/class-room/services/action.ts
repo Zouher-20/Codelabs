@@ -11,6 +11,7 @@ import {
     getClassesByMeInput,
     GetClassRomByIdInput,
     GetClassRomForStudentsByIdInput,
+    GetClassRomStatistics,
     getMyClassesInput,
     GetRomInClassInput,
     GetUserInClassInput
@@ -72,4 +73,10 @@ export const getClassRomForStudentsById = async (payload: GetClassRomForStudents
 //For add user In rom
 export const getAllUserAndSearch = async (payload: GetAllUserAndSearchInput) => {
     return classRoomRepository.getAllUserAndSearch(payload);
+};
+
+export const getClassRomStatistics = async (payload: GetClassRomStatistics) => {
+    const session = await getSession();
+    const userId = session?.id;
+    return classRoomRepository.getClassRomStatistics(payload, userId);
 };
