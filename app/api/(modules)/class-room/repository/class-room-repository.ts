@@ -557,6 +557,74 @@ class ClassRoomRepository {
             totalStudents: studentLimit
         };
     }
+
+    static async getStudentsStatisticsSubmitted(
+        payload: { page: number; pageSize: number; romId: string },
+        userId: string
+    ) {
+        const myClass = await db.classRom.findFirst({
+            where: {
+                MemberClass: {
+                    some: {
+                        userId: userId,
+                        isTeacher: true
+                    }
+                }
+            }
+        });
+
+        if (!myClass) {
+            throw new Error('No class found');
+        }
+
+        const userSkip = (payload.page - 1) * payload.pageSize;
+
+        const totalStudentsInClass = await db.memberClass.count({
+            where: {
+                classRomId: myClass.id
+            }
+        });
+
+        const usersWithLabs = await db.user.findMany({
+            where: {
+                MemberClass: {
+                    some: {
+                        classRomId: myClass.id
+                    }
+                }
+            },
+            include: {
+                MemberClass: {
+                    where: {
+                        classRomId: myClass.id
+                    },
+                    include: {
+                        ClassProject: {
+                            where: {
+                                romId: payload.romId
+                            },
+                            include: {
+                                Lab: {
+                                    where: {
+                                        jsonFile: {
+                                            not: null
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            take: payload.pageSize,
+            skip: userSkip
+        });
+
+        return {
+            usersWithLabs,
+            totalStudentsInClass
+        };
+    }
 }
 
 export default ClassRoomRepository;
