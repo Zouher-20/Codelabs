@@ -566,12 +566,23 @@ class ClassRoomRepository {
     ) {
         const myClass = await db.classRom.findFirst({
             where: {
-                MemberClass: {
-                    some: {
-                        userId: userId,
-                        isTeacher: true
+                AND: [
+                    {
+                        Rom: {
+                            some: {
+                                classRomId: payload.romId
+                            }
+                        }
+                    },
+                    {
+                        MemberClass: {
+                            some: {
+                                userId: userId,
+                                isTeacher: true
+                            }
+                        }
                     }
-                }
+                ]
             }
         });
 
