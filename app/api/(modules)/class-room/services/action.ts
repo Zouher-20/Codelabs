@@ -12,7 +12,9 @@ import {
     GetClassRomByIdInput,
     GetClassRomForStudentsByIdInput,
     GetClassRomStatistics,
+    GetLabsSubmittedInRomInput,
     getMyClassesInput,
+    GetRomByIdInput,
     GetRomInClassInput,
     GetStudentsStatisticsSubmittedInput,
     GetUserInClassInput
@@ -88,4 +90,15 @@ export const getStudentsStatisticsSubmitted = async (
     const session = await getSession();
     const userId = session?.id;
     return classRoomRepository.getStudentsStatisticsSubmitted(payload, userId);
+};
+
+export const getRomById = async (payload: GetRomByIdInput) => {
+    const session = await getSession();
+    const userId = session?.id;
+    return classRoomRepository.getRomById(payload, userId);
+};
+export const getLabsSubmittedInRom = async (payload: GetLabsSubmittedInRomInput) => {
+    const session = await getSession();
+    const userId = session?.id;
+    return classRoomRepository.getLabsSubmittedInRom(payload, userId);
 };
