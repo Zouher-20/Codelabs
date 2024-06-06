@@ -1,6 +1,6 @@
 'use client';
 
-import { userType } from '@/app/@types/user';
+import { ClassRoomUserType } from '@/app/@types/user';
 import { useRouter, useSearchParams } from 'next/navigation';
 import CodeLabContainer from '../../components/container';
 import ClassDescriptionComponent from '../components/class-description';
@@ -9,12 +9,12 @@ import StatisticsContainer from '../components/statistics_components';
 import StudentList from '../components/student_list';
 
 export default function ClassLabPage() {
-    var students: Array<userType> = [
-        { id: '1', email: 'alshalabi211@gmail.com', name: 'majd1' },
-        { id: '2', email: 'alshalabi211@gmail.com', name: 'majd2' },
-        { id: '3', email: 'alshalabi211@gmail.com', name: 'majd3' },
-        { id: '4', email: 'alshalabi211@gmail.com', name: 'majd4' },
-        { id: '5', email: 'alshalabi211@gmail.com', name: 'majd5' }
+    var students: Array<ClassRoomUserType> = [
+        { id: '1', email: 'alshalabi211@gmail.com', name: 'majd1', isTeacher: false },
+        { id: '2', email: 'alshalabi211@gmail.com', name: 'majd2', isTeacher: false },
+        { id: '3', email: 'alshalabi211@gmail.com', name: 'majd3', isTeacher: false },
+        { id: '4', email: 'alshalabi211@gmail.com', name: 'majd4', isTeacher: false },
+        { id: '5', email: 'alshalabi211@gmail.com', name: 'majd5', isTeacher: false }
     ];
     var labs: Array<LabModel> = [
         { title: 'majd', id: 1 },

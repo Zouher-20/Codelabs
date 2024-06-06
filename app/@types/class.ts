@@ -4,3 +4,10 @@ export interface classType {
     description?: string;
     type?: string;
 }
+
+export interface RoomType {
+    title: string;
+    id: string;
+    description?: string;
+    type?: string;
+}

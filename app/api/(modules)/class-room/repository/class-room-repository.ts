@@ -301,7 +301,7 @@ class ClassRoomRepository {
             where: {
                 classRomId: myClassRom.id
             },
-            take: payload.romePage,
+            take: payload.romPageSize,
             skip: romSkip
         });
         const romCountInClassRom = await db.rom.count({

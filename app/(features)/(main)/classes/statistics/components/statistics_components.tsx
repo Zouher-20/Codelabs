@@ -8,13 +8,15 @@ export default function StatisticsContainer({
     primaryText,
     anotherText,
     onClick,
-    withAdd = true
+    withAdd = true,
+    series
 }: {
     color: string;
     primaryText: string;
     anotherText: string;
     onClick?: MouseEventHandler<SVGSVGElement>;
     withAdd?: boolean;
+    series?: number[];
 }) {
     return (
         <CodeLabContainer>
@@ -35,7 +37,7 @@ export default function StatisticsContainer({
                 <div className="h-8"></div>
                 <CircleChart
                     labels={[anotherText, primaryText]}
-                    series={[30, 80]}
+                    series={series ?? [30, 80]}
                     colors={['#282C2B', color]}
                     width={200}
                     height={200}
