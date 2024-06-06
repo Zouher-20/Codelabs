@@ -121,6 +121,8 @@ model ClassProject {
   createdAt      DateTime         @default(now())
   romId          String?
   rom            Rom?             @relation(fields: [romId], references: [id], onDelete: Cascade)
+  memberClassId  String?
+  memberClass    MemberClass?     @relation(fields: [memberClassId], references: [id], onDelete: Cascade)
   FeedbackProjct FeedbackProjct[]
   TagMorph       TagMorph[]
 }
@@ -201,7 +203,7 @@ model Lab {
   id                       String                  @id @default(cuid())
   tamblateId               String? // Nullable tamblateId
   tamblate                 Tamblate?               @relation(fields: [tamblateId], references: [id], onDelete: SetNull) // onDelete: SetNull
-  jsonFile                 String
+  jsonFile                 String?
   userprojectId            String?
   classProjectId           String?
   challengeParticipationId String?
@@ -273,6 +275,7 @@ model MemberClass {
   user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   FeedbackProjct FeedbackProjct[]
   isTeacher      Boolean
+  ClassProject   ClassProject[]
 }
 
 model FeedbackProjct {

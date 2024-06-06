@@ -557,6 +557,190 @@ class ClassRoomRepository {
             totalStudents: studentLimit
         };
     }
+
+    static async getRomById(
+        payload: {
+            romId: string;
+        },
+        userId: string
+    ) {
+        const myClass = await db.classRom.findFirst({
+            where: {
+                MemberClass: {
+                    some: {
+                        userId: userId,
+                        isTeacher: true
+                    }
+                }
+            }
+        });
+
+        if (!myClass) {
+            throw new Error('No class found');
+        }
+
+        const myRom = await db.rom.findUnique({
+            where: {
+                id: payload.romId
+            }
+        });
+        if (!myRom) {
+            throw new Error('No room found with the specified ID');
+        }
+
+        return myRom;
+    }
+
+    static async getStudentsStatisticsSubmitted(
+        payload: { page: number; pageSize: number; romId: string },
+        userId: string
+    ) {
+        const myClass = await db.classRom.findFirst({
+            where: {
+                MemberClass: {
+                    some: {
+                        userId: userId,
+                        isTeacher: true
+                    }
+                }
+            }
+        });
+
+        if (!myClass) {
+            throw new Error('No class found');
+        }
+
+        const userSkip = (payload.page - 1) * payload.pageSize;
+
+        const totalStudentsInClass = await db.memberClass.count({
+            where: {
+                classRomId: myClass.id
+            }
+        });
+
+        const usersWithLabs = await db.user.findMany({
+            where: {
+                MemberClass: {
+                    some: {
+                        classRomId: myClass.id
+                    }
+                }
+            },
+            include: {
+                MemberClass: {
+                    where: {
+                        classRomId: myClass.id
+                    },
+                    include: {
+                        ClassProject: {
+                            where: {
+                                romId: payload.romId
+                            },
+                            include: {
+                                Lab: true
+                            }
+                        }
+                    }
+                }
+            },
+            take: payload.pageSize,
+            skip: userSkip
+        });
+
+        const countUsersWithLabs = await db.user.count({
+            where: {
+                AND: [
+                    {
+                        MemberClass: {
+                            some: {
+                                classRomId: myClass.id
+                            }
+                        }
+                    },
+                    {
+                        MemberClass: {
+                            some: {
+                                ClassProject: {
+                                    some: {
+                                        romId: payload.romId,
+                                        Lab: {
+                                            some: {
+                                                classProject: {
+                                                    romId: payload.romId
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        });
+        return {
+            Statistics: {
+                countUsersWithLabs: countUsersWithLabs,
+                totalStudentsInClass: totalStudentsInClass
+            },
+            usersWithLabs,
+            totalStudentsInClass
+        };
+    }
+
+    static async getLabsSubmittedInRom(
+        payload: {
+            romId: string;
+            pageSize: number;
+            page: number;
+        },
+        userId: string
+    ) {
+        const myClass = await db.classRom.findFirst({
+            where: {
+                MemberClass: {
+                    some: {
+                        userId: userId,
+                        isTeacher: true
+                    }
+                }
+            }
+        });
+
+        if (!myClass) {
+            throw new Error('No class found');
+        }
+        const userSkip = (payload.page - 1) * payload.pageSize;
+
+        const labs = await db.lab.findMany({
+            where: {
+                classProject: {
+                    romId: payload.romId
+                }
+            },
+            include: {
+                classProject: {
+                    include: {
+                        memberClass: {
+                            include: {
+                                user: true
+                            }
+                        }
+                    }
+                }
+            },
+            take: payload.pageSize,
+            skip: userSkip
+        });
+        const totalCountLabs = await db.lab.count({
+            where: {
+                classProject: {
+                    romId: payload.romId
+                }
+            }
+        });
+        return { labs };
+    }
 }
 
 export default ClassRoomRepository;
