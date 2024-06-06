@@ -67,6 +67,9 @@ export default function StatisticsPage() {
                 res.RomInClassRom.map<RoomType>(value => {
                     return {
                         id: value.id,
+                        description: value.description,
+                        endAt: value.endAt,
+                        type: value.type,
                         title: value.name
                     };
                 })
