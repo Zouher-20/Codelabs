@@ -1,7 +1,9 @@
 'use client';
 
+import { RoomType } from '@/app/@types/room';
 import { ClassRoomUserType } from '@/app/@types/user';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useState } from 'react';
 import CodeLabContainer from '../../components/container';
 import ClassDescriptionComponent from '../components/class-description';
 import ClassLabListComponent, { LabModel } from '../components/lab-list';
@@ -23,7 +25,26 @@ export default function ClassLabPage() {
         { title: 'majd4', id: 4 },
         { title: 'majd5', id: 5 }
     ];
+    const [roomLoading, setRoomLoading] = useState(true);
+    const [roomError, setRoomError] = useState(null);
+    const [roomInfo, setRoomInfo] = useState<RoomType | null>(null);
     const currentParams = useSearchParams();
+    const getClassInfo = async ({ id }: { id: string }) => {
+        setRoomLoading(true);
+        try {
+            const res = await getRoomById({ classRomId: id });
+            setRoomInfo({
+                id: res.myClassRom.id,
+                title: res.myClassRom.name,
+                type: res.myClassRom.type,
+                description: res.myClassRom.description
+            });
+        } catch (e: any) {
+            setRoomError(e.message);
+        } finally {
+            setRoomLoading(false);
+        }
+    };
     const route = useRouter();
 
     const handleLabClick = (index: number) => {
