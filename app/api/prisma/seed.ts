@@ -26,9 +26,39 @@ async function main() {
                 }
             }
         });
-        console.log('Seed data has been added to the database.');
+        console.log('Seed plan data has been added to the database.');
     } else {
-        console.log('Database already contains data, no seed needed.');
+        console.log('Database already contains plan data, no seed needed.');
+    }
+
+    const usersCount = await prisma.user.count();
+    if (usersCount === 0) {
+        const plan = await prisma.plan.findFirst();
+        if (!plan) {
+            throw new Error('No plans found in the database.');
+        }
+
+        for (let i = 1; i <= 20; i++) {
+            await prisma.user.create({
+                data: {
+                    email: `user${i}@example.com`,
+                    username: `user${i}`,
+                    password: 'password123',
+                    role: 'USER',
+                    typeUser: 'basic',
+                    userImage: `https://example.com/user${i}.png`,
+                    planEndDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
+                    inActive: false,
+                    verifiedAt: new Date(),
+                    plan: {
+                        connect: { id: plan.id }
+                    }
+                }
+            });
+        }
+        console.log('20 users with plan subscription have been added to the database.');
+    } else {
+        console.log('Database already contains users, no users added.');
     }
 }
 
