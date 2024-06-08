@@ -8,6 +8,7 @@ import {
     AddRomInClassInput,
     AddUsersInClassInput,
     GetAllUserAndSearchInput,
+    GetClasRomAndTeacherDetailsInput,
     getClassesByMeInput,
     GetClassRomByIdInput,
     GetClassRomForStudentsByIdInput,
@@ -42,6 +43,12 @@ export const getClassRomById = async (payload: GetClassRomByIdInput) => {
     const session = await getSession();
     const userId = session?.id;
     return classRoomRepository.getClassRomById(payload, userId);
+};
+// for member class
+export const getClassRoomAndTeacherDetails = async (payload: GetClasRomAndTeacherDetailsInput) => {
+    const session = await getSession();
+    const userId = session?.id;
+    return classRoomRepository.getClassRoomAndTeacherDetails(payload, userId);
 };
 
 export const getUserInClass = async (payload: GetUserInClassInput) => {
