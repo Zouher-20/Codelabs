@@ -106,31 +106,34 @@ export function treeReducer(fileTreeSate: FileTreeState, { type, payload }: ITre
             };
         }
         case TreeReducerActionType.NODE_DELETE: {
-            unset(fileTreeSate.nodes, TreeHelper.getStringPath(payload));
+            const newNodes = { ...fileTreeSate.nodes };
+            unset(newNodes, TreeHelper.getParsedPath(payload, false));
             return {
                 activeFolder: fileTreeSate.activeFolder,
                 activeFile: ['package.json'],
-                nodes: fileTreeSate.nodes,
+                nodes: newNodes,
                 activeFileName: 'package.json'
             };
         }
         case TreeReducerActionType.FOLDER_CREATE: {
-            set(fileTreeSate.nodes, TreeHelper.getParsedPath(payload, false), { directory: {} });
+            const newNodes = { ...fileTreeSate.nodes };
+            set(newNodes, TreeHelper.getParsedPath(payload, false), { directory: {} });
             return {
                 activeFolder: fileTreeSate.activeFolder,
                 activeFile: fileTreeSate.activeFile,
-                nodes: fileTreeSate.nodes,
+                nodes: newNodes,
                 activeFileName: fileTreeSate.activeFileName
             };
         }
         case TreeReducerActionType.FILE_CREATE: {
-            set(fileTreeSate.nodes, TreeHelper.getParsedPath(payload, false), {
+            const newNodes = { ...fileTreeSate.nodes };
+            set(newNodes, TreeHelper.getParsedPath(payload, false), {
                 file: { contents: '' }
             });
             return {
                 activeFolder: fileTreeSate.activeFolder,
                 activeFile: payload,
-                nodes: fileTreeSate.nodes,
+                nodes: newNodes,
                 activeFileName: payload.pop()
             };
         }
