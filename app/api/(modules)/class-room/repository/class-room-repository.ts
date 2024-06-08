@@ -383,7 +383,8 @@ class ClassRoomRepository {
             where: {
                 MemberClass: {
                     some: {
-                        userId: userId
+                        userId: userId,
+                        isTeacher: false
                     }
                 },
                 ...(payload.searchWord && {
@@ -401,7 +402,8 @@ class ClassRoomRepository {
             where: {
                 MemberClass: {
                     some: {
-                        userId: userId
+                        userId: userId,
+                        isTeacher: false
                     }
                 },
                 ...(payload.searchWord && {
