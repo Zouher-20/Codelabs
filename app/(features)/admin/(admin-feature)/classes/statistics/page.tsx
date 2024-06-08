@@ -7,24 +7,24 @@ import RoomListComponent from '@/app/(features)/(main)/classes/statistics/compon
 import StatisticsContainer from '@/app/(features)/(main)/classes/statistics/components/statistics_components';
 import StudentList from '@/app/(features)/(main)/classes/statistics/components/student_list';
 import { RoomType } from '@/app/@types/room';
-import { userType } from '@/app/@types/user';
+import { ClassRoomUserType } from '@/app/@types/user';
 import NewClassLabModal from '@/app/components/modals/new-lab';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function StatisticsPage() {
-    var students: Array<userType> = [
-        { id: '1', name: 'majd1', email: 'majd@gmail.com' },
-        { id: '2', name: 'majd2', email: 'majd@gmail.com' },
-        { id: '3', name: 'majd3', email: 'majd@gmail.com' },
-        { id: '4', name: 'majd4', email: 'majd@gmail.com' },
-        { id: '5', name: 'majd5', email: 'majd@gmail.com' }
+    var students: Array<ClassRoomUserType> = [
+        { id: '1', name: 'majd1', email: 'majd@gmail.com', isTeacher: false },
+        { id: '2', name: 'majd2', email: 'majd@gmail.com', isTeacher: false },
+        { id: '3', name: 'majd3', email: 'majd@gmail.com', isTeacher: false },
+        { id: '4', name: 'majd4', email: 'majd@gmail.com', isTeacher: false },
+        { id: '5', name: 'majd5', email: 'majd@gmail.com', isTeacher: false }
     ];
     var rooms: Array<RoomType> = [
-        { title: 'majd', id: 1 },
-        { title: 'majd2', id: 2 },
-        { title: 'majd3', id: 3 },
-        { title: 'majd4', id: 4 },
-        { title: 'majd5', id: 5 }
+        { title: 'majd', id: '1' },
+        { title: 'majd2', id: '2' },
+        { title: 'majd3', id: '3' },
+        { title: 'majd4', id: '4' },
+        { title: 'majd5', id: '5' }
     ];
     const currentParams = useSearchParams();
     const route = useRouter();
@@ -96,7 +96,12 @@ export default function StatisticsPage() {
                 className="class name"
                 classType="type"
             />
-            <AddStudentModal initialUser={students} />
+            <AddStudentModal
+                initialUser={students}
+                addCallbackFunction={() => {}}
+                isOpen={false}
+                classId={''}
+            />
             <NewClassLabModal />
         </div>
     );

@@ -53,7 +53,7 @@ export default function StudentList({
                 <div className="carousel carousel-vertical w-full gap-1 rounded-box p-2">
                     {students.map((e, index) => (
                         <div className="px-1" key={e + `${index}`}>
-                            <ListItem studentModel={e} checked={withCheck && index % 2 == 0} />
+                            <ListItem studentModel={e} checked={e.withCheck ?? false} />
                         </div>
                     ))}
                 </div>

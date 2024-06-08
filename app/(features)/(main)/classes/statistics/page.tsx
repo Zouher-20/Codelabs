@@ -5,6 +5,7 @@ import { RoomType } from '@/app/@types/room';
 import { ClassRoomUserType } from '@/app/@types/user';
 import {
     getClassRomById,
+    getClassRomStatistics,
     getRomInClass,
     getUserInClass
 } from '@/app/api/(modules)/class-room/services/action';
@@ -16,7 +17,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import CodeLabContainer from '../components/container';
-import NewClassLabModal from './components/add_lab_modal';
+import AddRoomInClassModal from './components/add_lab_modal';
 import AddStudentModal from './components/add_student_modal';
 import ClassDescriptionComponent from './components/class-description';
 import RoomListComponent from './components/room_list';
@@ -33,7 +34,18 @@ export default function StatisticsPage() {
         getClassStudentsById({ id });
         getClassRoomsById({ id });
         getClassInfo({ id });
+        getClassStatistics({ id });
     };
+    const [staticLoading, setStaticLoading] = useState(true);
+    const [staticError, setStaticError] = useState(null);
+    const [staticData, setStaticData] = useState<{
+        numberOfStudents: number;
+        numberOfRoms: number;
+        remainingStudentSlots: number;
+        remainingRomSlots: number;
+        totalRoms: number;
+        totalStudents: number;
+    } | null>(null);
     const [userLoading, setUserLoading] = useState(true);
     const [userError, setUserError] = useState(null);
     const [users, setUsers] = useState<Array<ClassRoomUserType>>([]);
@@ -55,6 +67,10 @@ export default function StatisticsPage() {
                 res.RomInClassRom.map<RoomType>(value => {
                     return {
                         id: value.id,
+                        description: value.description,
+                        endAt: value.endAt,
+                        createdAt: value.createdAt,
+                        type: value.type,
                         title: value.name
                     };
                 })
@@ -65,7 +81,18 @@ export default function StatisticsPage() {
             setRoomLoading(false);
         }
     };
-
+    const getClassStatistics = async ({ id }: { id: string }) => {
+        setStaticLoading(true);
+        setStaticError(null);
+        try {
+            const res = await getClassRomStatistics({ classRomId: id });
+            setStaticData(res);
+        } catch (e: any) {
+            setStaticError(e.message);
+        } finally {
+            setStaticLoading(false);
+        }
+    };
     const getClassStudentsById = async ({ id }: { id: string }) => {
         setUserLoading(true);
         try {
@@ -120,26 +147,76 @@ export default function StatisticsPage() {
     return (
         <div className="flex min-h-[550px] flex-col gap-2 p-3">
             <div className="flex flex-wrap gap-2 md:w-1/2">
-                <StatisticsContainer
-                    color="#50FA7B"
-                    primaryText="Student"
-                    anotherText="Class Capicity"
-                    onClick={() => {
-                        setIsStudentModelOpen(!isStudentModelOpen);
-                        (
-                            document.getElementById('add-student-modal') as HTMLFormElement
-                        )?.showModal();
+                <ManageState
+                    loading={staticLoading}
+                    error={staticError}
+                    errorAndEmptyCallback={() => {
+                        const id = currentParams.get('id') ?? '-1';
+                        getClassStatistics({ id });
                     }}
+                    customEmptyPage={
+                        <CodeLabContainer>
+                            <EmptyState />
+                        </CodeLabContainer>
+                    }
+                    customLoadingPage={
+                        <CodeLabContainer>
+                            <LoadingState />
+                        </CodeLabContainer>
+                    }
+                    loadedState={
+                        <StatisticsContainer
+                            color="#50FA7B"
+                            primaryText="Student"
+                            anotherText="Class Capicity"
+                            series={[
+                                staticData?.remainingStudentSlots ?? 0,
+                                staticData?.numberOfStudents ?? 0
+                            ]}
+                            onClick={() => {
+                                setIsStudentModelOpen(!isStudentModelOpen);
+                                (
+                                    document.getElementById('add-student-modal') as HTMLFormElement
+                                )?.showModal();
+                            }}
+                        />
+                    }
+                    empty={false}
                 />
-                <StatisticsContainer
-                    color="#E3E354"
-                    primaryText="Labs"
-                    anotherText="Labs Capicity"
-                    onClick={() => {
-                        (
-                            document.getElementById('new-class-lab-modal') as HTMLFormElement
-                        )?.showModal();
+                <ManageState
+                    loading={staticLoading}
+                    error={staticError}
+                    errorAndEmptyCallback={() => {
+                        const id = currentParams.get('id') ?? '-1';
+                        getClassStatistics({ id });
                     }}
+                    customEmptyPage={
+                        <CodeLabContainer>
+                            <EmptyState />
+                        </CodeLabContainer>
+                    }
+                    customLoadingPage={
+                        <CodeLabContainer>
+                            <LoadingState />
+                        </CodeLabContainer>
+                    }
+                    loadedState={
+                        <StatisticsContainer
+                            color="#E3E354"
+                            primaryText="Rooms"
+                            anotherText="Availabel Rooms"
+                            series={[
+                                staticData?.remainingRomSlots ?? 0,
+                                staticData?.numberOfRoms ?? 0
+                            ]}
+                            onClick={() => {
+                                (
+                                    document.getElementById('add-room-in-class') as HTMLFormElement
+                                )?.showModal();
+                            }}
+                        />
+                    }
+                    empty={false}
                 />
             </div>
             <div className="flex w-full gap-2 max-lg:flex-wrap">
@@ -223,10 +300,19 @@ export default function StatisticsPage() {
                 addCallbackFunction={() => {
                     const id = currentParams.get('id') ?? '-1';
                     getClassStudentsById({ id });
+                    getClassStatistics({ id });
                     toast.success('students added successfully');
                 }}
             />
-            <NewClassLabModal />
+            <AddRoomInClassModal
+                classId={classInfo?.id ?? ''}
+                callbackFunction={() => {
+                    const id = currentParams.get('id') ?? '-1';
+                    getClassRoomsById({ id });
+                    getClassStatistics({ id });
+                    toast.success('add new room done');
+                }}
+            />
             <CustomToaster />
         </div>
     );

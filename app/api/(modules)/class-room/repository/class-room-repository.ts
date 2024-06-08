@@ -301,7 +301,7 @@ class ClassRoomRepository {
             where: {
                 classRomId: myClassRom.id
             },
-            take: payload.romePage,
+            take: payload.romPageSize,
             skip: romSkip
         });
         const romCountInClassRom = await db.rom.count({
@@ -570,7 +570,7 @@ class ClassRoomRepository {
                     {
                         Rom: {
                             some: {
-                                classRomId: payload.romId
+                                id: payload.romId
                             }
                         }
                     },
@@ -608,12 +608,23 @@ class ClassRoomRepository {
     ) {
         const myClass = await db.classRom.findFirst({
             where: {
-                MemberClass: {
-                    some: {
-                        userId: userId,
-                        isTeacher: true
+                AND: [
+                    {
+                        Rom: {
+                            some: {
+                                id: payload.romId
+                            }
+                        }
+                    },
+                    {
+                        MemberClass: {
+                            some: {
+                                userId: userId,
+                                isTeacher: true
+                            }
+                        }
                     }
-                }
+                ]
             }
         });
 
@@ -709,12 +720,23 @@ class ClassRoomRepository {
     ) {
         const myClass = await db.classRom.findFirst({
             where: {
-                MemberClass: {
-                    some: {
-                        userId: userId,
-                        isTeacher: true
+                AND: [
+                    {
+                        Rom: {
+                            some: {
+                                id: payload.romId
+                            }
+                        }
+                    },
+                    {
+                        MemberClass: {
+                            some: {
+                                userId: userId,
+                                isTeacher: true
+                            }
+                        }
                     }
-                }
+                ]
             }
         });
 
@@ -750,7 +772,7 @@ class ClassRoomRepository {
                 }
             }
         });
-        return { labs };
+        return { labs, totalCountLabs };
     }
 }
 
