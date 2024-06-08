@@ -1,15 +1,33 @@
 import * as yup from 'yup';
 
+import { addClassRoom } from '@/app/api/(modules)/class-room/services/action';
 import Button from '@/app/components/globals/form/button';
 import Input from '@/app/components/globals/form/input';
 import Textarea from '@/app/components/globals/form/text-area';
 import IconRenderer from '@/app/components/globals/icon';
 import newClass from '@/public/images/classes/new-class.svg';
 import { useFormik } from 'formik';
+import { useState } from 'react';
 
-const NewClassModal = () => {
-    const onSubmit = () => {
-        (document.getElementById('new-class-modal') as HTMLDialogElement).close();
+const NewClassModal = ({ onClassAddedCallback }: { onClassAddedCallback: () => void }) => {
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const onSubmit = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const res = await addClassRoom({
+                name: values.name,
+                description: values.description,
+                type: values.tag
+            });
+            onClassAddedCallback();
+            (document.getElementById('new-class-modal') as HTMLDialogElement).close();
+        } catch (e: any) {
+            setError(e.message);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const { values, errors, touched, handleChange, handleSubmit, handleBlur } = useFormik({
@@ -79,8 +97,15 @@ const NewClassModal = () => {
                                         : null
                                 }
                             />
+                            {error != null ? <p className="text-red-500">{error}</p> : null}
                         </div>
-                        <Button style="w-fit self-end" color="any" label="Continue" type="submit" />
+                        <Button
+                            loading={loading}
+                            style="w-fit self-end"
+                            color="any"
+                            label="Continue"
+                            type="submit"
+                        />
                     </form>
                 </div>
             </div>

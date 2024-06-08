@@ -1,17 +1,25 @@
 'use server';
 
+'use server';
 import { getSession } from '@/app/api/(modules)/auth/service/actions';
 import classRoomRepository from '@/app/api/(modules)/class-room/repository/class-room-repository';
 import {
     AddClassRoomInput,
     AddRomInClassInput,
     AddUsersInClassInput,
+    GetAllUserAndSearchInput,
     getClassesByMeInput,
     GetClassRomByIdInput,
     GetClassRomForStudentsByIdInput,
+    GetClassRomStatistics,
+    GetLabsSubmittedInRomInput,
     getMyClassesInput,
+    GetRomByIdInput,
     GetRomInClassInput,
-    GetUserInClassInput
+    GetRoomAndTeacherDetailsInput,
+    GetStudentsStatisticsSubmittedInput,
+    GetUserInClassInput,
+    SubmittedLabsInRoomInput
 } from '@/app/api/(modules)/class-room/types';
 
 export const addClassRoom = async (payload: AddClassRoomInput) => {
@@ -36,6 +44,17 @@ export const getClassRomById = async (payload: GetClassRomByIdInput) => {
     const session = await getSession();
     const userId = session?.id;
     return classRoomRepository.getClassRomById(payload, userId);
+};
+// for member class
+export const getRoomAndTeacherDetails = async (payload: GetRoomAndTeacherDetailsInput) => {
+    const session = await getSession();
+    const userId = session?.id;
+    return classRoomRepository.getRoomAndTeacherDetails(payload, userId);
+};
+export const submittedLabsInRoom = async (payload: SubmittedLabsInRoomInput) => {
+    const session = await getSession();
+    const userId = session?.id;
+    return classRoomRepository.submittedLabsInRoom(payload, userId);
 };
 
 export const getUserInClass = async (payload: GetUserInClassInput) => {
@@ -65,4 +84,34 @@ export const getClassRomForStudentsById = async (payload: GetClassRomForStudents
     const session = await getSession();
     const userId = session?.id;
     return classRoomRepository.getClassRomForStudentsById(payload, userId);
+};
+
+//For add user In rom
+export const getAllUserAndSearch = async (payload: GetAllUserAndSearchInput) => {
+    return classRoomRepository.getAllUserAndSearch(payload);
+};
+
+export const getClassRomStatistics = async (payload: GetClassRomStatistics) => {
+    const session = await getSession();
+    const userId = session?.id;
+    return classRoomRepository.getClassRomStatistics(payload, userId);
+};
+
+export const getStudentsStatisticsSubmitted = async (
+    payload: GetStudentsStatisticsSubmittedInput
+) => {
+    const session = await getSession();
+    const userId = session?.id;
+    return classRoomRepository.getStudentsStatisticsSubmitted(payload, userId);
+};
+
+export const getRomById = async (payload: GetRomByIdInput) => {
+    const session = await getSession();
+    const userId = session?.id;
+    return classRoomRepository.getRomById(payload, userId);
+};
+export const getLabsSubmittedInRom = async (payload: GetLabsSubmittedInRomInput) => {
+    const session = await getSession();
+    const userId = session?.id;
+    return classRoomRepository.getLabsSubmittedInRom(payload, userId);
 };

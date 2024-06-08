@@ -124,11 +124,7 @@ const NewPlanModal = ({ onPlanAdded }: { onPlanAdded: (plan: planType) => void }
                             <input
                                 type="checkbox"
                                 className="checkbox-primary checkbox mt-1 rounded-sm"
-                                checked={
-                                    values.features[index].value < ('0' as unknown as number)
-                                        ? true
-                                        : false
-                                }
+                                checked={values.features[index].value < ('0' as unknown as number)}
                                 onChange={event => {
                                     event.target.checked
                                         ? handleChange(`features[${index}].value`)('-1')
@@ -147,7 +143,7 @@ const NewPlanModal = ({ onPlanAdded }: { onPlanAdded: (plan: planType) => void }
                                               ? 'student in class'
                                               : feature.name
                                     }
-                                    disabled={values.features[index].value < 0 ? true : false}
+                                    disabled={values.features[index].value < 0}
                                     value={
                                         values.features[index].value == -1 ||
                                         values.features[index].value == 0
