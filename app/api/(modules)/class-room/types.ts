@@ -67,3 +67,7 @@ export interface GetLabsSubmittedInRomInput {
     pageSize: number;
     page: number;
 }
+
+export interface GetClasRomAndTeacherDetailsInput {
+    classRomId: string;
+}
