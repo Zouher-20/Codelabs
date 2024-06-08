@@ -69,6 +69,7 @@ export default function StatisticsPage() {
                         id: value.id,
                         description: value.description,
                         endAt: value.endAt,
+                        createdAt: value.createdAt,
                         type: value.type,
                         title: value.name
                     };

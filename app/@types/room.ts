@@ -4,4 +4,5 @@ export interface RoomType {
     type: string;
     description: string;
     endAt: Date;
+    createdAt: Date;
 }

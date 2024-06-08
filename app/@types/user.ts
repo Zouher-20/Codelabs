@@ -18,6 +18,7 @@ export interface ClassRoomUserType {
     image?: string | null;
     isTeacher: boolean;
     selected?: UserState;
+    withCheck?: boolean;
 }
 
 export enum UserState {

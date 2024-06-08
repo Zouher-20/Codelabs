@@ -5,30 +5,30 @@ export default function ClassLabListComponent({
     onLabClicked
 }: {
     labs: Array<LabModel>;
-    title:string;
+    title: string;
     onLabClicked: (index: number) => void;
 }) {
     return (
-       <div>
-        <p className='pb-1'>{title}</p>
-         <div className="carousel relative w-full rounded-box"> 
-            <div className="carousel-item">
-                {labs.map((e, index) => (
-                    <div
-                        className="px-1"
-                        key={e.title + `${index}`}
-                        onClick={() => onLabClicked(index)}
-                    >
-                        <ClassLab name={e.title ?? ''} type="Type" />
-                    </div>
-                ))}
+        <div>
+            <p className="pb-1">{title}</p>
+            <div className="carousel relative w-full rounded-box">
+                <div className="carousel-item">
+                    {labs.map((e, index) => (
+                        <div
+                            className="px-1"
+                            key={e.title + `${index}`}
+                            onClick={() => onLabClicked(index)}
+                        >
+                            <ClassLab name={e.title ?? ''} type="Type" />
+                        </div>
+                    ))}
+                </div>
             </div>
         </div>
-       </div>
     );
 }
 
 export interface LabModel {
     title?: string;
-    id: number;
+    id: string;
 }

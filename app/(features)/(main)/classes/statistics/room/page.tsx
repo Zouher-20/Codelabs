@@ -1,8 +1,12 @@
 'use client';
 
 import { RoomType } from '@/app/@types/room';
-import { ClassRoomUserType } from '@/app/@types/user';
-import { getRomById } from '@/app/api/(modules)/class-room/services/action';
+import { ClassRoomUserType, UserState } from '@/app/@types/user';
+import {
+    getLabsSubmittedInRom,
+    getRomById,
+    getStudentsStatisticsSubmitted
+} from '@/app/api/(modules)/class-room/services/action';
 import { EmptyState } from '@/app/components/page-state/empty';
 import { LoadingState } from '@/app/components/page-state/loading';
 import { ManageState } from '@/app/components/page-state/state_manager';
@@ -17,26 +21,76 @@ import StudentList from '../components/student_list';
 export default function ClassLabPage() {
     useEffect(() => {
         const id = currentParams.get('roomId') ?? '-1';
-        getRoomInfo({ id: id });
+        getRoomInfo({ id });
+        getStudentFromServer({ id });
+        getLabFromServer({ id });
     }, []);
-    var students: Array<ClassRoomUserType> = [
-        { id: '1', email: 'alshalabi211@gmail.com', name: 'majd1', isTeacher: false },
-        { id: '2', email: 'alshalabi211@gmail.com', name: 'majd2', isTeacher: false },
-        { id: '3', email: 'alshalabi211@gmail.com', name: 'majd3', isTeacher: false },
-        { id: '4', email: 'alshalabi211@gmail.com', name: 'majd4', isTeacher: false },
-        { id: '5', email: 'alshalabi211@gmail.com', name: 'majd5', isTeacher: false }
-    ];
-    var labs: Array<LabModel> = [
-        { title: 'majd', id: 1 },
-        { title: 'majd2', id: 2 },
-        { title: 'majd3', id: 3 },
-        { title: 'majd4', id: 4 },
-        { title: 'majd5', id: 5 }
-    ];
+
+    const currentParams = useSearchParams();
+
     const [roomLoading, setRoomLoading] = useState(true);
     const [roomError, setRoomError] = useState(null);
     const [roomInfo, setRoomInfo] = useState<RoomType | null>(null);
-    const currentParams = useSearchParams();
+    const [studentLoading, setStudentLoading] = useState(true);
+    const [studentError, setStudentError] = useState(null);
+    const [students, setStudents] = useState<Array<ClassRoomUserType> | null>(null);
+    const [userStatistics, setUserStatistics] = useState<{
+        totalUserInClass: number;
+        userSubmit: number;
+    } | null>(null);
+    const [labLoading, setLabLoading] = useState(true);
+    const [labError, setLabError] = useState(null);
+    const [labs, setLabs] = useState<Array<LabModel> | null>(null);
+
+    const getLabFromServer = async ({ id }: { id: string }) => {
+        setLabLoading(true);
+        try {
+            const res = await getLabsSubmittedInRom({ page: 1, pageSize: 100, romId: id });
+
+            const currentLab = res.labs.map<LabModel>(e => {
+                return {
+                    id: e.id ?? '',
+                    title: e.classProject?.name ?? ''
+                };
+            });
+            setLabs(currentLab);
+        } catch (e: any) {
+            setLabError(e.message);
+        } finally {
+            setLabLoading(false);
+        }
+    };
+    const getStudentFromServer = async ({ id }: { id: string }) => {
+        setStudentLoading(true);
+        try {
+            const res = await getStudentsStatisticsSubmitted({ page: 1, pageSize: 100, romId: id });
+            let count = 0;
+            const currentStudent = res.usersWithLabs.map<ClassRoomUserType>(e => {
+                let checked = false;
+                if (e.MemberClass.length > 0) {
+                    if ((e.MemberClass.at(0)?.ClassProject.length ?? 0) > 0) {
+                        checked = true;
+                        count++;
+                    }
+                }
+                return {
+                    email: e.email,
+                    id: e.id,
+                    isTeacher: false,
+                    name: e.username,
+                    image: e.userImage,
+                    selected: UserState.notSelected,
+                    withCheck: checked
+                };
+            });
+            setUserStatistics({ totalUserInClass: res.totalStudentsInClass, userSubmit: count });
+            setStudents(currentStudent);
+        } catch (e: any) {
+            setStudentError(e.message);
+        } finally {
+            setStudentLoading(false);
+        }
+    };
     const getRoomInfo = async ({ id }: { id: string }) => {
         setRoomLoading(true);
         try {
@@ -46,7 +100,8 @@ export default function ClassLabPage() {
                 title: res.name,
                 description: res.description,
                 endAt: res.endAt,
-                type: res.type
+                type: res.type,
+                createdAt: res.createdAt
             });
         } catch (e: any) {
             setRoomError(e.message);
@@ -59,11 +114,11 @@ export default function ClassLabPage() {
     const handleLabClick = (index: number) => {
         const id = currentParams.get('id') ?? '-1';
         const roomId = currentParams.get('roomId') ?? '-1';
-        if (id && labs[index]) {
+        if (id && labs![index]) {
             const params = {
                 id,
                 roomId,
-                labId: labs[index].id.toString()
+                labId: labs![index].id.toString()
             };
             const queryString = new URLSearchParams(params).toString();
             route.push('/classes/statistics/room/lab' + '?' + queryString);
@@ -87,23 +142,68 @@ export default function ClassLabPage() {
         <div className="flex min-h-[550px] flex-col gap-2 p-3">
             <div className="flex flex-wrap">
                 <div className="flex w-full flex-wrap gap-2 md:w-1/4">
-                    <StatisticsContainer
-                        color="#50FA7B"
-                        primaryText="Submited Lab"
-                        anotherText="Not Yet"
-                        withAdd={false}
+                    <ManageState
+                        loading={studentLoading}
+                        error={studentError}
+                        errorAndEmptyCallback={() => {
+                            const id = currentParams.get('roomId') ?? '-1';
+                        }}
+                        customEmptyPage={
+                            <CodeLabContainer>
+                                <EmptyState />
+                            </CodeLabContainer>
+                        }
+                        customLoadingPage={
+                            <CodeLabContainer>
+                                <LoadingState />
+                            </CodeLabContainer>
+                        }
+                        loadedState={
+                            <StatisticsContainer
+                                color="#50FA7B"
+                                primaryText="Submited Lab"
+                                anotherText="Not Yet"
+                                series={[
+                                    userStatistics?.totalUserInClass ?? 0,
+                                    userStatistics?.userSubmit ?? 0
+                                ]}
+                                withAdd={false}
+                            />
+                        }
+                        empty={false}
                     />
                 </div>
                 <div className="w-full max-md:pt-2 md:w-3/4 md:pl-2">
-                    <CodeLabContainer height="20.5rem">
-                        <div className="w-full p-3">
-                            <ClassLabListComponent
-                                title="Labs"
-                                labs={labs}
-                                onLabClicked={handleLabClick}
-                            ></ClassLabListComponent>
-                        </div>
-                    </CodeLabContainer>
+                    <ManageState
+                        loading={labLoading}
+                        error={labError}
+                        errorAndEmptyCallback={() => {
+                            const id = currentParams.get('roomId') ?? '-1';
+                            getLabFromServer({ id });
+                        }}
+                        customEmptyPage={
+                            <CodeLabContainer height="20.5rem">
+                                <EmptyState />
+                            </CodeLabContainer>
+                        }
+                        customLoadingPage={
+                            <CodeLabContainer height="20.5rem">
+                                <LoadingState />
+                            </CodeLabContainer>
+                        }
+                        loadedState={
+                            <CodeLabContainer height="20.5rem">
+                                <div className="w-full p-3">
+                                    <ClassLabListComponent
+                                        title="Labs"
+                                        labs={labs ?? []}
+                                        onLabClicked={handleLabClick}
+                                    ></ClassLabListComponent>
+                                </div>
+                            </CodeLabContainer>
+                        }
+                        empty={labs?.length == 0}
+                    />
                 </div>
             </div>
             <ManageState
@@ -131,12 +231,33 @@ export default function ClassLabPage() {
 
             <div className="flex w-full gap-2 max-lg:flex-wrap">
                 <div className="w-1/3 max-md:w-full">
-                    <StudentList
-                        withCheck={true}
-                        students={students}
-                        title="Students"
-                        height="25rem"
-                    ></StudentList>
+                    <ManageState
+                        loading={studentLoading}
+                        error={studentError}
+                        errorAndEmptyCallback={() => {
+                            const id = currentParams.get('roomId') ?? '-1';
+                            getStudentFromServer({ id });
+                        }}
+                        customEmptyPage={
+                            <CodeLabContainer height="20.5rem" minWidth="64">
+                                <EmptyState />
+                            </CodeLabContainer>
+                        }
+                        customLoadingPage={
+                            <CodeLabContainer height="20.5rem" minWidth="64">
+                                <LoadingState />
+                            </CodeLabContainer>
+                        }
+                        loadedState={
+                            <StudentList
+                                withCheck={true}
+                                students={students ?? []}
+                                title="Students"
+                                height="25rem"
+                            ></StudentList>
+                        }
+                        empty={students?.length == 0}
+                    />
                 </div>
 
                 <div className="w-1/3 max-md:w-full">
@@ -164,7 +285,7 @@ export default function ClassLabPage() {
                                 series={[
                                     calculateDurationPercentage({
                                         end: roomInfo?.endAt ?? new Date(),
-                                        start: new Date()
+                                        start: roomInfo?.createdAt ?? new Date()
                                     })
                                 ]}
                                 withAdd={false}
