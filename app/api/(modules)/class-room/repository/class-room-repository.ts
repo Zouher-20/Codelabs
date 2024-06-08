@@ -213,8 +213,7 @@ class ClassRoomRepository {
                 id: payload.classRomId,
                 MemberClass: {
                     some: {
-                        userId: userId,
-                        isTeacher: true
+                        userId: userId
                     }
                 }
             }
