@@ -228,6 +228,39 @@ class ClassRoomRepository {
         };
     }
 
+    static async getClassRoomAndTeacherDetails(
+        payload: {
+            classRomId: string;
+        },
+        userId: string
+    ) {
+        const classDetails = await db.classRom.findUnique({
+            where: {
+                id: payload.classRomId,
+                MemberClass: {
+                    some: {
+                        userId: userId
+                    }
+                }
+            },
+            include: {
+                MemberClass: {
+                    where: {
+                        isTeacher: true
+                    }
+                }
+            }
+        });
+
+        if (!classDetails) {
+            throw new Error('class Rom not found');
+        }
+
+        return {
+            classDetails
+        };
+    }
+
     // if Iam creation or Iam student
     static async getUserInClass(
         payload: { userPage: number; userPageSize: number; classRomId: string },
