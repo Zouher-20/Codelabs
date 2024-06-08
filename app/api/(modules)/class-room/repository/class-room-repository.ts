@@ -228,37 +228,58 @@ class ClassRoomRepository {
         };
     }
 
-    static async getClassRoomAndTeacherDetails(
+    static async getRoomAndTeacherDetails(
         payload: {
-            classRomId: string;
+            romId: string;
         },
         userId: string
     ) {
-        const classDetails = await db.classRom.findUnique({
+        const myClass = await db.classRom.findFirst({
             where: {
-                id: payload.classRomId,
-                MemberClass: {
-                    some: {
-                        userId: userId
+                AND: [
+                    {
+                        Rom: {
+                            some: {
+                                id: payload.romId
+                            }
+                        }
+                    },
+                    {
+                        MemberClass: {
+                            some: {
+                                userId: userId
+                            }
+                        }
                     }
-                }
+                ]
+            }
+        });
+
+        if (!myClass) {
+            throw new Error('No class found');
+        }
+
+        const myRom = await db.rom.findUnique({
+            where: {
+                id: payload.romId
             },
             include: {
-                MemberClass: {
-                    where: {
-                        isTeacher: true
+                classRom: {
+                    include: {
+                        MemberClass: {
+                            where: {
+                                isTeacher: true
+                            }
+                        }
                     }
                 }
             }
         });
-
-        if (!classDetails) {
-            throw new Error('class Rom not found');
+        if (!myRom) {
+            throw new Error('No room found with the specified ID');
         }
 
-        return {
-            classDetails
-        };
+        return myRom;
     }
 
     // if Iam creation or Iam student
