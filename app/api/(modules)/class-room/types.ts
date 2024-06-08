@@ -68,6 +68,6 @@ export interface GetLabsSubmittedInRomInput {
     page: number;
 }
 
-export interface GetClasRomAndTeacherDetailsInput {
-    classRomId: string;
+export interface GetRoomAndTeacherDetailsInput {
+    romId: string;
 }
