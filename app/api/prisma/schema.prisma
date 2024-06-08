@@ -115,8 +115,6 @@ model FeaturePlan {
 
 model ClassProject {
   id             String           @id @default(cuid())
-  name           String
-  descraption    String
   Lab            Lab[]
   createdAt      DateTime         @default(now())
   romId          String?
@@ -124,7 +122,6 @@ model ClassProject {
   memberClassId  String?
   memberClass    MemberClass?     @relation(fields: [memberClassId], references: [id], onDelete: Cascade)
   FeedbackProjct FeedbackProjct[]
-  TagMorph       TagMorph[]
 }
 
 model PlanSubscription {
@@ -166,15 +163,13 @@ model Tag {
 }
 
 model TagMorph {
-  id            String        @id @default(cuid())
+  id            String       @id @default(cuid())
   tagId         String
-  tag           Tag           @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  tag           Tag          @relation(fields: [tagId], references: [id], onDelete: Cascade)
   userprojectId String?
-  userproject   UserProject?  @relation(fields: [userprojectId], references: [id], onDelete: Cascade)
+  userproject   UserProject? @relation(fields: [userprojectId], references: [id], onDelete: Cascade)
   challengeId   String?
-  challenge     Challenge?    @relation(fields: [challengeId], references: [id], onDelete: Cascade)
-  classId       String?
-  class         ClassProject? @relation(fields: [classId], references: [id], onDelete: Cascade)
+  challenge     Challenge?   @relation(fields: [challengeId], references: [id], onDelete: Cascade)
 }
 
 model Challenge {

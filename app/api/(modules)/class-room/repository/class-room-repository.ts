@@ -3,6 +3,77 @@ import { NAMEPLAN } from '@prisma/client';
 import { DateTime } from 'next-auth/providers/kakao';
 
 class ClassRoomRepository {
+    static async submittedLabsInRoom(
+        payload: {
+            romId: string;
+            jsonFile: string;
+        },
+        userId: string
+    ) {
+        const [myClass] = await Promise.all([
+            db.classRom.findFirst({
+                where: {
+                    AND: [
+                        {
+                            Rom: {
+                                some: {
+                                    id: payload.romId
+                                }
+                            }
+                        },
+                        {
+                            MemberClass: {
+                                some: {
+                                    userId: userId
+                                }
+                            }
+                        }
+                    ]
+                }
+            })
+        ]);
+
+        if (!myClass) {
+            throw new Error('No class found');
+        }
+        const existingClassProject = await db.classProject.findFirst({
+            where: {
+                romId: payload.romId,
+                memberClass: {
+                    userId: userId
+                }
+            }
+        });
+        if (existingClassProject) {
+            throw new Error('User already has a project in this room');
+        }
+
+        const memberClass = await db.memberClass.findFirst({
+            where: {
+                userId: userId,
+                classRomId: payload.romId
+            }
+        });
+
+        if (!memberClass) {
+            throw new Error('MemberClass not found');
+        }
+        const newClassProject = await db.classProject.create({
+            data: {
+                romId: payload.romId,
+                memberClassId: memberClass.id
+            }
+        });
+
+        const newLab = await db.lab.create({
+            data: {
+                jsonFile: payload.jsonFile,
+                classProjectId: newClassProject.id
+            }
+        });
+
+        return { lab: newLab, classProject: newClassProject };
+    }
     static async getAllUserAndSearch(payload: {
         page: number;
         pageSize: number;
