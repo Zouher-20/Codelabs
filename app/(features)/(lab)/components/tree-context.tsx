@@ -1,6 +1,6 @@
 'use client';
 import { FileSystemTree } from '@webcontainer/api';
-import { set, unset } from 'lodash';
+import { cloneDeep, get, set, unset } from 'lodash';
 import { Dispatch, PropsWithChildren, createContext, useContext, useReducer } from 'react';
 import TreeHelper from '../lab/tree-helper';
 export interface FileTreeState {
@@ -106,7 +106,7 @@ export function treeReducer(fileTreeSate: FileTreeState, { type, payload }: ITre
             };
         }
         case TreeReducerActionType.NODE_DELETE: {
-            const newNodes = { ...fileTreeSate.nodes };
+            const newNodes = cloneDeep(fileTreeSate.nodes);
             unset(newNodes, TreeHelper.getParsedPath(payload, false));
             return {
                 activeFolder: fileTreeSate.activeFolder,
@@ -116,7 +116,9 @@ export function treeReducer(fileTreeSate: FileTreeState, { type, payload }: ITre
             };
         }
         case TreeReducerActionType.FOLDER_CREATE: {
-            const newNodes = { ...fileTreeSate.nodes };
+            const alreadyExist = !!get(fileTreeSate, TreeHelper.getParsedPath(payload, false));
+            console.log(alreadyExist);
+            const newNodes = cloneDeep(fileTreeSate.nodes);
             set(newNodes, TreeHelper.getParsedPath(payload, false), { directory: {} });
             return {
                 activeFolder: fileTreeSate.activeFolder,
@@ -126,16 +128,24 @@ export function treeReducer(fileTreeSate: FileTreeState, { type, payload }: ITre
             };
         }
         case TreeReducerActionType.FILE_CREATE: {
-            const newNodes = { ...fileTreeSate.nodes };
-            set(newNodes, TreeHelper.getParsedPath(payload, false), {
-                file: { contents: '' }
-            });
-            return {
-                activeFolder: fileTreeSate.activeFolder,
-                activeFile: payload,
-                nodes: newNodes,
-                activeFileName: payload.pop()
-            };
+            const alreadyExist = !!get(
+                fileTreeSate.nodes,
+                TreeHelper.getParsedPath(payload, false)
+            );
+            if (!alreadyExist) {
+                const newNodes = cloneDeep(fileTreeSate.nodes);
+                set(newNodes, TreeHelper.getParsedPath(payload, false), {
+                    file: { contents: '' }
+                });
+                return {
+                    activeFolder: fileTreeSate.activeFolder,
+                    activeFile: payload,
+                    nodes: newNodes,
+                    activeFileName: payload[payload.length - 1]
+                };
+            } else {
+                return fileTreeSate;
+            }
         }
         default: {
             throw Error('Unknown action: ' + type);
