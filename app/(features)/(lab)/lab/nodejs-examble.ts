@@ -39,6 +39,26 @@ app.listen(port, () => {
                     contents: `
 tesat`
                 }
+            },
+            test2: {
+                directory: {
+                    'index.js': {
+                        file: {
+                            contents: `
+tesat`
+                        }
+                    },
+                    test3: {
+                        directory: {
+                            'index.js': {
+                                file: {
+                                    contents: `
+tesat`
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }

@@ -26,17 +26,12 @@ export default function FolderItem({ name, node }: { name: string; node: Directo
             if (dispatch)
                 dispatch({ type: TreeReducerActionType.NODE_DELETE, payload: [...path, name] });
         });
-        dispatch &&
-            dispatch({
-                type: TreeReducerActionType.NODE_DELETE,
-                payload: [...path, name]
-            });
     };
     const handleFolderAdd: CallableFunction = async (e: MouseEvent) => {
         e.stopPropagation();
         e.preventDefault();
 
-        const { value } = await Swal.fire({
+        Swal.fire({
             background: '#171818',
             color: '#f2f2f2',
             input: 'text',
@@ -45,17 +40,23 @@ export default function FolderItem({ name, node }: { name: string; node: Directo
             inputPlaceholder: 'example.js',
             confirmButtonColor: '#282C2B',
             inputValidator: result => !result && 'Type the folder name'
+        }).then(result => {
+            console.log(result);
+
+            if (result.isConfirmed && !result.isDismissed) {
+                dispatch &&
+                    dispatch({
+                        type: TreeReducerActionType.FOLDER_CREATE,
+                        payload: [...path, name, result.value]
+                    });
+            }
         });
-        dispatch &&
-            dispatch({
-                type: TreeReducerActionType.FOLDER_CREATE,
-                payload: [...path, name, value]
-            });
     };
-    const handleFileAdd: CallableFunction = async (e: MouseEvent) => {
+    const handleFileAdd: CallableFunction = (e: MouseEvent) => {
         e.stopPropagation();
         e.preventDefault();
-        const { value } = await Swal.fire({
+
+        Swal.fire({
             background: '#171818',
             color: '#f2f2f2',
             input: 'text',
@@ -63,12 +64,17 @@ export default function FolderItem({ name, node }: { name: string; node: Directo
             inputLabel: 'File Name',
             inputPlaceholder: 'example.js',
             confirmButtonColor: '#282C2B'
+        }).then(result => {
+            console.log(result);
+
+            if (result.isConfirmed && !result.isDismissed) {
+                dispatch &&
+                    dispatch({
+                        type: TreeReducerActionType.FILE_CREATE,
+                        payload: [...path, name, result.value]
+                    });
+            }
         });
-        dispatch &&
-            dispatch({
-                type: TreeReducerActionType.FILE_CREATE,
-                payload: [...path, name, value]
-            });
     };
 
     return (
