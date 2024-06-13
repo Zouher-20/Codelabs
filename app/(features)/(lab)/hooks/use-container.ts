@@ -153,7 +153,7 @@ export function useContainer(projectFiles: FileSystemTree) {
         };
 
         setupContainer();
-    });
+    }, [webcontainerInstance.current]);
 
     return {
         webcontainerInstance,

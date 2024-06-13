@@ -71,3 +71,7 @@ export interface GetLabsSubmittedInRomInput {
 export interface GetRoomAndTeacherDetailsInput {
     romId: string;
 }
+export interface SubmittedLabsInRoomInput {
+    romId: string;
+    jsonFile: string;
+}

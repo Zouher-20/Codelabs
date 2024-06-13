@@ -47,7 +47,7 @@ export default function CodeEditor({ files }: { files: FileSystemTree }) {
                     key={tree.activeFile.join()}
                 />
             </div>
-            <div className="h-full w-full rounded-lg bg-base-100">
+            <div className="h-full w-full bg-base-100">
                 {booting ? (
                     <div className="flex h-full flex-col items-center justify-center">
                         <DotLottiePlayer
