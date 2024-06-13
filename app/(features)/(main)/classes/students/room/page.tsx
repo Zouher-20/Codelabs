@@ -1,7 +1,7 @@
 'use client';
 
 import { RoomType } from '@/app/@types/room';
-import { getClassRoomAndTeacherDetails } from '@/app/api/(modules)/class-room/services/action';
+import { getRoomAndTeacherDetails } from '@/app/api/(modules)/class-room/services/action';
 import { EmptyState } from '@/app/components/page-state/empty';
 import { LoadingState } from '@/app/components/page-state/loading';
 import { ManageState } from '@/app/components/page-state/state_manager';
@@ -29,14 +29,19 @@ export default function ClassLabPage() {
     const getRoomInfo = async ({ id }: { id: string }) => {
         setRoomLoading(true);
         try {
-            const res = await getClassRoomAndTeacherDetails({ classRomId: id });
+            const res = await getRoomAndTeacherDetails({ romId: id });
             setRoomInfo({
                 id: id,
-                title: res.classDetails.name,
-                description: res.classDetails.description,
-                endAt: res.classDetails.endAt,
-                type: res.classDetails.type,
-                createdAt: res.classDetails.createdAt
+                title: res.name,
+                description: res.description,
+                endAt: res.endAt,
+                type: res.type,
+                createdAt: res.createdAt,
+                teatcher: {
+                    email: res.classRom?.MemberClass[0].user.email ?? '',
+                    id: res.classRom?.MemberClass[0].user.id ?? '',
+                    name: res.classRom?.MemberClass[0].user.username ?? ''
+                }
             });
         } catch (e: any) {
             setRoomError(e.message);
@@ -98,14 +103,28 @@ export default function ClassLabPage() {
                     empty={false}
                 />
             </div>
-            <ClassDescriptionComponent
-                classDescription="Lorem ipsum dolor sit amet consectetur. Ornare proin arcu amet fermentum
-                        tristique ultrices. Lacus sed et senectus dictum duis morbi at. Pellentesque
-                        duis aliquet lectus pellentesque tristique scelerisque. Lorem vitae senectus
-                        vehicula id at interdum."
-                className="room name"
-                classType="type"
-                teacher={{ name: 'majd', id: '1', email: 'alshalabi211@gmai.com' }}
+            <ManageState
+                loading={roomLoading}
+                error={roomError}
+                errorAndEmptyCallback={() => {
+                    const id = currentParams.get('roomId') ?? '-1';
+
+                    getRoomInfo({ id });
+                }}
+                customLoadingPage={
+                    <CodeLabContainer>
+                        <LoadingState />
+                    </CodeLabContainer>
+                }
+                loadedState={
+                    <ClassDescriptionComponent
+                        classDescription={roomInfo?.description ?? ''}
+                        className={roomInfo?.title ?? ''}
+                        classType={roomInfo?.type ?? ''}
+                        teacher={roomInfo?.teatcher}
+                    />
+                }
+                empty={false}
             />
             <div className="flex gap-2 max-md:flex-wrap">
                 <FeedbackComponent feedbacks={[]} onClick={onFeedbackClicked} />

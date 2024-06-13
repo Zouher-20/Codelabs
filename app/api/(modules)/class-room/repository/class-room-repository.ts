@@ -269,6 +269,9 @@ class ClassRoomRepository {
                         MemberClass: {
                             where: {
                                 isTeacher: true
+                            },
+                            include: {
+                                user: true
                             }
                         }
                     }
