@@ -1,7 +1,54 @@
+import BaseResponse from '@/app/api/core/base-response/base-response';
 import { db } from '@/app/api/core/db/db';
 import { NAMEPLAN, Prisma } from '@prisma/client';
+import { mkdir, writeFile } from 'node:fs/promises';
+import { join } from 'path';
 
 class BlogRepository {
+    static async uploadImage(payload: { file: File }): Promise<BaseResponse> {
+        try {
+            const { file } = payload;
+
+            if (!file) {
+                console.log('No file uploaded');
+                return BaseResponse.returnResponse({
+                    statusCode: 400,
+                    message: 'No file uploaded',
+                    data: null
+                });
+            }
+
+            const bytes = await file.arrayBuffer();
+            const buffer = Buffer.from(bytes);
+
+            const uploadDir = join(process.cwd(), 'public', 'uploads');
+            const filePath = join(uploadDir, file.name);
+
+            await mkdir(uploadDir, { recursive: true });
+
+            await writeFile(filePath, buffer);
+
+            console.log('File received:', file);
+
+            const url = join('/uploads', file.name);
+
+            return BaseResponse.returnResponse({
+                statusCode: 200,
+                message: 'File uploaded successfully',
+                data: {
+                    path: url
+                }
+            });
+        } catch (error) {
+            console.error('Error during file upload:', error);
+            return BaseResponse.returnResponse({
+                statusCode: 500,
+                message: 'Error during file upload',
+                data: null
+            });
+        }
+    }
+
     static async deleteMyCommentUserProjectLab(
         payload: {
             commentId: string;

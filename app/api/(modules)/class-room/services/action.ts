@@ -5,6 +5,7 @@ import { getSession } from '@/app/api/(modules)/auth/service/actions';
 import classRoomRepository from '@/app/api/(modules)/class-room/repository/class-room-repository';
 import {
     AddClassRoomInput,
+    AddFeedbackInForClassProjectInRomInput,
     AddRomInClassInput,
     AddUsersInClassInput,
     GetAllUserAndSearchInput,
@@ -54,7 +55,14 @@ export const getRoomAndTeacherDetails = async (payload: GetRoomAndTeacherDetails
 export const submittedLabsInRoom = async (payload: SubmittedLabsInRoomInput) => {
     const session = await getSession();
     const userId = session?.id;
-    return classRoomRepository.submittedLabsInRoom(payload, userId);
+    return classRoomRepository.submitLabsInRoom(payload, userId);
+};
+export const addFeedbackInForClassProjectInRom = async (
+    payload: AddFeedbackInForClassProjectInRomInput
+) => {
+    const session = await getSession();
+    const userId = session?.id;
+    return classRoomRepository.addFeedbackInForClassProjectInRom(payload, userId);
 };
 
 export const getUserInClass = async (payload: GetUserInClassInput) => {
