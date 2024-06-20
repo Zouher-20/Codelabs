@@ -55,7 +55,7 @@ export const getRoomAndTeacherDetails = async (payload: GetRoomAndTeacherDetails
 export const submittedLabsInRoom = async (payload: SubmittedLabsInRoomInput) => {
     const session = await getSession();
     const userId = session?.id;
-    return classRoomRepository.submittedLabsInRoom(payload, userId);
+    return classRoomRepository.submitLabsInRoom(payload, userId);
 };
 export const addFeedbackInForClassProjectInRom = async (
     payload: AddFeedbackInForClassProjectInRomInput
