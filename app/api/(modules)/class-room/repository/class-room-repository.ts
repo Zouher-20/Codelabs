@@ -5,19 +5,60 @@ import { DateTime } from 'next-auth/providers/kakao';
 class ClassRoomRepository {
     static async addFeedbackInForClassProjectInRom(
         payload: {
-            romId: string;
-            classProjectId: string;
+            labId: string;
             feedback: string;
         },
         userId: string
     ) {
+        // Check if the lab exists
+        const hasLab = await db.lab.findUnique({
+            where: {
+                id: payload.labId
+            }
+        });
+
+        if (!hasLab) {
+            throw new Error('no lab found');
+        }
+
+        // Check if the class project associated with the lab exists
+        const myClassProject = await db.classProject.findFirst({
+            where: {
+                Lab: {
+                    some: {
+                        id: payload.labId
+                    }
+                }
+            }
+        });
+
+        if (!myClassProject) {
+            throw new Error("no class project found");
+        }
+
+        // Check if the room associated with the class project exists
+        const myRoom = await db.rom.findFirst({
+            where: {
+                ClassProject: {
+                    some: {
+                        id: myClassProject.id
+                    }
+                }
+            }
+        });
+
+        if (!myRoom) {
+            throw new Error("no room found");
+        }
+
+        // Check if the user is a member of the class in the given room
         const myClass = await db.classRom.findFirst({
             where: {
                 AND: [
                     {
                         Rom: {
                             some: {
-                                id: payload.romId
+                                id: myRoom.id
                             }
                         }
                     },
@@ -36,17 +77,40 @@ class ClassRoomRepository {
             throw new Error('No class found');
         }
 
-        const myClassProject = await db.classProject.findUnique({
+        const memberClass = await db.memberClass.findFirst({
             where: {
-                id: payload.classProjectId,
-                romId: payload.romId
+                AND: [
+                    {
+                        userId: userId
+                    },
+                    {
+                        classRomId: myClass.id
+                    },
+                    {
+                        OR: [
+                            { isTeacher: true }
+                        ]
+                    }
+                ]
             }
         });
 
-        if (!myClassProject) {
-            throw new Error('you dont have permission to add feedback ');
+
+        if (!memberClass) {
+            throw new Error('MemberClass not found');
         }
+
+        const newFeedback = await db.feedbackProjct.create({
+            data: {
+                feedback: payload.feedback,
+                classProjectId: myClassProject.id,
+                memberClassId: memberClass.id
+            }
+        });
+
+        return newFeedback;
     }
+
     static async submitLabsInRoom(
         payload: {
             romId: string;
@@ -80,25 +144,13 @@ class ClassRoomRepository {
             throw new Error('No class found');
         }
 
-        // Check if the user already has a project in this room
-        const existingClassProject = await db.classProject.findFirst({
-            where: {
-                romId: payload.romId,
-                memberClass: {
-                    userId: userId
-                }
-            }
-        });
-
-        if (existingClassProject) {
-            throw new Error('User already has a project in this room');
-        }
-
-        // Check if the user is a member of the class
         const memberClass = await db.memberClass.findFirst({
             where: {
-                userId: userId,
-                classRomId: payload.romId
+                AND: [
+                    { userId: userId },
+                    {
+                        classRomId: myClass.id
+                    }]
             }
         });
 
@@ -793,6 +845,13 @@ class ClassRoomRepository {
         const myRom = await db.rom.findUnique({
             where: {
                 id: payload.romId
+            },
+            include: {
+                ClassProject: {
+                    include: {
+                        Lab: true
+                    }
+                }
             }
         });
         if (!myRom) {

@@ -86,3 +86,11 @@ export interface getLabsInChallengeInput {
     pageSize: number;
     page: number;
 }
+export interface uploadTemplateImageInput {
+    file: File;
+
+}
+export interface addTemplateInput {
+    nameTemplate: string;
+    imageTemplate: string
+}
