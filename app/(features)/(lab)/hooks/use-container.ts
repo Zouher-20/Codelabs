@@ -33,7 +33,8 @@ export function useContainer(projectFiles: FileSystemTree) {
                     convertEol: true,
                     theme: {
                         background: '#100F13'
-                    }
+                    },
+                    rows: 15
                 });
                 terminalInstance.current.open(terminalEl);
             } else {
@@ -153,7 +154,7 @@ export function useContainer(projectFiles: FileSystemTree) {
         };
 
         setupContainer();
-    }, [webcontainerInstance.current]);
+    });
 
     return {
         webcontainerInstance,
