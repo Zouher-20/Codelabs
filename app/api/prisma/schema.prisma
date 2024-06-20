@@ -211,8 +211,10 @@ model Lab {
 
 model Tamblate {
   id            String @id @default(cuid())
-  nameTemplate  String
-  imageTemplate String
+  nameTemplate  String @unique
+  imageTemplate String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime?      @updatedAt
   Lab           Lab[]
 }
 
