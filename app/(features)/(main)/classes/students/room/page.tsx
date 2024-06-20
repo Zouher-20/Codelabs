@@ -2,6 +2,7 @@
 
 import { RoomType } from '@/app/@types/room';
 import { getRoomAndTeacherDetails } from '@/app/api/(modules)/class-room/services/action';
+import SubmittedLab from '@/app/components/globals/lab/submitted-lab';
 import { EmptyState } from '@/app/components/page-state/empty';
 import { LoadingState } from '@/app/components/page-state/loading';
 import { ManageState } from '@/app/components/page-state/state_manager';
@@ -66,7 +67,14 @@ export default function ClassLabPage() {
             (document.getElementById('feedback-modal') as HTMLFormElement)?.showModal();
         }
     };
-
+    const onLabClicked = () => {
+        // const params = {
+        //     id: ''
+        // };
+        // const queryString = new URLSearchParams(params).toString();
+        // route.push('/lab' + '?' + queryString);
+        SubmittedLab();
+    };
     return (
         <div className="flex min-h-[550px] flex-col gap-2 p-3">
             <div className="flex w-full flex-wrap gap-2 md:w-1/4">
@@ -95,7 +103,12 @@ export default function ClassLabPage() {
                                 calculateDurationPercentage({
                                     end: roomInfo?.endAt ?? new Date(),
                                     start: roomInfo?.createdAt ?? new Date()
-                                })
+                                }),
+                                100 -
+                                    calculateDurationPercentage({
+                                        end: roomInfo?.endAt ?? new Date(),
+                                        start: roomInfo?.createdAt ?? new Date()
+                                    })
                             ]}
                             withAdd={false}
                         />
@@ -121,6 +134,8 @@ export default function ClassLabPage() {
                         classDescription={roomInfo?.description ?? ''}
                         className={roomInfo?.title ?? ''}
                         classType={roomInfo?.type ?? ''}
+                        endAt={roomInfo?.endAt.toLocaleString('en-US')}
+                        createdAt={roomInfo?.createdAt.toLocaleString('en-US')}
                         teacher={roomInfo?.teatcher}
                     />
                 }
@@ -128,7 +143,12 @@ export default function ClassLabPage() {
             />
             <div className="flex gap-2 max-md:flex-wrap">
                 <FeedbackComponent feedbacks={[]} onClick={onFeedbackClicked} />
-                <CloneLabComponent buttonText="Clone To Start Coding" onButtonClick={() => {}} />
+                <CloneLabComponent
+                    buttonText="Clone To Start Coding"
+                    onButtonClick={() => {
+                        onLabClicked();
+                    }}
+                />
             </div>
             <FeedbackModal comments={[]} />
         </div>
