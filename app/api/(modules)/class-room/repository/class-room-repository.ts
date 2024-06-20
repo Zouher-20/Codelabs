@@ -3,6 +3,50 @@ import { NAMEPLAN } from '@prisma/client';
 import { DateTime } from 'next-auth/providers/kakao';
 
 class ClassRoomRepository {
+    static async addFeedbackInForClassProjectInRom(
+        payload: {
+            romId: string;
+            classProjectId: string;
+            feedback: string;
+        },
+        userId: string
+    ) {
+        const myClass = await db.classRom.findFirst({
+            where: {
+                AND: [
+                    {
+                        Rom: {
+                            some: {
+                                id: payload.romId
+                            }
+                        }
+                    },
+                    {
+                        MemberClass: {
+                            some: {
+                                userId: userId
+                            }
+                        }
+                    }
+                ]
+            }
+        });
+
+        if (!myClass) {
+            throw new Error('No class found');
+        }
+
+        const myClassProject = await db.classProject.findUnique({
+            where: {
+                id: payload.classProjectId,
+                romId: payload.romId
+            }
+        });
+
+        if (!myClassProject) {
+            throw new Error('you dont have permission to add feedback ');
+        }
+    }
     static async submittedLabsInRoom(
         payload: {
             romId: string;
@@ -58,6 +102,7 @@ class ClassRoomRepository {
         if (!memberClass) {
             throw new Error('MemberClass not found');
         }
+
         const newClassProject = await db.classProject.create({
             data: {
                 romId: payload.romId,

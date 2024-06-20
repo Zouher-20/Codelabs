@@ -35,3 +35,7 @@ export interface GetAllBlogs {
 export interface GetDetailsBlogInput {
     blogId: string;
 }
+
+export interface uploadImageInput {
+    file: File;
+}

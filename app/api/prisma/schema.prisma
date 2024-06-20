@@ -277,6 +277,7 @@ model MemberClass {
 
 model FeedbackProjct {
   id             String       @id @default(cuid())
+  feedback       String
   classProjectId String
   classProject   ClassProject @relation(fields: [classProjectId], references: [id], onDelete: Cascade)
   memberClassId  String
