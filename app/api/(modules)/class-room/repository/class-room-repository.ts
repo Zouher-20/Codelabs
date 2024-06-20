@@ -80,25 +80,11 @@ class ClassRoomRepository {
             throw new Error('No class found');
         }
 
-        // Check if the user already has a project in this room
-        const existingClassProject = await db.classProject.findFirst({
-            where: {
-                romId: payload.romId,
-                memberClass: {
-                    userId: userId
-                }
-            }
-        });
-
-        if (existingClassProject) {
-            throw new Error('User already has a project in this room');
-        }
-
         // Check if the user is a member of the class
         const memberClass = await db.memberClass.findFirst({
             where: {
                 userId: userId,
-                classRomId: payload.romId
+                classRomId: myClass.id
             }
         });
 

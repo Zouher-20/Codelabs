@@ -109,7 +109,7 @@ export default function ClassLabPage() {
         if (id && rooms[index]) {
             const params = {
                 id: id,
-                roomId: rooms[index].id.toString() // Convert labId to a string
+                roomId: rooms[index].id.toString()
             };
             const queryString = new URLSearchParams(params).toString();
             route.push('/classes/students/room' + '?' + queryString);

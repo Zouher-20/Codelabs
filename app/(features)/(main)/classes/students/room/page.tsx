@@ -1,13 +1,17 @@
 'use client';
 
 import { RoomType } from '@/app/@types/room';
-import { getRoomAndTeacherDetails } from '@/app/api/(modules)/class-room/services/action';
-import SubmittedLab from '@/app/components/globals/lab/submitted-lab';
+import {
+    getRoomAndTeacherDetails,
+    submittedLabsInRoom
+} from '@/app/api/(modules)/class-room/services/action';
 import { EmptyState } from '@/app/components/page-state/empty';
 import { LoadingState } from '@/app/components/page-state/loading';
 import { ManageState } from '@/app/components/page-state/state_manager';
+import { CustomToaster } from '@/app/components/toast/custom-toaster';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import CodeLabContainer from '../../components/container';
 import ClassDescriptionComponent from '../../statistics/components/class-description';
 import FeedbackModal from '../../statistics/components/feedback-modal';
@@ -26,6 +30,8 @@ export default function ClassLabPage() {
     const [roomLoading, setRoomLoading] = useState(true);
     const [roomError, setRoomError] = useState(null);
     const [roomInfo, setRoomInfo] = useState<RoomType | null>(null);
+
+    const [submitRoomLoading, setSubmitRoomLoading] = useState(false);
 
     const getRoomInfo = async ({ id }: { id: string }) => {
         setRoomLoading(true);
@@ -67,13 +73,23 @@ export default function ClassLabPage() {
             (document.getElementById('feedback-modal') as HTMLFormElement)?.showModal();
         }
     };
-    const onLabClicked = () => {
+    const onLabClicked = async () => {
         // const params = {
         //     id: ''
         // };
         // const queryString = new URLSearchParams(params).toString();
         // route.push('/lab' + '?' + queryString);
-        SubmittedLab();
+        const id = currentParams.get('roomId') ?? '-1';
+
+        setSubmitRoomLoading(true);
+        try {
+            await submittedLabsInRoom({ jsonFile: '', romId: id });
+            toast.success('submit lab done');
+        } catch (e: any) {
+            toast.error(e.message);
+        } finally {
+            setSubmitRoomLoading(false);
+        }
     };
     return (
         <div className="flex min-h-[550px] flex-col gap-2 p-3">
@@ -148,9 +164,11 @@ export default function ClassLabPage() {
                     onButtonClick={() => {
                         onLabClicked();
                     }}
+                    loading={submitRoomLoading}
                 />
             </div>
             <FeedbackModal comments={[]} />
+            <CustomToaster />
         </div>
     );
 }
