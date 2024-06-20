@@ -47,39 +47,40 @@ class ClassRoomRepository {
             throw new Error('you dont have permission to add feedback ');
         }
     }
-    static async submittedLabsInRoom(
+    static async submitLabsInRoom(
         payload: {
             romId: string;
             jsonFile: string;
         },
         userId: string
     ) {
-        const [myClass] = await Promise.all([
-            db.classRom.findFirst({
-                where: {
-                    AND: [
-                        {
-                            Rom: {
-                                some: {
-                                    id: payload.romId
-                                }
-                            }
-                        },
-                        {
-                            MemberClass: {
-                                some: {
-                                    userId: userId
-                                }
+        // Check if the user is a member of the class in the given ROM
+        const myClass = await db.classRom.findFirst({
+            where: {
+                AND: [
+                    {
+                        Rom: {
+                            some: {
+                                id: payload.romId
                             }
                         }
-                    ]
-                }
-            })
-        ]);
+                    },
+                    {
+                        MemberClass: {
+                            some: {
+                                userId: userId
+                            }
+                        }
+                    }
+                ]
+            }
+        });
 
         if (!myClass) {
             throw new Error('No class found');
         }
+
+        // Check if the user already has a project in this room
         const existingClassProject = await db.classProject.findFirst({
             where: {
                 romId: payload.romId,
@@ -88,10 +89,12 @@ class ClassRoomRepository {
                 }
             }
         });
+
         if (existingClassProject) {
             throw new Error('User already has a project in this room');
         }
 
+        // Check if the user is a member of the class
         const memberClass = await db.memberClass.findFirst({
             where: {
                 userId: userId,
@@ -103,22 +106,48 @@ class ClassRoomRepository {
             throw new Error('MemberClass not found');
         }
 
-        const newClassProject = await db.classProject.create({
-            data: {
-                romId: payload.romId,
-                memberClassId: memberClass.id
+        // Check if the user already has a class project in the room
+        const hasClassProject = await db.classProject.findFirst({
+            where: {
+                memberClassId: memberClass.id,
+                romId: payload.romId
             }
         });
 
-        const newLab = await db.lab.create({
-            data: {
-                jsonFile: payload.jsonFile,
-                classProjectId: newClassProject.id
-            }
-        });
+        let newLab;
+        let newClassProject;
 
-        return { lab: newLab, classProject: newClassProject };
+        if (hasClassProject) {
+            // Create a new lab if the project already exists
+            newLab = await db.lab.updateMany({
+                where: {
+                    classProjectId: hasClassProject.id
+                },
+                data: {
+                    jsonFile: payload.jsonFile,
+                    classProjectId: hasClassProject.id
+                }
+            });
+        } else {
+            // Create a new class project and then create the lab
+            newClassProject = await db.classProject.create({
+                data: {
+                    romId: payload.romId,
+                    memberClassId: memberClass.id
+                }
+            });
+
+            newLab = await db.lab.create({
+                data: {
+                    jsonFile: payload.jsonFile,
+                    classProjectId: newClassProject.id
+                }
+            });
+        }
+
+        return { lab: newLab, classProject: newClassProject || hasClassProject };
     }
+
     static async getAllUserAndSearch(payload: {
         page: number;
         pageSize: number;
