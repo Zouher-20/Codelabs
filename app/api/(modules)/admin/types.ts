@@ -87,8 +87,8 @@ export interface getLabsInChallengeInput {
     page: number;
 }
 export interface uploadTemplateImageInput {
-    file: File;
-
+    base64: string;
+    fileName: string
 }
 export interface addTemplateInput {
     nameTemplate: string;
