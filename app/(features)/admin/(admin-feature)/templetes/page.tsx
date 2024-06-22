@@ -6,6 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import TempletesViewHeader from './components/headea';
+import AddTempelet from './components/modal/add_templete_modal';
 import DeleteTempletesModal from './components/modal/delete-templete-modal';
 import TempletessTable from './components/templetes-table';
 const Templetes = () => {
@@ -85,6 +86,13 @@ const Templetes = () => {
         <div className="flex flex-col gap-2 p-6">
             <div className="flex flex-col">
                 <TempletesViewHeader
+                    onCreateClicked={() => {
+                        if (document) {
+                            (
+                                document.getElementById('add-templete-modal') as HTMLFormElement
+                            )?.showModal();
+                        }
+                    }}
                     searchWord={searchWord}
                     onFieldChanged={e => {
                         setSearchWord(e);
@@ -125,6 +133,7 @@ const Templetes = () => {
                 />
             </div>
             <DeleteTempletesModal templetesId="" callback={() => {}} />
+            <AddTempelet />
         </div>
     );
 };
