@@ -3,6 +3,45 @@ import { NAMEPLAN } from '@prisma/client';
 import { DateTime } from 'next-auth/providers/kakao';
 
 class ClassRoomRepository {
+
+    // static async getAllFeedbackInRoom(payload: {
+    //     RomId: string,
+    //     pageSize: number,
+    //     page: number
+    // }, userId: string) {
+
+    //     const myClass = await db.classRom.findFirst({
+    //         where: {
+    //             AND: [
+    //                 {
+    //                     Rom: {
+    //                         some: {
+    //                             id: myRoom.id
+    //                         }
+    //                     }
+    //                 },
+    //                 {
+    //                     MemberClass: {
+    //                         some: {
+    //                             userId: userId
+    //                         }
+    //                     }
+    //                 }
+    //             ]
+    //         }
+    //     });
+
+    //     if (!myClass) {
+    //         throw new Error('No class found');
+    //     }
+
+    //     const feedbacks = await db.feedbackProjct.findMany({
+    //         where:{}
+    //     })
+    // }
+
+
+
     static async addFeedbackInForClassProjectInRom(
         payload: {
             labId: string;
