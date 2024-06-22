@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { useRef, useState } from 'react';
 
-const Avatar = ({ photo, imageSize }: { photo: (photo: string) => void; imageSize?: number }) => {
+const Avatar = ({ photo, imageSize }: { photo: (photo: File) => void; imageSize?: number }) => {
     const [imageFile, setImageFile] = useState('');
     const hiddenFileInput = useRef<HTMLInputElement>(null);
 
@@ -20,7 +20,7 @@ const Avatar = ({ photo, imageSize }: { photo: (photo: string) => void; imageSiz
         reader.onload = e => {
             if (e.target?.result) {
                 setImageFile(e.target.result as string);
-                photo(e.target.result as string);
+                photo(fileUploaded);
             }
         };
         console.log('fileUploaded', fileUploaded);

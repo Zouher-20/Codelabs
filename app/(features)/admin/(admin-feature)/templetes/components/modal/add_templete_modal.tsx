@@ -1,20 +1,19 @@
 'use client';
+import { uploadImage } from '@/app/api/(modules)/admin/template/services/action';
 import Avatar from '@/app/components/globals/avatar';
 import Button from '@/app/components/globals/form/button';
 import Input from '@/app/components/globals/form/input';
 import { CustomToaster } from '@/app/components/toast/custom-toaster';
 import { Form, Formik } from 'formik';
-import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import * as yup from 'yup';
 
 interface FormValues {
     title: string;
-    photo?: string;
+    photo?: File;
 }
 
 const AddTempelet = () => {
-    const router = useRouter();
     const defaultValues: FormValues = {
         photo: undefined,
         title: ''
@@ -29,14 +28,12 @@ const AddTempelet = () => {
             toast.error('selecte templete image');
         } else {
             console.log(values.photo);
-            // try {
-            //     const res = await uploadImage({
-            //         file: blobToFile(base64ToBlob(values.photo), 'image')
-            //     });
-            //     toast.success('upload done');
-            // } catch (e: any) {
-            //     toast.error(e.message);
-            // }
+            try {
+                const res = await uploadImage({ file: values.photo ?? '' });
+                toast.success('upload done');
+            } catch (e: any) {
+                toast.error(e.message);
+            }
         }
     };
 
@@ -61,7 +58,7 @@ const AddTempelet = () => {
                                         <label>templete image</label>
                                         <Avatar
                                             imageSize={100}
-                                            photo={(photo: string) => (props.values.photo = photo)}
+                                            photo={(photo: File) => (props.values.photo = photo)}
                                         />
                                     </div>
                                     <div className="flex flex-col">

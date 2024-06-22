@@ -1,16 +1,15 @@
-import { db } from "@/app/api/core/db/db";
+import { db } from '@/app/api/core/db/db';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'path';
 class TemplateRepository {
     static async addTemplate(payload: { nameTemplate: string; imageTemplate: string }) {
-
         const existsingTemplate = await db.tamblate.findUnique({
             where: {
                 nameTemplate: payload.nameTemplate
             }
         });
         if (existsingTemplate) {
-            throw new Error("please choose another name ");
+            throw new Error('please choose another name ');
         }
         const newTemplate = await db.tamblate.create({
             data: {
@@ -25,11 +24,11 @@ class TemplateRepository {
         try {
             const { base64, fileName } = payload;
             if (!base64 || !fileName) {
-                throw new Error("No base64 string or file name provided");
+                throw new Error('No base64 string or file name provided');
             }
 
             // Remove the base64 prefix if exists
-            const base64Data = base64.replace(/^data:image\/\w+;base64,/, "");
+            const base64Data = base64.replace(/^data:image\/\w+;base64,/, '');
             const buffer = Buffer.from(base64Data, 'base64');
 
             const uploadDir = join(process.cwd(), 'public', 'uploads');
@@ -44,11 +43,9 @@ class TemplateRepository {
             const url = join('/uploads', fileName);
 
             return url;
-
         } catch (error) {
-            throw new Error("Error during file upload");
+            throw new Error('Error during file upload');
         }
     }
-
 }
 export default TemplateRepository;

@@ -88,9 +88,9 @@ export interface getLabsInChallengeInput {
 }
 export interface uploadTemplateImageInput {
     base64: string;
-    fileName: string
+    fileName: string;
 }
 export interface addTemplateInput {
     nameTemplate: string;
-    imageTemplate: string
+    imageTemplate: string;
 }
