@@ -3,15 +3,20 @@
 import { getSession } from '@/app/api/(modules)/auth/service/actions';
 import BlogRepository from '@/app/api/(modules)/blog/repository/blog-repository';
 import {
+    AddAndDeleteStarBlogInput,
+    AddBlogCommentInput,
     AddBlogInput,
     DeleteMyBlogInput,
+    DeleteMyCommentInBlogInput,
     EditBlogInput,
     GetAllBlogs,
     GetBlogByCreatedAtInput,
+    GetCommentBlogInput,
     GetDetailsBlogInput,
     GetTrendingBlogInput,
     uploadImageInput
 } from '@/app/api/(modules)/blog/type';
+import exp from 'constants';
 
 export const addBlog = async (payload: AddBlogInput) => {
     const session = await getSession();
@@ -49,3 +54,25 @@ export const uploadImage = async (payload: uploadImageInput) => {
     const userId = session?.id;
     return BlogRepository.uploadImage(payload);
 };
+
+export const addBlogComment = async (payload: AddBlogCommentInput) => {
+    const session = await getSession();
+    const userId = session?.id;
+    return BlogRepository.addBlogComment(payload, userId);
+};
+
+export const getCommentBlog = async (payload: GetCommentBlogInput) => {
+    return BlogRepository.getCommentBlog(payload);
+}
+
+export const addAndDeleteStarBlog = async (payload: AddAndDeleteStarBlogInput) => {
+    const session = await getSession();
+    const userId = session?.id;
+    return BlogRepository.addAndDeleteStarBlog(payload, userId);
+}
+
+export const deleteMyCommentInBlog = async (payload: DeleteMyCommentInBlogInput) => {
+    const session = await getSession();
+    const userId = session?.id;
+    return BlogRepository.deleteMyCommentInBlog(payload, userId);
+}
