@@ -37,7 +37,6 @@ async function getSessionInMiddleware() {
     const session = await AuthUtils.decryptJwt(sessionAsToken);
     return session;
 }
-// See "Matching Paths" below to learn more
 export const config = {
     matcher: '/((?!api|login|register|_next/static|_next/image|favicon.ico|logo-title.svg).*)'
 };

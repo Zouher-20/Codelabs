@@ -45,7 +45,6 @@ class UserProjectRepository {
             const newLab = await db.lab.create({
                 data: {
                     jsonFile: payload.jsonFile,
-                    tamblateId: payload.templateId
                 }
             });
 
@@ -55,11 +54,7 @@ class UserProjectRepository {
                     name: payload.name,
                     description: payload.description,
                     userId: userId,
-                    Lab: {
-                        connect: {
-                            id: newLab.id
-                        }
-                    }
+                    labId: newLab.id
                 }
             });
 
@@ -214,7 +209,7 @@ class UserProjectRepository {
             orderBy: { createdAt: 'desc' },
             include: {
                 user: true,
-                Lab: true,
+                lab: true,
                 TagMorph: {
                     include: {
                         tag: true
@@ -327,7 +322,7 @@ class UserProjectRepository {
             ],
             include: {
                 user: true,
-                Lab: true,
+                lab: true,
                 TagMorph: {
                     include: {
                         tag: true
@@ -430,7 +425,7 @@ class UserProjectRepository {
                         tag: true
                     }
                 },
-                Lab: true
+                lab: true
             }
         });
 
@@ -581,7 +576,7 @@ class UserProjectRepository {
             orderBy: { createdAt: 'desc' },
             include: {
                 user: true,
-                Lab: true,
+                lab: true,
                 TagMorph: {
                     include: {
                         tag: true
