@@ -63,11 +63,7 @@ class ClassRoomRepository {
         // Check if the class project associated with the lab exists
         const myClassProject = await db.classProject.findFirst({
             where: {
-                Lab: {
-                    some: {
-                        id: payload.labId
-                    }
-                }
+                labId: payload.labId
             }
         });
 
@@ -212,28 +208,31 @@ class ClassRoomRepository {
             // Create a new lab if the project already exists
             newLab = await db.lab.updateMany({
                 where: {
-                    classProjectId: hasClassProject.id
+                    ClassProject: {
+                        id: hasClassProject.id
+                    }
                 },
                 data: {
                     jsonFile: payload.jsonFile,
-                    classProjectId: hasClassProject.id
                 }
             });
         } else {
             // Create a new class project and then create the lab
-            newClassProject = await db.classProject.create({
-                data: {
-                    romId: payload.romId,
-                    memberClassId: memberClass.id
-                }
-            });
 
             newLab = await db.lab.create({
                 data: {
                     jsonFile: payload.jsonFile,
-                    classProjectId: newClassProject.id
                 }
             });
+            newClassProject = await db.classProject.create({
+                data: {
+                    romId: payload.romId,
+                    memberClassId: memberClass.id,
+                    labId: newLab.id
+                }
+            });
+
+
         }
 
         return { lab: newLab, classProject: newClassProject || hasClassProject };
@@ -888,7 +887,7 @@ class ClassRoomRepository {
             include: {
                 ClassProject: {
                     include: {
-                        Lab: true
+                        lab: true
                     }
                 }
             }
@@ -957,7 +956,7 @@ class ClassRoomRepository {
                                 romId: payload.romId
                             },
                             include: {
-                                Lab: true
+                                lab: true
                             }
                         }
                     }
@@ -983,12 +982,11 @@ class ClassRoomRepository {
                                 ClassProject: {
                                     some: {
                                         romId: payload.romId,
-                                        Lab: {
-                                            some: {
-                                                classProject: {
-                                                    romId: payload.romId
-                                                }
+                                        lab: {
+                                            ClassProject: {
+                                                romId: payload.romId
                                             }
+
                                         }
                                     }
                                 }
@@ -1045,12 +1043,12 @@ class ClassRoomRepository {
 
         const labs = await db.lab.findMany({
             where: {
-                classProject: {
+                ClassProject: {
                     romId: payload.romId
                 }
             },
             include: {
-                classProject: {
+                ClassProject: {
                     include: {
                         memberClass: {
                             include: {
@@ -1065,7 +1063,7 @@ class ClassRoomRepository {
         });
         const totalCountLabs = await db.lab.count({
             where: {
-                classProject: {
+                ClassProject: {
                     romId: payload.romId
                 }
             }

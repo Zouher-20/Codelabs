@@ -115,18 +115,18 @@ model FeaturePlan {
 
 model ClassProject {
   id             String           @id @default(cuid())
-  Lab            Lab[]
   createdAt      DateTime         @default(now())
   romId          String?
   rom            Rom?             @relation(fields: [romId], references: [id], onDelete: Cascade)
   memberClassId  String?
   memberClass    MemberClass?     @relation(fields: [memberClassId], references: [id], onDelete: Cascade)
   FeedbackProjct FeedbackProjct[]
+  labId          String           @unique
+  lab            Lab              @relation(fields: [labId], references: [id], onDelete: Cascade)
 }
 
 model PlanSubscription {
-  id String @id @default(cuid())
-
+  id     String @id @default(cuid())
   userId String @unique
   planId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -193,29 +193,27 @@ model ChallengeParticipation {
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   challengeId String
   userId      String
-  Lab         Lab[]
+  labId       String    @unique
+  lab         Lab       @relation(fields: [labId], references: [id], onDelete: Cascade)
 }
 
 model Lab {
-  id                       String                  @id @default(cuid())
-  tamblateId               String? // Nullable tamblateId
-  tamblate                 Tamblate?               @relation(fields: [tamblateId], references: [id], onDelete: SetNull) // onDelete: SetNull
-  jsonFile                 String?
-  userprojectId            String?
-  classProjectId           String?
-  challengeParticipationId String?
-  challengeParticipation   ChallengeParticipation? @relation(fields: [challengeParticipationId], references: [id], onDelete: Cascade)
-  classProject             ClassProject?           @relation(fields: [classProjectId], references: [id], onDelete: Cascade)
-  userproject              UserProject?            @relation(fields: [userprojectId], references: [id], onDelete: Cascade)
+  id                     String                  @id @default(cuid())
+  jsonFile               String?
+  ClassProject           ClassProject?
+  ChallengeParticipation ChallengeParticipation?
+  Tamblate               Tamblate?
+  UserProject            UserProject?
 }
 
 model Tamblate {
-  id            String @id @default(cuid())
-  nameTemplate  String @unique
+  id            String    @id @default(cuid())
+  nameTemplate  String    @unique
   imageTemplate String?
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime?      @updatedAt
-  Lab           Lab[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime? @updatedAt
+  labId         String    @unique
+  lab           Lab       @relation(fields: [labId], references: [id], onDelete: Cascade)
 }
 
 model UserProject {
@@ -225,9 +223,10 @@ model UserProject {
   name        String?
   createdAt   DateTime   @default(now())
   description String?
+  labId       String     @unique
+  lab         Lab        @relation(fields: [labId], references: [id], onDelete: Cascade)
   Star        Star[]
   Comment     Comment[]
-  Lab         Lab[]
   TagMorph    TagMorph[]
 }
 
