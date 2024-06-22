@@ -167,7 +167,11 @@ export default function ClassLabPage() {
                     loading={submitRoomLoading}
                 />
             </div>
-            <FeedbackModal comments={[]} />
+            <FeedbackModal
+                room={roomInfo}
+                onFeedbackChange={function ({ addedValue }: { addedValue: number }): void {}}
+                open={false}
+            />
             <CustomToaster />
         </div>
     );

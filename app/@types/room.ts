@@ -7,5 +7,6 @@ export interface RoomType {
     description: string;
     endAt: Date;
     createdAt: Date;
+    labId?: string;
     teatcher?: userType;
 }

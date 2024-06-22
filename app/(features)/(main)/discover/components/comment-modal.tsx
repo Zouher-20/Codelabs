@@ -1,5 +1,5 @@
 import CommentListComponent from '@/app/(features)/(main)/discover/components/comment_list';
-import { LabTableType } from '@/app/(features)/admin/discover/components/lab-table';
+import { LabTableType } from '@/app/(features)/admin/(admin-feature)/discover/components/lab-table';
 import { FeedbackType } from '@/app/@types/feedback';
 import {
     addCommentUserProjectLab,

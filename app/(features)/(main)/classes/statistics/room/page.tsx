@@ -49,8 +49,7 @@ export default function ClassLabPage() {
 
             const currentLab = res.labs.map<LabModel>(e => {
                 return {
-                    id: e.id ?? '',
-                    title: e.classProject?.name ?? ''
+                    id: e.id ?? ''
                 };
             });
             setLabs(currentLab);
