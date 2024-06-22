@@ -45,7 +45,7 @@ const Comments = () => {
             />
             <div className="">
                 <dialog id="Comments" className="modal ">
-                    <div className="flex flex-col gap-4 w-2/5 bg-base-100 h-screen absolute top-0 right-0 p-8">
+                    <div className="flex flex-col gap-4 w-screen sm:w-4/5 md:w-3/5 lg:w-2/5 bg-base-100 h-screen absolute top-0 right-0 p-8">
                         <form method="dialog">
                             <button onClick={() => toggleModal()} className="btn btn-sm btn-circle btn-ghost absolute right-4 top-4 text-white">✕</button>
                         </form>

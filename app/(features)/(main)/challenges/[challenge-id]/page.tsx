@@ -51,6 +51,13 @@ const ChallengeDetails = async ({ params }: { params: { 'challenge-id': string }
             <div className="flex mt-[7rem]">
                 {data.resources && <DisplayCard name="RESOURCES" resources={data.resources} />}
             </div>
+            {/* <div className="flex mt-4">
+                {data?.ChallengeParticipation.map((challenge, index) => {
+                    <div key={index}>
+                        {challenge}
+                    </div>
+                })}
+            </div> */}
         </div>
     );
 }
