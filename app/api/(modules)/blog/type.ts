@@ -39,3 +39,21 @@ export interface GetDetailsBlogInput {
 export interface uploadImageInput {
     file: File;
 }
+export interface AddBlogCommentInput {
+    blogId: string;
+    comment: string
+}
+
+export interface GetCommentBlogInput {
+    blogId: string;
+    page: number;
+    pageSize: number
+}
+export interface AddAndDeleteStarBlogInput {
+    blogId: string;
+    action: boolean;
+}
+export interface DeleteMyCommentInBlogInput {
+    blogId: string;
+    commentId: string;
+}

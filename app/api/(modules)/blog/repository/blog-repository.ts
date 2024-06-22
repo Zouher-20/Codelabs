@@ -94,7 +94,7 @@ class BlogRepository {
         }
 
         const hasBlogPlan = blogPlan.plan.FeaturePlan.some(
-            featurePlan => featurePlan.name === NAMEPLAN.labs
+            featurePlan => featurePlan.name === NAMEPLAN.blogs
         );
 
         if (hasBlogPlan && countMyBlog < blogPlan.plan.FeaturePlan[0].value) {
@@ -122,7 +122,7 @@ class BlogRepository {
 
         if (payload.blogTitle) {
             args = {
-                title: { contains: payload.blogTitle }
+                title: { contains: payload.blogTitle, mode: "insensitive" }
             };
         }
         const myBlogs = await db.blog.findMany({
@@ -173,7 +173,7 @@ class BlogRepository {
 
         if (payload.blogTitle) {
             args = {
-                title: { contains: payload.blogTitle }
+                title: { contains: payload.blogTitle, mode: "insensitive" }
             };
         }
 
@@ -302,7 +302,7 @@ class BlogRepository {
 
         if (payload.blogTitle) {
             args = {
-                title: { contains: payload.blogTitle }
+                title: { contains: payload.blogTitle, mode: "insensitive" }
             };
         }
         const myBlogs = await db.blog.findMany({
@@ -391,9 +391,116 @@ class BlogRepository {
         };
     }
 
-    static async addBlogComment(payload: { blogId: string; comment: string }) {}
-    static async getCommentBlog(payload: { blogId: string; page: number; pageSize: number }) {}
-    static async addStarBlog(payload: { blogId: string }) {}
-    static async deleteMyCommentInBlog(payload: { commentId: string }) {}
+
+    static async addBlogComment(payload: { blogId: string; comment: string }, userId: string) {
+
+        const blog = await db.blog.findUnique({
+            where: {
+                id: payload.blogId
+            }
+        });
+        if (!blog) {
+            throw new Error('blog is not found');
+        }
+
+        await db.comment.create({
+            data: {
+                userId: userId,
+                comment: payload.comment,
+                blogId: payload.blogId
+            }
+        });
+    }
+    static async getCommentBlog(payload: { blogId: string; page: number; pageSize: number }) {
+        const skip = (payload.page - 1) * payload.pageSize;
+
+        const blog = await db.blog.findUnique({
+            where: {
+                id: payload.blogId
+            }
+        });
+        if (!blog) {
+            throw new Error('blog is not found');
+        }
+        const comment = await db.comment.findMany({
+            take: payload.pageSize,
+            skip: skip,
+            where: {
+                userprojectId: payload.blogId
+            },
+            include: {
+                user: true
+            }
+        });
+        const countOfComment = await db.comment.count({
+            where: {
+                userprojectId: payload.blogId
+            }
+        });
+        return {
+            comment,
+            countOfComment: countOfComment
+        };
+    }
+    static async addAndDeleteStarBlog(
+        payload: {
+            blogId: string;
+            action: boolean;
+        },
+        userId: string
+    ) {
+        const existingStar = await db.star.findFirst({
+            where: {
+                userId: userId,
+                blogId: payload.blogId
+            }
+        });
+
+        if (payload.action) {
+            if (existingStar) {
+                throw new Error('You have already starred this blog.');
+            }
+
+            const newStar = await db.star.create({
+                data: {
+                    userId: userId,
+                    blogId: payload.blogId
+                }
+            });
+
+            return newStar;
+        } else {
+            if (!existingStar) {
+                throw new Error('You not have starred this blog.');
+            }
+            const deletedStar = await db.star.deleteMany({
+                where: {
+                    userId: userId,
+                    blogId: payload.blogId
+                }
+            });
+
+            return deletedStar;
+        }
+    }
+    static async deleteMyCommentInBlog(payload: { commentId: string, blogId: string }, userId: string) {
+        const existingBlog = await db.blog.findUnique({
+            where: {
+                id: payload.blogId
+            }
+        });
+        if (!existingBlog) {
+            throw new Error('blog is not found');
+        }
+        const myComment = await db.comment.findUnique({
+            where: { id: payload.commentId, userId: userId, blogId: payload.blogId }
+        });
+        if (!myComment) {
+            throw new Error('your comment was deleted or this comment its not yours');
+        }
+        await db.comment.delete({
+            where: { id: payload.commentId }
+        });
+    }
 }
 export default BlogRepository;
