@@ -13,7 +13,7 @@ const Favorite = ({ count }: { count: number }) => {
             onClick={() => { favoriteHandler() }}
             icon='solar:star-bold-duotone'
             width={24} height={24}
-            className={(isFavorite ? 'text-error' : 'text-gray-800') + ' cursor-pointer ml-auto transition-all duration-300'}
+            className={(isFavorite ? 'text-error' : 'text-gray-200') + ' cursor-pointer ml-auto transition-all duration-300'}
         />
         <p>{count + (isFavorite ? 1 : 0)}</p>
     </div>

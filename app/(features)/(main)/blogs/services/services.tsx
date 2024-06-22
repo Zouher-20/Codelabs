@@ -1,35 +1,15 @@
 import { getAllBlog, getBlogByCreatedAt, getTrendingBlog } from "@/app/api/(modules)/blog/services/action"
-
-import {
-    AddBlogInput,
-    DeleteMyBlogInput,
-    EditBlogInput,
-    GetAllBlogs,
-    GetBlogByCreatedAtInput,
-    GetTrendingBlogInput
-} from '@/app/api/(modules)/blog/type';
 import toast from "react-hot-toast";
 
-export const getBlogs = async (payload: GetAllBlogs) => {
+export const getBlogs = async (currentTab: string, page: number, pageSize: number, blogTitle?: string) => {
     try {
-        const data = await getAllBlog(payload)
-        return data.projects
-    } catch (err: any) {
-        toast.error(err.message)
-    }
-}
-
-export const getTrending = async (payload: GetTrendingBlogInput) => {
-    try {
-        const data = await getTrendingBlog(payload)
-        return data.projects
-    } catch (err: any) {
-        toast.error(err.message)
-    }
-}
-export const getLatest = async (payload: GetBlogByCreatedAtInput) => {
-    try {
-        const data = await getBlogByCreatedAt(payload)
+        let data;
+        if (currentTab == 'Blogs')
+            data = await getAllBlog({ page, pageSize, blogTitle })
+        else if (currentTab == 'Trending Blogs')
+            data = await getTrendingBlog({ page, pageSize, blogTitle })
+        else
+            data = await getBlogByCreatedAt({ page, pageSize, blogTitle })
         return data.projects
     } catch (err: any) {
         toast.error(err.message)
