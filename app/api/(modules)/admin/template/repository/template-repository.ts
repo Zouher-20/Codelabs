@@ -5,9 +5,16 @@ import { randomBytes } from 'crypto';
 
 class TemplateRepository {
     static async addTemplate(payload: { nameTemplate: string; imageTemplate: string }) {
+        const defaultJsonPath = join(process.cwd(), 'public', 'uploads', 'labs', 'default.json');
+        const uploadDir = join(process.cwd(), 'public', 'uploads', 'labs');
+        const newJsonFilePath = join(uploadDir, `${payload.nameTemplate}.json`);
+        const defaultJsonContent = await readFile(defaultJsonPath, 'utf-8');
+        await mkdir(uploadDir, { recursive: true });
+        await writeFile(newJsonFilePath, defaultJsonContent);
+
         const newLab = await db.lab.create({
             data: {
-                jsonFile: "",
+                jsonFile: newJsonFilePath
             }
         });
 
@@ -19,12 +26,7 @@ class TemplateRepository {
         if (existingTemplate) {
             throw new Error("please choose another name");
         }
-        const defaultJsonPath = join(process.cwd(), 'public', 'lab', 'default.json');
-        const uploadDir = join(process.cwd(), 'public', 'lab');
-        const newJsonFilePath = join(uploadDir, `${payload.nameTemplate}.json`);
-        const defaultJsonContent = await readFile(defaultJsonPath, 'utf-8');
-        await mkdir(uploadDir, { recursive: true });
-        await writeFile(newJsonFilePath, defaultJsonContent);
+
         const newTemplate = await db.tamblate.create({
             data: {
                 imageTemplate: payload.imageTemplate,
@@ -32,15 +34,6 @@ class TemplateRepository {
                 labId: newLab.id
             }
         });
-        await db.lab.update({
-            where: {
-                id: newLab.id
-            },
-            data: {
-                jsonFile: newJsonFilePath
-            }
-        });
-
         return newTemplate;
     }
 
