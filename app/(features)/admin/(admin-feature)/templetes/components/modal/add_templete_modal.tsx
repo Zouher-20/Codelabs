@@ -36,8 +36,23 @@ const AddTempelet = () => {
                 });
                 const result = await response.json();
                 console.log(result.data);
-                // addTemplate({ imageTemplate: result, nameTemplate: values.title });
-                // toast.success('template created successfully');
+                const response2 = await fetch('/api/admin/template/add-template', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json' 
+                    },
+                    body: JSON.stringify({
+                        imageTemplate: result.data,
+                        nameTemplate: values.title
+                    }),
+                });
+                const result2 = await response2.json();
+                console.log(result2);
+                if(result2.statusCode >= 300)
+                {
+                    throw new Error(result2.data);
+                }
+                toast.success('template created successfully');
             } catch (e: any) {
                 toast.error(e.message);
             }
