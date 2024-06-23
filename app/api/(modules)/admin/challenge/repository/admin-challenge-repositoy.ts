@@ -22,10 +22,10 @@ class AdminChallengeRepository {
             take: payload.pageSize,
             skip: skip,
             include: {
-                tamblate: true
+                Tamblate: true
             },
             where: {
-                challengeParticipation: {
+                ChallengeParticipation: {
                     challengeId: challenge.id
                 }
             }
@@ -37,7 +37,7 @@ class AdminChallengeRepository {
 
         const totalCount = await db.lab.count({
             where: {
-                challengeParticipation: {
+                ChallengeParticipation: {
                     challengeId: challenge.id
                 }
             }
@@ -77,7 +77,7 @@ class AdminChallengeRepository {
                 challengeId: payload.challengeId
             },
             include: {
-                Lab: true
+                lab: true
             }
         });
 
