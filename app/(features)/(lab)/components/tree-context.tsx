@@ -16,6 +16,10 @@ export const FileTreeContext = createContext<FileTreeState>({
     activeFileName: 'package.json'
 });
 
+export enum NodeType {
+    file,
+    folder
+}
 export const FileTreeDispatchContext = createContext<Dispatch<ITreeAction> | null>(null);
 export function TreeContextProvider({
     children,
@@ -53,7 +57,8 @@ export enum TreeReducerActionType {
     FOLDER_ACTIVATE,
     NODE_DELETE,
     FOLDER_CREATE,
-    FILE_CREATE
+    FILE_CREATE,
+    FILE_UPDATE
 }
 
 interface IFileActivateAction {
@@ -74,6 +79,10 @@ interface IFileCreateAction {
     type: TreeReducerActionType.FILE_CREATE;
     payload: string[];
 }
+interface IFileUpdateAction {
+    type: TreeReducerActionType.FILE_UPDATE;
+    payload: string;
+}
 interface IFolderCreateAction {
     type: TreeReducerActionType.FOLDER_CREATE;
     payload: string[];
@@ -84,7 +93,8 @@ type ITreeAction =
     | IFolderActivateAction
     | INodeDeleteAction
     | IFileCreateAction
-    | IFolderCreateAction;
+    | IFolderCreateAction
+    | IFileUpdateAction;
 
 export function treeReducer(fileTreeSate: FileTreeState, { type, payload }: ITreeAction) {
     switch (type) {
@@ -146,6 +156,20 @@ export function treeReducer(fileTreeSate: FileTreeState, { type, payload }: ITre
             } else {
                 return fileTreeSate;
             }
+        }
+        case TreeReducerActionType.FILE_UPDATE: {
+            const newNodes = cloneDeep(fileTreeSate.nodes);
+            set(newNodes, TreeHelper.getParsedPath(fileTreeSate.activeFile, false), {
+                file: { contents: payload }
+            });
+            console.log(newNodes);
+
+            return {
+                activeFolder: fileTreeSate.activeFolder,
+                activeFile: fileTreeSate.activeFile,
+                nodes: newNodes,
+                activeFileName: fileTreeSate.activeFileName
+            };
         }
         default: {
             throw Error('Unknown action: ' + type);
