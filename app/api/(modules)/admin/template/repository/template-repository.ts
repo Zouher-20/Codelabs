@@ -20,27 +20,25 @@ class TemplateRepository {
         return newTemplate;
     }
 
-    static async uploadImage(payload: { base64: string; fileName: string }) {
+    static async uploadImage(payload: { file: File }) {
         try {
-            const { base64, fileName } = payload;
-            if (!base64 || !fileName) {
-                throw new Error('No base64 string or file name provided');
+            const { file } = payload;
+            if (!file) {
+                throw new Error('No file uploaded');
             }
-
-            // Remove the base64 prefix if exists
-            const base64Data = base64.replace(/^data:image\/\w+;base64,/, '');
-            const buffer = Buffer.from(base64Data, 'base64');
+            const bytes = await file.arrayBuffer();
+            const buffer = Buffer.from(bytes);
 
             const uploadDir = join(process.cwd(), 'public', 'uploads');
-            const filePath = join(uploadDir, fileName);
+            const filePath = join(uploadDir, file.name);
 
             await mkdir(uploadDir, { recursive: true });
 
             await writeFile(filePath, buffer);
 
-            console.log('File received:', fileName);
+            console.log('File received:', file);
 
-            const url = join('/uploads', fileName);
+            const url = join('/uploads', file.name);
 
             return url;
         } catch (error) {
