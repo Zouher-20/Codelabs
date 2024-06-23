@@ -31,7 +31,7 @@ class TemplateActionRepostiory {
                 lab: true
             },
             where: {
-                nameTemplate: {contains :payload.searchWord}
+                nameTemplate: { contains: payload.searchWord, mode: "insensitive" }
             },
             skip: skip,
             take: payload.pageSize
