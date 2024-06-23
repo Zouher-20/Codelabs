@@ -1,4 +1,5 @@
 'use client';
+import { addTemplate } from '@/app/api/(modules)/admin/template/services/action';
 import Avatar from '@/app/components/globals/avatar';
 import Button from '@/app/components/globals/form/button';
 import Input from '@/app/components/globals/form/input';
@@ -26,7 +27,6 @@ const AddTempelet = () => {
         if (values.photo == null) {
             toast.error('selecte templete image');
         } else {
-            console.log(values.photo);
             try {
                 const formData = new FormData();
                 formData.append('file', values.photo);
@@ -36,6 +36,8 @@ const AddTempelet = () => {
                 });
                 const result = await response.json();
                 console.log(result.data);
+                // addTemplate({ imageTemplate: result, nameTemplate: values.title });
+                // toast.success('template created successfully');
             } catch (e: any) {
                 toast.error(e.message);
             }

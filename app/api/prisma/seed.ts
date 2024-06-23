@@ -50,8 +50,8 @@ async function main() {
                     planEndDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
                     inActive: false,
                     verifiedAt: new Date(),
-                    plan: {
-                        connect: { id: plan.id }
+                    PlanSubscription: {
+                        create: { planId: plan.id }
                     }
                 }
             });
