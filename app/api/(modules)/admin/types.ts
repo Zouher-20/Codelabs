@@ -93,3 +93,13 @@ export interface addTemplateInput {
     nameTemplate: string;
     imageTemplate: string
 }
+
+export interface DeleteTemplateInput {
+    templateId: string
+
+}
+export interface getAllTemplateInput {
+    pageSize: number;
+    page: number;
+    searchWord?: string
+}
