@@ -1,4 +1,5 @@
 'use client';
+import { TempletsTableType } from '@/app/@types/templetes';
 import { addTemplate } from '@/app/api/(modules)/admin/template/services/action';
 import Avatar from '@/app/components/globals/avatar';
 import Button from '@/app/components/globals/form/button';
@@ -14,7 +15,7 @@ interface FormValues {
     photo?: File;
 }
 
-const AddTempelet = ({ callback }: { callback: () => void }) => {
+const AddTempelet = ({ callback }: { callback: (template: TempletsTableType) => void }) => {
     const defaultValues: FormValues = {
         photo: undefined,
         title: ''
@@ -53,7 +54,11 @@ const AddTempelet = ({ callback }: { callback: () => void }) => {
                 }
                 (document.getElementById('add-templete-modal') as HTMLDialogElement).close();
 
-                callback();
+                callback({
+                    image: result2.data.imageTemplate,
+                    name: result2.data.nameTemplate,
+                    labId: result2.data.labId
+                });
             } catch (e: any) {
                 toast.error(e.message);
             }

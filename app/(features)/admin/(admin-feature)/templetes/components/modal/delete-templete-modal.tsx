@@ -1,4 +1,5 @@
 'use client';
+import { deletTemplate } from '@/app/api/(modules)/admin/template/services/action';
 import Button from '@/app/components/globals/form/button';
 import IconRenderer from '@/app/components/globals/icon';
 import { useRouter } from 'next/navigation';
@@ -6,19 +7,21 @@ import { useState } from 'react';
 import toast from 'react-hot-toast';
 
 const DeleteTempletesModal = ({
-    templetesId,
+    templateId,
     callback
 }: {
-    templetesId: string;
+    templateId: string;
     callback: () => void;
 }) => {
     const [loadin, setLoading] = useState(false);
-    const router = useRouter();
 
     const onSubmit = async () => {
         setLoading(true);
         try {
-            // await deleteTempletes({ templetesId });
+            await deletTemplate({ templateId });
+            callback();
+            (document.getElementById('delete-templetes-modal') as HTMLDialogElement).close();
+            toast.success("delete templete done");
         } catch (error: any) {
             toast.error(error.message);
         } finally {

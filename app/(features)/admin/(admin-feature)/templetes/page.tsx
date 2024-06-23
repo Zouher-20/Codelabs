@@ -2,7 +2,7 @@
 import { planType } from '@/app/@types/plan';
 import { TempletsTableType } from '@/app/@types/templetes';
 import { ManageState } from '@/app/components/page-state/state_manager';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import TempletesViewHeader from './components/headea';
@@ -11,6 +11,7 @@ import DeleteTempletesModal from './components/modal/delete-templete-modal';
 import TempletessTable from './components/templetes-table';
 import { CustomToaster } from '@/app/components/toast/custom-toaster';
 import { getAllTemplate } from '@/app/api/(modules)/admin/template/services/action';
+import { template } from 'lodash';
 const Templetes = () => {
     const pageSize = 10;
     const params = useSearchParams();
@@ -46,10 +47,11 @@ const Templetes = () => {
             setTempletes(
                 res.templates.map(e => {
                     return {
-                       createdAt:e.createdAt,
-                       id:e.id,
-                       image:e.imageTemplate,
-                       name:e.nameTemplate,
+                        createdAt: e.createdAt,
+                        id: e.id,
+                        labId:e.labId,
+                        image: e.imageTemplate,
+                        name: e.nameTemplate,
                     } as TempletsTableType;
                 })
             );
@@ -60,6 +62,7 @@ const Templetes = () => {
             setLoading(false);
         }
     };
+    const route = useRouter();
     const onPageChange = ({ index }: { index: number }) => {
         updateCurrentPage(index);
         getTempletes({ newSearchWord: searchWord, page: index });
@@ -100,8 +103,15 @@ const Templetes = () => {
                             pageCount={totalPageCount / pageSize}
                             currentPage={currentPage}
                             onPageChange={onPageChange}
-                            deleteTempletesButtonClicked={user => {
-                                setModalTempletesId(user.id);
+                            editTempletesButtonClicked={template => {
+                                const params = {
+                                    id: template.labId ?? "",
+                                };
+                                const queryString = new URLSearchParams(params).toString();
+                                route.push('/lab' + '?' + queryString);
+                            }}
+                            deleteTempletesButtonClicked={template => {
+                                setModalTempletesId(template.id ?? "");
                                 if (document) {
                                     (
                                         document.getElementById(
@@ -114,11 +124,26 @@ const Templetes = () => {
                     }
                 />
             </div>
-            <DeleteTempletesModal templetesId="" callback={() => {}} />
-            <AddTempelet callback={()=>{
+            <DeleteTempletesModal templateId={modalTempletesId} callback={() => {
+                getTempletes({
+                    newSearchWord: searchWord,
+                    page: currentPage
+                });
+            }} />
+            <AddTempelet callback={(template: TempletsTableType) => {
+                getTempletes({
+                    newSearchWord: searchWord,
+                    page: currentPage
+                });
                 toast.success('template created successfully');
-            }}/>
-            <CustomToaster/>
+
+                const params = {
+                    id: template.labId ?? "",
+                };
+                const queryString = new URLSearchParams(params).toString();
+                route.push('/lab' + '?' + queryString);
+            }} />
+            <CustomToaster />
         </div>
     );
 };

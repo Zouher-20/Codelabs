@@ -60,7 +60,7 @@ class TemplateRepository {
 
             console.log('File received:', file);
 
-            const url = join('/uploads', fileName);
+            const url = join('/uploads', 'images', fileName);
 
             return url;
         } catch (error) {
