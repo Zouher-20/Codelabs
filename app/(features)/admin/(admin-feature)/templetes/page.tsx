@@ -9,6 +9,7 @@ import TempletesViewHeader from './components/headea';
 import AddTempelet from './components/modal/add_templete_modal';
 import DeleteTempletesModal from './components/modal/delete-templete-modal';
 import TempletessTable from './components/templetes-table';
+import { CustomToaster } from '@/app/components/toast/custom-toaster';
 const Templetes = () => {
     const pageSize = 10;
     const params = useSearchParams();
@@ -19,23 +20,17 @@ const Templetes = () => {
     const [error, setError] = useState<string | null>(null);
     const [searchWord, setSearchWord] = useState('');
     const [modalTempletesId, setModalTempletesId] = useState('');
-    const [currentPlan, setCurrentPlan] = useState<planType | null>(null);
-    const [serverPlans, setServerPlans] = useState<Array<string>>([]);
-    const [selectedSearchPlan, setSelectedSearchPlan] = useState<string>('');
-
     useEffect(() => {
         var pageNumber = Number(params.get('id') ?? '1');
         updateCurrentPage(pageNumber);
-        getTempletes({ newSearchWord: searchWord, planText: selectedSearchPlan, page: pageNumber });
+        getTempletes({ newSearchWord: searchWord, page: pageNumber });
     }, []);
 
     const getTempletes = async ({
         newSearchWord,
-        planText,
         page
     }: {
         newSearchWord: string;
-        planText: string;
         page: number;
     }) => {
         setLoading(true);
@@ -79,7 +74,7 @@ const Templetes = () => {
     };
     const onPageChange = ({ index }: { index: number }) => {
         updateCurrentPage(index);
-        getTempletes({ newSearchWord: searchWord, planText: selectedSearchPlan, page: index });
+        getTempletes({ newSearchWord: searchWord, page: index });
     };
 
     return (
@@ -98,7 +93,7 @@ const Templetes = () => {
                         setSearchWord(e);
                         updateCurrentPage(1);
                         setTotalPageCount(0);
-                        getTempletes({ newSearchWord: e, planText: selectedSearchPlan, page: 1 });
+                        getTempletes({ newSearchWord: e, page: 1 });
                     }}
                 />
                 <ManageState
@@ -107,7 +102,6 @@ const Templetes = () => {
                     errorAndEmptyCallback={() => {
                         getTempletes({
                             newSearchWord: searchWord,
-                            planText: selectedSearchPlan,
                             page: currentPage
                         });
                     }}
@@ -133,7 +127,10 @@ const Templetes = () => {
                 />
             </div>
             <DeleteTempletesModal templetesId="" callback={() => {}} />
-            <AddTempelet />
+            <AddTempelet callback={()=>{
+                toast.success('template created successfully');
+            }}/>
+            <CustomToaster/>
         </div>
     );
 };

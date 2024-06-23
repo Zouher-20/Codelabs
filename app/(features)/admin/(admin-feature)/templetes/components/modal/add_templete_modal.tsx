@@ -5,6 +5,7 @@ import Button from '@/app/components/globals/form/button';
 import Input from '@/app/components/globals/form/input';
 import { CustomToaster } from '@/app/components/toast/custom-toaster';
 import { Form, Formik } from 'formik';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 import * as yup from 'yup';
 
@@ -13,12 +14,12 @@ interface FormValues {
     photo?: File;
 }
 
-const AddTempelet = () => {
+const AddTempelet = ({ callback }: { callback: () => void }) => {
     const defaultValues: FormValues = {
         photo: undefined,
         title: ''
     };
-
+    const [loading, setLoading] = useState<boolean>(false);
     const validationSchema = yup.object().shape({
         title: yup.string().required('Required')
     });
@@ -27,6 +28,7 @@ const AddTempelet = () => {
         if (values.photo == null) {
             toast.error('selecte templete image');
         } else {
+            setLoading(true);
             try {
                 const formData = new FormData();
                 formData.append('file', values.photo);
@@ -35,11 +37,10 @@ const AddTempelet = () => {
                     body: formData
                 });
                 const result = await response.json();
-                console.log(result.data);
                 const response2 = await fetch('/api/admin/template/add-template', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json' 
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
                         imageTemplate: result.data,
@@ -47,14 +48,17 @@ const AddTempelet = () => {
                     }),
                 });
                 const result2 = await response2.json();
-                console.log(result2);
-                if(result2.statusCode >= 300)
-                {
+                if (result2.statusCode >= 300) {
                     throw new Error(result2.data);
                 }
-                toast.success('template created successfully');
+                (document.getElementById('add-templete-modal') as HTMLDialogElement).close();
+
+                callback();
             } catch (e: any) {
                 toast.error(e.message);
+            }
+            finally {
+                setLoading(false);
             }
         }
     };
@@ -101,17 +105,19 @@ const AddTempelet = () => {
                                         />
                                     </div>
                                 </div>
-                                <Button
-                                    onClick={() => props.validateForm()}
-                                    style="w-fit self-end "
-                                    color="any"
-                                    label="Continue"
-                                    type="submit"
-                                />
+                                <div className='flex justify-end'>
+                                    <Button
+                                        onClick={() => props.validateForm()}
+                                        style="w-fit self-end "
+                                        color="any"
+                                        label="Continue"
+                                        loading={loading}
+                                        type="submit"
+                                    />
+                                </div>
                             </Form>
                         )}
                     </Formik>
-                    <CustomToaster />
                 </div>
             </div>
         </dialog>
