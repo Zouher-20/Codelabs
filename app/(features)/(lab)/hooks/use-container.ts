@@ -5,10 +5,11 @@ export enum PackageManagerType {
 }
 import GlobalUtils from '@/app/utils/global-utils';
 import { FileSystemTree, WebContainer } from '@webcontainer/api';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Terminal } from 'xterm';
+import { NodeType } from '../components/tree-context';
 
-export function useContainer(projectFiles: FileSystemTree) {
+export function useContainer() {
     const [booting, setBooting] = useState(false);
     const [isBooted, setIsBooted] = useState(false);
     const [mounting, setMounting] = useState(false);
@@ -58,7 +59,7 @@ export function useContainer(projectFiles: FileSystemTree) {
                 throw 'no web container booted';
             }
 
-            await webcontainerInstance.current.mount(newTree || projectFiles);
+            if (newTree) await webcontainerInstance.current.mount(newTree);
         } catch (err) {
             console.warn('__ CONTAINER ERROR __ : ' + err);
         }
@@ -133,28 +134,35 @@ export function useContainer(projectFiles: FileSystemTree) {
         const writePath = '/' + path.join('/');
         webcontainerInstance.current?.fs.writeFile(writePath, contents);
     }
-    useEffect(() => {
-        const setupContainer = async () => {
-            if (!webcontainerInstance.current) {
-                setBooting(true);
 
-                await bootContainer().then(async () => {
-                    await mountFiles().then(async () => {
-                        setIsMounted(true);
-                        const pkgManagerType = PackageManagerType.NPM;
-                        await installDependancies(pkgManagerType).then(async code => {
-                            if (code === 0) {
-                                await runDevServer();
-                                setBooting(false);
-                            }
-                        });
+    function createNode(path: string[], type: NodeType) {
+        console.log('createNode');
+    }
+
+    function deleteNode(path: string[], type: NodeType) {
+        const actualPath = '/' + path.join('/');
+        webcontainerInstance.current?.fs.rm(actualPath);
+        console.log('deleteNode', actualPath, type);
+    }
+
+    async function setupContainer(projectFiles: FileSystemTree) {
+        if (!webcontainerInstance.current) {
+            setBooting(true);
+
+            await bootContainer().then(async () => {
+                await mountFiles(projectFiles).then(async () => {
+                    setIsMounted(true);
+                    const pkgManagerType = PackageManagerType.NPM;
+                    await installDependancies(pkgManagerType).then(async code => {
+                        if (code === 0) {
+                            await runDevServer();
+                            setBooting(false);
+                        }
                     });
                 });
-            }
-        };
-
-        setupContainer();
-    });
+            });
+        }
+    }
 
     return {
         webcontainerInstance,
@@ -168,6 +176,9 @@ export function useContainer(projectFiles: FileSystemTree) {
         serverReady,
         editor,
         setEditor,
-        writeFile
+        writeFile,
+        createNode,
+        deleteNode,
+        setupContainer
     };
 }

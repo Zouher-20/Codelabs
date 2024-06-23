@@ -8,31 +8,34 @@ import 'xterm/css/xterm.css';
 import { useContainer } from '../hooks/use-container';
 import TreeHelper from '../lab/tree-helper';
 import EditorToolbar from './editor-toolbar';
-import { useTree } from './tree-context';
+import { TreeReducerActionType, useTree, useTreeDispatch } from './tree-context';
 
 export default function CodeEditor({ files }: { files: FileSystemTree }) {
-    const { editor, setEditor, booting, writeFile } = useContainer(files);
+    const { editor, setEditor, booting, writeFile, setupContainer } = useContainer();
     const [language, setLanguage] = useState('json');
     const [dirty, setDirty] = useState(false);
+    const dispatch = useTreeDispatch();
 
     const tree = useTree();
     const handleEditorChange = debounce((value?: string) => {
         if (value) {
             setEditor(value);
+            if (dispatch) dispatch({ type: TreeReducerActionType.FILE_UPDATE, payload: value });
             writeFile(tree.activeFile, value);
             setDirty(true);
         }
     }, 500);
 
     useEffect(() => {
+        setupContainer(files);
         if (tree.activeFileName?.includes('.json')) setLanguage('json');
         else if (tree.activeFileName?.includes('.js')) setLanguage('javascript');
         else if (tree.activeFileName?.includes('.ts')) setLanguage('typescript');
         else setLanguage('text');
 
-        setEditor(get(files, TreeHelper.getParsedPath(tree.activeFile)));
+        setEditor(get(tree.nodes, TreeHelper.getParsedPath(tree.activeFile)));
         setDirty(false);
-    }, [tree.activeFileName, setEditor, files, tree.activeFile]);
+    }, [tree.activeFileName, setEditor, files, tree.activeFile, setupContainer, tree.nodes]);
 
     return (
         <div className="grid min-h-screen w-5/6 grid-cols-2">
