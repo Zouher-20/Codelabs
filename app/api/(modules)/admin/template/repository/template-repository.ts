@@ -1,7 +1,7 @@
-import { db } from "@/app/api/core/db/db";
-import { mkdir, writeFile, readFile } from 'node:fs/promises';
-import { join } from 'path';
+import { db } from '@/app/api/core/db/db';
 import { randomBytes } from 'crypto';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { join } from 'path';
 
 class TemplateRepository {
     static async addTemplate(payload: { nameTemplate: string; imageTemplate: string }) {
@@ -24,7 +24,7 @@ class TemplateRepository {
             }
         });
         if (existingTemplate) {
-            throw new Error("please choose another name");
+            throw new Error('please choose another name');
         }
 
         const newTemplate = await db.tamblate.create({
@@ -41,13 +41,13 @@ class TemplateRepository {
         try {
             const { file } = payload;
             if (!file) {
-                throw new Error("No file uploaded");
+                throw new Error('No file uploaded');
             }
 
             const bytes = await file.arrayBuffer();
             const buffer = Buffer.from(bytes);
 
-            const uploadDir = join(process.cwd(), 'public', 'uploads', "images");
+            const uploadDir = join(process.cwd(), 'public', 'uploads', 'images');
             const randomName = randomBytes(16).toString('hex');
             const extension = file.name.split('.').pop();
             const fileName = `${randomName}.${extension}`;
@@ -60,16 +60,12 @@ class TemplateRepository {
 
             console.log('File received:', file);
 
-            const url = join('/uploads', fileName);
+            const url = join('/uploads', 'images', fileName);
 
             return url;
-
         } catch (error) {
-            throw new Error("Error during file upload");
+            throw new Error('Error during file upload');
         }
     }
 }
 export default TemplateRepository;
-
-
-

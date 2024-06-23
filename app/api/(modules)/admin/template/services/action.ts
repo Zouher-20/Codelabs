@@ -1,3 +1,4 @@
+'use server';
 import { ROLE } from "@prisma/client";
 import { getSession } from "../../../auth/service/actions";
 import { DeleteTemplateInput, addTemplateInput, getAllTemplateInput, uploadTemplateImageInput } from "../../types";

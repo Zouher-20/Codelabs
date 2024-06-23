@@ -84,6 +84,14 @@ export default function LabsPage() {
         route.push('/classes/statistics' + '?' + queryString);
         return;
     };
+    const handleMyClassClick = (currentClass: classType) => {
+        const params = {
+            id: currentClass.id.toString()
+        };
+        const queryString = new URLSearchParams(params).toString();
+        route.push('/classes/students' + '?' + queryString);
+        return;
+    };
     return (
         <div className="flex min-h-[550px] flex-col items-center justify-center ">
             <div className="flex w-full flex-col gap-2 p-3">
@@ -134,7 +142,7 @@ export default function LabsPage() {
                             <ClassesList
                                 classes={myClass}
                                 title="Classes joined"
-                                onClick={handleClassClick}
+                                onClick={handleMyClassClick}
                             />
                         }
                         empty={myClass.length == 0}

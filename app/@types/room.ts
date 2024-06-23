@@ -1,3 +1,5 @@
+import { userType } from './user';
+
 export interface RoomType {
     title: string;
     id: string;
@@ -5,4 +7,6 @@ export interface RoomType {
     description: string;
     endAt: Date;
     createdAt: Date;
+    labId?: string;
+    teatcher?: userType;
 }

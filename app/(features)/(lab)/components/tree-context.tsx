@@ -1,6 +1,6 @@
 'use client';
 import { FileSystemTree } from '@webcontainer/api';
-import { set, unset } from 'lodash';
+import { cloneDeep, get, set, unset } from 'lodash';
 import { Dispatch, PropsWithChildren, createContext, useContext, useReducer } from 'react';
 import TreeHelper from '../lab/tree-helper';
 export interface FileTreeState {
@@ -16,6 +16,10 @@ export const FileTreeContext = createContext<FileTreeState>({
     activeFileName: 'package.json'
 });
 
+export enum NodeType {
+    file,
+    folder
+}
 export const FileTreeDispatchContext = createContext<Dispatch<ITreeAction> | null>(null);
 export function TreeContextProvider({
     children,
@@ -53,7 +57,8 @@ export enum TreeReducerActionType {
     FOLDER_ACTIVATE,
     NODE_DELETE,
     FOLDER_CREATE,
-    FILE_CREATE
+    FILE_CREATE,
+    FILE_UPDATE
 }
 
 interface IFileActivateAction {
@@ -74,6 +79,10 @@ interface IFileCreateAction {
     type: TreeReducerActionType.FILE_CREATE;
     payload: string[];
 }
+interface IFileUpdateAction {
+    type: TreeReducerActionType.FILE_UPDATE;
+    payload: string;
+}
 interface IFolderCreateAction {
     type: TreeReducerActionType.FOLDER_CREATE;
     payload: string[];
@@ -84,7 +93,8 @@ type ITreeAction =
     | IFolderActivateAction
     | INodeDeleteAction
     | IFileCreateAction
-    | IFolderCreateAction;
+    | IFolderCreateAction
+    | IFileUpdateAction;
 
 export function treeReducer(fileTreeSate: FileTreeState, { type, payload }: ITreeAction) {
     switch (type) {
@@ -106,32 +116,59 @@ export function treeReducer(fileTreeSate: FileTreeState, { type, payload }: ITre
             };
         }
         case TreeReducerActionType.NODE_DELETE: {
-            unset(fileTreeSate.nodes, TreeHelper.getStringPath(payload));
+            const newNodes = cloneDeep(fileTreeSate.nodes);
+            unset(newNodes, TreeHelper.getParsedPath(payload, false));
             return {
                 activeFolder: fileTreeSate.activeFolder,
                 activeFile: ['package.json'],
-                nodes: fileTreeSate.nodes,
+                nodes: newNodes,
                 activeFileName: 'package.json'
             };
         }
         case TreeReducerActionType.FOLDER_CREATE: {
-            set(fileTreeSate.nodes, TreeHelper.getParsedPath(payload, false), { directory: {} });
+            const alreadyExist = !!get(fileTreeSate, TreeHelper.getParsedPath(payload, false));
+            console.log(alreadyExist);
+            const newNodes = cloneDeep(fileTreeSate.nodes);
+            set(newNodes, TreeHelper.getParsedPath(payload, false), { directory: {} });
             return {
                 activeFolder: fileTreeSate.activeFolder,
                 activeFile: fileTreeSate.activeFile,
-                nodes: fileTreeSate.nodes,
+                nodes: newNodes,
                 activeFileName: fileTreeSate.activeFileName
             };
         }
         case TreeReducerActionType.FILE_CREATE: {
-            set(fileTreeSate.nodes, TreeHelper.getParsedPath(payload, false), {
-                file: { contents: '' }
+            const alreadyExist = !!get(
+                fileTreeSate.nodes,
+                TreeHelper.getParsedPath(payload, false)
+            );
+            if (!alreadyExist) {
+                const newNodes = cloneDeep(fileTreeSate.nodes);
+                set(newNodes, TreeHelper.getParsedPath(payload, false), {
+                    file: { contents: '' }
+                });
+                return {
+                    activeFolder: fileTreeSate.activeFolder,
+                    activeFile: payload,
+                    nodes: newNodes,
+                    activeFileName: payload[payload.length - 1]
+                };
+            } else {
+                return fileTreeSate;
+            }
+        }
+        case TreeReducerActionType.FILE_UPDATE: {
+            const newNodes = cloneDeep(fileTreeSate.nodes);
+            set(newNodes, TreeHelper.getParsedPath(fileTreeSate.activeFile, false), {
+                file: { contents: payload }
             });
+            console.log(newNodes);
+
             return {
                 activeFolder: fileTreeSate.activeFolder,
-                activeFile: payload,
-                nodes: fileTreeSate.nodes,
-                activeFileName: payload.pop()
+                activeFile: fileTreeSate.activeFile,
+                nodes: newNodes,
+                activeFileName: fileTreeSate.activeFileName
             };
         }
         default: {

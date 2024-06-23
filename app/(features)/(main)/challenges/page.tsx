@@ -7,30 +7,62 @@ import { getDetailsChallenge } from "@/app/api/(modules)/admin/challenge/service
 import { getChallenge } from "@/app/api/(modules)/admin/service/action"
 
 async function getData() {
-    const challenge = await getDetailsChallenge({ challengeId: 'clw23v8hq0001pw8n67popm1d', page: 1, pageSize: 100 });
-    const challenges = await getChallenge({ page: 1, pageSize: 100 });
-    const data = {
-        challenge: (challenge.challenge as unknown as challengeType),
-        challenges: (challenges.challenges as unknown as challengeType[])
+    const data = await getChallenge({ page: 1, pageSize: 100 });
+    const currentCh: challengeType[] = []
+    const lastCh: challengeType[] = []
+
+    if (data.challenges) {
+        data.challenges.map((challenge) => {
+            if (!challenge.isComplete)
+                currentCh.push(challenge as unknown as challengeType)
+            else lastCh.push(challenge as unknown as challengeType)
+        })
     }
-    return data
+    return { lastCh, currentCh }
 }
+
 export default async function ChallengesPage() {
 
-    const data = await getData()
+    const challenges = await getData()
+
     return <div className="flex flex-col gap-8 pb-8">
-        <Introduction />
-        {data.challenge && <CurrentChallenge challenge={data.challenge} />}
-        <div className="grid lg:grid-cols-2 gap-8 px-8">
-            {data.challenges && data.challenges.map((challenge, index) => {
-                if (challenge.isComplete) return (
-                    <div key={index}>
-                        <LastChallenge challenge={challenge} />
-                    </div>
-                )
-            }
-            )}
-        </div>
+        <Introduction showImage={challenges ? true : false} />
+
+        {challenges.currentCh
+            ? <CurrentChallenge challenge={challenges.currentCh[0]} />
+            : <div className="text-xl text-warning font-bold w-full flex justify-center">
+                There is no challenge right now !</div>
+        }
+
+        {challenges.currentCh.length > 0 &&
+            <div>
+                <span className="font-bold text-2xl pl-4">Ongoing challenges : </span>
+                <div className="grid lg:grid-cols-2 gap-8 px-8 mt-8">
+                    {challenges.currentCh.map((challenge, index) => {
+                        if (index == 0) return null
+                        else return (
+                            <div key={index}>
+                                <LastChallenge challenge={challenge} />
+                            </div>
+                        )
+                    })}
+                </div>
+            </div>
+        }
+        {challenges.lastCh.length > 0 &&
+            <div>
+                <span className="font-bold text-2xl">Last challenges : </span>
+                <div className="grid lg:grid-cols-2 gap-8 px-8 mt-8">
+                    {challenges.lastCh.map((challenge, index) => {
+                        return (
+                            <div key={index}>
+                                <LastChallenge challenge={challenge} />
+                            </div>
+                        )
+                    })}
+                </div>
+            </div>
+        }
     </div>
 }
 
@@ -56,7 +88,7 @@ const LastChallenge = ({ challenge }: { challenge: challengeType }) => {
         </div>
     )
 }
-const Introduction = () => {
+const Introduction = ({ showImage }: { showImage: boolean }) => {
     return <div className="flex gap-2 relative py-8 pl-2">
         <div className="flex flex-col gap-4  self-center">
             <h1 className="text-4xl text-white font-bold">Challenges</h1>
@@ -64,7 +96,7 @@ const Introduction = () => {
                 Each week, you’ll get a new prompt surrounding a monthly theme to riff on.<br />
                 The best Labs get picked and featured on the homepage!</span>
         </div>
-        <Image src={imageTournament} alt="" className='hidden xl:block absolute right-32 top-5 w-80 h-80 ' />
+        {showImage && <Image src={imageTournament} alt="" className='hidden xl:block absolute right-32 top-5 w-80 h-80 ' />}
     </div>
 }
 

@@ -69,6 +69,11 @@ const AdminSiteSidebarItem: Array<SideBarItemType> = [
         icon: 'solar:slider-minimalistic-horizontal-bold-duotone',
         name: 'Blogs',
         route: '/admin/blogs'
+    },
+    {
+        icon: 'solar:diploma-verified-bold-duotone',
+        name: 'Templetes',
+        route: '/admin/templetes'
     }
 ];
 

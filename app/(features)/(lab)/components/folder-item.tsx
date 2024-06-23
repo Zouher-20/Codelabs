@@ -2,6 +2,7 @@ import IconRenderer from '@/app/components/globals/icon';
 import { SwalUtil } from '@/app/utils/swal-util';
 import { DirectoryNode } from '@webcontainer/api';
 import { useContext, useState } from 'react';
+import Swal from 'sweetalert2';
 import FileTree from './file-tree';
 import PathContextProvider, { PathContext } from './path-context';
 import { TreeReducerActionType, useTreeDispatch } from './tree-context';
@@ -26,13 +27,54 @@ export default function FolderItem({ name, node }: { name: string; node: Directo
                 dispatch({ type: TreeReducerActionType.NODE_DELETE, payload: [...path, name] });
         });
     };
-    const handleFolderAdd: CallableFunction = (e: MouseEvent) => {
+    const handleFolderAdd: CallableFunction = async (e: MouseEvent) => {
         e.stopPropagation();
         e.preventDefault();
+
+        Swal.fire({
+            background: '#171818',
+            color: '#f2f2f2',
+            input: 'text',
+            confirmButtonText: 'Create',
+            inputLabel: 'File Name',
+            inputPlaceholder: 'example.js',
+            confirmButtonColor: '#282C2B',
+            inputValidator: result => !result && 'Type the folder name'
+        }).then(result => {
+            console.log(result);
+
+            if (result.isConfirmed && !result.isDismissed) {
+                dispatch &&
+                    dispatch({
+                        type: TreeReducerActionType.FOLDER_CREATE,
+                        payload: [...path, name, result.value]
+                    });
+            }
+        });
     };
     const handleFileAdd: CallableFunction = (e: MouseEvent) => {
         e.stopPropagation();
         e.preventDefault();
+
+        Swal.fire({
+            background: '#171818',
+            color: '#f2f2f2',
+            input: 'text',
+            confirmButtonText: 'Create',
+            inputLabel: 'File Name',
+            inputPlaceholder: 'example.js',
+            confirmButtonColor: '#282C2B'
+        }).then(result => {
+            console.log(result);
+
+            if (result.isConfirmed && !result.isDismissed) {
+                dispatch &&
+                    dispatch({
+                        type: TreeReducerActionType.FILE_CREATE,
+                        payload: [...path, name, result.value]
+                    });
+            }
+        });
     };
 
     return (

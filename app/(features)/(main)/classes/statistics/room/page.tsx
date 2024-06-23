@@ -49,8 +49,7 @@ export default function ClassLabPage() {
 
             const currentLab = res.labs.map<LabModel>(e => {
                 return {
-                    id: e.id ?? '',
-                    title: e.classProject?.name ?? ''
+                    id: e.id ?? ''
                 };
             });
             setLabs(currentLab);
@@ -224,6 +223,8 @@ export default function ClassLabPage() {
                         classDescription={roomInfo?.description ?? ''}
                         className={roomInfo?.title ?? ''}
                         classType={roomInfo?.type ?? ''}
+                        endAt={roomInfo?.endAt.toLocaleString('en-US')}
+                        createdAt={roomInfo?.createdAt.toLocaleString('en-US')}
                     />
                 }
                 empty={false}
@@ -286,7 +287,12 @@ export default function ClassLabPage() {
                                     calculateDurationPercentage({
                                         end: roomInfo?.endAt ?? new Date(),
                                         start: roomInfo?.createdAt ?? new Date()
-                                    })
+                                    }),
+                                    100 -
+                                        calculateDurationPercentage({
+                                            end: roomInfo?.endAt ?? new Date(),
+                                            start: roomInfo?.createdAt ?? new Date()
+                                        })
                                 ]}
                                 withAdd={false}
                             />
