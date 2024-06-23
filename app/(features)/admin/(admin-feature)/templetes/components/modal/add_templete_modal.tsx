@@ -1,5 +1,4 @@
 'use client';
-import { uploadImage } from '@/app/api/(modules)/admin/template/services/action';
 import Avatar from '@/app/components/globals/avatar';
 import Button from '@/app/components/globals/form/button';
 import Input from '@/app/components/globals/form/input';
@@ -29,8 +28,14 @@ const AddTempelet = () => {
         } else {
             console.log(values.photo);
             try {
-                const res = await uploadImage({ file: values.photo ?? '' });
-                toast.success('upload done');
+                const formData = new FormData();
+                formData.append('file', values.photo);
+                const response = await fetch('/api/admin/template/image-upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                console.log(result.data);
             } catch (e: any) {
                 toast.error(e.message);
             }

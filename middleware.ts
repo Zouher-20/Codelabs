@@ -39,5 +39,6 @@ async function getSessionInMiddleware() {
 }
 // See "Matching Paths" below to learn more
 export const config = {
-    matcher: '/((?!api|login|register|_next/static|_next/image|favicon.ico|logo-title.svg).*)'
+    matcher:
+        '/((?!api|login|register|_next/static|_next/image|favicon.ico|uploads|logo-title.svg).*)'
 };

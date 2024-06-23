@@ -27,7 +27,7 @@ const Avatar = ({ photo, imageSize }: { photo: (photo: File) => void; imageSize?
     };
 
     return (
-        <div className="flex gap-4 py-1">
+        <div className="flex ">
             <div
                 className="avatar"
                 onClick={handleClick}
@@ -48,7 +48,7 @@ const Avatar = ({ photo, imageSize }: { photo: (photo: File) => void; imageSize?
                 )}
             </div>
             <section className="flex flex-col self-center">
-                <span className="relative flex cursor-pointer  gap-1 text-gray-500">
+                <span className="relative flex cursor-pointer text-gray-500">
                     <input
                         type="file"
                         onChange={handleChange}
