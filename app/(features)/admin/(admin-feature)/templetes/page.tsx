@@ -10,6 +10,7 @@ import AddTempelet from './components/modal/add_templete_modal';
 import DeleteTempletesModal from './components/modal/delete-templete-modal';
 import TempletessTable from './components/templetes-table';
 import { CustomToaster } from '@/app/components/toast/custom-toaster';
+import { getAllTemplate } from '@/app/api/(modules)/admin/template/services/action';
 const Templetes = () => {
     const pageSize = 10;
     const params = useSearchParams();
@@ -36,35 +37,22 @@ const Templetes = () => {
         setLoading(true);
         setError(null);
         try {
-            // const user = await findTempletess({
-            //     page: page,
-            //     pageSize: pageSize,
-            //     planName: planText === '' ? undefined : planText,
-            //     searchWord: newSearchWord
-            // });
-            // setTotalPageCount(user.userCount);
-            // setTempletess(
-            //     user.user.templetes.map(e => {
-            //         return {
-            //             email: e.email,
-            //             id: e.id,
-            //             name: e.username,
-            //             labs: 1,
-            //             role: e.role,
-            //             createdAt: e.createdAt,
-            //             classes: 1,
-            //             plan: {
-            //                 duration: e.PlanSubscription?.plan.duration,
-            //                 features: [],
-            //                 id: e.PlanSubscription?.id,
-            //                 name: e.PlanSubscription?.plan.name,
-            //                 price: e.PlanSubscription?.plan.price,
-            //                 subtitle: e.PlanSubscription?.plan.subtitle,
-            //                 createdAt: e.PlanSubscription?.plan.createdAt
-            //             }
-            //         } as TempletesTableType;
-            //     })
-            // );
+            const res = await getAllTemplate({
+                page: page,
+                pageSize: pageSize,
+                searchWord: newSearchWord
+            });
+            setTotalPageCount(res.templateCount);
+            setTempletes(
+                res.templates.map(e => {
+                    return {
+                       createdAt:e.createdAt,
+                       id:e.id,
+                       image:e.imageTemplate,
+                       name:e.nameTemplate,
+                    } as TempletsTableType;
+                })
+            );
         } catch (e: any) {
             setError(e.message);
             toast.error(e.message);

@@ -78,9 +78,8 @@ class TemplateRepository {
                 }
             }
         );
-        return
-        {
-            templates: templates
+        return {
+            templates: templates,
             templateCount: templateCount
         }
     }
