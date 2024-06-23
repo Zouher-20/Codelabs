@@ -87,11 +87,11 @@ export interface getLabsInChallengeInput {
     page: number;
 }
 export interface uploadTemplateImageInput {
-    file: File
+    file: File;
 }
 export interface addTemplateInput {
     nameTemplate: string;
-    imageTemplate: string
+    imageTemplate: string;
 }
 
 export interface DeleteTemplateInput {
