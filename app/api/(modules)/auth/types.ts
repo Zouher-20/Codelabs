@@ -23,3 +23,7 @@ export interface AllUserInformationInput {
     userProjectPage: number;
     userProjectPageSize: number;
 }
+
+export interface GetUserDetails {
+    userId: string
+}
