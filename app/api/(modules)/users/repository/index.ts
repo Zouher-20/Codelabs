@@ -17,19 +17,48 @@ class UsersRepository {
             }
         });
     }
+    static async getMyInfo(userId: string) {
+        const myinfo = await db.user.findUnique({
+            where: { id: userId },
+            include: {
+                PlanSubscription: {
+                    include: {
+                        plan: {
+                            include: {
+                                FeaturePlan: true
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        if (!myinfo) {
+            throw new Error('user not found ');
+        }
+        return myinfo;
+    }
+    static async getUserDetails(payload: { userId: string }) {
+        const userDetails = await db.user.findUnique({
+            where: { id: payload.userId }
+        });
+        if (!userDetails) {
+            throw new Error('user not found ');
+        }
+        return userDetails;
+    }
 
     static async create(payload: CreateUserInput, planId?: string) {
         const requestedPlan = GlobalUtils.isNullOrUndefined(planId)
             ? await db.plan.findFirst({
-                  where: {
-                      price: -1
-                  }
-              })
+                where: {
+                    price: -1
+                }
+            })
             : await db.plan.findUnique({
-                  where: {
-                      id: planId
-                  }
-              });
+                where: {
+                    id: planId
+                }
+            });
         if (!requestedPlan) throw new Error('Cannot find requested plan');
         return await db.user.create({
             data: {

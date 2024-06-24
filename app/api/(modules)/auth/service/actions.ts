@@ -10,6 +10,7 @@ import {
     AdminRegisterInput,
     AllUserInformationInput,
     DeleteMyAccountInput,
+    GetUserDetails,
     RegisterUserInput
 } from '../types';
 import AuthValidator from '../validator/validation';
@@ -49,6 +50,16 @@ export const register = async (payload: RegisterUserInput) => {
         throw new Error('Invalid OTP');
     }
 };
+
+export const getMyInfo = async () => {
+    const session = await getSession();
+    const userId = session?.id;
+    return UsersRepository.getMyInfo(userId);
+}
+
+export const getUserDetails = async (payload: GetUserDetails) => {
+    return UsersRepository.getUserDetails(payload);
+}
 
 export const adminRegister = async (req: Request) => {
     const body = await req.json();

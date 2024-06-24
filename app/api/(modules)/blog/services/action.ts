@@ -14,6 +14,7 @@ import {
     GetCommentBlogInput,
     GetDetailsBlogInput,
     GetTrendingBlogInput,
+    getMyBlogInput,
     uploadImageInput
 } from '@/app/api/(modules)/blog/type';
 import exp from 'constants';
@@ -34,10 +35,14 @@ export const deleteMyBlog = async (payload: DeleteMyBlogInput) => {
     return BlogRepository.deleteMyBlog(payload, userId);
 };
 export const getBlogByCreatedAt = async (payload: GetBlogByCreatedAtInput) => {
-    return BlogRepository.getBlogByCreatedAt(payload);
+    const session = await getSession();
+    const userId = session?.id
+    return BlogRepository.getBlogByCreatedAt(payload, userId);
 };
 export const getTrendingBlog = async (payload: GetTrendingBlogInput) => {
-    return BlogRepository.getTrendingBlog(payload);
+    const session = await getSession();
+    const userId = session?.id;
+    return BlogRepository.getTrendingBlog(payload, userId);
 };
 export const getAllBlog = async (payload: GetAllBlogs) => {
     return BlogRepository.getAllBlog(payload);
@@ -75,4 +80,9 @@ export const deleteMyCommentInBlog = async (payload: DeleteMyCommentInBlogInput)
     const session = await getSession();
     const userId = session?.id;
     return BlogRepository.deleteMyCommentInBlog(payload, userId);
+}
+export const getMyBlog = async (payload: getMyBlogInput) => {
+    const session = await getSession();
+    const userId = session?.id;
+    return BlogRepository.getMyBlogs(payload, userId);
 }

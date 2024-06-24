@@ -57,3 +57,9 @@ export interface DeleteMyCommentInBlogInput {
     blogId: string;
     commentId: string;
 }
+export interface getMyBlogInput {
+    page: number;
+    pageSize: number;
+    searchWord?: string;
+
+}
