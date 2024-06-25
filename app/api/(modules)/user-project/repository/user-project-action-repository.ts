@@ -23,6 +23,7 @@ class UserProjectActionRepository {
             }
         });
 
+
         if (myTemplate?.id == null || payload.templateId === "") {
             templateJsonFilePath = path.join(process.cwd(), 'public', 'uploads', 'labs', 'default.json');
         } else {
