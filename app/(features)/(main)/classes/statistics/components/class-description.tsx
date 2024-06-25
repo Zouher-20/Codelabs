@@ -7,10 +7,14 @@ export default function ClassDescriptionComponent({
     className,
     classDescription,
     classType,
+    endAt,
+    createdAt,
     teacher
 }: {
     classType: string;
     className: string;
+    endAt?: string;
+    createdAt?: string;
     classDescription: string;
     teacher?: userType;
 }) {
@@ -25,6 +29,8 @@ export default function ClassDescriptionComponent({
                         <p className="text-xs">{classType}</p>
                     </div>
                     <p>{classDescription}</p>
+                    {createdAt != null ? <p>created at: {createdAt}</p> : null}
+                    {endAt != null ? <p>end at: {endAt}</p> : null}
                     {teacher != null ? <UserAvatar user={teacher} /> : <div></div>}
                 </div>
             </CodeLabContainer>

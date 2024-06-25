@@ -68,7 +68,7 @@ class ClassRoomRepository {
         });
 
         if (!myClassProject) {
-            throw new Error("no class project found");
+            throw new Error('no class project found');
         }
 
         // Check if the room associated with the class project exists
@@ -83,7 +83,7 @@ class ClassRoomRepository {
         });
 
         if (!myRoom) {
-            throw new Error("no room found");
+            throw new Error('no room found');
         }
 
         // Check if the user is a member of the class in the given room
@@ -122,14 +122,11 @@ class ClassRoomRepository {
                         classRomId: myClass.id
                     },
                     {
-                        OR: [
-                            { isTeacher: true }
-                        ]
+                        OR: [{ isTeacher: true }]
                     }
                 ]
             }
         });
-
 
         if (!memberClass) {
             throw new Error('MemberClass not found');
@@ -179,13 +176,12 @@ class ClassRoomRepository {
             throw new Error('No class found');
         }
 
+        // Check if the user is a member of the class
+
         const memberClass = await db.memberClass.findFirst({
             where: {
-                AND: [
-                    { userId: userId },
-                    {
-                        classRomId: myClass.id
-                    }]
+                userId: userId,
+                classRomId: myClass.id
             }
         });
 
@@ -504,6 +500,9 @@ class ClassRoomRepository {
                         MemberClass: {
                             where: {
                                 isTeacher: true
+                            },
+                            include: {
+                                user: true
                             }
                         }
                     }

@@ -38,5 +38,6 @@ async function getSessionInMiddleware() {
     return session;
 }
 export const config = {
-    matcher: '/((?!api|login|register|_next/static|_next/image|favicon.ico|logo-title.svg).*)'
+    matcher:
+        '/((?!api|login|register|_next/static|_next/image|favicon.ico|lab|uploads|logo-title.svg).*)'
 };

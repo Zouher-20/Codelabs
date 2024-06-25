@@ -83,11 +83,11 @@ export default function LabDetails() {
         );
     };
     const handleLabClick = () => {
-        const id = '';
-        const params = {
+        const id = params.get('id') ?? '';
+        const newParams = {
             id
         };
-        const queryString = new URLSearchParams(params).toString();
+        const queryString = new URLSearchParams(newParams).toString();
         route.push('/lab' + '?' + queryString);
 
         return;

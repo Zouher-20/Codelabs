@@ -112,11 +112,8 @@ class BlogRepository {
         }
     }
 
-    static async getBlogByCreatedAt(payload: {
-        page: number;
-        pageSize: number;
-        blogTitle?: string;
-    }) {
+
+    static async getBlogByCreatedAt(payload: { page: number; pageSize: number; blogTitle?: string }, userId: string) {
         const skip = (payload.page - 1) * payload.pageSize;
         let args = {};
 
@@ -125,6 +122,7 @@ class BlogRepository {
                 title: { contains: payload.blogTitle, mode: "insensitive" }
             };
         }
+
         const myBlogs = await db.blog.findMany({
             take: payload.pageSize,
             skip: skip,
@@ -147,10 +145,29 @@ class BlogRepository {
                     where: { blogId: blog.id }
                 });
 
+                const starredBlogsId = (
+                    await db.star.findMany({
+                        where: {
+                            userId: userId,
+                            blogId: {
+                                in: myBlogs.map(blog => blog.id)
+                            }
+                        },
+                        select: {
+                            blogId: true
+                        }
+                    })
+                ).map(star => star.blogId);
+
+
+
+                const hasStarred = starredBlogsId.includes(blog.id);
+
                 return {
                     ...blog,
                     commentCount,
-                    starCount
+                    starCount,
+                    hasStarred
                 };
             })
         );
@@ -167,7 +184,91 @@ class BlogRepository {
         };
     }
 
-    static async getTrendingBlog(payload: { page: number; pageSize: number; blogTitle?: string }) {
+    static async getMyBlogs(
+        payload: {
+            page: number;
+            pageSize: number;
+            searchWord?: string;
+        },
+        userId: string
+    ) {
+        const skip = (payload.page - 1) * payload.pageSize;
+
+        const existingUser = await db.user.findUnique({
+            where: {
+                id: userId
+            }
+        });
+        if (!existingUser) {
+            throw new Error('user not found');
+        }
+
+        let args = {};
+        if (payload.searchWord) {
+            args = {
+                title: { contains: payload.searchWord, mode: "insensitive" }
+            };
+        }
+        const myBlogs = await db.blog.findMany({
+            take: payload.pageSize,
+            skip: skip,
+            orderBy: { createdAt: 'desc' },
+            include: {
+                user: true,
+            },
+            where: {
+                ...args,
+                userId: existingUser.id
+            }
+        });
+
+        const blogsWithCounts = await Promise.all(
+            myBlogs.map(async blog => {
+                const commentCount = await db.comment.count({
+                    where: { blogId: blog.id }
+                });
+
+                const starCount = await db.star.count({
+                    where: { blogId: blog.id }
+                });
+
+                const starredProjectsIds = (
+                    await db.star.findMany({
+                        where: {
+                            userId: userId,
+                            blogId: {
+                                in: myBlogs.map(blog => blog.id)
+                            }
+                        },
+                        select: {
+                            blogId: true
+                        }
+                    })
+                ).map(star => star.blogId);
+
+                const hasStarred = starredProjectsIds.includes(blog.id);
+
+                return {
+                    ...blog,
+                    commentCount,
+                    starCount,
+                    hasStarred
+                };
+            })
+        );
+
+        const totalCount = await db.blog.count({
+            where: { ...args }
+        });
+
+        return {
+            blogs: blogsWithCounts,
+            totalCount: totalCount
+        };
+    }
+
+    //TODOpppppp
+    static async getTrendingBlog(payload: { page: number; pageSize: number; blogTitle?: string }, userId: string) {
         const skip = (payload.page - 1) * payload.pageSize;
         let args = {};
 
@@ -210,10 +311,29 @@ class BlogRepository {
                     where: { blogId: blog.id }
                 });
 
+                const starredBlogsId = (
+                    await db.star.findMany({
+                        where: {
+                            userId: userId,
+                            blogId: {
+                                in: myBlogs.map(blog => blog.id)
+                            }
+                        },
+                        select: {
+                            blogId: true
+                        }
+                    })
+                ).map(star => star.blogId);
+
+
+
+                const hasStarred = starredBlogsId.includes(blog.id);
+
                 return {
                     ...blog,
                     commentCount,
-                    starCount
+                    starCount,
+                    hasStarred
                 };
             })
         );
