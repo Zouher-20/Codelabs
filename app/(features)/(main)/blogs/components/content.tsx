@@ -1,12 +1,13 @@
 import { blogType } from "@/app/@types/blog";
 import BlogCard from "./blog-card";
 
-const Content = ({ blogs }: { blogs: Array<blogType> }) => {
+const Content = ({ blogs, userID }: { blogs: Array<blogType>, userID?: string }) => {
+
     return (
         <div className="flex flex-wrap gap-8 max-xl:justify-center">
             {blogs.map((blog, index) => (
                 <span key={index}>
-                    <BlogCard blog={blog} />
+                    {userID && <BlogCard blog={blog} userID={userID} />}
                 </span>
             ))}
         </div>

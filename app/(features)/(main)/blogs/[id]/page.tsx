@@ -34,7 +34,7 @@ const ChallengeDetails = async ({ params }: { params: { 'id': string } }) => {
         <div className="divider m-0"></div>
         <div className="flex gap-6 text-gray-500 px-4">
             <Favorite count={data?.starCount as number} />
-            <Comments />
+            {blog?.id && <Comments id={blog.id} />}
             <p>Your feedback would be greatly appreciated.</p>
         </div>
         <div className="divider m-0"></div>

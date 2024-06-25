@@ -8,7 +8,7 @@ import { useState } from "react";
 import { editBlog } from "@/app/api/(modules)/blog/services/action";
 import Favorite from "./favorite";
 
-const BlogCard = ({ blog }: { blog: blogType }) => {
+const BlogCard = ({ blog, userID }: { blog: blogType, userID: string }) => {
 
     return <div className="w-80 h-full flex flex-col gap-2">
         <div className="relative">
@@ -21,7 +21,7 @@ const BlogCard = ({ blog }: { blog: blogType }) => {
         <span className="flex gap-2 text-gray-500">
             <IconRenderer icon='solar:calendar-date-broken' width={24} height={24} />
             <p className="mr-auto">{blog.createdAt?.toLocaleDateString()}</p>
-            <Favorite count={blog.starCount} />
+            <Favorite blog={blog} userID={userID} />
         </span>
         <Link href={`/blogs/${blog.id}`} className="btn btn-sm p-0 w-fit btn-link" >Read more</Link>
     </div>

@@ -57,12 +57,12 @@ const AddBlog = () => {
             >
                 {props => (
                     <Form className="flex w-full flex-col gap-4">
-                        <div className="flex max-md:flex-wrap gap-8">
+                        <div className="flex lg:flex-wrap gap-8">
                             <div className='flex flex-col gap-2'>
                                 <label >Add your blogs cover</label>
                                 <Avatar photo={(photo: string) => props.values.photo = photo} />
                             </div>
-                            <div className="flex flex-col w-3/5  gap-2">
+                            <div className="flex flex-col w-full lg:w-3/5  gap-2">
                                 <span className='grid gap-2'>
                                     <label>Title</label>
                                     <Input
