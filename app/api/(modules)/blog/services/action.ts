@@ -45,7 +45,9 @@ export const getTrendingBlog = async (payload: GetTrendingBlogInput) => {
     return BlogRepository.getTrendingBlog(payload, userId);
 };
 export const getAllBlog = async (payload: GetAllBlogs) => {
-    return BlogRepository.getAllBlog(payload);
+    const session = await getSession();
+    const userId = session?.id;
+    return BlogRepository.getAllBlog(payload, userId);
 };
 
 export const getDetailsBlog = async (payload: GetDetailsBlogInput) => {
