@@ -69,6 +69,7 @@ model User {
   MemberClass            MemberClass[]
   Verified               Verified?
   PlanSubscription       PlanSubscription?
+  veiw                   veiw[]
 }
 
 model Verified {
@@ -185,6 +186,7 @@ model Challenge {
   ChallengeParticipation ChallengeParticipation[]
   TagMorph               TagMorph[]
   Star                   Star[]
+  veiw                   veiw[]
 }
 
 model ChallengeParticipation {
@@ -228,6 +230,7 @@ model UserProject {
   Star        Star[]
   Comment     Comment[]
   TagMorph    TagMorph[]
+  veiw        veiw[]
 }
 
 model Blog {
@@ -240,9 +243,22 @@ model Blog {
   title     String?
   Star      Star[]
   Comment   Comment[]
+  veiw      veiw[]
 }
 
 model Star {
+  id            String       @id @default(cuid())
+  userId        String
+  userprojectId String?
+  blogId        String?
+  challengeId   String?
+  challenge     Challenge?   @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  blog          Blog?        @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  userproject   UserProject? @relation(fields: [userprojectId], references: [id], onDelete: Cascade)
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model veiw {
   id            String       @id @default(cuid())
   userId        String
   userprojectId String?

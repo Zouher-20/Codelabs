@@ -275,11 +275,11 @@ class BlogRepository {
             take: payload.pageSize,
             skip: skip,
             orderBy: [
-                {
-                    Comment: {
-                        _count: Prisma.SortOrder.desc
-                    }
-                },
+                // {
+                //     Comment: {
+                //         _count: Prisma.SortOrder.desc
+                //     }
+                // },
                 {
                     Star: {
                         _count: Prisma.SortOrder.desc
@@ -539,7 +539,7 @@ class BlogRepository {
             take: payload.pageSize,
             skip: skip,
             where: {
-                userprojectId: payload.blogId
+                blogId: payload.blogId
             },
             include: {
                 user: true
@@ -547,7 +547,7 @@ class BlogRepository {
         });
         const countOfComment = await db.comment.count({
             where: {
-                userprojectId: payload.blogId
+                blogId: payload.blogId
             }
         });
         return {
