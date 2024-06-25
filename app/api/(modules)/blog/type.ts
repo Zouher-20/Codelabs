@@ -41,13 +41,13 @@ export interface uploadImageInput {
 }
 export interface AddBlogCommentInput {
     blogId: string;
-    comment: string
+    comment: string;
 }
 
 export interface GetCommentBlogInput {
     blogId: string;
     page: number;
-    pageSize: number
+    pageSize: number;
 }
 export interface AddAndDeleteStarBlogInput {
     blogId: string;
@@ -60,6 +60,5 @@ export interface DeleteMyCommentInBlogInput {
 export interface getMyBlogInput {
     page: number;
     pageSize: number;
-    searchWord?: string;
-
+    blogTitle?: string;
 }

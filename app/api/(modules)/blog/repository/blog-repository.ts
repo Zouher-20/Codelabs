@@ -109,13 +109,16 @@ class BlogRepository {
             throw new Error('User does not have access to create more blogs.');
         }
     }
-    static async getBlogByCreatedAt(payload: { page: number; pageSize: number; blogTitle?: string }, userId: string) {
+    static async getBlogByCreatedAt(
+        payload: { page: number; pageSize: number; blogTitle?: string },
+        userId: string
+    ) {
         const skip = (payload.page - 1) * payload.pageSize;
         let args = {};
 
         if (payload.blogTitle) {
             args = {
-                title: { contains: payload.blogTitle, mode: "insensitive" }
+                title: { contains: payload.blogTitle, mode: 'insensitive' }
             };
         }
 
@@ -155,8 +158,6 @@ class BlogRepository {
                     })
                 ).map(star => star.blogId);
 
-
-
                 const hasStarred = starredBlogsId.includes(blog.id);
 
                 return {
@@ -183,7 +184,7 @@ class BlogRepository {
         payload: {
             page: number;
             pageSize: number;
-            searchWord?: string;
+            blogTitle?: string;
         },
         userId: string
     ) {
@@ -199,9 +200,9 @@ class BlogRepository {
         }
 
         let args = {};
-        if (payload.searchWord) {
+        if (payload.blogTitle) {
             args = {
-                title: { contains: payload.searchWord, mode: "insensitive" }
+                title: { contains: payload.blogTitle, mode: 'insensitive' }
             };
         }
         const myBlogs = await db.blog.findMany({
@@ -209,7 +210,7 @@ class BlogRepository {
             skip: skip,
             orderBy: { createdAt: 'desc' },
             include: {
-                user: true,
+                user: true
             },
             where: {
                 ...args,
@@ -257,17 +258,20 @@ class BlogRepository {
         });
 
         return {
-            blogs: blogsWithCounts,
+            projects: blogsWithCounts,
             totalCount: totalCount
         };
     }
-    static async getTrendingBlog(payload: { page: number; pageSize: number; blogTitle?: string }, userId: string) {
+    static async getTrendingBlog(
+        payload: { page: number; pageSize: number; blogTitle?: string },
+        userId: string
+    ) {
         const skip = (payload.page - 1) * payload.pageSize;
         let args = {};
 
         if (payload.blogTitle) {
             args = {
-                title: { contains: payload.blogTitle, mode: "insensitive" }
+                title: { contains: payload.blogTitle, mode: 'insensitive' }
             };
         }
 
@@ -317,8 +321,6 @@ class BlogRepository {
                         }
                     })
                 ).map(star => star.blogId);
-
-
 
                 const hasStarred = starredBlogsId.includes(blog.id);
 
@@ -406,13 +408,16 @@ class BlogRepository {
             starCount
         };
     }
-    static async getAllBlog(payload: { page: number; pageSize: number; blogTitle?: string }, userId: string) {
+    static async getAllBlog(
+        payload: { page: number; pageSize: number; blogTitle?: string },
+        userId: string
+    ) {
         const skip = (payload.page - 1) * payload.pageSize;
         let args = {};
 
         if (payload.blogTitle) {
             args = {
-                title: { contains: payload.blogTitle, mode: "insensitive" }
+                title: { contains: payload.blogTitle, mode: 'insensitive' }
             };
         }
         const myBlogs = await db.blog.findMany({
@@ -448,8 +453,6 @@ class BlogRepository {
                         }
                     })
                 ).map(star => star.blogId);
-
-
 
                 const hasStarred = starredBlogsId.includes(blog.id);
 
@@ -506,7 +509,6 @@ class BlogRepository {
         };
     }
     static async addBlogComment(payload: { blogId: string; comment: string }, userId: string) {
-
         const blog = await db.blog.findUnique({
             where: {
                 id: payload.blogId
@@ -596,7 +598,10 @@ class BlogRepository {
             return deletedStar;
         }
     }
-    static async deleteMyCommentInBlog(payload: { commentId: string, blogId: string }, userId: string) {
+    static async deleteMyCommentInBlog(
+        payload: { commentId: string; blogId: string },
+        userId: string
+    ) {
         const existingBlog = await db.blog.findUnique({
             where: {
                 id: payload.blogId

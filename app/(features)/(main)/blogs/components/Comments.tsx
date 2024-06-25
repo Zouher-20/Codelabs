@@ -92,9 +92,6 @@ const Comments = ({ id }: { id: string }) => {
                             }
                         </div>
                     </div>
-                    <form method="dialog" className="modal-backdrop">
-                        <button onClick={() => toggleModal()}>close</button>
-                    </form>
                 </dialog>
             </div>
         </span>

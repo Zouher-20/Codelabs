@@ -1,4 +1,5 @@
 export interface blogType {
+    hasStarred: boolean;
     id: string;
     title: string;
     photo: string;
