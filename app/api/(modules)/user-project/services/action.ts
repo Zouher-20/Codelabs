@@ -14,11 +14,12 @@ import {
     UserProjectInput,
     userProjectStaredInput
 } from '../types';
+import UserProjectActionRepository from '../repository/user-project-action-repository';
 
-export const addUserProject = async (payload: UserProjectInput) => {
+export const createUserProjectLabFromTemplate = async (payload: UserProjectInput) => {
     const session = await getSession();
     const userId = session?.id;
-    return UserProjectRepository.addUserProjectLab(payload, userId);
+    return UserProjectActionRepository.addUserProjectLab(payload, userId);
 };
 
 export const getUserProjectsLab = async (payload: GetUserProjectInput) => {
