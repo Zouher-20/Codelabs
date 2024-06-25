@@ -11,6 +11,8 @@ import Image from "next/image";
 import Favorite from "./favorite";
 import IconRenderer from "@/app/components/globals/icon";
 import Link from "next/link";
+import { getSession } from "@/app/api/(modules)/auth/service/actions";
+import { userType } from "@/app/@types/user";
 
 const tabs = ['Blogs', 'Trending Blogs', 'Latest Blogs']
 
@@ -25,6 +27,7 @@ const Body = () => {
     const debouncedSearch = useDebounce(searchValue, 1000)
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [user, setUser] = useState<userType>();
 
     useEffect(() => {
         setLoading(true);
@@ -63,6 +66,14 @@ const Body = () => {
         }
     }, [currentTab])
 
+    useEffect(() => {
+        const getUser = async () => {
+            return await getSession()
+        }
+        getUser().then((res) => setUser(res))
+
+    }, [])
+
     async function getBlog() {
         await getBlogs(
             currentTab, 1, 100, debouncedSearch[0]
@@ -91,7 +102,7 @@ const Body = () => {
     }
 
     return <div className="flex flex-col gap-4">
-        <TrendCard trend={trend} />
+        <TrendCard trend={trend} userID={user?.id} />
         <Header
             HandleTab={(tab) => setCurrentTab(tab)}
             searchValue={searchValue}
@@ -102,7 +113,7 @@ const Body = () => {
                 error={error}
                 errorAndEmptyCallback={() => { }}
                 empty={currentData.length == 0}
-                loadedState={<Content blogs={currentData} />}
+                loadedState={<Content blogs={currentData} userID={user?.id} />}
             />
         }
     </div>
@@ -144,24 +155,24 @@ const Header = ({ HandleTab, onChange, searchValue }: {
         </span>
     </div>
 }
-const TrendCard = ({ trend }: { trend?: blogType }) => {
+const TrendCard = ({ trend, userID }: { trend?: blogType, userID?: string }) => {
     if (trend)
-        return <Link href={`/blogs/${trend.id}`} className="flex w-fit max-md:w-80 xl:w-3/4 2xl:w-fit max-md:flex-col md:flex-row bg-base-100 rounded-3xl max-md:self-start self-center">
+        return <div className="flex w-fit max-md:w-80 xl:w-3/4 2xl:w-fit max-md:flex-col md:flex-row bg-base-100 rounded-3xl max-md:self-start self-center">
             <Image
                 src={trend.photo}
                 alt="" width={320} height={208}
                 className={" max-h-52 min-h-64 w-80 md:min-w-[350px] rounded-3xl"} />
             <div className="flex flex-col p-4 gap-2">
-                <span className="text-3xl font-bold line-clamp-2 text-white">{trend.title}</span>
+                <Link href={`/blogs/${trend.id}`} className="text-3xl font-bold line-clamp-2 text-white">{trend.title}</Link>
                 <span className="flex gap-4 text-white">
                     <IconRenderer icon='solar:calendar-date-broken' width={24} height={24} />
                     <p>{trend.createdAt?.toLocaleDateString()}</p>
-                    <Favorite count={trend.starCount} />
+                    {trend && userID && <Favorite blog={trend} userID={userID} />}
                 </span>
                 <span
                     className="text-gray-500 line-clamp-5 md:line-clamp-4"
                     dangerouslySetInnerHTML={{ __html: trend.contant }}
                 ></span>
             </div>
-        </Link>
+        </div>
 }

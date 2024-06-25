@@ -1,9 +1,15 @@
 "use client"
+import { blogType } from "@/app/@types/blog";
 import IconRenderer from "@/app/components/globals/icon";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-const Favorite = ({ count }: { count: number }) => {
+
+const Favorite = ({ blog, userID }: { blog: blogType, userID: string }) => {
     const [isFavorite, setFavorite] = useState<boolean>(false);
+    useEffect(() => {
+        if (blog?.userId)
+            blog.userId == userID ? setFavorite(true) : setFavorite(false);
+    }, [])
 
     const favoriteHandler = () => {
         setFavorite(!isFavorite)
@@ -15,7 +21,7 @@ const Favorite = ({ count }: { count: number }) => {
             width={24} height={24}
             className={(isFavorite ? 'text-error' : 'text-gray-200') + ' cursor-pointer ml-auto transition-all duration-300'}
         />
-        <p>{count + (isFavorite ? 1 : 0)}</p>
+        <p>{blog?.starCount && blog.starCount + (isFavorite ? 0 : -1)}</p>
     </div>
 }
 
