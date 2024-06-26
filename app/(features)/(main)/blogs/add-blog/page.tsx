@@ -1,5 +1,5 @@
 'use client';
-import { uploadImage } from '@/app/api/(modules)/admin/template/services/action';
+import { getSession } from '@/app/api/(modules)/auth/service/actions';
 import { addBlog } from '@/app/api/(modules)/blog/services/action';
 import Avatar from '@/app/components/globals/avatar';
 import CodeLabsQuill from '@/app/components/globals/codelabs-quill';
@@ -43,7 +43,10 @@ const AddBlog = () => {
                 const result = await response.json();
                 await addBlog({ ...values, photo: result.data });
             } else await addBlog({ ...values, photo: '' });
-            router.push('/blogs');
+            const user = await getSession();
+            if (user.role == 'ADMIN') {
+                router.push('/admin/blogs');
+            } else router.push('/blogs');
             toast.success('blog created successfully');
         } catch (error: any) {
             toast.error(error.message);
@@ -67,12 +70,12 @@ const AddBlog = () => {
             >
                 {props => (
                     <Form className="flex w-full flex-col gap-4">
-                        <div className="flex lg:flex-wrap gap-8">
+                        <div className="flex gap-8 lg:flex-wrap">
                             <div className="flex flex-col gap-2">
                                 <label>Add your blogs cover</label>
                                 <Avatar photo={(photo: File) => (props.values.photo = photo)} />
                             </div>
-                            <div className="flex flex-col w-full lg:w-3/5  gap-2">
+                            <div className="flex w-full flex-col gap-2  lg:w-3/5">
                                 <span className="grid gap-2">
                                     <label>Title</label>
                                     <Input

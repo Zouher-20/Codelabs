@@ -5,19 +5,24 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-export default function Sidebar({ children, sidebarItems }:
-    Readonly<{
-        children: React.ReactNode;
-        sidebarItems: Array<SideBarItemType>;
-    }>) {
+export default function Sidebar({
+    children,
+    sidebarItems
+}: Readonly<{
+    children: React.ReactNode;
+    sidebarItems: Array<SideBarItemType>;
+}>) {
     const router = usePathname();
 
-    const MenuItem = ({ icon, name, route }: {
+    const MenuItem = ({
+        icon,
+        name,
+        route
+    }: {
         icon: React.ReactNode | undefined;
         name: String | undefined;
         route: Url | undefined;
     }) => {
-
         if (name == null || route == null || icon == null) {
             return <div className="h-10"></div>;
         }
@@ -66,11 +71,17 @@ export default function Sidebar({ children, sidebarItems }:
                                 ></MenuItem>
                             ))}
                         </ul>
-                        <div className={(router.includes('/blogs') ? 'block' : 'hidden') + ' mt-auto mb-8'}>
+                        <div
+                            className={
+                                (router.includes('/blogs') ? 'block' : 'hidden') + ' mb-8 mt-auto'
+                            }
+                        >
                             <Link
                                 href={'/blogs/add-blog'}
                                 className="btn btn-outline w-full text-primary"
-                            >Add Your Blog Now !</Link>
+                            >
+                                Add Your Blog Now !
+                            </Link>
                         </div>
                     </nav>
                 </div>
