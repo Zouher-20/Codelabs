@@ -33,7 +33,7 @@ const AddBlog = () => {
 
     const onSubmit = async (values: FormValues) => {
         try {
-            if (values.photo) {
+            if (values.photo && values.photo instanceof File) {
                 const formData = new FormData();
                 formData.append('file', values.photo);
                 const response = await fetch('/api/admin/template/image-upload', {
@@ -42,7 +42,8 @@ const AddBlog = () => {
                 });
                 const result = await response.json();
                 await addBlog({ ...values, photo: result.data });
-            } else await addBlog({ ...values, photo: '' });
+            } else if (values.photo) await addBlog({ ...values, photo: values.photo });
+            else await addBlog({ ...values, photo: '' });
             const user = await getSession();
             if (user.role == 'ADMIN') {
                 router.push('/admin/blogs');
