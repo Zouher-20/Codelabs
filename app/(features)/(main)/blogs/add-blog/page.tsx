@@ -1,4 +1,5 @@
 'use client';
+import { getSession } from '@/app/api/(modules)/auth/service/actions';
 import { addBlog } from '@/app/api/(modules)/blog/services/action';
 import Avatar from '@/app/components/globals/avatar';
 import CodeLabsQuill from '@/app/components/globals/codelabs-quill';
@@ -42,7 +43,10 @@ const AddBlog = () => {
                 const result = await response.json();
                 await addBlog({ ...values, photo: result.data });
             } else await addBlog({ ...values, photo: '' });
-            router.push('/blogs');
+            const user = await getSession();
+            if (user.role == 'ADMIN') {
+                router.push('/admin/blogs');
+            } else router.push('/blogs');
             toast.success('blog created successfully');
         } catch (error: any) {
             toast.error(error.message);
