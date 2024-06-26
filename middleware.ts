@@ -29,6 +29,9 @@ function CheckRole({ session, request }: { session: JWTPayload; request: NextReq
         }
     } else {
         if (session.role === ROLE.ADMIN) {
+            if (pathname.startsWith('/blogs/add-blog')) {
+                return NextResponse.next();
+            }
             return NextResponse.redirect(new URL('/admin', request.url));
         }
     }
