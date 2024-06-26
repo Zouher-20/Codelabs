@@ -1,13 +1,13 @@
-import { db } from "@/app/api/core/db/db";
-import { promises as fs } from "fs";
-import path from "path";
+import { db } from '@/app/api/core/db/db';
+import { promises as fs } from 'fs';
+import path from 'path';
 
 class LabRepository {
-    static async saveCodeLab(payload: { labId: string; jsoncontan: string }) {
+    static async saveCodeLab(payload: { labId: string; codeJsonContents: string }) {
         const mylab = await db.lab.findUnique({
             where: {
-                id: payload.labId,
-            },
+                id: payload.labId
+            }
         });
 
         if (!mylab) {
@@ -18,23 +18,14 @@ class LabRepository {
             throw new Error('no code found ');
         }
 
-        const jsonFilePath = path.join(process.cwd(), 'public', 'lab', mylab.jsonFile);
+        const jsonFilePath = path.join(process.cwd(), 'public', mylab.jsonFile);
 
         try {
-            const originalJsonContent = await fs.readFile(jsonFilePath, 'utf8');
-
-            const originalJson = JSON.parse(originalJsonContent);
-
-            const updatedJson = {
-                ...originalJson,
-                ...JSON.parse(payload.jsoncontan),
-            };
-
-            await fs.writeFile(jsonFilePath, JSON.stringify(updatedJson, null, 2));
+            await fs.writeFile(jsonFilePath, payload.codeJsonContents);
 
             await db.lab.update({
                 where: { id: payload.labId },
-                data: { jsonFile: jsonFilePath },
+                data: { jsonFile: mylab.jsonFile }
             });
 
             console.log('JSON file updated:', jsonFilePath);
@@ -42,6 +33,21 @@ class LabRepository {
             console.error('Error reading or writing JSON file:', error);
             throw new Error('Failed to save updated JSON file');
         }
+    }
+
+    static async getLab(id: string) {
+        const lab = await db.lab.findUnique({
+            where: {
+                id
+            }
+        });
+
+        if (!lab) throw 'lab not found';
+
+        const jsonFilePath = path.join(process.cwd(), 'public', lab.jsonFile);
+        const labContents = await fs.readFile(jsonFilePath);
+
+        return labContents.toString();
     }
 }
 
