@@ -153,6 +153,8 @@ model ClassRom {
   name        String
   type        String
   description String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime?     @updatedAt
   MemberClass MemberClass[]
   Rom         Rom[]
 }
