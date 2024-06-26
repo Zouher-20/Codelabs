@@ -21,6 +21,7 @@ class UserProjectActionRepository {
                 id: payload.templateId ?? ''
             }
         });
+
         if (myTemplate?.id == null || payload.templateId === '') {
             templateJsonFilePath = path.join(
                 process.cwd(),

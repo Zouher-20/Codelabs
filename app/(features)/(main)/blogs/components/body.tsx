@@ -11,15 +11,11 @@ import Image from "next/image";
 import Favorite from "./favorite";
 import IconRenderer from "@/app/components/globals/icon";
 import Link from "next/link";
-import { getSession } from "@/app/api/(modules)/auth/service/actions";
-import { userType } from "@/app/@types/user";
+import { getAllBlog, getBlogByCreatedAt, getMyBlog, getTrendingBlog } from "@/app/api/(modules)/blog/services/action";
 
-const tabs = ['Blogs', 'Trending Blogs', 'Latest Blogs']
+const tabs = ['Blogs', 'Trending Blogs', 'Latest Blogs', 'My Blogs']
 
 const Body = () => {
-    const [blogs, setBlogs] = useState<Array<blogType>>([]);
-    const [trending, setTrending] = useState<Array<blogType>>([]);
-    const [latest, setLatest] = useState<Array<blogType>>([]);
     const [trend, setTrend] = useState<blogType>();
     const [currentData, setCurrentData] = useState<Array<blogType>>([]);
     const [currentTab, setCurrentTab] = useState('Blogs');
@@ -27,7 +23,6 @@ const Body = () => {
     const debouncedSearch = useDebounce(searchValue, 1000)
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [user, setUser] = useState<userType>();
 
     useEffect(() => {
         setLoading(true);
@@ -36,6 +31,14 @@ const Body = () => {
         const searchFn = async () => {
             if (debouncedSearch) getBlog()
         };
+        searchFn().then(() => setLoading(false))
+    }, debouncedSearch)
+
+    useEffect(() => {
+        getBlog()
+    }, [currentTab])
+
+    useEffect(() => {
         const getTrendBlog = async () => {
             await getBlogs('Trending Blogs', 1, 1,).then((res) => {
                 if (Array.isArray(res) && res.every((item) => typeof item === 'object' && 'id' in item)) {
@@ -48,61 +51,42 @@ const Body = () => {
             })
         };
         getTrendBlog()
-        searchFn().then(() => setLoading(false))
-    }, debouncedSearch)
-
-    useEffect(() => {
-        if (currentTab == 'Blogs') {
-            getBlog()
-            setCurrentData(blogs)
-        }
-        else if (currentTab == 'Trending Blogs') {
-            getBlog()
-            setCurrentData(trending)
-        }
-        else {
-            getBlog()
-            setCurrentData(latest)
-        }
-    }, [currentTab])
-
-    useEffect(() => {
-        const getUser = async () => {
-            return await getSession()
-        }
-        getUser().then((res) => setUser(res))
-
     }, [])
 
     async function getBlog() {
-        await getBlogs(
-            currentTab, 1, 100, debouncedSearch[0]
-        ).then((res) => {
-            if (Array.isArray(res) && res.every((item) => typeof item === 'object' && 'id' in item)) {
-                if (currentTab == 'Blogs') {
-                    console.log('Blogs')
-                    setBlogs(res as blogType[]);
-                    setCurrentData(res as blogType[])
-                }
-                else if (currentTab == 'Trending Blogs') {
-                    console.log('trend')
-                    setTrending(res as blogType[]);
-                    setCurrentData(res as blogType[])
-                }
-                else {
-                    console.log('latest')
-                    setLatest(res as blogType[]);
-                    setCurrentData(res as blogType[])
-                }
-            }
-        }).catch((e) => {
-            setError(e.message);
-            toast.error(e.message);
-        })
+        if (currentTab == 'Blogs') {
+            await getAllBlog({ page: 1, pageSize: 100, blogTitle: debouncedSearch[0] }).then((res) => {
+                setCurrentData(res.projects as blogType[])
+            }).catch((e) => {
+                setError(e.message);
+                toast.error(e.message);
+            })
+        } else if (currentTab == 'Trending Blogs') {
+            await await getTrendingBlog({ page: 1, pageSize: 100, blogTitle: debouncedSearch[0] }).then((res) => {
+                setCurrentData(res.projects as blogType[])
+            }).catch((e) => {
+                setError(e.message);
+                toast.error(e.message);
+            })
+        } else if (currentTab == 'My Blogs') {
+            await getMyBlog({ page: 1, pageSize: 100, blogTitle: debouncedSearch[0] }).then((res) => {
+                setCurrentData(res.projects as blogType[])
+            }).catch((e) => {
+                setError(e.message);
+                toast.error(e.message);
+            })
+        } else {
+            await getBlogByCreatedAt({ page: 1, pageSize: 100, blogTitle: debouncedSearch[0] }).then((res) => {
+                setCurrentData(res.projects as blogType[])
+            }).catch((e) => {
+                setError(e.message);
+                toast.error(e.message);
+            })
+        }
     }
 
     return <div className="flex flex-col gap-4">
-        <TrendCard trend={trend} userID={user?.id} />
+        <TrendCard trend={trend} />
         <Header
             HandleTab={(tab) => setCurrentTab(tab)}
             searchValue={searchValue}
@@ -113,7 +97,7 @@ const Body = () => {
                 error={error}
                 errorAndEmptyCallback={() => { }}
                 empty={currentData.length == 0}
-                loadedState={<Content blogs={currentData} userID={user?.id} />}
+                loadedState={<Content blogs={currentData} />}
             />
         }
     </div>
@@ -155,7 +139,7 @@ const Header = ({ HandleTab, onChange, searchValue }: {
         </span>
     </div>
 }
-const TrendCard = ({ trend, userID }: { trend?: blogType, userID?: string }) => {
+const TrendCard = ({ trend }: { trend?: blogType }) => {
     if (trend)
         return <div className="flex w-fit max-md:w-80 xl:w-3/4 2xl:w-fit max-md:flex-col md:flex-row bg-base-100 rounded-3xl max-md:self-start self-center">
             <Image
@@ -167,7 +151,7 @@ const TrendCard = ({ trend, userID }: { trend?: blogType, userID?: string }) => 
                 <span className="flex gap-4 text-white">
                     <IconRenderer icon='solar:calendar-date-broken' width={24} height={24} />
                     <p>{trend.createdAt?.toLocaleDateString()}</p>
-                    {trend && userID && <Favorite blog={trend} userID={userID} />}
+                    {trend && <Favorite hasStarred={trend.hasStarred} blogId={trend.id} starCount={trend.starCount} />}
                 </span>
                 <span
                     className="text-gray-500 line-clamp-5 md:line-clamp-4"
