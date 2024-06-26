@@ -1,9 +1,8 @@
-import CodeLabTable, { GenericTableModel } from './generic-tabel';
+import { deleteMyBlog } from '@/app/api/(modules)/blog/services/action';
 import IconRenderer from '@/app/components/globals/icon';
 import Link from 'next/link';
-import { deleteChallenge } from '@/app/api/(modules)/admin/challenge/services/action';
 import toast from 'react-hot-toast';
-import { deleteMyBlog } from '@/app/api/(modules)/blog/services/action';
+import CodeLabTable, { GenericTableModel } from './generic-tabel';
 
 export default function BlogTable({
     currentPage,
@@ -16,41 +15,42 @@ export default function BlogTable({
     onPageChange: ({ index }: { index: number }) => void;
     pageCount: number;
     blogs: Array<blogTableType>;
-    isDelete: (value: boolean) => void
+    isDelete: (value: boolean) => void;
 }) {
     const handleDelete = async (id: string) => {
         try {
             const res = await deleteMyBlog({ blogId: id });
-            isDelete(true)
+            isDelete(true);
             return res;
         } catch (error: any) {
             toast.error(error.message);
         }
-    }
+    };
     function TableItem({ item, index }: { item: blogTableType; index: number }) {
         return (
-            <tr className={`my-3 ${index % 2 == 0 ? 'bg-base-300' : ''}`}>
+            <tr className={`my-3 ${index % 2 == 0 ? 'bg-base-300' : ''}`} key={index}>
                 <th>{index + 1}</th>
-                <td className='pb-0 line-clamp-2 w-64'>{item.title}</td>
-                <td>{(item.starCount)} </td>
-                <td >{(item.commentCount)}</td>
+                <td className="line-clamp-2 w-64 pb-0">{item.title}</td>
+                <td>{item.starCount} </td>
+                <td>{item.commentCount}</td>
                 <td>{item.createdAt.toLocaleDateString()}</td>
                 <td>
-                    <Link href={`/admin/challenges/challenge-details/${item.id}`} className="btn h-[35px] min-h-[35px] btn-outline">
+                    <Link
+                        href={`/admin/blogs/${item.id}`}
+                        className="btn btn-outline h-[35px] min-h-[35px]"
+                    >
                         Details
                     </Link>
                 </td>
                 <td>
                     <button
                         onClick={() => handleDelete(item.id)}
-                        className='h-[35px] min-h-[35px] btn btn-error btn-outline'>
-                        <IconRenderer
-                            className='w-6 h-6'
-                            icon='solar:trash-bin-2-broken'
-                        />
+                        className="btn btn-outline btn-error h-[35px] min-h-[35px]"
+                    >
+                        <IconRenderer className="h-6 w-6" icon="solar:trash-bin-2-broken" />
                     </button>
                 </td>
-            </tr >
+            </tr>
         );
     }
     return new CodeLabTable<blogTableType>({
@@ -86,6 +86,7 @@ export interface blogTableType extends GenericTableModel {
     starCount: number;
     createdAt: Date;
     userId: string;
+    isStarred?: boolean | null;
     user: {
         id: string;
         username: string;

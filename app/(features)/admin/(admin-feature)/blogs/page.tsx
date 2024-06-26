@@ -95,27 +95,23 @@ const Blogs = () => {
                 filter={filter}
                 onFilterChange={(val: string) => setFilter(val)}
             />
-            {blogs.length > 0 ? (
-                <ManageState
-                    loading={loading}
-                    errorAndEmptyCallback={() => {}}
-                    customEmptyPage={<EmptyState />}
-                    customLoadingPage={<LoadingState />}
-                    loadedState={
-                        <BlogTable
-                            blogs={selectedBlogs}
-                            pageCount={Math.ceil(blogs.length / pageSize)}
-                            currentPage={currentPage}
-                            onPageChange={onPageChange}
-                            isDelete={value => setIsDelete(value)}
-                        />
-                    }
-                    empty={blogs.length == 0}
-                    error={null}
-                />
-            ) : (
-                <span className="text-center font-bold">There is no challenge to display</span>
-            )}
+            <ManageState
+                loading={loading}
+                errorAndEmptyCallback={() => {}}
+                customEmptyPage={<EmptyState />}
+                customLoadingPage={<LoadingState />}
+                loadedState={
+                    <BlogTable
+                        blogs={selectedBlogs}
+                        pageCount={Math.ceil(blogs.length / pageSize)}
+                        currentPage={currentPage}
+                        onPageChange={onPageChange}
+                        isDelete={value => setIsDelete(value)}
+                    />
+                }
+                empty={blogs.length == 0}
+                error={null}
+            />
         </div>
     );
 };

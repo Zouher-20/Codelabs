@@ -1,7 +1,6 @@
 'use client';
 import Comments from '@/app/(features)/(main)/blogs/components/Comments';
 import Favorite from '@/app/(features)/(main)/blogs/components/favorite';
-import { blogTableType } from '@/app/(features)/admin/(admin-feature)/blogs/components/table/blog-table';
 import { blogType } from '@/app/@types/blog';
 import { userType } from '@/app/@types/user';
 import { getMyInfo } from '@/app/api/(modules)/auth/service/actions';
@@ -11,6 +10,7 @@ import { ManageState } from '@/app/components/page-state/state_manager';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { blogTableType } from '../components/table/blog-table';
 
 const BlogDetails = ({ params }: { params: { id: string } }) => {
     const [blog, setBlog] = useState<blogTableType | null>(null);
@@ -67,7 +67,7 @@ const BlogDetails = ({ params }: { params: { id: string } }) => {
             loadedState={
                 <div className="relative mx-auto flex flex-col gap-2 px-4 py-8 ">
                     <div className="flex gap-4 lg:-ml-8">
-                        <Link href="/blogs" className="mb-4 self-center ">
+                        <Link href="/admin/blogs" className="mb-4 self-center ">
                             <IconRenderer fontSize={24} icon="solar:arrow-left-linear" />
                         </Link>
                         <h1 className="slef-center mb-6 flex gap-2 text-4xl font-bold text-white">
@@ -78,8 +78,8 @@ const BlogDetails = ({ params }: { params: { id: string } }) => {
                         <Link
                             href={
                                 user?.id == blog?.user.id
-                                    ? '/profile'
-                                    : `/user-profile/${blog?.user.id}`
+                                    ? '/admin/profile'
+                                    : `/admin/user-profile/${blog?.user.id}`
                             }
                             className="w-14 cursor-pointer rounded-full bg-black p-4 text-center capitalize"
                         >
@@ -98,8 +98,8 @@ const BlogDetails = ({ params }: { params: { id: string } }) => {
                             <Link
                                 href={
                                     user?.id == blog?.user.id
-                                        ? '/profile'
-                                        : `/user-profile/${blog?.user.id}`
+                                        ? '/admin/profile'
+                                        : `/admin/user-profile/${blog?.user.id}`
                                 }
                                 className="cursor-pointer"
                             >
@@ -120,7 +120,7 @@ const BlogDetails = ({ params }: { params: { id: string } }) => {
                                 blog={blog as unknown as blogType}
                                 commentCount={blog?.commentCount}
                                 user={user}
-                                isAdmin={false}
+                                isAdmin={true}
                             />
                         )}
                         <p>Your feedback would be greatly appreciated.</p>
