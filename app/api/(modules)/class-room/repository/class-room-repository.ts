@@ -57,7 +57,10 @@ class ClassRoomRepository {
             include: {
                 MemberClass: {
                     where: {
-                        isTeacher: true
+                        isTeacher: true,
+                    },
+                    include: {
+                        user: true
                     }
                 }
             },
