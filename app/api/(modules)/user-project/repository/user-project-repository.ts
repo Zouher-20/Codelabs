@@ -131,10 +131,16 @@ class UserProjectRepository {
                         userprojectId: project.id
                     }
                 });
+                const viewCount = await db.veiw.count({
+                    where: {
+                        userprojectId: project.id
+                    }
+                });
 
                 return {
                     ...project,
                     starCount,
+                    viewCount,
                     commentCount
                 };
             })
