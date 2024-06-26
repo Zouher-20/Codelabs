@@ -54,6 +54,13 @@ class ClassRoomRepository {
         const classRoom = await db.classRom.findMany({
             take: payload.pageSize,
             skip: skip,
+            include: {
+                MemberClass: {
+                    where: {
+                        isTeacher: true
+                    }
+                }
+            },
             where: {
                 ...args
             }
