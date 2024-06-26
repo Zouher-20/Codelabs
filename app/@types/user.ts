@@ -1,4 +1,6 @@
 export interface userType {
+    userImage: string | null | undefined;
+    username: string;
     name: string;
     id: string;
     email: string;
