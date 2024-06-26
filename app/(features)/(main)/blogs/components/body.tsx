@@ -12,11 +12,15 @@ import Favorite from "./favorite";
 import IconRenderer from "@/app/components/globals/icon";
 import Link from "next/link";
 import { getAllBlog, getBlogByCreatedAt, getMyBlog, getTrendingBlog } from "@/app/api/(modules)/blog/services/action";
+import { getMyInfo } from "@/app/api/(modules)/auth/service/actions";
+import { userType } from "@/app/@types/user";
+import BlogSetting from "./blog-setting";
 
 const tabs = ['Blogs', 'Trending Blogs', 'Latest Blogs', 'My Blogs']
 
 const Body = () => {
     const [trend, setTrend] = useState<blogType>();
+    const [user, setUser] = useState<userType>();
     const [currentData, setCurrentData] = useState<Array<blogType>>([]);
     const [currentTab, setCurrentTab] = useState('Blogs');
     const [searchValue, setSearchValue] = useState<string>('');
@@ -50,6 +54,11 @@ const Body = () => {
                 toast.error(e.message);
             })
         };
+        const getUser = async () => {
+            const user = await getMyInfo()
+            if (user) setUser(user as unknown as userType);
+        }
+        getUser()
         getTrendBlog()
     }, [])
 
@@ -86,7 +95,7 @@ const Body = () => {
     }
 
     return <div className="flex flex-col gap-4">
-        <TrendCard trend={trend} />
+        <TrendCard trend={trend} userID={user?.id ?? ''} />
         <Header
             HandleTab={(tab) => setCurrentTab(tab)}
             searchValue={searchValue}
@@ -97,7 +106,7 @@ const Body = () => {
                 error={error}
                 errorAndEmptyCallback={() => { }}
                 empty={currentData.length == 0}
-                loadedState={<Content blogs={currentData} />}
+                loadedState={<Content blogs={currentData} userID={user?.id ?? ''} />}
             />
         }
     </div>
@@ -139,7 +148,7 @@ const Header = ({ HandleTab, onChange, searchValue }: {
         </span>
     </div>
 }
-const TrendCard = ({ trend }: { trend?: blogType }) => {
+const TrendCard = ({ trend, userID }: { trend?: blogType, userID: string }) => {
     if (trend) {
         const formattedPath = trend.photo.replace(/\\/g, '/');
         return <div className="flex w-fit max-md:w-80 xl:w-3/4 2xl:w-fit max-md:flex-col md:flex-row bg-base-100 rounded-3xl max-md:self-start self-center">
@@ -153,6 +162,11 @@ const TrendCard = ({ trend }: { trend?: blogType }) => {
                     <IconRenderer icon='solar:calendar-date-broken' width={24} height={24} />
                     <p>{trend.createdAt?.toLocaleDateString()}</p>
                     {trend && <Favorite hasStarred={trend.hasStarred} blogId={trend.id} starCount={trend.starCount} />}
+                    <div className="flex gap-1 ml-auto">
+                        <IconRenderer icon={'fa6-solid:street-view'} width={20} height={24} className={" text-warning"} />
+                        {trend.viewCount}
+                    </div>
+                    {userID == trend.user.id && <BlogSetting blogID={trend.id} />}
                 </span>
                 <span
                     className="text-gray-500 line-clamp-5 md:line-clamp-4"
