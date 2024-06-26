@@ -11,7 +11,8 @@ import EditorToolbar from './editor-toolbar';
 import { TreeReducerActionType, useTree, useTreeDispatch } from './tree-context';
 
 export default function CodeEditor({ files }: { files: FileSystemTree }) {
-    const { editor, setEditor, booting, writeFile, setupContainer } = useContainer();
+    const { editor, setEditor, booting, writeFile, setupContainer, webcontainerInstance } =
+        useContainer();
     const [language, setLanguage] = useState('json');
     const [dirty, setDirty] = useState(false);
     const dispatch = useTreeDispatch();
@@ -27,7 +28,6 @@ export default function CodeEditor({ files }: { files: FileSystemTree }) {
     }, 500);
 
     useEffect(() => {
-        setupContainer(files);
         if (tree.activeFileName?.includes('.json')) setLanguage('json');
         else if (tree.activeFileName?.includes('.js')) setLanguage('javascript');
         else if (tree.activeFileName?.includes('.ts')) setLanguage('typescript');
@@ -35,12 +35,21 @@ export default function CodeEditor({ files }: { files: FileSystemTree }) {
 
         setEditor(get(tree.nodes, TreeHelper.getParsedPath(tree.activeFile)));
         setDirty(false);
-    }, [tree.activeFileName, setEditor, files, tree.activeFile, setupContainer, tree.nodes]);
+    }, [tree.activeFile]);
+
+    useEffect(() => {
+        setupContainer(files);
+        if (webcontainerInstance.current && dispatch && !tree.webContainerInstance)
+            dispatch({
+                type: TreeReducerActionType.SET_CONTAINER,
+                payload: webcontainerInstance.current
+            });
+    }, [webcontainerInstance.current]);
 
     return (
         <div className="grid min-h-screen w-5/6 grid-cols-2">
             <EditorToolbar dirty={dirty} />
-            <div className="editor  w-full">
+            <div className="editor min-h-[600px] w-full">
                 <Editor
                     className="h-full w-full rounded-lg"
                     language={language}

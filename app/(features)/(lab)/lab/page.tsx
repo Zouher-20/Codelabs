@@ -1,21 +1,13 @@
-'use client';
-import CodeEditor from '../components/code-editor';
-import FileTreeWrapper from '../components/file-tree-wrapper';
-import { TreeContextProvider } from '../components/tree-context';
-import { files } from './nodejs-examble';
+import LabWrapper from '../components/lab-wrapper';
 import './styles.css';
 
 // get lab from server , reboot and save methods
 
-export default function Lab() {
+export default function LabPage() {
     return (
-        <TreeContextProvider nodes={files}>
-            <div className="flex">
-                <div className="w-1/6 border-e border-base-100 bg-base-300">
-                    <FileTreeWrapper />
-                </div>
-                <CodeEditor files={files} />
-            </div>
-        </TreeContextProvider>
+        <div>
+            {/* <LabHeader /> */}
+            <LabWrapper />
+        </div>
     );
 }

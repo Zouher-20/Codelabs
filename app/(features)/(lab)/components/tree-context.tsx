@@ -1,6 +1,6 @@
 'use client';
-import { FileSystemTree } from '@webcontainer/api';
-import { cloneDeep, get, set, unset } from 'lodash';
+import { FileSystemTree, WebContainer } from '@webcontainer/api';
+import { cloneDeep, set, unset } from 'lodash';
 import { Dispatch, PropsWithChildren, createContext, useContext, useReducer } from 'react';
 import TreeHelper from '../lab/tree-helper';
 export interface FileTreeState {
@@ -8,12 +8,14 @@ export interface FileTreeState {
     activeFile: string[];
     activeFolder: string[];
     activeFileName?: string;
+    webContainerInstance: WebContainer | null;
 }
 export const FileTreeContext = createContext<FileTreeState>({
     nodes: {},
     activeFile: ['package.json'],
     activeFolder: [],
-    activeFileName: 'package.json'
+    activeFileName: 'package.json',
+    webContainerInstance: null
 });
 
 export enum NodeType {
@@ -58,7 +60,8 @@ export enum TreeReducerActionType {
     NODE_DELETE,
     FOLDER_CREATE,
     FILE_CREATE,
-    FILE_UPDATE
+    FILE_UPDATE,
+    SET_CONTAINER
 }
 
 interface IFileActivateAction {
@@ -88,87 +91,113 @@ interface IFolderCreateAction {
     payload: string[];
 }
 
+interface ISetContainerAction {
+    type: TreeReducerActionType.SET_CONTAINER;
+    payload: WebContainer;
+}
+
 type ITreeAction =
     | IFileActivateAction
     | IFolderActivateAction
     | INodeDeleteAction
     | IFileCreateAction
     | IFolderCreateAction
-    | IFileUpdateAction;
+    | IFileUpdateAction
+    | ISetContainerAction;
 
-export function treeReducer(fileTreeSate: FileTreeState, { type, payload }: ITreeAction) {
+export function treeReducer(fileTreeState: FileTreeState, { type, payload }: ITreeAction) {
     switch (type) {
         case TreeReducerActionType.FILE_ACTIVATE: {
-            // if (setFileCb) setFileCb(get(fileTreeSate.nodes, TreeHelper.getParsedPath(payload)));
+            // if (setFileCb) setFileCb(get(fileTreeState.nodes, TreeHelper.getParsedPath(payload)));
             return {
-                activeFolder: fileTreeSate.activeFolder,
+                activeFolder: fileTreeState.activeFolder,
                 activeFile: payload,
-                nodes: fileTreeSate.nodes,
-                activeFileName: [...payload].pop()
+                nodes: fileTreeState.nodes,
+                activeFileName: [...payload].pop(),
+                webContainerInstance: fileTreeState.webContainerInstance
             };
         }
         case TreeReducerActionType.FOLDER_ACTIVATE: {
             return {
                 activeFolder: payload,
-                activeFile: fileTreeSate.activeFile,
-                nodes: fileTreeSate.nodes,
-                activeFileName: fileTreeSate.activeFileName
+                activeFile: fileTreeState.activeFile,
+                nodes: fileTreeState.nodes,
+                activeFileName: fileTreeState.activeFileName,
+                webContainerInstance: fileTreeState.webContainerInstance
             };
         }
         case TreeReducerActionType.NODE_DELETE: {
-            const newNodes = cloneDeep(fileTreeSate.nodes);
+            const newNodes = cloneDeep(fileTreeState.nodes);
             unset(newNodes, TreeHelper.getParsedPath(payload, false));
+            const actualPath = '/' + payload.join('/');
+
+            fileTreeState.webContainerInstance?.fs.rm(actualPath, { recursive: true });
             return {
-                activeFolder: fileTreeSate.activeFolder,
+                activeFolder: fileTreeState.activeFolder,
                 activeFile: ['package.json'],
                 nodes: newNodes,
-                activeFileName: 'package.json'
+                activeFileName: 'package.json',
+                webContainerInstance: fileTreeState.webContainerInstance
             };
         }
         case TreeReducerActionType.FOLDER_CREATE: {
-            const alreadyExist = !!get(fileTreeSate, TreeHelper.getParsedPath(payload, false));
-            console.log(alreadyExist);
-            const newNodes = cloneDeep(fileTreeSate.nodes);
+            const newNodes = cloneDeep(fileTreeState.nodes);
             set(newNodes, TreeHelper.getParsedPath(payload, false), { directory: {} });
+            const actualPath =
+                payload[0] === 'root'
+                    ? '/' + payload.slice(1, payload.length).join('/')
+                    : '/' + payload.join('/');
+            fileTreeState.webContainerInstance?.fs
+                .mkdir(actualPath, { recursive: true })
+                .catch(() => {});
             return {
-                activeFolder: fileTreeSate.activeFolder,
-                activeFile: fileTreeSate.activeFile,
+                activeFolder: fileTreeState.activeFolder,
+                activeFile: fileTreeState.activeFile,
                 nodes: newNodes,
-                activeFileName: fileTreeSate.activeFileName
+                activeFileName: fileTreeState.activeFileName,
+                webContainerInstance: fileTreeState.webContainerInstance
             };
         }
         case TreeReducerActionType.FILE_CREATE: {
-            const alreadyExist = !!get(
-                fileTreeSate.nodes,
-                TreeHelper.getParsedPath(payload, false)
-            );
-            if (!alreadyExist) {
-                const newNodes = cloneDeep(fileTreeSate.nodes);
-                set(newNodes, TreeHelper.getParsedPath(payload, false), {
-                    file: { contents: '' }
-                });
-                return {
-                    activeFolder: fileTreeSate.activeFolder,
-                    activeFile: payload,
-                    nodes: newNodes,
-                    activeFileName: payload[payload.length - 1]
-                };
-            } else {
-                return fileTreeSate;
-            }
+            const newNodes = cloneDeep(fileTreeState.nodes);
+            set(newNodes, TreeHelper.getParsedPath(payload, false), {
+                file: { contents: '' }
+            });
+            const actualPath =
+                payload[0] === 'root'
+                    ? '/' + payload.slice(1, payload.length).join('/')
+                    : '/' + payload.join('/');
+
+            fileTreeState.webContainerInstance?.fs.writeFile(actualPath, '').catch(() => {});
+            return {
+                activeFolder: fileTreeState.activeFolder,
+                activeFile: payload,
+                nodes: newNodes,
+                activeFileName: payload[payload.length - 1],
+                webContainerInstance: fileTreeState.webContainerInstance
+            };
         }
         case TreeReducerActionType.FILE_UPDATE: {
-            const newNodes = cloneDeep(fileTreeSate.nodes);
-            set(newNodes, TreeHelper.getParsedPath(fileTreeSate.activeFile, false), {
+            const newNodes = cloneDeep(fileTreeState.nodes);
+            set(newNodes, TreeHelper.getParsedPath(fileTreeState.activeFile, false), {
                 file: { contents: payload }
             });
-            console.log(newNodes);
 
             return {
-                activeFolder: fileTreeSate.activeFolder,
-                activeFile: fileTreeSate.activeFile,
+                activeFolder: fileTreeState.activeFolder,
+                activeFile: fileTreeState.activeFile,
                 nodes: newNodes,
-                activeFileName: fileTreeSate.activeFileName
+                activeFileName: fileTreeState.activeFileName,
+                webContainerInstance: fileTreeState.webContainerInstance
+            };
+        }
+        case TreeReducerActionType.SET_CONTAINER: {
+            return {
+                activeFolder: fileTreeState.activeFolder,
+                activeFile: fileTreeState.activeFile,
+                nodes: fileTreeState.nodes,
+                activeFileName: fileTreeState.activeFileName,
+                webContainerInstance: payload
             };
         }
         default: {
