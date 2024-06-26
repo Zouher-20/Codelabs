@@ -45,6 +45,8 @@ async function main() {
                     username: `user${i}`,
                     password: 'password123',
                     role: 'USER',
+                    position: " software rng",
+                    bio: "this this this this this this this",
                     typeUser: 'basic',
                     userImage: `https://example.com/user${i}.png`,
                     planEndDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
