@@ -5,7 +5,6 @@ import { MyOptionType } from '@/app/@types/select';
 import { TempletsTableType } from '@/app/@types/templetes';
 import { getTag } from '@/app/api/(modules)/admin/service/action';
 import { getAllTemplate } from '@/app/api/(modules)/admin/template/services/action';
-import { addUserProject } from '@/app/api/(modules)/user-project/services/action';
 import Button from '@/app/components/globals/form/button';
 import Input from '@/app/components/globals/form/input';
 import Select from '@/app/components/globals/form/select/select';
@@ -85,13 +84,22 @@ const NewLabModal = () => {
 
     const onSubmit = async (values: FormValues) => {
         try {
-            await addUserProject({
-                jsonFile: '',
-                tagId: values.tags,
-                description: values.description,
-                name: values.name,
-                templateId: templateId
+            const response2 = await fetch('/api/user-project/lab-from-template', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    tagId: values.tags,
+                    description: values.description,
+                    name: values.name,
+                    templateId: templateId
+                })
             });
+            const result2 = await response2.json();
+            if (result2.statusCode >= 300) {
+                throw new Error(result2.data);
+            }
             toast.success('lab created successfully');
             setTimeout(function () {
                 (document.getElementById('new-lab-modal') as HTMLDialogElement).close();
@@ -185,8 +193,7 @@ const NewLabModal = () => {
                                             ]}
                                             onChange={e => {
                                                 props.values.option = e.target.value;
-                                                console.log(e.target.value);
-                                                console.log('dsadsadsa');
+                                                setTemplateId(e.target.value);
                                             }}
                                         />
                                     </div>

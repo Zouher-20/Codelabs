@@ -1,11 +1,10 @@
-import { db } from "@/app/api/core/db/db";
-import { NAMEPLAN } from "@prisma/client";
-import { promises as fs } from "fs";
-import path from "path";
+import { db } from '@/app/api/core/db/db';
+import { NAMEPLAN } from '@prisma/client';
+import { promises as fs } from 'fs';
+import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 
 class UserProjectActionRepository {
-
     static async addUserProjectLab(
         payload: {
             name?: string;
@@ -19,14 +18,25 @@ class UserProjectActionRepository {
 
         const myTemplate = await db.tamblate.findUnique({
             where: {
-                id: payload.templateId
+                id: payload.templateId ?? ''
             }
         });
-
-        if (myTemplate?.id == null || payload.templateId === "") {
-            templateJsonFilePath = path.join(process.cwd(), 'public', 'uploads', 'labs', 'default.json');
+        if (myTemplate?.id == null || payload.templateId === '') {
+            templateJsonFilePath = path.join(
+                process.cwd(),
+                'public',
+                'uploads',
+                'labs',
+                'default.json'
+            );
         } else {
-            templateJsonFilePath = path.join(process.cwd(), 'public', 'uploads', 'labs', myTemplate.nameTemplate);
+            templateJsonFilePath = path.join(
+                process.cwd(),
+                'public',
+                'uploads',
+                'labs',
+                myTemplate.nameTemplate + '.json'
+            );
         }
         const countMyUserProject = await db.userProject.count({
             where: {
@@ -57,7 +67,13 @@ class UserProjectActionRepository {
 
         if (hasLabsPlan && countMyUserProject < userPlan.plan.FeaturePlan[0].value) {
             const newJsonFileName = `${uuidv4()}.json`;
-            const newJsonFilePath = path.join(process.cwd(), 'public', 'uploads', 'labs', newJsonFileName);
+            const newJsonFilePath = path.join(
+                process.cwd(),
+                'public',
+                'uploads',
+                'labs',
+                newJsonFileName
+            );
 
             try {
                 const templateJsonContent = await fs.readFile(templateJsonFilePath, 'utf8');
@@ -65,7 +81,7 @@ class UserProjectActionRepository {
 
                 const newLab = await db.lab.create({
                     data: {
-                        jsonFile: newJsonFileName,
+                        jsonFile: newJsonFileName
                     }
                 });
 
@@ -110,7 +126,6 @@ class UserProjectActionRepository {
             throw new Error('User does not have access to create more user projects.');
         }
     }
-
 }
 
 export default UserProjectActionRepository;
