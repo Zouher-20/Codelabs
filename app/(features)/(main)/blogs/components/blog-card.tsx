@@ -5,8 +5,9 @@ import noImage from '@/public/images/no-image2.png'
 import { blogType } from "@/app/@types/blog";
 import { editBlog } from "@/app/api/(modules)/blog/services/action";
 import Favorite from "./favorite";
+import BlogSetting from "./blog-setting";
 
-const BlogCard = ({ blog }: { blog: blogType }) => {
+const BlogCard = ({ blog, userID }: { blog: blogType, userID: string }) => {
 
     const formattedPath = blog.photo.replace(/\\/g, '/');
 
@@ -20,10 +21,16 @@ const BlogCard = ({ blog }: { blog: blogType }) => {
         <span className="font-bold line-clamp-3 my-2">{blog.title}</span>
         <span className="flex gap-2 text-gray-500">
             <IconRenderer icon='solar:calendar-date-broken' width={24} height={24} />
-            <p className="mr-auto">{blog.createdAt?.toLocaleDateString()}</p>
+            <p>{blog.createdAt?.toLocaleDateString()}</p>
             <Favorite hasStarred={blog.hasStarred} blogId={blog.id} starCount={blog.starCount} />
+            <div className="flex gap-1 ml-auto">
+                <IconRenderer icon={'fa6-solid:street-view'} width={20} height={24} className={" text-warning"} />
+                {blog.viewCount}
+            </div>
+            {userID == blog.user.id && <BlogSetting blogID={blog.id} />}
         </span>
         <Link href={`/blogs/${blog.id}`} className="btn btn-sm p-0 w-fit btn-link" >Read more</Link>
+
     </div>
 }
 
