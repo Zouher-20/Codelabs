@@ -25,11 +25,10 @@ export default function ClassesTable({
     }) {
         return (
             <tr className={`my-3 ${index % 2 == 0 ? 'bg-base-300' : ''}`}>
-                <th>{item.id}</th>
                 <td>{item.className}</td>
                 <td>{item.teacherName}</td>
                 <td>{item.memberCount} members</td>
-                <td>{item.labCount} Labs</td>
+                <td>{item.labCount} Rooms</td>
                 <td>{item.createdAt}</td>
                 <td>
                     <Button
@@ -53,11 +52,10 @@ export default function ClassesTable({
         tableHeader: (
             <thead>
                 <tr>
-                    <th></th>
                     <th>Classes</th>
                     <th>Teacher</th>
                     <th>Member</th>
-                    <th>Labs</th>
+                    <th>Rooms</th>
                     <th>Created</th>
                     <th></th>
                 </tr>
@@ -67,7 +65,7 @@ export default function ClassesTable({
 }
 
 export interface ClassTableType extends GenericTableModel {
-    id: number;
+    id: string;
     className: string;
     teacherName: string;
     memberCount: number;

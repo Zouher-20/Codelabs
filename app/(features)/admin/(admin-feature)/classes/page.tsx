@@ -1,59 +1,62 @@
 'use client';
-import Input from '@/app/components/globals/form/input';
-import IconRenderer from '@/app/components/globals/icon';
+import { getAllClassRooms } from '@/app/api/(modules)/class-room/services/action';
+import { ManageState } from '@/app/components/page-state/state_manager';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import ClassesTable, { ClassTableType } from '../components/table/classes-table';
+import ClassesViewHeader from './statistics/components/header';
 
 const Classes = () => {
-    const [currentPage, updateCurrentPage] = useState(0);
-    const currentParams = useSearchParams();
-    var classes: Array<ClassTableType> = [
-        {
-            id: 1,
-            className: 'ClassName',
-            teacherName: 'Teacher name',
-            labCount: 2,
-            memberCount: 10,
-            createdAt: 'April 22/4/204'
-        },
-        {
-            id: 2,
-            className: 'ClassName',
-            teacherName: 'Teacher name',
-            labCount: 2,
-            memberCount: 10,
-            createdAt: 'April 22/4/204'
-        },
-        {
-            id: 3,
-            className: 'ClassName',
-            teacherName: 'Teacher name',
-            labCount: 2,
-            memberCount: 10,
-            createdAt: 'April 22/4/204'
-        },
-        {
-            id: 4,
-            className: 'ClassName',
-            teacherName: 'Teacher name',
-            labCount: 2,
-            memberCount: 10,
-            createdAt: 'April 22/4/204'
-        },
-        {
-            id: 5,
-            className: 'ClassName',
-            teacherName: 'Teacher name',
-            labCount: 2,
-            memberCount: 10,
-            createdAt: 'April 22/4/204'
-        }
-    ];
-    const [selectedClasses, setSelectedClasses] = useState<Array<ClassTableType>>([]);
-    const pageSize = 4;
+    const pageSize = 10;
+    const params = useSearchParams();
+    const [classes, setClasses] = useState<Array<ClassTableType>>([]);
+    const [currentPage, updateCurrentPage] = useState(1);
+    const [totalPageCount, setTotalPageCount] = useState(0);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [searchWord, setSearchWord] = useState('');
     const route = useRouter();
 
+    useEffect(() => {
+        var pageNumber = Number(params.get('id') ?? '1');
+        updateCurrentPage(pageNumber);
+        getClasses({ newSearchWord: searchWord, page: pageNumber });
+    }, [searchWord]);
+
+    const getClasses = async ({ newSearchWord, page }: { newSearchWord: string; page: number }) => {
+        setLoading(true);
+        setError(null);
+        try {
+            const res = await getAllClassRooms({
+                page: page,
+                pageSize: pageSize,
+                searchWord: newSearchWord
+            });
+            setTotalPageCount(res.totalCount);
+            setClasses(
+                res.classRooms.map(e => {
+                    return {
+                        className: e.name ?? '',
+                        id: e.id ?? '',
+                        labCount: e.roomCount ?? 0,
+                        memberCount: e.memberCount ?? 0,
+                        teacherName: e.MemberClass[0].user.username,
+                        createdAt: e.createdAt.toUTCString()
+                    };
+                })
+            );
+        } catch (e: any) {
+            setError(e.message);
+            toast.error(e.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+    const onPageChange = ({ index }: { index: number }) => {
+        updateCurrentPage(index);
+        getClasses({ newSearchWord: searchWord, page: index });
+    };
     const handleClassClick = (currentClass: ClassTableType) => {
         const params = {
             id: currentClass.id.toString()
@@ -62,81 +65,36 @@ const Classes = () => {
         route.push('/admin/classes/statistics' + '?' + queryString);
         return;
     };
-    useEffect(() => {
-        const id = Number(currentParams.get('id') ?? '1');
-        onPageChange({ index: id });
-    }, []);
-    const onPageChange = ({ index }: { index: number }) => {
-        updateCurrentPage(index);
-        setSelectedClasses([
-            ...chunkArray({
-                startingIndex: (index - 1) * pageSize,
-                lastIndex: index * pageSize,
-                array: classes
-            })
-        ]);
-    };
-    function chunkArray({
-        array,
-        lastIndex,
-        startingIndex
-    }: {
-        startingIndex: number;
-        array: Array<ClassTableType>;
-        lastIndex: number;
-    }): Array<ClassTableType> {
-        const chunks: Array<ClassTableType> = [];
-        for (let i = startingIndex; i < lastIndex && i < array.length; i++) {
-            chunks.push(array[i]);
-        }
-        return chunks;
-    }
     return (
         <div className="flex flex-col gap-2 p-6">
-            <Header />
-            <ClassesTable
-                onDetailsButtonClicked={({ currentClass }: { currentClass: ClassTableType }) =>
-                    handleClassClick(currentClass)
+            <ClassesViewHeader
+                onFieldChanged={e => {
+                    updateCurrentPage(1);
+                    setSearchWord(e);
+                }}
+                searchWord={searchWord}
+            />
+            <ManageState
+                loading={loading}
+                error={error}
+                errorAndEmptyCallback={() => {}}
+                empty={classes.length == 0}
+                loadedState={
+                    <ClassesTable
+                        onDetailsButtonClicked={({
+                            currentClass
+                        }: {
+                            currentClass: ClassTableType;
+                        }) => handleClassClick(currentClass)}
+                        classes={classes}
+                        pageCount={Math.ceil(totalPageCount / pageSize)}
+                        currentPage={currentPage}
+                        onPageChange={onPageChange}
+                    />
                 }
-                classes={selectedClasses}
-                pageCount={Math.ceil(classes.length / pageSize)}
-                currentPage={currentPage}
-                onPageChange={onPageChange}
             />
         </div>
     );
 };
 
-const Header = () => {
-    return (
-        <div className="flex flex-col gap-8 p-6">
-            <h1 className="text-4xl font-bold text-white">Classes</h1>
-
-            <div className="flex gap-8">
-                <span>
-                    <Input
-                        id="search"
-                        type="text"
-                        placeholder="Search for Classes ..."
-                        icon="circum:search"
-                        value={''}
-                    />
-                </span>
-                <div className="dropdown">
-                    <summary tabIndex={0} className=" btn flex h-[35px] min-h-[35px]">
-                        Date
-                        <IconRenderer width={24} height={24} icon={'solar:alt-arrow-down-linear'} />
-                    </summary>
-                    <ul
-                        tabIndex={0}
-                        className="menu dropdown-content z-[1] ml-4 mt-2 w-52 rounded-box bg-base-100 p-2 shadow"
-                    >
-                        <li></li>
-                        <li></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    );
-};
 export default Classes;
