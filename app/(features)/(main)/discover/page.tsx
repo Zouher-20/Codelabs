@@ -46,6 +46,7 @@ export default function DiscoverPage() {
                     commentCount: e.commentCount,
                     description: e.description,
                     starCount: e.starCount,
+                    viewCount: e.viewCount,
                     user: {
                         email: e.user.email,
                         id: e.user.id,
@@ -71,6 +72,7 @@ export default function DiscoverPage() {
                     commentCount: e.commentCount,
                     description: e.description,
                     starCount: e.starCount,
+                    viewCount: e.viewCount,
                     user: {
                         email: e.user.email,
                         id: e.user.id,

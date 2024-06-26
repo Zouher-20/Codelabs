@@ -64,6 +64,8 @@ export default function LabDetails() {
             commentCount: res.commentCount,
             starCount: res.starCount,
             description: res.lab.description ?? '',
+            viewCount: res.viewCount,
+            clone: res.lab.clone ?? 0,
             user: {
                 email: res.lab.user.email,
                 id: res.lab.user.id,
@@ -176,7 +178,9 @@ export default function LabDetails() {
                                                             ? lab?.starCount
                                                             : index == 3
                                                               ? lab?.commentCount
-                                                              : 0,
+                                                              : index == 2
+                                                                ? lab?.viewCount ?? 0
+                                                                : lab?.clone,
                                                     style: interaction.style,
                                                     key: index
                                                 })

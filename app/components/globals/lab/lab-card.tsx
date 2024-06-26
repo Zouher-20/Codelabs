@@ -1,4 +1,4 @@
-import { LabTableType } from '@/app/(features)/admin/discover/components/lab-table';
+import { LabTableType } from '@/app/(features)/admin/(admin-feature)/discover/components/lab-table';
 import UserAvatar from '../user-avatar';
 import InteractionsLab from './interactions-lab';
 
@@ -21,7 +21,7 @@ const LabCard = ({
             <InteractionsLab
                 onInteractionClicked={onInteractionClicked}
                 lab={lab}
-                react={[lab.starCount, 213, 30, lab.commentCount]}
+                react={[lab.starCount, lab.clone ?? 0, lab.viewCount ?? 0, lab.commentCount]}
             />
             <div className="px-4">
                 <p className="text-sm">{lab.name}</p>
