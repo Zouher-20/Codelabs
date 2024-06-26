@@ -8,6 +8,7 @@ import {
     AddFeedbackInForClassProjectInRomInput,
     AddRomInClassInput,
     AddUsersInClassInput,
+    getAllClassRoomsInput,
     GetAllUserAndSearchInput,
     getClassesByMeInput,
     GetClassRomByIdInput,
@@ -77,6 +78,9 @@ export const getRomInClass = async (payload: GetRomInClassInput) => {
     return classRoomRepository.getRomInClass(payload, userId);
 };
 
+export const getAllClassRooms = async (payload: getAllClassRoomsInput) => {
+    return classRoomRepository.getAllClassRooms(payload);
+}
 export const addRomInClass = async (payload: AddRomInClassInput) => {
     const session = await getSession();
     const userId = session?.id;

@@ -40,6 +40,62 @@ class ClassRoomRepository {
     //     })
     // }
 
+    static async getAllClassRooms(
+        payload: { page: number; pageSize: number; searchWord?: string },
+    ) {
+        const skip = (payload.page - 1) * payload.pageSize;
+        let args = {};
+
+        if (payload.searchWord) {
+            args = {
+                name: { contains: payload.searchWord, mode: 'insensitive' }
+            };
+        }
+        const classRoom = await db.classRom.findMany({
+            take: payload.pageSize,
+            skip: skip,
+            where: {
+                ...args
+            }
+        });
+
+        const classRoomsWithCounts = await Promise.all(
+            classRoom.map(async classRoom => {
+
+                const memberCount = await db.memberClass.count({
+                    where: { classRomId: classRoom.id }
+                });
+                const roomCount = await db.rom.count({
+                    where: { classRomId: classRoom.id }
+                });
+
+                return {
+                    ...classRoom,
+                    memberCount,
+                    roomCount
+                };
+            })
+        );
+
+        const totalCount = await db.classRom.count({
+            where: {
+                ...args
+            }
+        });
+
+        return {
+            classRooms: classRoomsWithCounts,
+            totalCount: totalCount
+        };
+    }
+
+
+
+
+
+
+
+
 
 
     static async addFeedbackInForClassProjectInRom(

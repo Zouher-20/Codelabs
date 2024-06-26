@@ -79,3 +79,9 @@ export interface AddFeedbackInForClassProjectInRomInput {
     labId: string;
     feedback: string;
 }
+
+export interface getAllClassRoomsInput {
+    page: number;
+    pageSize: number;
+    searchWord?: string
+}
