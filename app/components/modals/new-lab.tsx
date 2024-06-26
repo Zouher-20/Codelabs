@@ -2,8 +2,9 @@
 import * as yup from 'yup';
 
 import { MyOptionType } from '@/app/@types/select';
+import { TempletsTableType } from '@/app/@types/templetes';
 import { getTag } from '@/app/api/(modules)/admin/service/action';
-import { addUserProject } from '@/app/api/(modules)/user-project/services/action';
+import { getAllTemplate } from '@/app/api/(modules)/admin/template/services/action';
 import Button from '@/app/components/globals/form/button';
 import Input from '@/app/components/globals/form/input';
 import Select from '@/app/components/globals/form/select/select';
@@ -24,11 +25,17 @@ interface FormValues {
 
 const NewLabModal = () => {
     const [tOptions, setTOptions] = useState<Array<MyOptionType>>([]);
+    const [template, setTemplate] = useState<Array<TempletsTableType>>([]);
+
     const [templateId, setTemplateId] = useState<string | null>(null);
 
     useEffect(() => {
-        getTags();
+        getServerData();
     }, []);
+    const getServerData = () => {
+        getTags();
+        getTempletes();
+    };
     const getTags = async () => {
         try {
             const res = await getTag({ page: 1, pageSize: 100 });
@@ -37,6 +44,24 @@ const NewLabModal = () => {
                     return {
                         value: e.id,
                         label: e.tagename
+                    };
+                })
+            );
+        } catch (error: any) {
+            toast.error(error.message);
+        }
+    };
+    const getTempletes = async () => {
+        try {
+            const res = await getAllTemplate({ page: 1, pageSize: 100 });
+            setTemplate(
+                res.templates.map<TempletsTableType>(e => {
+                    return {
+                        createdAt: e.createdAt,
+                        id: e.id ?? '',
+                        image: e.imageTemplate ?? '',
+                        labId: e.labId ?? '',
+                        name: e.nameTemplate ?? ''
                     };
                 })
             );
@@ -59,13 +84,22 @@ const NewLabModal = () => {
 
     const onSubmit = async (values: FormValues) => {
         try {
-            await addUserProject({
-                jsonFile: '',
-                tagId: values.tags,
-                description: values.description,
-                name: values.name,
-                templateId: templateId
+            const response2 = await fetch('/api/user-project/lab-from-template', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    tagId: values.tags,
+                    description: values.description,
+                    name: values.name,
+                    templateId: templateId
+                })
             });
+            const result2 = await response2.json();
+            if (result2.statusCode >= 300) {
+                throw new Error(result2.data);
+            }
             toast.success('lab created successfully');
             setTimeout(function () {
                 (document.getElementById('new-lab-modal') as HTMLDialogElement).close();
@@ -143,12 +177,26 @@ const NewLabModal = () => {
                                 </div>
                                 <div className="divider divider-horizontal max-md:hidden"></div>
                                 <div className="w-full md:py-12">
-                                    <RadioOption
-                                        options={types}
-                                        onChange={e => {
-                                            props.values.option = e.target.value;
-                                        }}
-                                    />
+                                    <div className="h-64 overflow-y-auto">
+                                        <RadioOption
+                                            options={[
+                                                types[0],
+                                                ...template.map(e => {
+                                                    return {
+                                                        icon: e.image ?? '',
+                                                        id: e.id ?? '',
+                                                        label: e.name ?? '',
+                                                        disabled: false,
+                                                        name: 'type'
+                                                    };
+                                                })
+                                            ]}
+                                            onChange={e => {
+                                                props.values.option = e.target.value;
+                                                setTemplateId(e.target.value);
+                                            }}
+                                        />
+                                    </div>
                                 </div>
                             </div>
                             <Button
