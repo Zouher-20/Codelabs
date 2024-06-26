@@ -1,105 +1,72 @@
 'use client';
+import { getAllClassRooms } from '@/app/api/(modules)/class-room/services/action';
 import Input from '@/app/components/globals/form/input';
-import IconRenderer from '@/app/components/globals/icon';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { CustomToaster } from '@/app/components/toast/custom-toaster';
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import ClassesTable, { ClassTableType } from '../components/table/classes-table';
 
 const Classes = () => {
-    const [currentPage, updateCurrentPage] = useState(0);
-    const currentParams = useSearchParams();
-    var classes: Array<ClassTableType> = [
-        {
-            id: 1,
-            className: 'ClassName',
-            teacherName: 'Teacher name',
-            labCount: 2,
-            memberCount: 10,
-            createdAt: 'April 22/4/204'
-        },
-        {
-            id: 2,
-            className: 'ClassName',
-            teacherName: 'Teacher name',
-            labCount: 2,
-            memberCount: 10,
-            createdAt: 'April 22/4/204'
-        },
-        {
-            id: 3,
-            className: 'ClassName',
-            teacherName: 'Teacher name',
-            labCount: 2,
-            memberCount: 10,
-            createdAt: 'April 22/4/204'
-        },
-        {
-            id: 4,
-            className: 'ClassName',
-            teacherName: 'Teacher name',
-            labCount: 2,
-            memberCount: 10,
-            createdAt: 'April 22/4/204'
-        },
-        {
-            id: 5,
-            className: 'ClassName',
-            teacherName: 'Teacher name',
-            labCount: 2,
-            memberCount: 10,
-            createdAt: 'April 22/4/204'
-        }
-    ];
-    const [selectedClasses, setSelectedClasses] = useState<Array<ClassTableType>>([]);
-    const pageSize = 4;
-    const route = useRouter();
+    const pageSize = 10;
+    const params = useSearchParams();
+    const [classes, setClasses] = useState<Array<ClassTableType>>([]);
+    const [currentPage, updateCurrentPage] = useState(1);
+    const [totalPageCount, setTotalPageCount] = useState(0);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [searchWord, setSearchWord] = useState('');
 
-    const handleClassClick = (currentClass: ClassTableType) => {
-        const params = {
-            id: currentClass.id.toString()
-        };
-        const queryString = new URLSearchParams(params).toString();
-        route.push('/admin/classes/statistics' + '?' + queryString);
-        return;
-    };
     useEffect(() => {
-        const id = Number(currentParams.get('id') ?? '1');
-        onPageChange({ index: id });
+        var pageNumber = Number(params.get('id') ?? '1');
+        updateCurrentPage(pageNumber);
+        getClasses({ newSearchWord: searchWord, page: pageNumber });
     }, []);
+
+    const getClasses = async ({ newSearchWord, page }: { newSearchWord: string; page: number }) => {
+        setLoading(true);
+        setError(null);
+        try {
+            const res = await getAllClassRooms({
+                page: page,
+                pageSize: pageSize,
+                searchWord: newSearchWord
+            });
+            setTotalPageCount(res.totalCount);
+            setClasses(
+                res.classRooms.map(e => {
+                    return {
+                        className: e.name ?? '',
+                        id: e.id ?? '',
+                        labCount: e.roomCount ?? 0,
+                        memberCount: e.memberCount ?? 0,
+                        teacherName: '',
+                        createdAt: new Date().toISOString()
+                    };
+                })
+            );
+        } catch (e: any) {
+            setError(e.message);
+            toast.error(e.message);
+        } finally {
+            setLoading(false);
+        }
+    };
     const onPageChange = ({ index }: { index: number }) => {
         updateCurrentPage(index);
-        setSelectedClasses([
-            ...chunkArray({
-                startingIndex: (index - 1) * pageSize,
-                lastIndex: index * pageSize,
-                array: classes
-            })
-        ]);
+        getClasses({ newSearchWord: searchWord, page: index });
     };
-    function chunkArray({
-        array,
-        lastIndex,
-        startingIndex
-    }: {
-        startingIndex: number;
-        array: Array<ClassTableType>;
-        lastIndex: number;
-    }): Array<ClassTableType> {
-        const chunks: Array<ClassTableType> = [];
-        for (let i = startingIndex; i < lastIndex && i < array.length; i++) {
-            chunks.push(array[i]);
-        }
-        return chunks;
-    }
+
     return (
         <div className="flex flex-col gap-2 p-6">
             <Header />
             <ClassesTable
-                onDetailsButtonClicked={({ currentClass }: { currentClass: ClassTableType }) =>
-                    handleClassClick(currentClass)
+                onDetailsButtonClicked={
+                    ({ currentClass }: { currentClass: ClassTableType }) => {}
+                    // handleClassClick(currentClass)
                 }
-                classes={selectedClasses}
-                pageCount={Math.ceil(classes.length / pageSize)}
+                classes={classes}
+                pageCount={Math.ceil(totalPageCount / pageSize)}
                 currentPage={currentPage}
                 onPageChange={onPageChange}
             />
@@ -122,20 +89,8 @@ const Header = () => {
                         value={''}
                     />
                 </span>
-                <div className="dropdown">
-                    <summary tabIndex={0} className=" btn flex h-[35px] min-h-[35px]">
-                        Date
-                        <IconRenderer width={24} height={24} icon={'solar:alt-arrow-down-linear'} />
-                    </summary>
-                    <ul
-                        tabIndex={0}
-                        className="menu dropdown-content z-[1] ml-4 mt-2 w-52 rounded-box bg-base-100 p-2 shadow"
-                    >
-                        <li></li>
-                        <li></li>
-                    </ul>
-                </div>
             </div>
+            <CustomToaster />
         </div>
     );
 };
