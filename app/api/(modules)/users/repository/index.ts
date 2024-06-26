@@ -46,6 +46,30 @@ class UsersRepository {
         }
         return userDetails;
     }
+    static async completeMyInfo(payload: { imagePath?: string, bio?: string, position?: string }, userId: string) {
+
+        const existingUser = await db.user.findUnique({
+            where: { id: userId }
+        });
+        if (!existingUser) {
+            throw new Error('user not found');
+        }
+        if (payload.imagePath == null) {
+            payload.imagePath = existingUser.userImage ?? ""
+        }
+        return await db.user.update({
+            data: {
+                userImage: payload.imagePath,
+                bio: payload.bio,
+                position: payload.position
+
+            },
+            where: {
+                id: userId
+            }
+        });
+
+    }
 
     static async create(payload: CreateUserInput, planId?: string) {
         const requestedPlan = GlobalUtils.isNullOrUndefined(planId)

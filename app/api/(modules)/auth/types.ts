@@ -27,3 +27,8 @@ export interface AllUserInformationInput {
 export interface GetUserDetails {
     userId: string
 }
+export interface CompleteMyInfoInput {
+    imagePath?: string;
+    bio?: string;
+    position?: string;
+}

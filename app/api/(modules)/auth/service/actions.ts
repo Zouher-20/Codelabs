@@ -9,6 +9,7 @@ import AuthRepository from '../repository/auth-repository';
 import {
     AdminRegisterInput,
     AllUserInformationInput,
+    CompleteMyInfoInput,
     DeleteMyAccountInput,
     GetUserDetails,
     RegisterUserInput
@@ -133,6 +134,11 @@ export const signIn = async (email: string, password: string) => {
 export const signOut = async () => {
     cookies().set('session', '', { expires: new Date(0) });
 };
+export const completeMyInfo = async (payload: CompleteMyInfoInput) => {
+    const session = await getSession();
+    const userId = session?.id
+    UsersRepository.completeMyInfo(payload, userId);
+}
 
 export const getSession = async () => {
     const sessionAsToken = cookies().get('session')?.value;
