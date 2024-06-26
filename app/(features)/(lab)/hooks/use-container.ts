@@ -7,7 +7,6 @@ import GlobalUtils from '@/app/utils/global-utils';
 import { FileSystemTree, WebContainer } from '@webcontainer/api';
 import { useRef, useState } from 'react';
 import { Terminal } from 'xterm';
-import { NodeType } from '../components/tree-context';
 
 export function useContainer() {
     const [booting, setBooting] = useState(false);
@@ -135,16 +134,6 @@ export function useContainer() {
         webcontainerInstance.current?.fs.writeFile(writePath, contents);
     }
 
-    function createNode(path: string[], type: NodeType) {
-        console.log('createNode');
-    }
-
-    function deleteNode(path: string[], type: NodeType) {
-        const actualPath = '/' + path.join('/');
-        webcontainerInstance.current?.fs.rm(actualPath);
-        console.log('deleteNode', actualPath, type);
-    }
-
     async function setupContainer(projectFiles: FileSystemTree) {
         if (!webcontainerInstance.current) {
             setBooting(true);
@@ -177,8 +166,6 @@ export function useContainer() {
         editor,
         setEditor,
         writeFile,
-        createNode,
-        deleteNode,
         setupContainer
     };
 }

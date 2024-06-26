@@ -2,13 +2,11 @@ import IconRenderer from '@/app/components/globals/icon';
 import { SwalUtil } from '@/app/utils/swal-util';
 import { FileNode } from '@webcontainer/api';
 import { useContext } from 'react';
-import { useContainer } from '../hooks/use-container';
 import { PathContext } from './path-context';
-import { NodeType, TreeReducerActionType, useTreeDispatch } from './tree-context';
+import { TreeReducerActionType, useTreeDispatch } from './tree-context';
 
 export default function FileItem({ name, node }: { name: string; node: FileNode }) {
     const dispatch = useTreeDispatch();
-    const { deleteNode } = useContainer();
     const path = useContext(PathContext);
 
     const activateFile = () => {
@@ -24,7 +22,6 @@ export default function FileItem({ name, node }: { name: string; node: FileNode 
         SwalUtil.showConfirm(() => {
             if (dispatch) {
                 dispatch({ type: TreeReducerActionType.NODE_DELETE, payload: [...path, name] });
-                deleteNode([...path, name], NodeType.file);
             }
         });
     };
