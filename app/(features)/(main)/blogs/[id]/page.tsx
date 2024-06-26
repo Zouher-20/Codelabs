@@ -62,7 +62,7 @@ const BlogDetails = ({ params }: { params: { id: string } }) => {
         <ManageState
             loading={loading}
             error={error}
-            errorAndEmptyCallback={() => {}}
+            errorAndEmptyCallback={() => { }}
             empty={false}
             loadedState={
                 <div className="relative mx-auto flex flex-col gap-2 px-4 py-8 ">

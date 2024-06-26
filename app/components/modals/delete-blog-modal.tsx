@@ -3,15 +3,15 @@
 import Button from '@/app/components/globals/form/button';
 import IconRenderer from '@/app/components/globals/icon';
 
-const DeleteBlogModal = ({ onDelete }: { onDelete: (val: boolean) => void }) => {
+const DeleteBlogModal = ({ index, onDelete }: { index: string, onDelete: (val: boolean) => void }) => {
 
     const onSubmit = () => {
         onDelete(true);
-        (document.getElementById('delete-blog-modal') as HTMLDialogElement).close();
+        (document.getElementById(`delete-blog-modal${index}`) as HTMLDialogElement).close();
     };
 
     return (
-        <dialog id="delete-blog-modal" className="modal">
+        <dialog id={`delete-blog-modal${index}`} className="modal">
             <div className="modal-box flex w-8/12 max-w-3xl flex-col gap-4 p-8">
                 <form className="flex gap-2" method="dialog">
                     <button>

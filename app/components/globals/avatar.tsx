@@ -3,8 +3,10 @@
 import Image from 'next/image';
 import { useRef, useState } from 'react';
 
-const Avatar = ({ photo, imageSize }: { photo: (photo: File) => void; imageSize?: number }) => {
-    const [imageFile, setImageFile] = useState('');
+const Avatar = ({ photo, imageSize, imagePath }
+    : { photo: (photo: File) => void; imageSize?: number, imagePath?: string }) => {
+
+    const [imageFile, setImageFile] = useState(imagePath ?? '');
     const hiddenFileInput = useRef<HTMLInputElement>(null);
 
     const handleClick = () => {
@@ -23,7 +25,6 @@ const Avatar = ({ photo, imageSize }: { photo: (photo: File) => void; imageSize?
                 photo(fileUploaded);
             }
         };
-        console.log('fileUploaded', fileUploaded);
     };
 
     return (
@@ -39,7 +40,7 @@ const Avatar = ({ photo, imageSize }: { photo: (photo: File) => void; imageSize?
                         height={140}
                         width={140}
                         alt="user"
-                        src={imageFile}
+                        src={imageFile.replace(/\\/g, '/')}
                     />
                 ) : (
                     <span className="flex w-full cursor-pointer items-center justify-center rounded-xl bg-base-200 text-4xl">
