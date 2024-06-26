@@ -1,5 +1,5 @@
 'use client';
-import { DefaultToastOptions, Toaster } from 'react-hot-toast';
+import { DefaultToastOptions, Toaster, ToasterProps } from 'react-hot-toast';
 
 const toastOptions: DefaultToastOptions = {
     className: 'cb-toast',
@@ -16,10 +16,10 @@ const toastOptions: DefaultToastOptions = {
         duration: 3000
     }
 };
-export function CustomToaster() {
+export function CustomToaster({ pos }: { pos?: boolean }) {
     return (
         <>
-            <Toaster position="bottom-right" toastOptions={toastOptions} />
+            <Toaster position={pos ? 'bottom-left' : 'bottom-right'} toastOptions={toastOptions} />
         </>
     );
 }

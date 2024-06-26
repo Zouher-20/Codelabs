@@ -140,10 +140,11 @@ const Header = ({ HandleTab, onChange, searchValue }: {
     </div>
 }
 const TrendCard = ({ trend }: { trend?: blogType }) => {
-    if (trend)
+    if (trend) {
+        const formattedPath = trend.photo.replace(/\\/g, '/');
         return <div className="flex w-fit max-md:w-80 xl:w-3/4 2xl:w-fit max-md:flex-col md:flex-row bg-base-100 rounded-3xl max-md:self-start self-center">
             <Image
-                src={trend.photo}
+                src={formattedPath}
                 alt="" width={320} height={208}
                 className={" max-h-52 min-h-64 w-80 md:min-w-[350px] rounded-3xl"} />
             <div className="flex flex-col p-4 gap-2">
@@ -159,4 +160,5 @@ const TrendCard = ({ trend }: { trend?: blogType }) => {
                 ></span>
             </div>
         </div>
+    }
 }
