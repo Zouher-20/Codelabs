@@ -2,7 +2,7 @@
 import { getAllClassRooms } from '@/app/api/(modules)/class-room/services/action';
 import Input from '@/app/components/globals/form/input';
 import { CustomToaster } from '@/app/components/toast/custom-toaster';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import ClassesTable, { ClassTableType } from '../components/table/classes-table';
@@ -16,6 +16,7 @@ const Classes = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [searchWord, setSearchWord] = useState('');
+    const route = useRouter();
 
     useEffect(() => {
         var pageNumber = Number(params.get('id') ?? '1');
@@ -40,8 +41,8 @@ const Classes = () => {
                         id: e.id ?? '',
                         labCount: e.roomCount ?? 0,
                         memberCount: e.memberCount ?? 0,
-                        teacherName: '',
-                        createdAt: new Date().toISOString()
+                        teacherName: e.MemberClass[0].id,
+                        createdAt: e.createdAt.toUTCString()
                     };
                 })
             );
@@ -56,14 +57,20 @@ const Classes = () => {
         updateCurrentPage(index);
         getClasses({ newSearchWord: searchWord, page: index });
     };
-
+    const handleClassClick = (currentClass: ClassTableType) => {
+        const params = {
+            id: currentClass.id.toString()
+        };
+        const queryString = new URLSearchParams(params).toString();
+        route.push('/admin/classes/statistics' + '?' + queryString);
+        return;
+    };
     return (
         <div className="flex flex-col gap-2 p-6">
             <Header />
             <ClassesTable
-                onDetailsButtonClicked={
-                    ({ currentClass }: { currentClass: ClassTableType }) => {}
-                    // handleClassClick(currentClass)
+                onDetailsButtonClicked={({ currentClass }: { currentClass: ClassTableType }) =>
+                    handleClassClick(currentClass)
                 }
                 classes={classes}
                 pageCount={Math.ceil(totalPageCount / pageSize)}
