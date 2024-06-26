@@ -5,7 +5,9 @@ import { challengeDetailsInput, deleteChallengeInput, getLabsInChallengeInput } 
 import AdminChallengeRepository from '../repository/admin-challenge-repositoy';
 
 export const getDetailsChallenge = async (payload: challengeDetailsInput) => {
-    return AdminChallengeRepository.getDetailsChallenge(payload);
+    const session = await getSession();
+    const userId = session?.id;
+    return AdminChallengeRepository.getDetailsChallenge(payload, userId);
 };
 
 export const getAllLabInChallengeDetails = async (payload: getLabsInChallengeInput) => {

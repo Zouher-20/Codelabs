@@ -8,14 +8,16 @@ import Favorite from "./favorite";
 
 const BlogCard = ({ blog }: { blog: blogType }) => {
 
-    return <div className="w-80 h-full flex flex-col gap-2">
+    const formattedPath = blog.photo.replace(/\\/g, '/');
+
+    return <div className="w-80 h-full flex flex-col gap-1" key={blog.id}>
         <div className="relative">
             <Image
-                src={blog.photo ? blog.photo : noImage}
+                src={blog.photo ? formattedPath : noImage}
                 alt="" width={320} height={208}
                 className={" max-h-52 min-h-52 min-w-[320px] rounded-t-3xl"} />
         </div>
-        <span className="font-bold line-clamp-3">{blog.title}</span>
+        <span className="font-bold line-clamp-3 my-2">{blog.title}</span>
         <span className="flex gap-2 text-gray-500">
             <IconRenderer icon='solar:calendar-date-broken' width={24} height={24} />
             <p className="mr-auto">{blog.createdAt?.toLocaleDateString()}</p>

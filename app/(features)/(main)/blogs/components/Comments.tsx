@@ -1,48 +1,70 @@
 "use client"
-import { getCommentBlog } from "@/app/api/(modules)/blog/services/action";
+import { blogType } from "@/app/@types/blog";
+import { commentType } from "@/app/@types/comment";
+import { userType } from "@/app/@types/user";
+import { getMyInfo } from "@/app/api/(modules)/auth/service/actions";
+import { addBlogComment, deleteMyCommentInBlog, getCommentBlog } from "@/app/api/(modules)/blog/services/action";
 import IconRenderer from "@/app/components/globals/icon";
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
-const Comments = ({ id }: { id: string }) => {
-    const [isOpen, setIsOpen] = useState<boolean>(false);
-    const [userComment, setUserComment] = useState<string>('');
-    const [comment, setComment] = useState<any>()
+const Comments = ({ blog, commentCount }: { blog: blogType, commentCount: number }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const [count, setCount] = useState(commentCount);
+    const [userComment, setUserComment] = useState('');
+    const [comments, setComments] = useState<Array<commentType>>([]);
+    const [user, setUser] = useState<userType>();
+    const route = useRouter();
 
-    const comments = [
-        'What kind of nonsense is this',
-        'Put me on the Council and not make me a Master!??',
-        'Thats never been done in the history of the Jedi.Its insulting!',
-        'Calm down, Anakin.',
-        'You have been given a great honor.',
-        'To be on the Council at your age.',
-        'Put me on the Council and not make me a Master!??',
-        'Thats never been done in the history of the Jedi.Its insulting!',
-        'Put me on the Council and not make me a Master!??',
-        'Thats never been done in the history of the Jedi.Its insulting!',
-    ]
     useEffect(() => {
-        const getComments = async () => {
-            return await getCommentBlog({
-                blogId: id,
-                page: 1,
-                pageSize: 100
-            })
+        const getInfo = async () => {
+            return await getMyInfo()
         }
-        getComments().then((res) => console.log('comment', res))
+        getComments().then((res) => {
+            setComments(res.comment as any)
+        })
+        getInfo().then((res) => {
+            setUser(res as unknown as userType)
+        })
     }, [])
-
-    let dir = 2;
-
-    const commentHandler = async (payload: string) => {
+    const getComments = async () => {
+        return await getCommentBlog({
+            blogId: blog.id,
+            page: 1,
+            pageSize: 100
+        })
+    }
+    const commentHandler = async (comment: string) => {
         try {
-            // const res = await addCommentBlog(payload)
-            toast.success('You comment added successfully')
-            setUserComment('')
+            if (comment != '') {
+                await addBlogComment({ blogId: blog.id, comment: comment }).then(() => {
+                    getComments().then((res) => {
+                        setComments(res.comment as any)
+                    })
+                    setCount(count + 1)
+                    setUserComment('')
+                })
+                toast.success('You comment added successfully')
+            } else toast.error('Empty Comment !')
         } catch (e: any) {
             toast.error(e.message)
         }
     }
+    const deleteCommentHandler = async (id: string) => {
+        try {
+            await deleteMyCommentInBlog({ blogId: blog.id, commentId: id }).then(() => {
+                getComments().then((res) => {
+                    setComments(res.comment as any)
+                })
+                setCount(count - 1)
+            })
+            toast.success('You comment added successfully')
+        } catch (e: any) {
+            toast.error(e.message)
+        }
+    }
+
     function toggleModal() {
         if (document) {
             (document.getElementById('Comments') as HTMLFormElement)?.showModal();
@@ -51,12 +73,15 @@ const Comments = ({ id }: { id: string }) => {
     }
     return <div>
         <span>
-            <IconRenderer
-                icon={'solar:chat-round-broken'}
-                width={24} height={24}
-                className={"cursor-pointer " + (isOpen ? 'text-primary' : '')}
-                onClick={() => { toggleModal() }}
-            />
+            <div className="flex gap-1">
+                <IconRenderer
+                    icon={'solar:chat-round-broken'}
+                    width={24} height={24}
+                    className={"cursor-pointer " + (isOpen ? 'text-primary' : '')}
+                    onClick={() => { toggleModal() }}
+                />
+                {count}
+            </div>
             <div className="">
                 <dialog id="Comments" className="modal ">
                     <div className="flex flex-col gap-4 w-screen sm:w-4/5 md:w-3/5 lg:w-2/5 bg-base-100 h-screen absolute top-0 right-0 p-8">
@@ -73,6 +98,10 @@ const Comments = ({ id }: { id: string }) => {
                                     className=""
                                     value={userComment}
                                     onChange={(e) => setUserComment(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter')
+                                            commentHandler(userComment);
+                                    }}
                                 />
                                 <IconRenderer
                                     onClick={() => { commentHandler(userComment) }}
@@ -83,15 +112,41 @@ const Comments = ({ id }: { id: string }) => {
                             </label>
                         </div>
                         <div className="flex flex-col gap-2 h-full overflow-y-auto">
-                            {
-                                comments.map((comment, index) => (
-                                    <div key={index} className={"chat " + (dir++ % 2 == 0 ? 'chat-start' : 'chat-end')}>
-                                        <div className="chat-bubble">{comment}</div>
+                            {comments &&
+                                comments.map((comment: commentType, index) => (
+                                    <div key={index} className="flex gap-2 mb-4">
+                                        {comment.user.userImage
+                                            ? <img src={comment.user.userImage} alt="user" width={32}
+                                                onClick={() => { route.push(`/user-profile/${comment.user.id}`) }}
+                                                className="cursor-pointer" />
+                                            : <div
+                                                onClick={() => { route.push(`/user-profile/${comment.user.id}`) }}
+                                                className="cursor-pointer text-sm bg-base-300 p-5 py-4 -mb-2 self-start rounded-full text-white">{comment.user.username.slice(0, 1)}</div>
+                                        }
+                                        <div className="flex flex-col gap-1 self-center ">
+                                            <div className="flex gap-2">
+                                                <p
+                                                    onClick={() => { route.push(`/user-profile/${comment.user.id}`) }}
+                                                    className="cursor-pointer text-sm text-gray-500">{comment.user.username}</p>
+                                                {
+                                                    comment.user.id == user?.id &&
+                                                    <IconRenderer
+                                                        icon={'solar:trash-bin-2-bold-duotone'}
+                                                        width={20} height={24}
+                                                        className={"cursor-pointer text-error"}
+                                                        onClick={() => deleteCommentHandler(comment.id)} />
+                                                }
+                                            </div>
+                                            <p className="text-lg text-white pr-2">{comment.comment}</p>
+                                        </div>
                                     </div>
                                 ))
                             }
                         </div>
                     </div>
+                    <form method="dialog" className="modal-backdrop">
+                        <button></button>
+                    </form>
                 </dialog>
             </div>
         </span>

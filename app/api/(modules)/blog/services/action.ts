@@ -56,12 +56,6 @@ export const getDetailsBlog = async (payload: GetDetailsBlogInput) => {
     return BlogRepository.getDetailsBlog(payload, userId);
 };
 
-export const uploadImage = async (payload: uploadImageInput) => {
-    const session = await getSession();
-    const userId = session?.id;
-    return BlogRepository.uploadImage(payload);
-};
-
 export const addBlogComment = async (payload: AddBlogCommentInput) => {
     const session = await getSession();
     const userId = session?.id;

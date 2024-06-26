@@ -1,5 +1,4 @@
 'use client';
-import { getSession } from '@/app/api/(modules)/auth/service/actions';
 import { addBlog } from '@/app/api/(modules)/blog/services/action';
 import Avatar from '@/app/components/globals/avatar';
 import CodeLabsQuill from '@/app/components/globals/codelabs-quill';
@@ -33,12 +32,18 @@ const AddBlog = () => {
 
     const onSubmit = async (values: FormValues) => {
         try {
-            await addBlog({ ...values, photo: '' });
+            if (values.photo) {
+                const formData = new FormData();
+                formData.append('file', values.photo);
+                const response = await fetch('/api/admin/template/image-upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                await addBlog({ ...values, photo: result.data });
+            } else await addBlog({ ...values, photo: '' });
+            router.push('/blogs');
             toast.success('blog created successfully');
-            const user = await getSession();
-            if (user.role == 'ADMIN') {
-                router.push('/admin/blogs');
-            } else router.push('/blogs');
         } catch (error: any) {
             toast.error(error.message);
         }
