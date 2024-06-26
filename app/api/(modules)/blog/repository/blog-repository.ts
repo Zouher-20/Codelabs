@@ -5,49 +5,6 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'path';
 
 class BlogRepository {
-    static async uploadImage(payload: { file: File }): Promise<BaseResponse> {
-        try {
-            const { file } = payload;
-
-            if (!file) {
-                console.log('No file uploaded');
-                return BaseResponse.returnResponse({
-                    statusCode: 400,
-                    message: 'No file uploaded',
-                    data: null
-                });
-            }
-
-            const bytes = await file.arrayBuffer();
-            const buffer = Buffer.from(bytes);
-
-            const uploadDir = join(process.cwd(), 'public', 'uploads');
-            const filePath = join(uploadDir, file.name);
-
-            await mkdir(uploadDir, { recursive: true });
-
-            await writeFile(filePath, buffer);
-
-            console.log('File received:', file);
-
-            const url = join('/uploads', file.name);
-
-            return BaseResponse.returnResponse({
-                statusCode: 200,
-                message: 'File uploaded successfully',
-                data: {
-                    path: url
-                }
-            });
-        } catch (error) {
-            console.error('Error during file upload:', error);
-            return BaseResponse.returnResponse({
-                statusCode: 500,
-                message: 'Error during file upload',
-                data: null
-            });
-        }
-    }
     static async deleteMyCommentUserProjectLab(
         payload: {
             commentId: string;
@@ -141,6 +98,10 @@ class BlogRepository {
                     where: { blogId: blog.id }
                 });
 
+                const viewCount = await db.veiw.count({
+                    where: { blogId: blog.id }
+                });
+
                 const starredBlogsId = (
                     await db.star.findMany({
                         where: {
@@ -163,6 +124,7 @@ class BlogRepository {
                     ...blog,
                     commentCount,
                     starCount,
+                    viewCount,
                     hasStarred
                 };
             })
@@ -227,6 +189,10 @@ class BlogRepository {
                     where: { blogId: blog.id }
                 });
 
+                const viewCount = await db.veiw.count({
+                    where: { blogId: blog.id }
+                });
+
                 const starredProjectsIds = (
                     await db.star.findMany({
                         where: {
@@ -247,6 +213,7 @@ class BlogRepository {
                     ...blog,
                     commentCount,
                     starCount,
+                    viewCount,
                     hasStarred
                 };
             })
@@ -304,6 +271,10 @@ class BlogRepository {
                     where: { blogId: blog.id }
                 });
 
+                const viewCount = await db.veiw.count({
+                    where: { blogId: blog.id }
+                });
+
                 const starredBlogsId = (
                     await db.star.findMany({
                         where: {
@@ -326,6 +297,7 @@ class BlogRepository {
                     ...blog,
                     commentCount,
                     starCount,
+                    viewCount,
                     hasStarred
                 };
             })
@@ -435,6 +407,9 @@ class BlogRepository {
                 const starCount = await db.star.count({
                     where: { blogId: blog.id }
                 });
+                const viewCount = await db.veiw.count({
+                    where: { blogId: blog.id }
+                });
                 const starredBlogsId = (
                     await db.star.findMany({
                         where: {
@@ -456,6 +431,7 @@ class BlogRepository {
                 return {
                     ...blog,
                     commentCount,
+                    viewCount,
                     starCount,
                     hasStarred
                 };
@@ -482,12 +458,31 @@ class BlogRepository {
         if (!blog) {
             throw new Error('Lab is not found');
         }
+        const view = await db.veiw.findFirst(
+            {
+                where: {
+                    userId: userId,
+                    blogId: payload.blogId
+                }
+            }
+        );
+        if (!view) {
+            await db.veiw.create({
+                data: {
+                    userId: userId,
+                    blogId: payload.blogId
+                }
+            });
+        }
 
         const commentCount = await db.comment.count({
             where: { blogId: payload.blogId }
         });
 
         const starCount = await db.star.count({
+            where: { blogId: payload.blogId }
+        });
+        const viewCount = await db.veiw.count({
             where: { blogId: payload.blogId }
         });
 
@@ -502,6 +497,7 @@ class BlogRepository {
             blog,
             commentCount,
             starCount,
+            viewCount,
             isStarred: isStarred != null
         };
     }

@@ -225,6 +225,10 @@ class UserProjectRepository {
                     where: { userprojectId: project.id }
                 });
 
+                const viewCount = await db.veiw.count({
+                    where: { userprojectId: project.id }
+                });
+
                 const starCount = await db.star.count({
                     where: { userprojectId: project.id }
                 });
@@ -249,6 +253,7 @@ class UserProjectRepository {
                     ...project,
                     commentCount,
                     starCount,
+                    viewCount,
                     hasStarred
                 };
             })
@@ -342,6 +347,10 @@ class UserProjectRepository {
                     where: { userprojectId: project.id }
                 });
 
+                const viewCount = await db.veiw.count({
+                    where: { userprojectId: project.id }
+                });
+
                 const starredProjectsIds = (
                     await db.star.findMany({
                         where: {
@@ -362,6 +371,7 @@ class UserProjectRepository {
                     ...project,
                     commentCount,
                     starCount,
+                    viewCount,
                     hasStarred
                 };
             })
@@ -425,13 +435,34 @@ class UserProjectRepository {
                         tag: true
                     }
                 },
-                lab: true
+                lab: true,
             }
         });
+        const view = await db.veiw.findFirst(
+            {
+                where: {
+                    userId: userId,
+                    userprojectId: payload.userProjectId
+                }
+            }
+        );
+        if (!view) {
+            await db.veiw.create({
+                data: {
+                    userId: userId,
+                    userprojectId: payload.userProjectId
+                }
+            });
+        }
 
         if (!lab) {
             throw new Error('Lab is not found');
         }
+        const viewCount = await db.veiw.count({
+            where: {
+                userprojectId: payload.userProjectId
+            }
+        });
 
         const commentCount = await db.comment.count({
             where: { userprojectId: payload.userProjectId }
@@ -452,6 +483,7 @@ class UserProjectRepository {
             lab,
             commentCount,
             starCount,
+            viewCount,
             isStarred: isStarred != null
         };
     }
@@ -598,6 +630,9 @@ class UserProjectRepository {
                 const starCount = await db.star.count({
                     where: { userprojectId: project.id }
                 });
+                const viewCount = await db.veiw.count({
+                    where: { userprojectId: project.id }
+                });
 
                 const starredProjectsIds = (
                     await db.star.findMany({
@@ -618,6 +653,7 @@ class UserProjectRepository {
                 return {
                     ...project,
                     commentCount,
+                    viewCount,
                     starCount,
                     hasStarred
                 };
