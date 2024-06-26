@@ -1,11 +1,11 @@
 'use client';
 import { getAllClassRooms } from '@/app/api/(modules)/class-room/services/action';
-import Input from '@/app/components/globals/form/input';
-import { CustomToaster } from '@/app/components/toast/custom-toaster';
+import { ManageState } from '@/app/components/page-state/state_manager';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import ClassesTable, { ClassTableType } from '../components/table/classes-table';
+import ClassesViewHeader from './statistics/components/header';
 
 const Classes = () => {
     const pageSize = 10;
@@ -22,7 +22,7 @@ const Classes = () => {
         var pageNumber = Number(params.get('id') ?? '1');
         updateCurrentPage(pageNumber);
         getClasses({ newSearchWord: searchWord, page: pageNumber });
-    }, []);
+    }, [searchWord]);
 
     const getClasses = async ({ newSearchWord, page }: { newSearchWord: string; page: number }) => {
         setLoading(true);
@@ -41,7 +41,7 @@ const Classes = () => {
                         id: e.id ?? '',
                         labCount: e.roomCount ?? 0,
                         memberCount: e.memberCount ?? 0,
-                        teacherName: e.MemberClass[0].id,
+                        teacherName: e.MemberClass[0].user.username,
                         createdAt: e.createdAt.toUTCString()
                     };
                 })
@@ -67,38 +67,34 @@ const Classes = () => {
     };
     return (
         <div className="flex flex-col gap-2 p-6">
-            <Header />
-            <ClassesTable
-                onDetailsButtonClicked={({ currentClass }: { currentClass: ClassTableType }) =>
-                    handleClassClick(currentClass)
+            <ClassesViewHeader
+                onFieldChanged={e => {
+                    updateCurrentPage(1);
+                    setSearchWord(e);
+                }}
+                searchWord={searchWord}
+            />
+            <ManageState
+                loading={loading}
+                error={error}
+                errorAndEmptyCallback={() => {}}
+                empty={classes.length == 0}
+                loadedState={
+                    <ClassesTable
+                        onDetailsButtonClicked={({
+                            currentClass
+                        }: {
+                            currentClass: ClassTableType;
+                        }) => handleClassClick(currentClass)}
+                        classes={classes}
+                        pageCount={Math.ceil(totalPageCount / pageSize)}
+                        currentPage={currentPage}
+                        onPageChange={onPageChange}
+                    />
                 }
-                classes={classes}
-                pageCount={Math.ceil(totalPageCount / pageSize)}
-                currentPage={currentPage}
-                onPageChange={onPageChange}
             />
         </div>
     );
 };
 
-const Header = () => {
-    return (
-        <div className="flex flex-col gap-8 p-6">
-            <h1 className="text-4xl font-bold text-white">Classes</h1>
-
-            <div className="flex gap-8">
-                <span>
-                    <Input
-                        id="search"
-                        type="text"
-                        placeholder="Search for Classes ..."
-                        icon="circum:search"
-                        value={''}
-                    />
-                </span>
-            </div>
-            <CustomToaster />
-        </div>
-    );
-};
 export default Classes;

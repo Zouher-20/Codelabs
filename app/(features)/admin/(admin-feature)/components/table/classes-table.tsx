@@ -28,7 +28,7 @@ export default function ClassesTable({
                 <td>{item.className}</td>
                 <td>{item.teacherName}</td>
                 <td>{item.memberCount} members</td>
-                <td>{item.labCount} Labs</td>
+                <td>{item.labCount} Rooms</td>
                 <td>{item.createdAt}</td>
                 <td>
                     <Button
@@ -55,7 +55,7 @@ export default function ClassesTable({
                     <th>Classes</th>
                     <th>Teacher</th>
                     <th>Member</th>
-                    <th>Labs</th>
+                    <th>Rooms</th>
                     <th>Created</th>
                     <th></th>
                 </tr>
