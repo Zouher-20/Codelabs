@@ -65,7 +65,10 @@ export default function LabDetails() {
             starCount: res.starCount,
             description: res.lab.description ?? '',
             user: {
-                ...res.lab.user,
+                email: res.lab.user.email,
+                id: res.lab.user.id,
+                userImage: res.lab.user.userImage,
+                username: res.lab.user.username,
                 name: res.lab.user.username
             }
         });
@@ -76,7 +79,13 @@ export default function LabDetails() {
             res.comment.map<FeedbackType>(e => {
                 return {
                     id: e.id,
-                    user: { ...e.user, name: e.user.username },
+                    user: {
+                        email: e.user.email,
+                        id: e.user.id,
+                        userImage: e.user.userImage,
+                        username: e.user.username,
+                        name: e.user.username
+                    },
                     feedback: e.comment
                 };
             })

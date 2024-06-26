@@ -1,6 +1,5 @@
 import { userType } from '@/app/@types/user';
 import { getSession, signOut } from '@/app/api/(modules)/auth/service/actions';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -16,10 +15,13 @@ export default function UserDropDown() {
         const session = await getSession();
         if (session) {
             setUser({
-                id: session?.id as string,
-                email: session?.email as string,
-                name: session?.username as string,
-                role: session?.role as string
+                id: session?.id ?? '',
+                email: session?.email ?? '',
+                name: session?.username ?? '',
+                role: session?.role ?? '',
+                image: session?.userImage ?? '',
+                userImage: session?.userImage ?? '',
+                username: session?.username ?? ''
             });
         }
     }
@@ -31,17 +33,19 @@ export default function UserDropDown() {
                 role="button"
                 className="flex cursor-pointer items-center gap-2 rounded-btn hover:opacity-85"
             >
-                {/* TODO : Get Those info from API and remove from next.config.js */}
-                <div className="avatar w-9">
-                    <div className="rounded-full">
-                        <Image
-                            height={38}
-                            width={38}
-                            alt="user"
-                            src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
-                        />
+                {user?.userImage ? (
+                    <div className="avatar">
+                        <div className="w-10 rounded">
+                            <img src={`http://localhost:3000${user?.image?.replace(/\\/g, '/')}`} />
+                        </div>
                     </div>
-                </div>
+                ) : (
+                    <div className="avatar placeholder">
+                        <div className="w-10 rounded-full bg-neutral text-neutral-content">
+                            <span className="text-l">{user?.name[0]}</span>
+                        </div>
+                    </div>
+                )}
                 <div className="text-start">
                     <span className="font-bold">{user?.name}</span>
                     <div className="text-xs">{user?.email}</div>
