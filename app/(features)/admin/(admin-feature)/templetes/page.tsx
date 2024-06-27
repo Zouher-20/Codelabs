@@ -134,12 +134,7 @@ const Templetes = () => {
                         page: currentPage
                     });
                     toast.success('template created successfully');
-
-                    const params = {
-                        id: template.labId ?? ''
-                    };
-                    const queryString = new URLSearchParams(params).toString();
-                    route.push('/lab' + '?' + queryString);
+                    route.push('/lab' + '/' + template.labId ?? '');
                 }}
             />
             <CustomToaster />
