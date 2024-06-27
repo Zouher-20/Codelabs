@@ -5,6 +5,14 @@ export interface AddClassRoomInput {
     description?: string;
     type?: string;
 }
+export interface CloneLabForRoomInClassInput {
+    classRomId: string;
+    description?: string;
+    name?: string;
+    endAt: DateTime;
+    type?: string;
+    labId: string;
+}
 
 export interface getClassesByMeInput {
     page: number;
