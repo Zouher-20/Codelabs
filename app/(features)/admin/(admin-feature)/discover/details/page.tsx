@@ -60,6 +60,7 @@ export default function LabDetails() {
         const res = await getDetailsUserProjectLab({ userProjectId: id });
         setLab({
             id: res.lab.id,
+            labId: res.lab.lab.id,
             name: res.lab.name ?? '',
             isStared: res.isStarred,
             createdAt: res.lab.createdAt ?? '',
@@ -96,12 +97,7 @@ export default function LabDetails() {
         );
     };
     const handleLabClick = () => {
-        const id = '';
-        const params = {
-            id
-        };
-        const queryString = new URLSearchParams(params).toString();
-        route.push('/lab' + '?' + queryString);
+        route.push('/lab' + '/' + lab?.labId);
 
         return;
     };

@@ -18,6 +18,7 @@ import UserAvatar from '@/app/components/globals/user-avatar';
 import { ManageState } from '@/app/components/page-state/state_manager';
 import { CustomToaster } from '@/app/components/toast/custom-toaster';
 import { interactions } from '@/app/constants/interactions';
+import { Icon } from '@iconify/react/dist/iconify.js';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -63,6 +64,7 @@ export default function LabDetails() {
             createdAt: res.lab.createdAt ?? '',
             commentCount: res.commentCount,
             starCount: res.starCount,
+            labId: res.lab.lab.id,
             description: res.lab.description ?? '',
             viewCount: res.viewCount,
             clone: res.lab.clone ?? 0,
@@ -94,12 +96,7 @@ export default function LabDetails() {
         );
     };
     const handleLabClick = () => {
-        const id = params.get('id') ?? '';
-        const newParams = {
-            id
-        };
-        const queryString = new URLSearchParams(newParams).toString();
-        route.push('/lab' + '?' + queryString);
+        route.push('/lab/' + lab?.labId);
 
         return;
     };
@@ -141,6 +138,41 @@ export default function LabDetails() {
             toast.error(e.message);
         }
     };
+    const dropdown = () => {
+        return (
+            <div className="dropdown dropdown-left">
+                <div
+                    tabIndex={0}
+                    role="button"
+                    className="flex cursor-pointer items-center gap-2 rounded-btn hover:opacity-85"
+                >
+                    <Icon icon="solar:menu-dots-bold-duotone" className="size-10 text-primary" />
+                </div>
+
+                <ul
+                    tabIndex={0}
+                    className="menu dropdown-content z-[1] mt-4 w-52 rounded-box bg-base-100 p-2 shadow"
+                >
+                    <li>
+                        <div>
+                            <Icon icon="solar:dna-bold-duotone" className="size-8 text-primary" />
+                            Clone lab
+                        </div>
+                    </li>
+                    <span className="divider my-0" />
+                    <li>
+                        <div>
+                            <Icon
+                                icon="solar:case-round-bold-duotone"
+                                className="size-8 text-primary"
+                            />
+                            Clone to class
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        );
+    };
     return (
         <div className="flex min-h-[550px] flex-col gap-2 p-3">
             <ManageState
@@ -159,10 +191,12 @@ export default function LabDetails() {
 
                             <CodeLabContainer height={'18rem'} minWidth="64">
                                 <div className="flex w-full flex-col justify-center gap-5 p-5">
-                                    <article className="line-clamp-5 text-wrap text-sm">
-                                        {lab?.description}
-                                    </article>
-
+                                    <div className="flex">
+                                        <article className="line-clamp-5 text-wrap text-sm">
+                                            {lab?.description}
+                                        </article>
+                                        {dropdown()}
+                                    </div>
                                     <div className="flex gap-1">
                                         {interactions.map(
                                             (interaction: InteractionType, index: number) =>
