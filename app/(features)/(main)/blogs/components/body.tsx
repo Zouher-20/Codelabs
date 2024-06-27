@@ -8,22 +8,22 @@ import {
 } from '@/app/api/(modules)/blog/services/action';
 import noImage from '@/public/images/no-image2.png';
 
+import { userType } from '@/app/@types/user';
+import { getMyInfo } from '@/app/api/(modules)/auth/service/actions';
 import Input from '@/app/components/globals/form/input';
 import IconRenderer from '@/app/components/globals/icon';
 import { ManageState } from '@/app/components/page-state/state_manager';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import { useDebounce } from 'use-debounce';
-import { getBlogs } from '../services/services';
-import Content from './content';
+import BlogSetting from './blog-setting';
 import Favorite from './favorite';
 
 const tabs = ['Blogs', 'Trending Blogs', 'Latest Blogs', 'My Blogs'];
 
 const Body = () => {
     const [trend, setTrend] = useState<blogType>();
+    const [user, setUser] = useState<userType>();
     const [currentData, setCurrentData] = useState<Array<blogType>>([]);
     const [currentTab, setCurrentTab] = useState('Blogs');
     const [searchValue, setSearchValue] = useState<string>('');
@@ -46,24 +46,7 @@ const Body = () => {
     }, [currentTab]);
 
     useEffect(() => {
-        const getTrendBlog = async () => {
-            await getBlogs('Trending Blogs', 1, 1)
-                .then(res => {
-                    if (
-                        Array.isArray(res) &&
-                        res.every(item => typeof item === 'object' && 'id' in item)
-                    ) {
-                        console.log(res);
-                        console.log('Sadsadsad');
-                        const data = res as blogType[];
-                        setTrend(data[0]);
-                    }
-                })
-                .catch(e => {
-                    setError(e.message);
-                    toast.error(e.message);
-                });
-        };
+        getUser();
         getTrendBlog();
     }, []);
 
@@ -106,10 +89,56 @@ const Body = () => {
                 });
         }
     }
+    async function getTrendBlog() {
+        await getBlogs('Trending Blogs', 1, 1)
+            .then(res => {
+                if (
+                    Array.isArray(res) &&
+                    res.every(item => typeof item === 'object' && 'id' in item)
+                ) {
+                    const data = res as blogType[];
+                    setTrend(data[0]);
+                }
+            })
+            .catch(e => {
+                setError(e.message);
+                toast.error(e.message);
+            });
+    }
+    async function getUser() {
+        const user = await getMyInfo();
+        if (user) setUser(user as unknown as userType);
+    }
 
+    const handleDelete = (isDelete: boolean, index: number) => {
+        if (isDelete) {
+            const arr = [...currentData];
+            if (arr[index].id == trend?.id) {
+                getTrendBlog();
+            }
+            arr.splice(index, 1);
+            setCurrentData(arr);
+        }
+    };
+    const handleDeleteTrend = (isDelete: boolean, id: string) => {
+        if (isDelete) {
+            const arr = [...currentData];
+            const filterarr = arr.filter(el => {
+                return el.id != id;
+            });
+            setCurrentData(filterarr);
+            getTrendBlog();
+        }
+    };
     return (
         <div className="flex flex-col gap-4">
-            <TrendCard trend={trend} />
+            <TrendCard
+                trend={trend}
+                userID={user?.id ?? ''}
+                deleteTrend={(val, id) => {
+                    handleDeleteTrend(val, id);
+                }}
+            />
             <Header
                 HandleTab={tab => setCurrentTab(tab)}
                 searchValue={searchValue}
@@ -121,7 +150,15 @@ const Body = () => {
                     error={error}
                     errorAndEmptyCallback={() => {}}
                     empty={currentData.length == 0}
-                    loadedState={<Content blogs={currentData} />}
+                    loadedState={
+                        <Content
+                            blogs={currentData}
+                            userID={user?.id ?? ''}
+                            deleted={(val, index) => {
+                                handleDelete(val, index);
+                            }}
+                        />
+                    }
                 />
             }
         </div>
@@ -142,7 +179,7 @@ const Header = ({
     const [currentTab, setCurrentTab] = useState('Blogs');
 
     return (
-        <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+        <div className="mt-8 flex flex-col gap-4 sm:flex-row ">
             <h1 className="text-3xl font-bold text-white">{currentTab}</h1>
             <div className="divider divider-horizontal h-12 max-sm:hidden"></div>
             <div role="tablist" className="mr-auto mt-2">
@@ -172,14 +209,20 @@ const Header = ({
         </div>
     );
 };
-const TrendCard = ({ trend }: { trend?: blogType }) => {
+const TrendCard = ({
+    trend,
+    userID,
+    deleteTrend
+}: {
+    trend?: blogType;
+    userID: string;
+    deleteTrend: (val: boolean, id: string) => void;
+}) => {
     if (trend) {
-        const formattedPath = trend.photo.replace(/\\/g, '/');
-
         return (
             <div className="flex w-fit self-center rounded-3xl bg-base-100 max-md:w-80 max-md:flex-col max-md:self-start md:flex-row xl:w-3/4 2xl:w-fit">
                 <Image
-                    src={formattedPath.length != 0 ? formattedPath : noImage}
+                    src={trend.photo ? trend.photo.replace(/\\/g, '/') : noImage}
                     alt=""
                     width={320}
                     height={208}
@@ -200,6 +243,23 @@ const TrendCard = ({ trend }: { trend?: blogType }) => {
                                 hasStarred={trend.hasStarred}
                                 blogId={trend.id}
                                 starCount={trend.starCount}
+                            />
+                        )}
+                        <div className="ml-auto flex gap-1">
+                            <IconRenderer
+                                icon={'fa6-solid:street-view'}
+                                width={20}
+                                height={24}
+                                className={' text-warning'}
+                            />
+                            {trend.viewCount}
+                        </div>
+                        {userID == trend.user.id && (
+                            <BlogSetting
+                                blogID={trend.id}
+                                deleted={val => {
+                                    deleteTrend(val, trend.id);
+                                }}
                             />
                         )}
                     </span>

@@ -1,4 +1,5 @@
 export interface blogType {
+    viewCount: ReactNode;
     hasStarred: boolean;
     id: string;
     title: string;
