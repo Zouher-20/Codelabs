@@ -9,6 +9,7 @@ class LabRepository {
                 id: payload.labId
             },
             include: {
+                Tamblate: true,
                 UserProject: true,
                 ChallengeParticipation: true,
                 ClassProject: {
@@ -22,8 +23,10 @@ class LabRepository {
         if (!mylab) {
             throw new Error('Lab not found');
         }
+        const isTemplate = !!mylab.Tamblate;
 
-        const userHasAccess = (mylab.UserProject && mylab.UserProject.userId === userId) ||
+
+        const userHasAccess = isTemplate || (mylab.UserProject && mylab.UserProject.userId === userId) ||
             (mylab.ChallengeParticipation && mylab.ChallengeParticipation.userId === userId) ||
             (mylab.ClassProject && mylab.ClassProject.memberClass && mylab.ClassProject.memberClass.userId === userId);
 
