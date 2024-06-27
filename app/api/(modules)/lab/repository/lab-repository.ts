@@ -3,10 +3,19 @@ import { promises as fs } from 'fs';
 import path from 'path';
 
 class LabRepository {
-    static async saveCodeLab(payload: { labId: string; codeJsonContents: string }) {
+    static async saveCodeLab(payload: { labId: string; codeJsonContents: string }, userId: string) {
         const mylab = await db.lab.findUnique({
             where: {
                 id: payload.labId
+            },
+            include: {
+                UserProject: true,
+                ChallengeParticipation: true,
+                ClassProject: {
+                    include: {
+                        memberClass: true
+                    }
+                }
             }
         });
 
@@ -54,7 +63,7 @@ class LabRepository {
 
         if (!lab) throw 'lab not found';
 
-        const jsonFilePath = path.join(process.cwd(), 'public', lab.jsonFile);
+        const jsonFilePath = path.join(process.cwd(), 'public', lab.jsonFile ?? "");
         const labContents = await fs.readFile(jsonFilePath);
 
         return labContents.toString();
@@ -62,3 +71,4 @@ class LabRepository {
 }
 
 export default LabRepository;
+
