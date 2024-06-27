@@ -153,6 +153,11 @@ export function useContainer() {
         }
     }
 
+    async function rebootContainer(projectFiles: FileSystemTree) {
+        webcontainerInstance.current?.teardown();
+        setupContainer(projectFiles);
+    }
+
     return {
         webcontainerInstance,
         booting,
@@ -166,6 +171,7 @@ export function useContainer() {
         editor,
         setEditor,
         writeFile,
-        setupContainer
+        setupContainer,
+        rebootContainer
     };
 }

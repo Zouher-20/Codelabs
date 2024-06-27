@@ -204,7 +204,7 @@ model ChallengeParticipation {
 
 model Lab {
   id                     String                  @id @default(cuid())
-  jsonFile               String?
+  jsonFile               String
   ClassProject           ClassProject?
   ChallengeParticipation ChallengeParticipation?
   Tamblate               Tamblate?

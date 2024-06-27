@@ -31,6 +31,7 @@ export default function CodeEditor({ files }: { files: FileSystemTree }) {
         if (tree.activeFileName?.includes('.json')) setLanguage('json');
         else if (tree.activeFileName?.includes('.js')) setLanguage('javascript');
         else if (tree.activeFileName?.includes('.ts')) setLanguage('typescript');
+        else if (tree.activeFileName?.includes('.css')) setLanguage('css');
         else setLanguage('text');
 
         setEditor(get(tree.nodes, TreeHelper.getParsedPath(tree.activeFile)));

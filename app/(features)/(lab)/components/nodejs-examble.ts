@@ -31,35 +31,5 @@ app.listen(port, () => {
   }
 }`
         }
-    },
-    test: {
-        directory: {
-            'index.js': {
-                file: {
-                    contents: `
-tesat`
-                }
-            },
-            test2: {
-                directory: {
-                    'index.js': {
-                        file: {
-                            contents: `
-tesat`
-                        }
-                    },
-                    test3: {
-                        directory: {
-                            'index.js': {
-                                file: {
-                                    contents: `
-tesat`
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
 };
