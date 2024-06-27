@@ -244,7 +244,7 @@ export default function LabDetails() {
         }
         toast.success('lab created successfully');
 
-        route.push('/lab' + '/' + result2.data);
+        route.push('/lab' + '/' + result2.data.labId);
     };
     return (
         <div className="flex min-h-[550px] flex-col gap-2 p-3">
