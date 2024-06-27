@@ -71,6 +71,9 @@ class UsersRepository {
 
     }
 
+    // plan ,  lab , class 
+    // get all plan (edit) 
+
     static async create(payload: CreateUserInput, planId?: string) {
         const requestedPlan = GlobalUtils.isNullOrUndefined(planId)
             ? await db.plan.findFirst({

@@ -6,6 +6,7 @@ import UserProjectRepository from '../repository/user-project-repository';
 import {
     AddAndDeleteStarUserProjectInput,
     AddCommentUserProjectLabInput,
+    CloneCodeFromUserProjectInput,
     DeleteMyUserProjectInput,
     GetCommentUserProjectLabInput,
     GetDetailsUserProjectLabInput,
@@ -21,6 +22,12 @@ export const createUserProjectLabFromTemplate = async (payload: UserProjectInput
     const userId = session?.id;
     return UserProjectActionRepository.addUserProjectLab(payload, userId);
 };
+export const cloneLabFromUserProject = async (payload: CloneCodeFromUserProjectInput) => {
+    const session = await getSession();
+    const userId = session?.id;
+    return UserProjectActionRepository.cloneLabFromUserProject(payload, userId);
+};
+
 
 export const getUserProjectsLab = async (payload: GetUserProjectInput) => {
     const session = await getSession();
