@@ -82,7 +82,7 @@ class UserProjectActionRepository {
 
                 const newLab = await db.lab.create({
                     data: {
-                        jsonFile: newJsonFileName
+                        jsonFile: `/uploads/labs/${newJsonFileName}`
                     }
                 });
 
