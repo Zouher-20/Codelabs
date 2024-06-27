@@ -15,8 +15,12 @@ import IconRenderer from '@/app/components/globals/icon';
 import { ManageState } from '@/app/components/page-state/state_manager';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import { useDebounce } from 'use-debounce';
+import { getBlogs } from '../services/services';
 import BlogSetting from './blog-setting';
+import Content from './content';
 import Favorite from './favorite';
 
 const tabs = ['Blogs', 'Trending Blogs', 'Latest Blogs', 'My Blogs'];
