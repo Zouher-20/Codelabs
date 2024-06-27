@@ -1,7 +1,8 @@
 'use client';
-import { planType } from '@/app/@types/plan';
 import { TempletsTableType } from '@/app/@types/templetes';
+import { getAllTemplate } from '@/app/api/(modules)/admin/template/services/action';
 import { ManageState } from '@/app/components/page-state/state_manager';
+import { CustomToaster } from '@/app/components/toast/custom-toaster';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -9,9 +10,6 @@ import TempletesViewHeader from './components/headea';
 import AddTempelet from './components/modal/add_templete_modal';
 import DeleteTempletesModal from './components/modal/delete-templete-modal';
 import TempletessTable from './components/templetes-table';
-import { CustomToaster } from '@/app/components/toast/custom-toaster';
-import { getAllTemplate } from '@/app/api/(modules)/admin/template/services/action';
-import { template } from 'lodash';
 const Templetes = () => {
     const pageSize = 10;
     const params = useSearchParams();
@@ -49,9 +47,9 @@ const Templetes = () => {
                     return {
                         createdAt: e.createdAt,
                         id: e.id,
-                        labId:e.labId,
+                        labId: e.labId,
                         image: e.imageTemplate,
-                        name: e.nameTemplate,
+                        name: e.nameTemplate
                     } as TempletsTableType;
                 })
             );
@@ -104,14 +102,10 @@ const Templetes = () => {
                             currentPage={currentPage}
                             onPageChange={onPageChange}
                             editTempletesButtonClicked={template => {
-                                const params = {
-                                    id: template.labId ?? "",
-                                };
-                                const queryString = new URLSearchParams(params).toString();
-                                route.push('/lab' + '?' + queryString);
+                                route.push('/lab' + '/' + template.labId ?? '');
                             }}
                             deleteTempletesButtonClicked={template => {
-                                setModalTempletesId(template.id ?? "");
+                                setModalTempletesId(template.id ?? '');
                                 if (document) {
                                     (
                                         document.getElementById(
@@ -124,25 +118,30 @@ const Templetes = () => {
                     }
                 />
             </div>
-            <DeleteTempletesModal templateId={modalTempletesId} callback={() => {
-                getTempletes({
-                    newSearchWord: searchWord,
-                    page: currentPage
-                });
-            }} />
-            <AddTempelet callback={(template: TempletsTableType) => {
-                getTempletes({
-                    newSearchWord: searchWord,
-                    page: currentPage
-                });
-                toast.success('template created successfully');
+            <DeleteTempletesModal
+                templateId={modalTempletesId}
+                callback={() => {
+                    getTempletes({
+                        newSearchWord: searchWord,
+                        page: currentPage
+                    });
+                }}
+            />
+            <AddTempelet
+                callback={(template: TempletsTableType) => {
+                    getTempletes({
+                        newSearchWord: searchWord,
+                        page: currentPage
+                    });
+                    toast.success('template created successfully');
 
-                const params = {
-                    id: template.labId ?? "",
-                };
-                const queryString = new URLSearchParams(params).toString();
-                route.push('/lab' + '?' + queryString);
-            }} />
+                    const params = {
+                        id: template.labId ?? ''
+                    };
+                    const queryString = new URLSearchParams(params).toString();
+                    route.push('/lab' + '?' + queryString);
+                }}
+            />
             <CustomToaster />
         </div>
     );
