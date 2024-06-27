@@ -8,6 +8,7 @@ import {
     AddFeedbackInForClassProjectInRomInput,
     AddRomInClassInput,
     AddUsersInClassInput,
+    CloneLabForRoomInClassInput,
     getAllClassRoomsInput,
     GetAllUserAndSearchInput,
     getClassesByMeInput,
@@ -23,12 +24,21 @@ import {
     GetUserInClassInput,
     SubmittedLabsInRoomInput
 } from '@/app/api/(modules)/class-room/types';
+import ActoinRoomRepository from '../repository/action-room-repository';
 
 export const addClassRoom = async (payload: AddClassRoomInput) => {
     const session = await getSession();
     const userId = session?.id;
     return classRoomRepository.addClassRoom(payload, userId);
 };
+
+export const cloneLabForRoomInClass = async (payload: CloneLabForRoomInClassInput) => {
+    const session = await getSession();
+    const userId = session?.id;
+    return ActoinRoomRepository.cloneLabForRoomInClass(payload, userId);
+};
+
+
 
 export const getClassCreateByMe = async (payload: getClassesByMeInput) => {
     const session = await getSession();
