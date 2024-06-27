@@ -224,7 +224,7 @@ model Tamblate {
 model UserProject {
   id          String     @id @default(cuid())
   userId      String
-  clone       Int?
+  clone       Int        @default(0)
   user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   name        String?
   createdAt   DateTime   @default(now())
