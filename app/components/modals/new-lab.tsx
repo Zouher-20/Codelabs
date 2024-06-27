@@ -13,6 +13,7 @@ import RadioOption from '@/app/components/globals/form/type-multi-select/radio-o
 import IconRenderer from '@/app/components/globals/icon';
 import { types } from '@/app/constants/types';
 import { Field, Form, Formik } from 'formik';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { CustomToaster } from '../toast/custom-toaster';
@@ -26,8 +27,8 @@ interface FormValues {
 const NewLabModal = () => {
     const [tOptions, setTOptions] = useState<Array<MyOptionType>>([]);
     const [template, setTemplate] = useState<Array<TempletsTableType>>([]);
-
     const [templateId, setTemplateId] = useState<string | null>(null);
+    const router = useRouter();
 
     useEffect(() => {
         getServerData();
@@ -101,9 +102,9 @@ const NewLabModal = () => {
                 throw new Error(result2.data);
             }
             toast.success('lab created successfully');
-            setTimeout(function () {
-                (document.getElementById('new-lab-modal') as HTMLDialogElement).close();
-            }, 1000);
+            console.log(result2);
+            console.log('Dsadsadsd');
+            router.push('/lab' + '/' + result2.data.labId);
         } catch (error: any) {
             toast.error(error.message);
         }

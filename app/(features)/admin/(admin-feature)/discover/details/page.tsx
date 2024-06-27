@@ -60,14 +60,20 @@ export default function LabDetails() {
         const res = await getDetailsUserProjectLab({ userProjectId: id });
         setLab({
             id: res.lab.id,
-            isStared: res.isStarred,
+            labId: res.lab.lab.id,
             name: res.lab.name ?? '',
+            isStared: res.isStarred,
             createdAt: res.lab.createdAt ?? '',
             commentCount: res.commentCount,
             starCount: res.starCount,
             description: res.lab.description ?? '',
+            viewCount: res.viewCount,
+            clone: res.lab.clone ?? 0,
             user: {
-                ...res.lab.user,
+                email: res.lab.user.email,
+                id: res.lab.user.id,
+                userImage: res.lab.user.userImage,
+                username: res.lab.user.username,
                 name: res.lab.user.username
             }
         });
@@ -78,19 +84,20 @@ export default function LabDetails() {
             res.comment.map<FeedbackType>(e => {
                 return {
                     id: e.id,
-                    user: { ...e.user, name: e.user.username },
+                    user: {
+                        email: e.user.email,
+                        id: e.user.id,
+                        userImage: e.user.userImage,
+                        username: e.user.username,
+                        name: e.user.username
+                    },
                     feedback: e.comment
                 };
             })
         );
     };
     const handleLabClick = () => {
-        const id = '';
-        const params = {
-            id
-        };
-        const queryString = new URLSearchParams(params).toString();
-        route.push('/lab' + '?' + queryString);
+        route.push('/lab' + '/' + lab?.labId);
 
         return;
     };
@@ -186,7 +193,9 @@ export default function LabDetails() {
                                                             ? lab?.starCount
                                                             : index == 3
                                                               ? lab?.commentCount
-                                                              : 0,
+                                                              : index == 2
+                                                                ? lab?.viewCount
+                                                                : lab?.clone,
                                                     style: interaction.style,
                                                     key: index
                                                 })

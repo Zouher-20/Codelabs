@@ -58,9 +58,12 @@ export default function LabTable({
 
 export interface LabTableType extends GenericTableModel {
     id: string;
+    labId?: string;
     name: string;
     description: string;
     commentCount: number;
+    viewCount: number;
+    clone: number;
     isStared: boolean;
     starCount: number;
     createdAt?: Date;

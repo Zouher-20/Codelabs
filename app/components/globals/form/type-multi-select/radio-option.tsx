@@ -16,6 +16,8 @@ const RadioOption = ({ options, onChange }: radio) => {
                     >
                         {label == 'From scratch' ? (
                             <IconRenderer className="text-primary " fontSize={28} icon={icon} />
+                        ) : icon == '' ? (
+                            <></>
                         ) : (
                             <img
                                 className="h-10  w-10 rounded-md object-cover"

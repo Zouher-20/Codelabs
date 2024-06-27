@@ -18,9 +18,12 @@ import UserAvatar from '@/app/components/globals/user-avatar';
 import { ManageState } from '@/app/components/page-state/state_manager';
 import { CustomToaster } from '@/app/components/toast/custom-toaster';
 import { interactions } from '@/app/constants/interactions';
+import { Icon } from '@iconify/react/dist/iconify.js';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import CloneToClassModal from './components/modal/clone_to_class_modal';
+import CloneLabModal from './components/modal/new-lab';
 
 export default function LabDetails() {
     const [comments, setComment] = useState<Array<FeedbackType>>([]);
@@ -63,9 +66,15 @@ export default function LabDetails() {
             createdAt: res.lab.createdAt ?? '',
             commentCount: res.commentCount,
             starCount: res.starCount,
+            labId: res.lab.lab.id,
             description: res.lab.description ?? '',
+            viewCount: res.viewCount,
+            clone: res.lab.clone ?? 0,
             user: {
-                ...res.lab.user,
+                email: res.lab.user.email,
+                id: res.lab.user.id,
+                userImage: res.lab.user.userImage,
+                username: res.lab.user.username,
                 name: res.lab.user.username
             }
         });
@@ -76,19 +85,20 @@ export default function LabDetails() {
             res.comment.map<FeedbackType>(e => {
                 return {
                     id: e.id,
-                    user: { ...e.user, name: e.user.username },
+                    user: {
+                        email: e.user.email,
+                        id: e.user.id,
+                        userImage: e.user.userImage,
+                        username: e.user.username,
+                        name: e.user.username
+                    },
                     feedback: e.comment
                 };
             })
         );
     };
     const handleLabClick = () => {
-        const id = params.get('id') ?? '';
-        const newParams = {
-            id
-        };
-        const queryString = new URLSearchParams(newParams).toString();
-        route.push('/lab' + '?' + queryString);
+        route.push('/lab/' + lab?.labId);
 
         return;
     };
@@ -130,6 +140,112 @@ export default function LabDetails() {
             toast.error(e.message);
         }
     };
+
+    const dropdown = () => {
+        return (
+            <div className="dropdown dropdown-left">
+                <div
+                    tabIndex={0}
+                    role="button"
+                    className="flex cursor-pointer items-center gap-2 rounded-btn hover:opacity-85"
+                >
+                    <Icon icon="solar:menu-dots-bold-duotone" className="size-10 text-primary" />
+                </div>
+
+                <ul
+                    tabIndex={0}
+                    className="menu dropdown-content z-[1] mt-4 w-52 rounded-box bg-base-100 p-2 shadow"
+                >
+                    <li
+                        onClick={() => {
+                            if (document) {
+                                (
+                                    document.getElementById('clone-lab-modal') as HTMLFormElement
+                                )?.showModal();
+                            }
+                        }}
+                    >
+                        <div>
+                            <Icon icon="solar:dna-bold-duotone" className="size-8 text-primary" />
+                            Clone lab
+                        </div>
+                    </li>
+                    <span className="divider my-0" />
+                    <li
+                        onClick={() => {
+                            if (document) {
+                                (
+                                    document.getElementById('clone-lab-to-class') as HTMLFormElement
+                                )?.showModal();
+                            }
+                        }}
+                    >
+                        <div>
+                            <Icon
+                                icon="solar:case-round-bold-duotone"
+                                className="size-8 text-primary"
+                            />
+                            Clone to class
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        );
+    };
+    const onCloneClicked = async (values: {
+        name: string;
+        description: string;
+        tags: Array<string>;
+    }) => {
+        const response2 = await fetch('/api/user-project/clone-from-user-project', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                tagId: values.tags,
+                description: values.description,
+                name: values.name,
+                labId: lab?.labId ?? ''
+            })
+        });
+        const result2 = await response2.json();
+        if (result2.statusCode >= 300) {
+            throw new Error(result2.data);
+        }
+        toast.success('lab created successfully');
+
+        route.push('/lab' + '/' + result2.data.labId);
+    };
+    const onCloneToClassClicked = async (values: {
+        name: string;
+        description: string;
+        type: string;
+        endAt: Date;
+        classId: string;
+    }) => {
+        const response2 = await fetch('/api/user-project/clone-for-class', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                type: values.type,
+                description: values.description,
+                name: values.name,
+                endAt: values.endAt,
+                labId: lab?.labId ?? '',
+                classRomId: values.classId
+            })
+        });
+        const result2 = await response2.json();
+        if (result2.statusCode >= 300) {
+            throw new Error(result2.data);
+        }
+        toast.success('lab created successfully');
+
+        route.push('/lab' + '/' + result2.data.labId);
+    };
     return (
         <div className="flex min-h-[550px] flex-col gap-2 p-3">
             <ManageState
@@ -148,10 +264,12 @@ export default function LabDetails() {
 
                             <CodeLabContainer height={'18rem'} minWidth="64">
                                 <div className="flex w-full flex-col justify-center gap-5 p-5">
-                                    <article className="line-clamp-5 text-wrap text-sm">
-                                        {lab?.description}
-                                    </article>
-
+                                    <div className="flex">
+                                        <article className="line-clamp-5 text-wrap text-sm">
+                                            {lab?.description}
+                                        </article>
+                                        {dropdown()}
+                                    </div>
                                     <div className="flex gap-1">
                                         {interactions.map(
                                             (interaction: InteractionType, index: number) =>
@@ -167,7 +285,9 @@ export default function LabDetails() {
                                                             ? lab?.starCount
                                                             : index == 3
                                                               ? lab?.commentCount
-                                                              : 0,
+                                                              : index == 2
+                                                                ? lab?.viewCount ?? 0
+                                                                : lab?.clone,
                                                     style: interaction.style,
                                                     key: index
                                                 })
@@ -189,6 +309,8 @@ export default function LabDetails() {
                 empty={false}
             />
             <CustomToaster />
+            <CloneLabModal submitCallback={onCloneClicked} />
+            <CloneToClassModal callbackFunction={onCloneToClassClicked} />
             <CommentModal myId={myId} lab={lab} open={open} onCommentChange={onCommentChange} />
         </div>
     );

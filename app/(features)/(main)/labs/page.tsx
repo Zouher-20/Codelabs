@@ -43,7 +43,8 @@ export default function StaredPage() {
                         },
                         commentCount: e.commentCount,
                         starCount: e.starCount,
-                        isStared: true
+                        isStared: true,
+                        viewCount: e.viewCount
                     };
                 })
             );

@@ -32,6 +32,8 @@ export default function StaredPage() {
             });
             setLabs(
                 res.starredUserProjects.map<LabTableType>((e: any) => {
+                    console.log(e);
+                    console.log('sadasds');
                     return {
                         ...e,
                         user: {
@@ -43,7 +45,8 @@ export default function StaredPage() {
                         },
                         commentCount: e.commentCount,
                         starCount: e.starCount,
-                        isStared: true
+                        isStared: true,
+                        viewCount: e.viewCount
                     };
                 })
             );
