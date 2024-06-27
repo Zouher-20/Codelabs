@@ -1,4 +1,4 @@
 export interface SaveCodeLabInput {
     labId: string;
-    jsoncontan: string
+    codeJsonContents: string;
 }
