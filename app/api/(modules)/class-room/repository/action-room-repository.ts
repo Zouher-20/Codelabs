@@ -109,8 +109,18 @@ class ActoinRoomRepository {
                     labId: newLab.id
                 }
             });
-            const labId = newLab.id
 
+            const labId = newLab.id
+            await db.userProject.update({
+                where: {
+                    labId: payload.labId
+                },
+                data: {
+                    clone: {
+                        increment: 1
+                    }
+                }
+            });
             return { labId };
         } else {
             throw new Error('Rom limit reached for this class.');

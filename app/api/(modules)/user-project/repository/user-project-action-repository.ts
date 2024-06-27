@@ -231,6 +231,16 @@ class UserProjectActionRepository {
                     })
                 );
 
+                await db.userProject.update({
+                    where: {
+                        labId: payload.labId
+                    },
+                    data: {
+                        clone: {
+                            increment: 1
+                        }
+                    }
+                });
                 await Promise.all(tagMorphCreatePromises);
 
                 return newUserProject;
