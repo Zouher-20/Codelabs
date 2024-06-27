@@ -4,6 +4,12 @@ export interface UserProjectInput {
     tagId: string[];
     templateId: string;
 }
+export interface CloneCodeFromUserProjectInput {
+    name?: string;
+    description?: string;
+    tagId: string[];
+    labId: string
+}
 
 export interface GetUserProjectInput {
     page: number;
