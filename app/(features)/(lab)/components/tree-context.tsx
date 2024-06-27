@@ -9,13 +9,15 @@ export interface FileTreeState {
     activeFolder: string[];
     activeFileName?: string;
     webContainerInstance: WebContainer | null;
+    labId: string | null;
 }
 export const FileTreeContext = createContext<FileTreeState>({
     nodes: {},
     activeFile: ['package.json'],
     activeFolder: [],
     activeFileName: 'package.json',
-    webContainerInstance: null
+    webContainerInstance: null,
+    labId: null
 });
 
 export enum NodeType {
@@ -25,13 +27,15 @@ export enum NodeType {
 export const FileTreeDispatchContext = createContext<Dispatch<ITreeAction> | null>(null);
 export function TreeContextProvider({
     children,
-    nodes
-}: PropsWithChildren<{ nodes: FileSystemTree }>) {
+    nodes,
+    labId
+}: PropsWithChildren<{ nodes: FileSystemTree; labId: string }>) {
     const [fileTreeState, dispatch] = useReducer(treeReducer, {
         nodes,
         activeFile: ['package.json'],
         activeFolder: [],
-        activeFileName: 'package.json'
+        activeFileName: 'package.json',
+        labId
     } as never);
 
     return (
@@ -61,7 +65,8 @@ export enum TreeReducerActionType {
     FOLDER_CREATE,
     FILE_CREATE,
     FILE_UPDATE,
-    SET_CONTAINER
+    SET_CONTAINER,
+    SYNC_LAB
 }
 
 interface IFileActivateAction {
@@ -95,6 +100,10 @@ interface ISetContainerAction {
     type: TreeReducerActionType.SET_CONTAINER;
     payload: WebContainer;
 }
+interface ISyncLabAction {
+    type: TreeReducerActionType.SYNC_LAB;
+    payload?: undefined;
+}
 
 type ITreeAction =
     | IFileActivateAction
@@ -103,7 +112,8 @@ type ITreeAction =
     | IFileCreateAction
     | IFolderCreateAction
     | IFileUpdateAction
-    | ISetContainerAction;
+    | ISetContainerAction
+    | ISyncLabAction;
 
 export function treeReducer(fileTreeState: FileTreeState, { type, payload }: ITreeAction) {
     switch (type) {
@@ -114,7 +124,8 @@ export function treeReducer(fileTreeState: FileTreeState, { type, payload }: ITr
                 activeFile: payload,
                 nodes: fileTreeState.nodes,
                 activeFileName: [...payload].pop(),
-                webContainerInstance: fileTreeState.webContainerInstance
+                webContainerInstance: fileTreeState.webContainerInstance,
+                labId: fileTreeState.labId
             };
         }
         case TreeReducerActionType.FOLDER_ACTIVATE: {
@@ -123,7 +134,8 @@ export function treeReducer(fileTreeState: FileTreeState, { type, payload }: ITr
                 activeFile: fileTreeState.activeFile,
                 nodes: fileTreeState.nodes,
                 activeFileName: fileTreeState.activeFileName,
-                webContainerInstance: fileTreeState.webContainerInstance
+                webContainerInstance: fileTreeState.webContainerInstance,
+                labId: fileTreeState.labId
             };
         }
         case TreeReducerActionType.NODE_DELETE: {
@@ -137,7 +149,8 @@ export function treeReducer(fileTreeState: FileTreeState, { type, payload }: ITr
                 activeFile: ['package.json'],
                 nodes: newNodes,
                 activeFileName: 'package.json',
-                webContainerInstance: fileTreeState.webContainerInstance
+                webContainerInstance: fileTreeState.webContainerInstance,
+                labId: fileTreeState.labId
             };
         }
         case TreeReducerActionType.FOLDER_CREATE: {
@@ -155,7 +168,8 @@ export function treeReducer(fileTreeState: FileTreeState, { type, payload }: ITr
                 activeFile: fileTreeState.activeFile,
                 nodes: newNodes,
                 activeFileName: fileTreeState.activeFileName,
-                webContainerInstance: fileTreeState.webContainerInstance
+                webContainerInstance: fileTreeState.webContainerInstance,
+                labId: fileTreeState.labId
             };
         }
         case TreeReducerActionType.FILE_CREATE: {
@@ -174,7 +188,8 @@ export function treeReducer(fileTreeState: FileTreeState, { type, payload }: ITr
                 activeFile: payload,
                 nodes: newNodes,
                 activeFileName: payload[payload.length - 1],
-                webContainerInstance: fileTreeState.webContainerInstance
+                webContainerInstance: fileTreeState.webContainerInstance,
+                labId: fileTreeState.labId
             };
         }
         case TreeReducerActionType.FILE_UPDATE: {
@@ -188,7 +203,8 @@ export function treeReducer(fileTreeState: FileTreeState, { type, payload }: ITr
                 activeFile: fileTreeState.activeFile,
                 nodes: newNodes,
                 activeFileName: fileTreeState.activeFileName,
-                webContainerInstance: fileTreeState.webContainerInstance
+                webContainerInstance: fileTreeState.webContainerInstance,
+                labId: fileTreeState.labId
             };
         }
         case TreeReducerActionType.SET_CONTAINER: {
@@ -197,7 +213,29 @@ export function treeReducer(fileTreeState: FileTreeState, { type, payload }: ITr
                 activeFile: fileTreeState.activeFile,
                 nodes: fileTreeState.nodes,
                 activeFileName: fileTreeState.activeFileName,
-                webContainerInstance: payload
+                webContainerInstance: payload,
+                labId: fileTreeState.labId
+            };
+        }
+        case TreeReducerActionType.SYNC_LAB: {
+            fetch('/api/lab/save-lab', {
+                method: 'POST', // *GET, POST, PUT, DELETE, etc
+                headers: {
+                    'Content-Type': 'application/json'
+                    // 'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: JSON.stringify({
+                    labId: fileTreeState.labId,
+                    codeJsonContents: JSON.stringify(fileTreeState.nodes)
+                })
+            });
+            return {
+                activeFolder: fileTreeState.activeFolder,
+                activeFile: fileTreeState.activeFile,
+                nodes: fileTreeState.nodes,
+                activeFileName: fileTreeState.activeFileName,
+                webContainerInstance: cloneDeep(fileTreeState.webContainerInstance),
+                labId: fileTreeState.labId
             };
         }
         default: {
