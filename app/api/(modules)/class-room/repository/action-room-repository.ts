@@ -109,8 +109,9 @@ class ActoinRoomRepository {
                     labId: newLab.id
                 }
             });
+            const labId = newLab.id
 
-            return { message: 'Rom added to class successfully' };
+            return { labId };
         } else {
             throw new Error('Rom limit reached for this class.');
         }
