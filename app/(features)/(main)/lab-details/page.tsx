@@ -217,6 +217,35 @@ export default function LabDetails() {
 
         route.push('/lab' + '/' + result2.data.labId);
     };
+    const onCloneToClassClicked = async (values: {
+        name: string;
+        description: string;
+        type: string;
+        endAt: Date;
+        classId: string;
+    }) => {
+        const response2 = await fetch('/api/user-project/clone-for-class', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                type: values.type,
+                description: values.description,
+                name: values.name,
+                endAt: values.endAt,
+                labId: lab?.labId ?? '',
+                classRomId: values.classId
+            })
+        });
+        const result2 = await response2.json();
+        if (result2.statusCode >= 300) {
+            throw new Error(result2.data);
+        }
+        toast.success('lab created successfully');
+
+        route.push('/lab' + '/' + result2.data);
+    };
     return (
         <div className="flex min-h-[550px] flex-col gap-2 p-3">
             <ManageState
@@ -281,7 +310,7 @@ export default function LabDetails() {
             />
             <CustomToaster />
             <CloneLabModal submitCallback={onCloneClicked} />
-            <CloneToClassModal callbackFunction={async val => {}} />
+            <CloneToClassModal callbackFunction={onCloneToClassClicked} />
             <CommentModal myId={myId} lab={lab} open={open} onCommentChange={onCommentChange} />
         </div>
     );

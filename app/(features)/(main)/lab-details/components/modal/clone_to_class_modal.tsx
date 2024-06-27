@@ -21,6 +21,7 @@ const CloneToClassModal = ({
         description: string;
         type: string;
         endAt: Date;
+        classId: string;
     }) => Promise<void>;
 }) => {
     const [buttonLoading, setButtonLoading] = useState<boolean>(false);
@@ -73,7 +74,8 @@ const CloneToClassModal = ({
                 type: values.type,
                 description: values.description,
                 name: values.name,
-                endAt: endDate
+                endAt: endDate,
+                classId: selectedClass ?? ''
             });
         } catch (e: any) {
             toast.error(e.message);
@@ -171,13 +173,15 @@ const CloneToClassModal = ({
                                     </div>
                                 </div>
                             </div>
-                            <Button
-                                style="w-fit self-end"
-                                color="any"
-                                label="Continue"
-                                type="submit"
-                                loading={buttonLoading}
-                            />
+                            <div className="flex justify-end">
+                                <Button
+                                    style="w-fit self-end"
+                                    color="any"
+                                    label="Continue"
+                                    type="submit"
+                                    loading={buttonLoading}
+                                />
+                            </div>
                         </Form>
                     )}
                 </Formik>
