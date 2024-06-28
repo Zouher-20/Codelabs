@@ -1,29 +1,34 @@
 'use client';
+import { completeMyInfo } from '@/app/api/(modules)/auth/service/actions';
 import Button from '@/app/components/globals/form/button';
 import Input from '@/app/components/globals/form/input';
 import IconRenderer from '@/app/components/globals/icon';
-import { email, textField } from '@/app/schemas';
+import { textField } from '@/app/schemas';
 import { useFormik } from 'formik';
+import toast from 'react-hot-toast';
 import * as yup from 'yup';
 
 export type userInfo = {
-    name?: string;
-    email?: string;
     bio?: string;
     position?: string;
 };
-const EditModal = ({ userInfo }: { userInfo: userInfo }) => {
+const EditModal = ({ userInfo, isUpdate }: { userInfo: userInfo, isUpdate: Function }) => {
     const validationSchema = yup.object().shape({
-        name: textField,
-        email: email,
         bio: textField,
         position: textField
     });
-    const onSubmit = () => {};
+    const onSubmit = async (values: userInfo) => {
+        try {
+            await completeMyInfo({ bio: values.bio, position: values.position });
+            isUpdate(true);
+            (document.getElementById('new-lab-modal') as HTMLDialogElement).close();
+            toast.success('Update Your profile successfully')
+        } catch (err: any) {
+            toast.error(err);
+        }
+    };
     const { values, errors, touched, handleChange, handleSubmit, handleBlur } = useFormik({
         initialValues: {
-            name: userInfo.name,
-            email: userInfo.email,
             bio: userInfo.bio ? userInfo.bio : '',
             position: userInfo.position ? userInfo.position : ''
         },
@@ -51,20 +56,16 @@ const EditModal = ({ userInfo }: { userInfo: userInfo }) => {
                                     type="text"
                                     placeholder={key}
                                     icon={
-                                        key == 'name'
-                                            ? 'solar:people-nearby-bold-duotone'
-                                            : key == 'email'
-                                              ? 'solar:user-bold'
-                                              : key == 'bio'
-                                                ? 'mingcute:user-info-fill'
-                                                : 'mdi:position'
+                                        key == 'bio'
+                                            ? 'mingcute:user-info-fill'
+                                            : 'mdi:position'
                                     }
                                     value={values[key as keyof typeof userInfo]}
                                     onBlur={handleBlur}
                                     onChange={handleChange}
                                     errors={
                                         errors[key as keyof typeof userInfo] &&
-                                        touched[key as keyof typeof userInfo]
+                                            touched[key as keyof typeof userInfo]
                                             ? errors[key as keyof typeof userInfo]
                                             : null
                                     }

@@ -1,12 +1,27 @@
+"use client"
 import { planType } from '@/app/@types/plan';
+import { userType } from '@/app/@types/user';
+import { getPlan } from '@/app/api/(modules)/admin/plan/service/action';
 import UserPlanCard from '@/app/components/cards/user-plan-card';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
-const Billing = ({ plan }: { plan: planType }) => {
+const Billing = ({ user }: { user: userType }) => {
+    const [plan, setPlan] = useState<planType>();
+
+    useEffect(() => {
+        getUserPlan()
+    }, [])
+
+    const getUserPlan = async () => {
+        await getPlan().then((res) => {
+            setPlan(res as unknown as planType)
+        })
+    }
     return (
         <div className="flex gap-4 max-md:flex-col">
             <div className="w-fit">
-                <UserPlanCard plan={plan} />
+                {plan && <UserPlanCard plan={user.PlanSubscription.plan as unknown as planType} />}
             </div>
             <div className="flex flex-col justify-center  gap-4 rounded-3xl border-2 border-base-100 p-4">
                 <h3 className="text-4xl">

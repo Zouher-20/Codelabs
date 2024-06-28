@@ -74,26 +74,25 @@ const BlogDetails = ({ params }: { params: { id: string } }) => {
                             {blog?.title}
                         </h1>
                     </div>
-                    <div className="mb-6 flex gap-4">
-                        <Link
-                            href={
-                                user?.id == blog?.user.id
-                                    ? '/profile'
-                                    : `/user-profile/${blog?.user.id}`
-                            }
-                            className="w-14 cursor-pointer rounded-full bg-black p-4 text-center capitalize"
-                        >
-                            {blog?.user.userImage ? (
-                                <Image
-                                    src={blog?.user.userImage}
-                                    alt="user"
-                                    width={56}
-                                    height={56}
-                                />
-                            ) : (
-                                blog?.user.username.slice(0, 1)
-                            )}
-                        </Link>
+                    <div className="flex gap-4">
+                        {blog?.user.userImage ?
+                            <Image
+                                src={blog?.user.userImage.replace(/\\/g, '/')}
+                                alt="user"
+                                width={56}
+                                height={56}
+                                className='rounded-full h-24 w-24 bg-cover'
+                            />
+                            : <Link
+                                href={
+                                    user?.id == blog?.user.id
+                                        ? '/profile'
+                                        : `/user-profile/${blog?.user.id}`
+                                }
+                                className="w-14 cursor-pointer rounded-full bg-black p-4 text-center capitalize"
+                            >
+                                {blog?.user.username.slice(0, 1)}
+                            </Link>}
                         <span className="flex flex-col gap-1">
                             <Link
                                 href={

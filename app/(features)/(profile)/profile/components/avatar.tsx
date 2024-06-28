@@ -3,10 +3,17 @@
 import IconRenderer from "@/app/components/globals/icon";
 import Image from "next/image";
 import { useRef, useState } from "react";
+import noImage from '@/public/images/no-image2.png'
 
-const Avatar = ({ user }: { user: { username: string, userimage: string } }) => {
+const Avatar = ({ photo, imageSize, imagePath, username }
+    : {
+        photo: (photo: File) => void;
+        imageSize?: number,
+        imagePath?: string,
+        username: string
+    }) => {
 
-    const [imageFile, setImageFile] = useState(user.userimage)
+    const [imageFile, setImageFile] = useState(imagePath ?? '')
     const hiddenFileInput = useRef<HTMLInputElement>(null);
 
     const handleClick = () => {
@@ -22,24 +29,26 @@ const Avatar = ({ user }: { user: { username: string, userimage: string } }) => 
         reader.onload = (e) => {
             if (e.target?.result) {
                 setImageFile(e.target.result as string);
+                photo(fileUploaded);
             }
         };
     };
 
     return (
         <div className="flex gap-4 py-1">
-            <div className="avatar w-[140px] h-[140px]">
+            <div className="avatar"
+                style={{ width: `${imageSize ?? 140}px`, height: `${imageSize ?? 140}px` }}
+            >
                 <Image
                     className="rounded-xl"
                     height={140}
                     width={140}
                     alt="user"
-                    src={imageFile ? imageFile :
-                        "https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"}
+                    src={imageFile ? imageFile.replace(/\\/g, '/') : noImage}
                 />
             </div>
             <section className="self-center flex flex-col">
-                <span className="text-lg ">{user.username}</span>
+                <span className="text-lg ">{username}</span>
                 <span onClick={handleClick} className="relative flex gap-1  text-gray-500 cursor-pointer">
                     <IconRenderer className="self-end cursor-pointer" height={18} width={18} icon='basil:edit-outline' />
                     <button style={{ cursor: 'pointer', font: 'inherit', }} >

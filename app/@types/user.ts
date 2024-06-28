@@ -1,16 +1,33 @@
+import { NAMEPLAN } from '@prisma/client';
+
 export interface userType {
-    userImage: string | null | undefined;
-    username: string;
-    name: string;
     id: string;
     email: string;
-    image?: string | null;
-    plan?: string;
-    bio?: string;
-    position?: string;
-    labs?: number;
-    classes?: number;
-    role?: string;
+    username: string;
+    user: string;
+    password: string;
+    bio: string;
+    role: string;
+    createdAt: Date | null;
+    position: string;
+    typeUser: string | null;
+    userImage: string;
+    planEndDate: Date | null;
+    inActive: boolean;
+    PlanSubscription: {
+        id: string;
+        userId: string;
+        planId: string;
+        plan: {
+            id: string;
+            name: string;
+            price: number | null;
+            duration: string | null;
+            subtitle: string;
+            createdAt: Date | null;
+            FeaturePlan: { name: NAMEPLAN; value: number };
+        };
+    };
 }
 
 export interface ClassRoomUserType {
