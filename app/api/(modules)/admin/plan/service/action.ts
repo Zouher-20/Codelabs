@@ -15,12 +15,7 @@ export const addPlan = async (payload: PlanInput) => {
 };
 
 export const getPlan = async () => {
-    const session = await getSession();
-    if (session?.role === ROLE.ADMIN) {
-        return AdminPlanRepository.getPlan();
-    } else {
-        throw new Error('Access denied: You are not an admin.');
-    }
+    return AdminPlanRepository.getPlan();
 };
 export const editPlan = async (payload: editPlanInput) => {
     const { subtitle, duration, price, featurePlans, planId, name } = payload;

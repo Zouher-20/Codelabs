@@ -3,10 +3,26 @@
 import { CustomToaster } from '@/app/components/toast/custom-toaster';
 import DeleteAccountModal from './delete-modal';
 import EditModal from './edit-modal';
+import { useEffect, useState } from 'react';
+import { getMyInfo } from '@/app/api/(modules)/auth/service/actions';
 
-const PersonalInfo = ({ user }: { user: { username: string, email: string } }) => {
+const PersonalInfo = () => {
+    const [UserInfo, setUserInfo] = useState<any>();
+    const [isUpdate, setIsUpdate] = useState(false);
 
-    const userInfo = { name: user.username, email: user.email, bio: 'Bio', position: 'Developber' };
+    useEffect(() => {
+        const getUser = async () => {
+            const user = await getMyInfo()
+            if (user) setUserInfo({
+                username: user.username,
+                email: user.email,
+                bio: user.bio,
+                position: user.position
+            })
+            setIsUpdate(false);
+        }
+        getUser()
+    }, [isUpdate])
 
     function toggleModal() {
         if (document) {
@@ -30,11 +46,11 @@ const PersonalInfo = ({ user }: { user: { username: string, email: string } }) =
                 </button>
             </div>
             <div className="flex flex-col gap-4 px-2">
-                {Object.keys(userInfo).map(key => (
+                {UserInfo && Object.keys(UserInfo).map(key => (
                     <div className="flex flex-col " key={key}>
                         <p className="capitalize">{key}</p>
                         <p key={key} className="text-gray-500">
-                            {(userInfo as any)[key]}
+                            {(UserInfo as any)[key] ?? (key == 'bio' ? 'ex : Bio' : (key == 'position' ? 'ex: Designer ,developer' : ''))}
                         </p>
                     </div>
                 ))}
@@ -53,7 +69,7 @@ const PersonalInfo = ({ user }: { user: { username: string, email: string } }) =
                     delete my account
                 </button>
             </div>
-            <EditModal userInfo={userInfo} />
+            {UserInfo && <EditModal userInfo={{ bio: UserInfo.bio, position: UserInfo.position }} isUpdate={(val: boolean) => setIsUpdate(val)} />}
             <DeleteAccountModal />
             <CustomToaster />
         </div>
