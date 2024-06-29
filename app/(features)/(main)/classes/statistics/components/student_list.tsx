@@ -1,4 +1,4 @@
-import { ClassRoomUserType } from '@/app/@types/user';
+import { ClassRoomUserType, userType } from '@/app/@types/user';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import { MouseEventHandler } from 'react';
 import CodeLabContainer from '../../components/container';
@@ -7,13 +7,17 @@ export default function StudentList({
     students,
     title,
     height = '19rem',
-    withCheck = false
+    myInfo,
+    onDeleteUserClicked
 }: {
     students: Array<ClassRoomUserType>;
     title: string;
     height?: string;
-    withCheck?: boolean;
+    onDeleteUserClicked?: (user: ClassRoomUserType) => void;
+    myInfo?: userType | null;
 }) {
+    const amITheTeacher = myInfo ? students.find(e => e.id === myInfo.id)?.isTeacher : false;
+
     function ListItem({
         studentModel,
         onClick,
@@ -25,7 +29,10 @@ export default function StudentList({
     }) {
         return (
             <div className="carousel-item w-full">
-                <div className="flex w-full rounded-lg bg-base-200 p-3" onClick={onClick}>
+                <div
+                    className="flex w-full items-center rounded-lg bg-base-200 p-3"
+                    onClick={onClick}
+                >
                     <div className="flex w-full items-center gap-3">
                         <Icon
                             icon="solar:square-academic-cap-bold-duotone"
@@ -33,13 +40,30 @@ export default function StudentList({
                         />
                         <p>{studentModel.name}</p>
                     </div>
-                    {checked ? (
+                    {studentModel.isTeacher ? (
+                        <div className="rounded-md bg-base-100 p-1">
+                            <Icon icon="solar:case-round-bold-duotone" className="size-6" />
+                        </div>
+                    ) : (
+                        amITheTeacher && (
+                            <div
+                                className="rounded-md bg-base-100 p-1"
+                                onClick={() => {
+                                    onDeleteUserClicked && onDeleteUserClicked!(studentModel);
+                                }}
+                            >
+                                <Icon
+                                    icon="solar:trash-bin-trash-bold-duotone"
+                                    className="size-6 text-red-500 hover:cursor-pointer"
+                                />
+                            </div>
+                        )
+                    )}
+                    {checked && (
                         <Icon
                             icon="solar:verified-check-broken"
                             className={`size-10 text-primary`}
                         />
-                    ) : (
-                        <></>
                     )}
                 </div>
             </div>
@@ -53,7 +77,11 @@ export default function StudentList({
                 <div className="carousel carousel-vertical w-full gap-1 rounded-box p-2">
                     {students.map((e, index) => (
                         <div className="px-1" key={e + `${index}`}>
-                            <ListItem studentModel={e} checked={e.withCheck ?? false} />
+                            <ListItem
+                                studentModel={e}
+                                checked={e.withCheck ?? false}
+                                onClick={() => {}}
+                            />
                         </div>
                     ))}
                 </div>

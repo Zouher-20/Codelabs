@@ -3,7 +3,6 @@ import { NAMEPLAN } from '@prisma/client';
 import { DateTime } from 'next-auth/providers/kakao';
 
 class ClassRoomRepository {
-
     static async deleteMyClass(payload: { classRoomId: string }, userId: string) {
         const myClass = await db.classRom.findUnique({
             where: {
@@ -17,19 +16,20 @@ class ClassRoomRepository {
             }
         });
         if (!myClass) {
-            throw new Error("your class was deleted ||  this class not yours");
-        };
+            throw new Error('your class was deleted ||  this class not yours');
+        }
 
         await db.classRom.deleteMany({
             where: {
                 id: myClass.id
             }
         });
-        return "class deleted successfully";
-
+        return 'class deleted successfully';
     }
-    static async deleteUserFromMyClass(payload: { classRoomId: string, userIds: string[] }, userId: string) {
-
+    static async deleteUserFromMyClass(
+        payload: { classRoomId: string; userIds: string[] },
+        userId: string
+    ) {
         const myClass = await db.classRom.findUnique({
             where: {
                 id: payload.classRoomId,
@@ -46,7 +46,6 @@ class ClassRoomRepository {
             throw new Error('No class found');
         }
 
-
         for (const studentId of payload.userIds) {
             await db.memberClass.deleteMany({
                 where: {
@@ -56,7 +55,7 @@ class ClassRoomRepository {
                 }
             });
         }
-        return "users deleted successfully "
+        return 'users deleted successfully ';
     }
     // static async getAllFeedbackInRoom(payload: {
     //     RomId: string,
@@ -94,9 +93,11 @@ class ClassRoomRepository {
     //     })
     // }
 
-    static async getAllClassRooms(
-        payload: { page: number; pageSize: number; searchWord?: string },
-    ) {
+    static async getAllClassRooms(payload: {
+        page: number;
+        pageSize: number;
+        searchWord?: string;
+    }) {
         const skip = (payload.page - 1) * payload.pageSize;
         let args = {};
 
@@ -111,7 +112,7 @@ class ClassRoomRepository {
             include: {
                 MemberClass: {
                     where: {
-                        isTeacher: true,
+                        isTeacher: true
                     },
                     include: {
                         user: true
@@ -125,7 +126,6 @@ class ClassRoomRepository {
 
         const classRoomsWithCounts = await Promise.all(
             classRoom.map(async classRoom => {
-
                 const memberCount = await db.memberClass.count({
                     where: { classRomId: classRoom.id }
                 });
@@ -319,7 +319,7 @@ class ClassRoomRepository {
                     }
                 },
                 data: {
-                    jsonFile: payload.jsonFile,
+                    jsonFile: payload.jsonFile
                 }
             });
         } else {
@@ -327,7 +327,7 @@ class ClassRoomRepository {
 
             newLab = await db.lab.create({
                 data: {
-                    jsonFile: payload.jsonFile,
+                    jsonFile: payload.jsonFile
                 }
             });
             newClassProject = await db.classProject.create({
@@ -337,8 +337,6 @@ class ClassRoomRepository {
                     labId: newLab.id
                 }
             });
-
-
         }
 
         return { lab: newLab, classProject: newClassProject || hasClassProject };
@@ -1003,8 +1001,7 @@ class ClassRoomRepository {
                                 user: true
                             }
                         }
-                    },
-
+                    }
                 }
             }
         });
@@ -1032,7 +1029,7 @@ class ClassRoomRepository {
                     {
                         MemberClass: {
                             some: {
-                                userId: userId,
+                                userId: userId
                             }
                         }
                     }
@@ -1055,7 +1052,7 @@ class ClassRoomRepository {
             where: {
                 MemberClass: {
                     some: {
-                        classRomId: myClass.id,
+                        classRomId: myClass.id
                     }
                 }
             },
@@ -1063,7 +1060,6 @@ class ClassRoomRepository {
                 MemberClass: {
                     where: {
                         classRomId: myClass.id
-
                     },
                     include: {
                         ClassProject: {
@@ -1101,7 +1097,6 @@ class ClassRoomRepository {
                                             ClassProject: {
                                                 romId: payload.romId
                                             }
-
                                         }
                                     }
                                 }
