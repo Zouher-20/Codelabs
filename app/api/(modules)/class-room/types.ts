@@ -13,6 +13,9 @@ export interface CloneLabForRoomInClassInput {
     type?: string;
     labId: string;
 }
+export interface ExitUserFromYourClassInput {
+    classRoomId: string;
+}
 
 export interface getClassesByMeInput {
     page: number;
@@ -92,4 +95,13 @@ export interface getAllClassRoomsInput {
     page: number;
     pageSize: number;
     searchWord?: string
+}
+
+export interface DeleteUserFromMyClassInput {
+    classRoomId: string;
+    userIds: string[];
+}
+export interface DeleteMYClassInput {
+
+    classRoomId: string;
 }

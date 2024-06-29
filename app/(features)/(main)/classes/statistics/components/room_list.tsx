@@ -1,4 +1,5 @@
 import { RoomType } from '@/app/@types/room';
+import IconRenderer from '@/app/components/globals/icon';
 import ClassLab from '@/app/components/globals/lab/class-lab';
 export default function RoomListComponent({
     rooms,
@@ -20,7 +21,21 @@ export default function RoomListComponent({
                             key={e.title + `${index}`}
                             onClick={() => onLabClicked(index)}
                         >
-                            <ClassLab name={e.title ?? ''} type="Type" />
+                            <ClassLab
+                                footer={
+                                    <div>
+                                        <p className="self-start">{e.title}</p>
+
+                                        <section className="flex min-w-[50px] gap-1  rounded-2xl bg-base-100">
+                                            <IconRenderer
+                                                fontSize={24}
+                                                icon={'solar:bookmark-circle-broken'}
+                                            />
+                                            <p className="self-start">{e.type}</p>
+                                        </section>
+                                    </div>
+                                }
+                            />
                         </div>
                     ))}
                 </div>

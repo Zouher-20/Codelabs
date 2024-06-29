@@ -3,6 +3,7 @@ import { NAMEPLAN } from '@prisma/client';
 export interface userType {
     id: string;
     email: string;
+    name?: string | null;
     username: string;
     password: string;
     bio: string;
@@ -26,7 +27,7 @@ export interface userType {
             createdAt: Date | null;
             FeaturePlan: Array<{ name: NAMEPLAN; value: number }>;
         };
-    };
+    } | null;
 }
 
 export interface ClassRoomUserType {

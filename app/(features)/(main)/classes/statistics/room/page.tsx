@@ -49,7 +49,15 @@ export default function ClassLabPage() {
 
             const currentLab = res.labs.map<LabModel>(e => {
                 return {
-                    id: e.id ?? ''
+                    id: e.id ?? '',
+                    user: {
+                        name: e.ClassProject?.memberClass?.user.username ?? '',
+                        image: e.ClassProject?.memberClass?.user.userImage ?? '',
+                        username: e.ClassProject?.memberClass?.user.username ?? '',
+                        userImage: e.ClassProject?.memberClass?.user.userImage ?? '',
+                        id: e.ClassProject?.memberClass?.user.id ?? '',
+                        email: e.ClassProject?.memberClass?.user.email ?? ''
+                    }
                 };
             });
             setLabs(currentLab);
@@ -63,26 +71,24 @@ export default function ClassLabPage() {
         setStudentLoading(true);
         try {
             const res = await getStudentsStatisticsSubmitted({ page: 1, pageSize: 100, romId: id });
-            let count = 0;
+            console.log(res);
+            console.log('sdadsad');
             const currentStudent = res.usersWithLabs.map<ClassRoomUserType>(e => {
-                let checked = false;
-                if (e.MemberClass.length > 0) {
-                    if ((e.MemberClass.at(0)?.ClassProject.length ?? 0) > 0) {
-                        checked = true;
-                        count++;
-                    }
-                }
                 return {
                     email: e.email,
                     id: e.id,
-                    isTeacher: false,
+                    isTeacher: e.MemberClass.at(0)?.isTeacher ?? false,
                     name: e.username,
                     image: e.userImage,
                     selected: UserState.notSelected,
-                    withCheck: checked
+                    withCheck: true
                 };
             });
-            setUserStatistics({ totalUserInClass: res.totalStudentsInClass, userSubmit: count });
+
+            setUserStatistics({
+                totalUserInClass: res.totalStudentsInClass,
+                userSubmit: res.usersWithLabs.length
+            });
             setStudents(currentStudent);
         } catch (e: any) {
             setStudentError(e.message);
@@ -163,7 +169,8 @@ export default function ClassLabPage() {
                                 primaryText="Submited Lab"
                                 anotherText="Not Yet"
                                 series={[
-                                    userStatistics?.totalUserInClass ?? 0,
+                                    (userStatistics?.totalUserInClass ?? 0) -
+                                        (userStatistics?.userSubmit ?? 0),
                                     userStatistics?.userSubmit ?? 0
                                 ]}
                                 withAdd={false}
@@ -251,7 +258,6 @@ export default function ClassLabPage() {
                         }
                         loadedState={
                             <StudentList
-                                withCheck={true}
                                 students={students ?? []}
                                 title="Students"
                                 height="25rem"

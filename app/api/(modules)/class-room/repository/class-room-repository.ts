@@ -3,7 +3,60 @@ import { NAMEPLAN } from '@prisma/client';
 import { DateTime } from 'next-auth/providers/kakao';
 
 class ClassRoomRepository {
+    static async deleteMyClass(payload: { classRoomId: string }, userId: string) {
+        const myClass = await db.classRom.findUnique({
+            where: {
+                id: payload.classRoomId,
+                MemberClass: {
+                    some: {
+                        isTeacher: true,
+                        userId: userId
+                    }
+                }
+            }
+        });
+        if (!myClass) {
+            throw new Error('your class was deleted ||  this class not yours');
+        }
 
+        await db.classRom.deleteMany({
+            where: {
+                id: myClass.id
+            }
+        });
+        return 'class deleted successfully';
+    }
+    static async deleteUserFromMyClass(
+        payload: { classRoomId: string; userIds: string[] },
+        userId: string
+    ) {
+        const myClass = await db.classRom.findUnique({
+            where: {
+                id: payload.classRoomId,
+                MemberClass: {
+                    some: {
+                        userId: userId,
+                        isTeacher: true
+                    }
+                }
+            }
+        });
+
+        if (!myClass) {
+            throw new Error('No class found');
+        }
+
+        for (const studentId of payload.userIds) {
+            await db.memberClass.deleteMany({
+                where: {
+                    classRomId: payload.classRoomId,
+                    userId: studentId,
+                    isTeacher: false
+                }
+            });
+        }
+        return 'users deleted successfully ';
+    }
     // static async getAllFeedbackInRoom(payload: {
     //     RomId: string,
     //     pageSize: number,
@@ -40,9 +93,11 @@ class ClassRoomRepository {
     //     })
     // }
 
-    static async getAllClassRooms(
-        payload: { page: number; pageSize: number; searchWord?: string },
-    ) {
+    static async getAllClassRooms(payload: {
+        page: number;
+        pageSize: number;
+        searchWord?: string;
+    }) {
         const skip = (payload.page - 1) * payload.pageSize;
         let args = {};
 
@@ -57,7 +112,7 @@ class ClassRoomRepository {
             include: {
                 MemberClass: {
                     where: {
-                        isTeacher: true,
+                        isTeacher: true
                     },
                     include: {
                         user: true
@@ -71,7 +126,6 @@ class ClassRoomRepository {
 
         const classRoomsWithCounts = await Promise.all(
             classRoom.map(async classRoom => {
-
                 const memberCount = await db.memberClass.count({
                     where: { classRomId: classRoom.id }
                 });
@@ -98,16 +152,6 @@ class ClassRoomRepository {
             totalCount: totalCount
         };
     }
-
-
-
-
-
-
-
-
-
-
     static async addFeedbackInForClassProjectInRom(
         payload: {
             labId: string;
@@ -275,7 +319,7 @@ class ClassRoomRepository {
                     }
                 },
                 data: {
-                    jsonFile: payload.jsonFile,
+                    jsonFile: payload.jsonFile
                 }
             });
         } else {
@@ -283,7 +327,7 @@ class ClassRoomRepository {
 
             newLab = await db.lab.create({
                 data: {
-                    jsonFile: payload.jsonFile,
+                    jsonFile: payload.jsonFile
                 }
             });
             newClassProject = await db.classProject.create({
@@ -293,8 +337,6 @@ class ClassRoomRepository {
                     labId: newLab.id
                 }
             });
-
-
         }
 
         return { lab: newLab, classProject: newClassProject || hasClassProject };
@@ -399,8 +441,9 @@ class ClassRoomRepository {
         },
         userId: string
     ) {
-        const myClass = await db.classRom.findFirst({
+        const myClass = await db.classRom.findUnique({
             where: {
+                id: payload.classRomId,
                 MemberClass: {
                     some: {
                         userId: userId,
@@ -913,6 +956,35 @@ class ClassRoomRepository {
         };
     }
 
+    static async exitUserFromYourClass(payload: { classRoomId: string }, userId: string) {
+        const myClass = await db.classRom.findUnique({
+            where: {
+                id: payload.classRoomId,
+                MemberClass: {
+                    some: {
+                        isTeacher: false,
+                        userId: userId
+                    }
+                }
+            }
+        });
+
+        if (!myClass) {
+            throw new Error('class not found or you are not join in this class');
+        }
+
+        await db.memberClass.deleteMany(
+            {
+                where: {
+                    classRomId: payload.classRoomId,
+                    userId: userId
+                }
+            }
+        );
+        return "Class Checkout Successful";
+
+    }
+
     static async getRomById(
         payload: {
             romId: string;
@@ -952,7 +1024,12 @@ class ClassRoomRepository {
             include: {
                 ClassProject: {
                     include: {
-                        lab: true
+                        lab: true,
+                        memberClass: {
+                            include: {
+                                user: true
+                            }
+                        }
                     }
                 }
             }
@@ -1001,14 +1078,38 @@ class ClassRoomRepository {
                 classRomId: myClass.id
             }
         });
-
         const usersWithLabs = await db.user.findMany({
             where: {
-                MemberClass: {
-                    some: {
-                        classRomId: myClass.id
+                AND: [
+                    {
+                        MemberClass: {
+                            some: {
+                                classRomId: myClass.id,
+                                ClassProject: {
+                                    some: {
+                                        romId: payload.romId
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        MemberClass: {
+                            some: {
+                                ClassProject: {
+                                    some: {
+                                        romId: payload.romId,
+                                        lab: {
+                                            ClassProject: {
+                                                romId: payload.romId
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
-                }
+                ]
             },
             include: {
                 MemberClass: {
@@ -1037,7 +1138,12 @@ class ClassRoomRepository {
                     {
                         MemberClass: {
                             some: {
-                                classRomId: myClass.id
+                                classRomId: myClass.id,
+                                ClassProject: {
+                                    some: {
+                                        romId: payload.romId
+                                    }
+                                }
                             }
                         }
                     },
@@ -1051,7 +1157,6 @@ class ClassRoomRepository {
                                             ClassProject: {
                                                 romId: payload.romId
                                             }
-
                                         }
                                     }
                                 }
@@ -1061,9 +1166,9 @@ class ClassRoomRepository {
                 ]
             }
         });
+
         return {
             Statistics: {
-                countUsersWithLabs: countUsersWithLabs,
                 totalStudentsInClass: totalStudentsInClass
             },
             usersWithLabs,

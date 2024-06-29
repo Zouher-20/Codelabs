@@ -2,7 +2,8 @@
 
 import { classType } from '@/app/@types/class';
 import { RoomType } from '@/app/@types/room';
-import { ClassRoomUserType } from '@/app/@types/user';
+import { ClassRoomUserType, userType } from '@/app/@types/user';
+import { getMyInfo } from '@/app/api/(modules)/auth/service/actions';
 import {
     getClassRomById,
     getRomInClass,
@@ -11,12 +12,14 @@ import {
 import { EmptyState } from '@/app/components/page-state/empty';
 import { LoadingState } from '@/app/components/page-state/loading';
 import { ManageState } from '@/app/components/page-state/state_manager';
+import { Icon } from '@iconify/react/dist/iconify.js';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import CodeLabContainer from '../components/container';
 import ClassDescriptionComponent from '../statistics/components/class-description';
 import RoomListComponent from '../statistics/components/room_list';
 import StudentList from '../statistics/components/student_list';
+import ExitClassModal from './room/components/exit-class-modal';
 
 export default function ClassLabPage() {
     useEffect(() => {
@@ -38,7 +41,7 @@ export default function ClassLabPage() {
     const [classLoading, setClassLoading] = useState(true);
     const [classError, setClassError] = useState(null);
     const [classInfo, setClassInfo] = useState<classType | null>(null);
-    const [isStudentModelOpen, setIsStudentModelOpen] = useState<boolean>(false);
+    const [myInfo, setMyInfo] = useState<userType | null>(null);
 
     const getClassRoomsById = async ({ id }: { id: string }) => {
         setRoomLoading(true);
@@ -77,6 +80,8 @@ export default function ClassLabPage() {
                     };
                 })
             );
+            const res2 = await getMyInfo();
+            setMyInfo({ ...res2, PlanSubscription: null });
         } catch (e: any) {
             setUserError(e.message);
         } finally {
@@ -144,6 +149,7 @@ export default function ClassLabPage() {
                                 students={users}
                                 title="Students"
                                 height="20.5rem"
+                                myInfo={myInfo}
                             ></StudentList>
                         }
                         empty={users.length == 0}
@@ -199,10 +205,50 @@ export default function ClassLabPage() {
                         classDescription={classInfo?.description ?? ''}
                         className={classInfo?.title ?? ''}
                         classType={classInfo?.type ?? ''}
+                        dropdown={
+                            <div className="dropdown dropdown-left">
+                                <div
+                                    tabIndex={0}
+                                    role="button"
+                                    className="flex cursor-pointer items-center gap-2 rounded-btn hover:opacity-85"
+                                >
+                                    <Icon
+                                        icon="solar:menu-dots-bold-duotone"
+                                        className="size-10 text-primary"
+                                    />
+                                </div>
+
+                                <ul
+                                    tabIndex={0}
+                                    className="menu dropdown-content z-[1] mt-4 w-52 rounded-box bg-base-100 p-2 shadow"
+                                >
+                                    <li
+                                        onClick={() => {
+                                            if (document) {
+                                                (
+                                                    document.getElementById(
+                                                        'exit-class-modal'
+                                                    ) as HTMLFormElement
+                                                )?.showModal();
+                                            }
+                                        }}
+                                    >
+                                        <div className="text-red-500">
+                                            <Icon
+                                                icon="solar:exit-bold-duotone"
+                                                className="size-8 text-red-500"
+                                            />
+                                            Exit Class
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        }
                     />
                 }
                 empty={false}
             />
+            <ExitClassModal callback={() => {}} classId={classInfo?.id ?? ''}></ExitClassModal>
         </div>
     );
 }

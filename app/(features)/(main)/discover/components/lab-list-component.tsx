@@ -48,7 +48,3 @@ export default function LabListComponent({
         </div>
     );
 }
-
-export interface LabModel {
-    title?: string;
-}

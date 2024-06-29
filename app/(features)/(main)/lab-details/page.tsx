@@ -73,9 +73,9 @@ export default function LabDetails() {
             user: {
                 email: res.lab.user.email,
                 id: res.lab.user.id,
-                userImage: res.lab.user.userImage,
+                userImage: res.lab.user.userImage ?? '',
                 username: res.lab.user.username,
-                name: res.lab.user.username
+                name: res.lab.user.username ?? ''
             }
         });
     };

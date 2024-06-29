@@ -9,7 +9,8 @@ export default function ClassDescriptionComponent({
     classType,
     endAt,
     createdAt,
-    teacher
+    teacher,
+    dropdown
 }: {
     classType: string;
     className: string;
@@ -17,18 +18,23 @@ export default function ClassDescriptionComponent({
     createdAt?: string;
     classDescription: string;
     teacher?: userType;
+    dropdown?: JSX.Element;
 }) {
     return (
         <div className="w-full">
             <CodeLabContainer>
                 <div className="flex flex-col justify-center p-5">
-                    <p className="text-lg font-bold">{className}</p>
+                    <div className="flex justify-between">
+                        <p className="text-lg font-bold">{className}</p>
+                        {dropdown}
+                    </div>
                     <div className="flex items-center py-2">
                         <Icon icon="solar:bookmark-circle-broken" />
                         <div className="w-1"></div>
                         <p className="text-xs">{classType}</p>
                     </div>
                     <p>{classDescription}</p>
+
                     {createdAt != null ? <p>created at: {createdAt}</p> : null}
                     {endAt != null ? <p>end at: {endAt}</p> : null}
                     {teacher != null ? <UserAvatar user={teacher} /> : <div></div>}

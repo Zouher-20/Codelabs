@@ -2,7 +2,8 @@
 
 import { classType } from '@/app/@types/class';
 import { RoomType } from '@/app/@types/room';
-import { ClassRoomUserType } from '@/app/@types/user';
+import { ClassRoomUserType, userType } from '@/app/@types/user';
+import { getMyInfo } from '@/app/api/(modules)/auth/service/actions';
 import {
     getClassRomById,
     getClassRomStatistics,
@@ -13,6 +14,7 @@ import { EmptyState } from '@/app/components/page-state/empty';
 import { LoadingState } from '@/app/components/page-state/loading';
 import { ManageState } from '@/app/components/page-state/state_manager';
 import { CustomToaster } from '@/app/components/toast/custom-toaster';
+import { Icon } from '@iconify/react/dist/iconify.js';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -20,6 +22,8 @@ import CodeLabContainer from '../components/container';
 import AddRoomInClassModal from './components/add_lab_modal';
 import AddStudentModal from './components/add_student_modal';
 import ClassDescriptionComponent from './components/class-description';
+import DeleteClassModal from './components/delete-class-modal';
+import DeleteUserFromClassModal from './components/delete-user-form-class-modal copy';
 import RoomListComponent from './components/room_list';
 import StatisticsContainer from './components/statistics_components';
 import StudentList from './components/student_list';
@@ -56,6 +60,8 @@ export default function StatisticsPage() {
     const [classError, setClassError] = useState(null);
     const [classInfo, setClassInfo] = useState<classType | null>(null);
     const [isStudentModelOpen, setIsStudentModelOpen] = useState<boolean>(false);
+    const [myInfo, setMyInfo] = useState<userType | null>(null);
+    const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
 
     const currentParams = useSearchParams();
     const route = useRouter();
@@ -108,6 +114,8 @@ export default function StatisticsPage() {
                     };
                 })
             );
+            const res2 = await getMyInfo();
+            setMyInfo({ ...res2, PlanSubscription: null });
         } catch (e: any) {
             setUserError(e.message);
         } finally {
@@ -131,6 +139,7 @@ export default function StatisticsPage() {
             setClassLoading(false);
         }
     };
+
     const handleLabClick = (index: number) => {
         const id = currentParams.get('id') ?? '-1';
         if (id && rooms[index]) {
@@ -243,6 +252,17 @@ export default function StatisticsPage() {
                                 students={users}
                                 title="Students"
                                 height="20.5rem"
+                                myInfo={myInfo}
+                                onDeleteUserClicked={e => {
+                                    setSelectedUserId(e.id ?? '');
+                                    if (document) {
+                                        (
+                                            document.getElementById(
+                                                'delete-user-from-class-modal'
+                                            ) as HTMLFormElement
+                                        )?.showModal();
+                                    }
+                                }}
                             ></StudentList>
                         }
                         empty={users.length == 0}
@@ -288,6 +308,45 @@ export default function StatisticsPage() {
                         classDescription={classInfo?.description ?? ''}
                         className={classInfo?.title ?? ''}
                         classType={classInfo?.type ?? ''}
+                        dropdown={
+                            <div className="dropdown dropdown-left">
+                                <div
+                                    tabIndex={0}
+                                    role="button"
+                                    className="flex cursor-pointer items-center gap-2 rounded-btn hover:opacity-85"
+                                >
+                                    <Icon
+                                        icon="solar:menu-dots-bold-duotone"
+                                        className="size-10 text-primary"
+                                    />
+                                </div>
+
+                                <ul
+                                    tabIndex={0}
+                                    className="menu dropdown-content z-[1] mt-4 w-52 rounded-box bg-base-100 p-2 shadow"
+                                >
+                                    <li
+                                        onClick={() => {
+                                            if (document) {
+                                                (
+                                                    document.getElementById(
+                                                        'delete-class-modal'
+                                                    ) as HTMLFormElement
+                                                )?.showModal();
+                                            }
+                                        }}
+                                    >
+                                        <div className="text-red-500">
+                                            <Icon
+                                                icon="solar:trash-bin-2-bold-duotone"
+                                                className="size-8 text-red-500"
+                                            />
+                                            Delete Class
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        }
                     />
                 }
                 empty={false}
@@ -313,6 +372,19 @@ export default function StatisticsPage() {
                     toast.success('add new room done');
                 }}
             />
+            <DeleteUserFromClassModal
+                callback={() => {
+                    getClassStudentsById({ id: classInfo?.id ?? '' });
+                }}
+                classId={classInfo?.id ?? ''}
+                userId={selectedUserId ?? ''}
+            />
+            <DeleteClassModal
+                callback={() => {
+                    route.push('/classes');
+                }}
+                classId={classInfo?.id ?? ''}
+            ></DeleteClassModal>
             <CustomToaster />
         </div>
     );
