@@ -1029,7 +1029,9 @@ class ClassRoomRepository {
                     {
                         MemberClass: {
                             some: {
-                                userId: userId
+                                userId: userId,
+                                isTeacher: true
+
                             }
                         }
                     }
@@ -1053,7 +1055,15 @@ class ClassRoomRepository {
                 MemberClass: {
                     some: {
                         classRomId: myClass.id
+                    },
+                    every: {
+                        ClassProject: {
+                            some: {
+                                romId: payload.romId
+                            }
+                        }
                     }
+
                 }
             },
             include: {
@@ -1083,8 +1093,15 @@ class ClassRoomRepository {
                     {
                         MemberClass: {
                             some: {
-                                classRomId: myClass.id
-                            }
+                                classRomId: myClass.id,
+                                ClassProject: {
+                                    some: {
+                                        romId: payload.romId
+                                    }
+                                }
+                            },
+
+
                         }
                     },
                     {
@@ -1106,9 +1123,10 @@ class ClassRoomRepository {
                 ]
             }
         });
+        console.log("Sssssssssssssss");
+        console.log(countUsersWithLabs);
         return {
             Statistics: {
-                countUsersWithLabs: countUsersWithLabs,
                 totalStudentsInClass: totalStudentsInClass
             },
             usersWithLabs,

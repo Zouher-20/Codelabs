@@ -60,6 +60,12 @@ class ActoinRoomRepository {
                 }
             })
         ]);
+        const memberclass = await db.memberClass.findFirst({
+            where: {
+                userId: userId,
+                classRomId: myClass?.id
+            }
+        });
 
         if (!myClass) {
             throw new Error('No class found');
@@ -106,7 +112,8 @@ class ActoinRoomRepository {
             await db.classProject.create({
                 data: {
                     romId: newRoom.id,
-                    labId: newLab.id
+                    labId: newLab.id,
+                    memberClassId: memberclass?.id
                 }
             });
 
