@@ -434,6 +434,41 @@ class ClassRoomRepository {
         }
     }
 
+    static async getMyLabInRoom(payload: { roomId: string }, userId: string) {
+        const myRoom = await db.rom.findUnique({
+            where: {
+                id: payload.roomId,
+                classRom: {
+                    MemberClass: {
+                        some: {
+                            userId: userId
+                        }
+                    }
+                }
+            }
+        });
+        if (!myRoom) {
+            throw new Error('room not found');
+        }
+        const myClassProject = await db.classProject.findFirst({
+            where: {
+                romId: payload.roomId,
+                memberClass: {
+                    userId: userId
+                }
+            }
+        });
+        if (!myClassProject) {
+            throw new Error('you dont have lab');
+        }
+        const mylab = await db.lab.findUnique({
+            where: {
+                id: myClassProject?.labId
+            }
+        });
+        return mylab;
+    }
+
     static async addUsersInClass(
         payload: {
             classRomId: string;

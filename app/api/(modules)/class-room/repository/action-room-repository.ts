@@ -143,7 +143,7 @@ class ActoinRoomRepository {
                 id: payload.roomId
             }
         });
-        if (myRoom?.endAt && myRoom.endAt.getTime() > Date.now()) {
+        if (myRoom?.endAt && myRoom.endAt.getTime() < Date.now()) {
             throw new Error('this room duration has ended');
         }
         const lab = await db.classProject.findFirst({
@@ -218,6 +218,8 @@ class ActoinRoomRepository {
                     memberClassId: memberClass?.id
                 }
             });
+            const labId = newLab.id;
+            return { labId }
         } catch (error) {
             console.error('Error reading or writing JSON file:', error);
             throw new Error('Failed to create lab from template');
