@@ -956,6 +956,35 @@ class ClassRoomRepository {
         };
     }
 
+    static async exitUserFromYourClass(payload: { classRoomId: string }, userId: string) {
+        const myClass = await db.classRom.findUnique({
+            where: {
+                id: payload.classRoomId,
+                MemberClass: {
+                    some: {
+                        isTeacher: false,
+                        userId: userId
+                    }
+                }
+            }
+        });
+
+        if (!myClass) {
+            throw new Error('class not found or you are not join in this class');
+        }
+
+        await db.memberClass.deleteMany(
+            {
+                where: {
+                    classRomId: payload.classRoomId,
+                    userId: userId
+                }
+            }
+        );
+        return "Class Checkout Successful";
+
+    }
+
     static async getRomById(
         payload: {
             romId: string;

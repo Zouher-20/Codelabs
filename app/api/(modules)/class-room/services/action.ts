@@ -11,6 +11,7 @@ import {
     CloneLabForRoomInClassInput,
     DeleteMYClassInput,
     DeleteUserFromMyClassInput,
+    ExitUserFromYourClassInput,
     getAllClassRoomsInput,
     GetAllUserAndSearchInput,
     getClassesByMeInput,
@@ -40,6 +41,11 @@ export const cloneLabForRoomInClass = async (payload: CloneLabForRoomInClassInpu
     return ActoinRoomRepository.cloneLabForRoomInClass(payload, userId);
 };
 
+export const exitUserFromYourClass = async (payload: ExitUserFromYourClassInput) => {
+    const session = await getSession();
+    const userId = session?.id;
+    return classRoomRepository.exitUserFromYourClass(payload, userId);
+};
 
 
 export const getClassCreateByMe = async (payload: getClassesByMeInput) => {
