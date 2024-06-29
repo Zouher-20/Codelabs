@@ -49,7 +49,15 @@ export default function ClassLabPage() {
 
             const currentLab = res.labs.map<LabModel>(e => {
                 return {
-                    id: e.id ?? ''
+                    id: e.id ?? '',
+                    user: {
+                        name: e.ClassProject?.memberClass?.user.username ?? '',
+                        image: e.ClassProject?.memberClass?.user.userImage ?? '',
+                        username: e.ClassProject?.memberClass?.user.username ?? '',
+                        userImage: e.ClassProject?.memberClass?.user.userImage ?? '',
+                        id: e.ClassProject?.memberClass?.user.id ?? '',
+                        email: e.ClassProject?.memberClass?.user.email ?? ''
+                    }
                 };
             });
             setLabs(currentLab);
