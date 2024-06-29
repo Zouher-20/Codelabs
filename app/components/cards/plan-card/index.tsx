@@ -20,13 +20,13 @@ const PlanCard = ({
     return (
         <div
             className={
-                'flex min-w-72 max-w-80 flex-col gap-4  rounded-3xl border-2 border-base-100 p-5' +
+                'flex min-w-72 max-w-80 flex-col gap-4  rounded-3xl border-2 border-base-100 p-5 ' +
                 (active ? 'bg-base-100' : '')
             }
         >
             <div className="flex justify-between">
                 <IconRenderer
-                    className={active ? 'text-white' : 'text-primary'}
+                    className='text-primary'
                     fontSize={33}
                     icon="solar:link-circle-line-duotone"
                 />
@@ -59,7 +59,7 @@ const PlanCard = ({
                 <p className="text-gray-400">{plan.subtitle}</p>
             </div>
             <div className="grid gap-1">
-                <p className={'text-4xl font-bold ' + (active ? 'text-white' : 'text-primary')}>
+                <p className={'text-4xl font-bold text-primary'}>
                     {plan.price > 0 ? '$' + plan.price : 'Free'}
                 </p>
                 <p>{plan.duration} Days</p>
@@ -79,17 +79,17 @@ export default PlanCard;
 function Advantages(plan: planType, active?: boolean) {
     return (
         <div className="flex flex-col gap-2">
-            {plan.features.map((feature, index) =>
+            {plan.FeaturePlan.map((feature, index) =>
                 feature.value > 0 && feature.name === 'participate' ? null : (
                     <div key={index} className="flex gap-3">
                         <IconRenderer
-                            className={active ? 'text-white' : 'text-primary'}
+                            className='text-primary'
                             fontSize={28}
                             icon="solar:check-read-broken"
                         />
                         {feature.value > 0 ? (
                             feature.name === 'students in class' ||
-                            feature.name === 'labs in class' ? (
+                                feature.name === 'labs in class' ? (
                                 <p>
                                     Only {feature.value} {feature.name}
                                 </p>
@@ -101,7 +101,7 @@ function Advantages(plan: planType, active?: boolean) {
                         ) : feature.name === 'participate' ? (
                             <p>Participate in challegens</p>
                         ) : feature.name === 'students in class' ||
-                          feature.name === 'labs in class' ? (
+                            feature.name === 'labs in class' ? (
                             <p>Up to 25 {feature.name}</p>
                         ) : (
                             <p>Unlimited {feature.name}</p>

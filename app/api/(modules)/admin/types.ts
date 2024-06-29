@@ -95,11 +95,10 @@ export interface addTemplateInput {
 }
 
 export interface DeleteTemplateInput {
-    templateId: string
-
+    templateId: string;
 }
 export interface getAllTemplateInput {
     pageSize: number;
     page: number;
-    searchWord?: string
+    searchWord?: string;
 }
