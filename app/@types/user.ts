@@ -5,6 +5,7 @@ export interface userType {
     email: string;
     name?: string | null;
     username: string;
+    image?: string | null;
     user?: string;
     password?: string;
     bio?: string | null;

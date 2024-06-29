@@ -12,7 +12,7 @@ const UserAvatar = ({ user }: { user?: userType | undefined | null }) => {
             ) : (
                 <div className="avatar placeholder">
                     <div className="w-9 rounded-full bg-neutral text-neutral-content">
-                        <span className="text-sm">{user?.name[0]}</span>
+                        <span className="text-sm">{user?.name?.at(0) ?? ''}</span>
                     </div>
                 </div>
             )}
