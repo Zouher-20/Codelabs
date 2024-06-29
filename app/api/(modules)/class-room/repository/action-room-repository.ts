@@ -234,6 +234,149 @@ class ActoinRoomRepository {
 
 
 
+    static async createRoomFromTemplate(
+        payload: {
+            classRomId: string;
+            description?: string;
+            name?: string;
+            endAt: DateTime;
+            type?: string;
+            templateId: string
+        },
+        userId: string
+    ) {
+
+
+        let templateJsonFilePath: string;
+
+        const myTemplate = await db.tamblate.findUnique({
+            where: {
+                id: payload.templateId ?? ''
+            }
+        });
+
+        if (myTemplate?.id == null || payload.templateId === '') {
+            templateJsonFilePath = path.join(
+                process.cwd(),
+                'public',
+                'uploads',
+                'labs',
+                'default.json'
+            );
+        } else {
+            templateJsonFilePath = path.join(
+                process.cwd(),
+                'public',
+                'uploads',
+                'labs',
+                myTemplate.nameTemplate + '.json'
+            );
+        }
+
+
+        const myClass = await db.classRom.findFirst({
+            where: {
+                MemberClass: {
+                    some: {
+                        userId: userId,
+                        isTeacher: true
+                    }
+                }
+            }
+        });
+
+        if (!myClass) {
+            throw new Error('No class found');
+        }
+
+
+        const memberclass = await db.memberClass.findFirst({
+            where: {
+                userId: userId,
+                classRomId: myClass?.id
+            }
+        });
+
+        const userPlan = await db.planSubscription.findUnique({
+            where: {
+                userId: userId
+            },
+            include: {
+                plan: {
+                    include: {
+                        FeaturePlan: true
+                    }
+                }
+            }
+        });
+        const countMyRomInClassRoom = await db.rom.count({
+            where: {
+                classRomId: payload.classRomId
+            }
+        });
+
+        if (!userPlan) {
+            throw new Error('User does not have a plan subscription.');
+        }
+
+        const hasLabsPlan = userPlan.plan.FeaturePlan.some(
+            featurePlan => featurePlan.name === NAMEPLAN.romsInClass
+        );
+
+        if (hasLabsPlan && countMyRomInClassRoom < userPlan.plan.FeaturePlan[0].value) {
+            const newJsonFileName = `${uuidv4()}.json`;
+            const newJsonFilePath = path.join(
+                process.cwd(),
+                'public',
+                'uploads',
+                'labs',
+                newJsonFileName
+            );
+            try {
+                const templateJsonContent = await fs.readFile(templateJsonFilePath, 'utf8');
+                await fs.writeFile(newJsonFilePath, templateJsonContent);
+
+                const newLab = await db.lab.create({
+                    data: {
+                        jsonFile: `/uploads/labs/${newJsonFileName}`
+                    }
+                });
+                const newRoom = await db.rom.create({
+                    data: {
+                        classRomId: payload.classRomId,
+                        type: payload.type ?? '',
+                        name: payload.name ?? '',
+                        endAt: payload.endAt,
+                        description: payload.description ?? ''
+                    }
+                });
+
+                await db.classProject.create({
+                    data: {
+                        labId: newLab.id,
+                        romId: newRoom.id,
+                        memberClassId: memberclass?.id
+                    }
+                });
+
+
+            } catch (e) {
+                console.error('Error reading or writing JSON file:', e);
+                throw new Error('Failed to create room from template');
+            }
+
+
+            return { message: 'Rom added to class successfully' };
+        } else {
+            throw new Error('Rom limit reached for this class.');
+        }
+    }
+
+
+
+
+
+
 
 
 
