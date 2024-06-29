@@ -22,6 +22,7 @@ import {
     GetClassRomStatistics,
     GetLabsSubmittedInRomInput,
     getMyClassesInput,
+    GetMyLabInRoomInput,
     GetRomByIdInput,
     GetRomInClassInput,
     GetRoomAndTeacherDetailsInput,
@@ -35,6 +36,12 @@ export const addClassRoom = async (payload: AddClassRoomInput) => {
     const session = await getSession();
     const userId = session?.id;
     return classRoomRepository.addClassRoom(payload, userId);
+};
+
+export const getMyLabInRoom = async (payload: GetMyLabInRoomInput) => {
+    const session = await getSession();
+    const userId = session?.id;
+    return classRoomRepository.getMyLabInRoom(payload, userId);
 };
 
 export const cloneLabForRoomInClass = async (payload: CloneLabForRoomInClassInput) => {
