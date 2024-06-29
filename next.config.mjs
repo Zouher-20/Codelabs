@@ -18,6 +18,7 @@ const nextConfig = {
         ];
     },
     images: {
+        domains: ['example.com'],
         remotePatterns: [
             {
                 protocol: 'https',

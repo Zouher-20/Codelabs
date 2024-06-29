@@ -4,7 +4,6 @@ export interface userType {
     id: string;
     email: string;
     username: string;
-    user: string;
     password: string;
     bio: string;
     role: string;
@@ -25,7 +24,7 @@ export interface userType {
             duration: string | null;
             subtitle: string;
             createdAt: Date | null;
-            FeaturePlan: { name: NAMEPLAN; value: number };
+            FeaturePlan: Array<{ name: NAMEPLAN; value: number }>;
         };
     };
 }

@@ -33,7 +33,9 @@ const Avatar = ({ photo, imageSize, imagePath, username }
             }
         };
     };
-
+    const handleError = () => {
+        setImageFile('/images/no-image2.png');
+    };
     return (
         <div className="flex gap-4 py-1">
             <div className="avatar"
@@ -45,6 +47,7 @@ const Avatar = ({ photo, imageSize, imagePath, username }
                     width={140}
                     alt="user"
                     src={imageFile ? imageFile.replace(/\\/g, '/') : noImage}
+                    onError={handleError}
                 />
             </div>
             <section className="self-center flex flex-col">

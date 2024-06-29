@@ -6,17 +6,10 @@ export default function Navbar() {
     return (
         <div className="navbar">
             <div className=" flex flex-1 justify-between">
-                <div className="flex justify-end w-1/3">
+                <div className="flex justify-start w-1/3 px-4 mr-auto">
                     <Image src="/logo-title.svg" width={150} height={35} alt="logo" />
                 </div>
-                <div className="navbar-start hidden lg:flex " >
-                    <ul className="menu menu-horizontal px-1 gap-8">
-                        <li><a>Discover</a></li>
-                        <li><a>Challenges</a></li>
-                        <li><a>Classes</a></li>
-                        <li><a>Blogs</a></li>
-                    </ul>
-                </div>
+                <button className="btn btn-sm btn-primary px-8 rounded-xl  mr-8">Register Now</button>
             </div>
         </div>
     );
