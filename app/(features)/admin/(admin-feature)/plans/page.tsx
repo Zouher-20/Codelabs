@@ -32,7 +32,7 @@ const Plans = () => {
                     return {
                         createdAt: e.createdAt,
                         duration: e.duration,
-                        features: e.FeaturePlan.map(feature => {
+                        FeaturePlan: e.FeaturePlan.map(feature => {
                             return { name: feature.name, value: feature.value };
                         }),
                         id: e.id,
@@ -85,7 +85,7 @@ const Plans = () => {
             await editPlan({
                 planId: plan?.id ?? '',
                 duration: plan?.duration ?? '',
-                featurePlans: plan?.features ?? [],
+                featurePlans: plan?.FeaturePlan ?? [],
                 name: plan?.name ?? '',
                 price: plan?.price ?? 0,
                 subtitle: plan?.subtitle ?? ''
@@ -95,7 +95,7 @@ const Plans = () => {
                     return {
                         ...item,
                         duration: plan?.duration ?? item.duration,
-                        features: plan?.features ?? item.features,
+                        features: plan?.FeaturePlan ?? item.FeaturePlan,
                         name: plan?.name ?? item.name,
                         price: plan?.price ?? item.price,
                         subtitle: plan?.subtitle ?? item.subtitle
@@ -126,7 +126,7 @@ const Plans = () => {
                 <ManageState
                     error={error}
                     empty={plans.length == 0}
-                    errorAndEmptyCallback={() => {}}
+                    errorAndEmptyCallback={() => { }}
                     loadedState={plans.map((e, index) => (
                         <PlanCard
                             key={index}

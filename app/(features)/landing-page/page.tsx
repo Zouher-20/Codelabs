@@ -1,14 +1,20 @@
 import Contact from "./components/contact-us";
+import Footr from "./components/footer";
+import Framework from "./components/framework";
 import Header from "./components/header";
 import Navbar from "./components/navbar";
-import Numbers from "./components/numbers";
+import Services from "./components/services";
 
 const LandingPage = () => {
-    return <div className="flex flex-col  min-h-screen">
+    return <div
+        className="flex flex-col  min-h-screen"
+    >
         <Navbar />
         <Header />
-        <Numbers />
+        <Services />
+        <Framework />
         <Contact />
+        <Footr />
     </div>
 }
 

@@ -1,53 +1,82 @@
+"use client"
 import { userType } from "@/app/@types/user";
+import { getMyInfo, getMyStatisticsInfo } from "@/app/api/(modules)/auth/service/actions";
 import StatisticsComponent from "@/app/components/statistics/statistics-components";
-import chart from '@/public/images/challenges/chart.png'
-import Image from "next/image";
+import { NAMEPLAN } from "@prisma/client";
+import { features } from "process";
+import { useEffect, useState } from "react";
 
+type statisticsType = {
+    projectCount: number;
+    classCount: number;
+    chellangeCount: number;
+    blogCount: number;
+}
 const Statistics = ({ user }: { user: userType }) => {
-    const labsCapacity = () => {
-        if (user.plan == 'basic') {
-            return (5 - user.labs)
-        } else if (user.plan == 'plus') {
-            return (10 - user.labs)
-        } else return 0
+
+    const [myCapacity, setMyCapacity] = useState<statisticsType>();
+    const [myInfo, setMyInfo] = useState<statisticsType>();
+
+    useEffect(() => {
+        getMyStatistics()
+        getMyInfo()
+    }, [])
+
+    const getMyStatistics = async () => {
+
+        await getMyStatisticsInfo().then((res) => {
+            setMyCapacity(res as unknown as statisticsType)
+        })
     }
-    const classesCapacity = () => {
-        if (user.plan == 'basic') {
-            return (2 - user.classes)
-        } else if (user.plan == 'plus') {
-            return (5 - user.classes)
-        } else return 0
+    const getMyInfo = () => {
+        let arr: statisticsType = {
+            projectCount: 0,
+            classCount: 0,
+            chellangeCount: 0,
+            blogCount: 0
+        };
+        user.PlanSubscription.plan.FeaturePlan.map((feature) => {
+            if (feature.name == NAMEPLAN.labs)
+                arr.projectCount = feature.value
+            else if (feature.name == NAMEPLAN.blogs)
+                arr.blogCount = feature.value
+            else if (feature.name == NAMEPLAN.challenge)
+                arr.chellangeCount = feature.value
+            else arr.classCount = feature.value
+        }
+        )
+        setMyInfo(arr);
     }
-    return (
-        <div className="flex flex-col w-full gap-4 p-4">
-            <div className="flex flex-col sm:flex-row">
-                <StatisticsComponent
-                    cardLabel="Labs"
-                    labels={['Labs', 'Labs capacity']}
-                    series={[user.labs, labsCapacity()]}
-                    colors={['#50FA7B', '#282C2B']}
-                    width={220}
-                    height={200}
-                />
-                <div className="self-center pt-20 px-16 max-md:hidden">
-                    <div className="font-bold text-2xl h-24 leading-relaxed" style={{ transform: 'rotate(-5deg)' }}>
+    const statistics = [
+        { label: 'Labs', name: 'Labs capacity', key: 'projectCount' },
+        { label: 'Classes', name: 'Classes capacity', key: 'classCount' },
+        { label: 'Blogs', name: 'Blogs capacity', key: 'blogCount' },
+        { label: 'Chellanges', name: 'Chellange capacity', key: 'chellangeCount' },
+    ]
+    return (<div className="w-full grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 p-4 ">
+        {myInfo && myCapacity && statistics.map((statistic, index) => (
+            <div className={index == 2 ? 'sm:flex gap-4 col-span-1 sm:col-span-3' : ''} key={index}>
+                <div className={index == 2 ? "sm:w-1/3" : ''}>
+                    <StatisticsComponent
+                        cardLabel={statistic.label}
+                        labels={[statistic.label, statistic.name]}
+                        series={[myInfo[statistic.key as keyof typeof myInfo], myCapacity[statistic.key as keyof typeof myCapacity]]}
+                        colors={['#50FA7B', '#282C2B']}
+                        width={220}
+                        height={200}
+                    />
+                </div>
+                <div className={"w-2/3 self-center px-16 " + (index == 2 ? 'max-xl:hidden xl:block' : 'hidden')}>
+                    <div className="font-bold text-2xl leading-relaxed" style={{ transform: 'rotate(-5deg)' }}>
                         Looking to add more labs and classes? Upgrade your plan for greater flexibility!<br />
                         Check out our options to find the perfect plan for you!"
-                        <button className="btn btn-primary  ml-2 ">Extend</button>
+                        <button className="btn btn-primary ml-2 ">Extend</button>
                     </div>
                 </div>
             </div>
-            <div className="flex flex-col sm:flex-row">
-                <StatisticsComponent
-                    cardLabel="Classes"
-                    labels={['Classes', 'Classes capacity']}
-                    series={[user.classes, classesCapacity()]}
-                    colors={['#E3E354', '#282C2B']}
-                    width={220}
-                    height={200}
-                />
-            </div>
-        </div>
+        ))
+        }
+    </div>
     );
 }
 

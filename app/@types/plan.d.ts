@@ -5,5 +5,5 @@ export interface planType {
     duration: string | null;
     subtitle: string;
     createdAt?: Date;
-    FeaturePlan?: Array<{ id: number; planId: string; name: NAMEPLAN; value: number }>;
+    FeaturePlan: Array<{ id: number; planId: string; name: NAMEPLAN; value: number }>;
 }
