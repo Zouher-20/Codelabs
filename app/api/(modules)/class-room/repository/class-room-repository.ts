@@ -1031,7 +1031,6 @@ class ClassRoomRepository {
                             some: {
                                 userId: userId,
                                 isTeacher: true
-
                             }
                         }
                     }
@@ -1052,19 +1051,36 @@ class ClassRoomRepository {
         });
         const usersWithLabs = await db.user.findMany({
             where: {
-                MemberClass: {
-                    some: {
-                        classRomId: myClass.id
-                    },
-                    every: {
-                        ClassProject: {
+                AND: [
+                    {
+                        MemberClass: {
                             some: {
-                                romId: payload.romId
+                                classRomId: myClass.id,
+                                ClassProject: {
+                                    some: {
+                                        romId: payload.romId
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        MemberClass: {
+                            some: {
+                                ClassProject: {
+                                    some: {
+                                        romId: payload.romId,
+                                        lab: {
+                                            ClassProject: {
+                                                romId: payload.romId
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
-
-                }
+                ]
             },
             include: {
                 MemberClass: {
@@ -1099,9 +1115,7 @@ class ClassRoomRepository {
                                         romId: payload.romId
                                     }
                                 }
-                            },
-
-
+                            }
                         }
                     },
                     {
@@ -1123,8 +1137,7 @@ class ClassRoomRepository {
                 ]
             }
         });
-        console.log("Sssssssssssssss");
-        console.log(countUsersWithLabs);
+
         return {
             Statistics: {
                 totalStudentsInClass: totalStudentsInClass

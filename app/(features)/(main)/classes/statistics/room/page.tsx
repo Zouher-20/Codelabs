@@ -71,6 +71,8 @@ export default function ClassLabPage() {
         setStudentLoading(true);
         try {
             const res = await getStudentsStatisticsSubmitted({ page: 1, pageSize: 100, romId: id });
+            console.log(res);
+            console.log('sdadsad');
             const currentStudent = res.usersWithLabs.map<ClassRoomUserType>(e => {
                 return {
                     email: e.email,
@@ -82,6 +84,7 @@ export default function ClassLabPage() {
                     withCheck: true
                 };
             });
+
             setUserStatistics({
                 totalUserInClass: res.totalStudentsInClass,
                 userSubmit: res.usersWithLabs.length
@@ -166,7 +169,8 @@ export default function ClassLabPage() {
                                 primaryText="Submited Lab"
                                 anotherText="Not Yet"
                                 series={[
-                                    userStatistics?.totalUserInClass ?? 0,
+                                    (userStatistics?.totalUserInClass ?? 0) -
+                                        (userStatistics?.userSubmit ?? 0),
                                     userStatistics?.userSubmit ?? 0
                                 ]}
                                 withAdd={false}
