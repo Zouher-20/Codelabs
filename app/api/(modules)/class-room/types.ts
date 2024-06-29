@@ -93,3 +93,12 @@ export interface getAllClassRoomsInput {
     pageSize: number;
     searchWord?: string
 }
+
+export interface DeleteUserFromMyClassInput {
+    classRoomId: string;
+    userIds: string[];
+}
+export interface DeleteMYClassInput {
+
+    classRoomId: string;
+}

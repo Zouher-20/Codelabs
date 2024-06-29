@@ -3,6 +3,60 @@ import { NAMEPLAN } from '@prisma/client';
 import { DateTime } from 'next-auth/providers/kakao';
 
 class ClassRoomRepository {
+    static async deleteMyClass(payload: { classRoomId: string }, userId: string) {
+        const myClass = await db.classRom.findUnique({
+            where: {
+                id: payload.classRoomId,
+                MemberClass: {
+                    some: {
+                        isTeacher: true,
+                        userId: userId
+                    }
+                }
+            }
+        });
+        if (!myClass) {
+            throw new Error('your class was deleted ||  this class not yours');
+        }
+
+        await db.classRom.deleteMany({
+            where: {
+                id: myClass.id
+            }
+        });
+        return 'class deleted successfully';
+    }
+    static async deleteUserFromMyClass(
+        payload: { classRoomId: string; userIds: string[] },
+        userId: string
+    ) {
+        const myClass = await db.classRom.findUnique({
+            where: {
+                id: payload.classRoomId,
+                MemberClass: {
+                    some: {
+                        userId: userId,
+                        isTeacher: true
+                    }
+                }
+            }
+        });
+
+        if (!myClass) {
+            throw new Error('No class found');
+        }
+
+        for (const studentId of payload.userIds) {
+            await db.memberClass.deleteMany({
+                where: {
+                    classRomId: payload.classRoomId,
+                    userId: studentId,
+                    isTeacher: false
+                }
+            });
+        }
+        return 'users deleted successfully ';
+    }
     // static async getAllFeedbackInRoom(payload: {
     //     RomId: string,
     //     pageSize: number,
@@ -98,7 +152,6 @@ class ClassRoomRepository {
             totalCount: totalCount
         };
     }
-
     static async addFeedbackInForClassProjectInRom(
         payload: {
             labId: string;
@@ -388,8 +441,9 @@ class ClassRoomRepository {
         },
         userId: string
     ) {
-        const myClass = await db.classRom.findFirst({
+        const myClass = await db.classRom.findUnique({
             where: {
+                id: payload.classRomId,
                 MemberClass: {
                     some: {
                         userId: userId,
@@ -941,7 +995,12 @@ class ClassRoomRepository {
             include: {
                 ClassProject: {
                     include: {
-                        lab: true
+                        lab: true,
+                        memberClass: {
+                            include: {
+                                user: true
+                            }
+                        }
                     }
                 }
             }
@@ -970,8 +1029,7 @@ class ClassRoomRepository {
                     {
                         MemberClass: {
                             some: {
-                                userId: userId,
-                                isTeacher: true
+                                userId: userId
                             }
                         }
                     }
@@ -990,7 +1048,6 @@ class ClassRoomRepository {
                 classRomId: myClass.id
             }
         });
-
         const usersWithLabs = await db.user.findMany({
             where: {
                 MemberClass: {

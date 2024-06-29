@@ -73,6 +73,43 @@ class UsersRepository {
 
     // plan ,  lab , class 
     // get all plan (edit) 
+    static async getMyStatisticsInfo(userId: string) {
+
+        const classCount = await db.classRom.count({
+            where: {
+                MemberClass: {
+                    some: {
+                        userId: userId,
+                        isTeacher: true
+                    }
+                }
+            }
+        });
+        const chellangeCount = await db.challengeParticipation.count({
+            where: {
+                userId: userId
+            }
+        });
+
+        const projectCount = await db.userProject.count({
+            where: {
+                userId: userId
+            }
+        });
+        const blogCount = await db.blog.count({
+            where: {
+                userId: userId
+            }
+        });
+        return {
+            projectCount,
+            classCount,
+            chellangeCount,
+            blogCount
+        }
+
+    }
+
 
     static async create(payload: CreateUserInput, planId?: string) {
         const requestedPlan = GlobalUtils.isNullOrUndefined(planId)

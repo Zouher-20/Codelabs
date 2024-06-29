@@ -9,6 +9,8 @@ import {
     AddRomInClassInput,
     AddUsersInClassInput,
     CloneLabForRoomInClassInput,
+    DeleteMYClassInput,
+    DeleteUserFromMyClassInput,
     getAllClassRoomsInput,
     GetAllUserAndSearchInput,
     getClassesByMeInput,
@@ -96,6 +98,17 @@ export const addRomInClass = async (payload: AddRomInClassInput) => {
     const userId = session?.id;
     return classRoomRepository.addRomInClass(payload, userId);
 };
+export const deleteMyClass = async (payload: DeleteMYClassInput) => {
+    const session = await getSession();
+    const userId = session?.id
+    return classRoomRepository.deleteMyClass(payload, userId);
+}
+
+export const deleteUserFromMyClass = async (payload: DeleteUserFromMyClassInput) => {
+    const session = await getSession();
+    const userId = session?.id
+    return classRoomRepository.deleteUserFromMyClass(payload, userId);
+}
 
 export const addUsersInClass = async (payload: AddUsersInClassInput) => {
     const session = await getSession();
