@@ -23,6 +23,7 @@ import AddRoomInClassModal from './components/add_lab_modal';
 import AddStudentModal from './components/add_student_modal';
 import ClassDescriptionComponent from './components/class-description';
 import DeleteClassModal from './components/delete-class-modal';
+import DeleteUserFromClassModal from './components/delete-user-form-class-modal copy';
 import RoomListComponent from './components/room_list';
 import StatisticsContainer from './components/statistics_components';
 import StudentList from './components/student_list';
@@ -60,6 +61,8 @@ export default function StatisticsPage() {
     const [classInfo, setClassInfo] = useState<classType | null>(null);
     const [isStudentModelOpen, setIsStudentModelOpen] = useState<boolean>(false);
     const [myInfo, setMyInfo] = useState<userType | null>(null);
+    const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+
     const currentParams = useSearchParams();
     const route = useRouter();
     const getClassRoomsById = async ({ id }: { id: string }) => {
@@ -137,22 +140,6 @@ export default function StatisticsPage() {
         }
     };
 
-    const deleteUser = async ({ id }: { id: string }) => {
-        setClassLoading(true);
-        try {
-            const res = await getClassRomById({ classRomId: id });
-            setClassInfo({
-                id: res.myClassRom.id,
-                title: res.myClassRom.name,
-                type: res.myClassRom.type,
-                description: res.myClassRom.description
-            });
-        } catch (e: any) {
-            setClassError(e.message);
-        } finally {
-            setClassLoading(false);
-        }
-    };
     const handleLabClick = (index: number) => {
         const id = currentParams.get('id') ?? '-1';
         if (id && rooms[index]) {
@@ -266,7 +253,16 @@ export default function StatisticsPage() {
                                 title="Students"
                                 height="20.5rem"
                                 myInfo={myInfo}
-                                onDeleteUserClicked={() => {}}
+                                onDeleteUserClicked={e => {
+                                    setSelectedUserId(e.id ?? '');
+                                    if (document) {
+                                        (
+                                            document.getElementById(
+                                                'delete-user-from-class-modal'
+                                            ) as HTMLFormElement
+                                        )?.showModal();
+                                    }
+                                }}
                             ></StudentList>
                         }
                         empty={users.length == 0}
@@ -376,7 +372,19 @@ export default function StatisticsPage() {
                     toast.success('add new room done');
                 }}
             />
-            <DeleteClassModal callback={() => {}} classId={classInfo?.id ?? ''}></DeleteClassModal>
+            <DeleteUserFromClassModal
+                callback={() => {
+                    getClassStudentsById({ id: classInfo?.id ?? '' });
+                }}
+                classId={classInfo?.id ?? ''}
+                userId={selectedUserId ?? ''}
+            />
+            <DeleteClassModal
+                callback={() => {
+                    route.push('/classes');
+                }}
+                classId={classInfo?.id ?? ''}
+            ></DeleteClassModal>
             <CustomToaster />
         </div>
     );
