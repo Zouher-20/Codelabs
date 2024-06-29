@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { createRoomFromTemplate } from '../services/action';
-import { createRoomFromTemplateInput } from '../types';
+import { createRoomFromTemplate } from '../../services/action';
+import { createRoomFromTemplateInput } from '../../types';
 
 
 export async function POST(req: Request) {
