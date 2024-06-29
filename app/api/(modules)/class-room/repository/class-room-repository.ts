@@ -3,7 +3,6 @@ import { NAMEPLAN } from '@prisma/client';
 import { DateTime } from 'next-auth/providers/kakao';
 
 class ClassRoomRepository {
-
     // static async getAllFeedbackInRoom(payload: {
     //     RomId: string,
     //     pageSize: number,
@@ -40,9 +39,11 @@ class ClassRoomRepository {
     //     })
     // }
 
-    static async getAllClassRooms(
-        payload: { page: number; pageSize: number; searchWord?: string },
-    ) {
+    static async getAllClassRooms(payload: {
+        page: number;
+        pageSize: number;
+        searchWord?: string;
+    }) {
         const skip = (payload.page - 1) * payload.pageSize;
         let args = {};
 
@@ -57,7 +58,7 @@ class ClassRoomRepository {
             include: {
                 MemberClass: {
                     where: {
-                        isTeacher: true,
+                        isTeacher: true
                     },
                     include: {
                         user: true
@@ -71,7 +72,6 @@ class ClassRoomRepository {
 
         const classRoomsWithCounts = await Promise.all(
             classRoom.map(async classRoom => {
-
                 const memberCount = await db.memberClass.count({
                     where: { classRomId: classRoom.id }
                 });
@@ -98,15 +98,6 @@ class ClassRoomRepository {
             totalCount: totalCount
         };
     }
-
-
-
-
-
-
-
-
-
 
     static async addFeedbackInForClassProjectInRom(
         payload: {
@@ -275,7 +266,7 @@ class ClassRoomRepository {
                     }
                 },
                 data: {
-                    jsonFile: payload.jsonFile,
+                    jsonFile: payload.jsonFile
                 }
             });
         } else {
@@ -283,7 +274,7 @@ class ClassRoomRepository {
 
             newLab = await db.lab.create({
                 data: {
-                    jsonFile: payload.jsonFile,
+                    jsonFile: payload.jsonFile
                 }
             });
             newClassProject = await db.classProject.create({
@@ -293,8 +284,6 @@ class ClassRoomRepository {
                     labId: newLab.id
                 }
             });
-
-
         }
 
         return { lab: newLab, classProject: newClassProject || hasClassProject };
@@ -1051,7 +1040,6 @@ class ClassRoomRepository {
                                             ClassProject: {
                                                 romId: payload.romId
                                             }
-
                                         }
                                     }
                                 }

@@ -63,26 +63,21 @@ export default function ClassLabPage() {
         setStudentLoading(true);
         try {
             const res = await getStudentsStatisticsSubmitted({ page: 1, pageSize: 100, romId: id });
-            let count = 0;
             const currentStudent = res.usersWithLabs.map<ClassRoomUserType>(e => {
-                let checked = false;
-                if (e.MemberClass.length > 0) {
-                    if ((e.MemberClass.at(0)?.ClassProject.length ?? 0) > 0) {
-                        checked = true;
-                        count++;
-                    }
-                }
                 return {
                     email: e.email,
                     id: e.id,
-                    isTeacher: false,
+                    isTeacher: e.MemberClass.at(0)?.isTeacher ?? false,
                     name: e.username,
                     image: e.userImage,
                     selected: UserState.notSelected,
-                    withCheck: checked
+                    withCheck: true
                 };
             });
-            setUserStatistics({ totalUserInClass: res.totalStudentsInClass, userSubmit: count });
+            setUserStatistics({
+                totalUserInClass: res.totalStudentsInClass,
+                userSubmit: res.usersWithLabs.length
+            });
             setStudents(currentStudent);
         } catch (e: any) {
             setStudentError(e.message);
@@ -251,7 +246,6 @@ export default function ClassLabPage() {
                         }
                         loadedState={
                             <StudentList
-                                withCheck={true}
                                 students={students ?? []}
                                 title="Students"
                                 height="25rem"
