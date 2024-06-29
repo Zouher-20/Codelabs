@@ -17,6 +17,15 @@ export interface ExitUserFromYourClassInput {
     classRoomId: string;
 }
 
+export interface createRoomFromTemplateInput {
+    classRomId: string;
+    description?: string;
+    name?: string;
+    endAt: DateTime;
+    type?: string;
+    templateId: string
+
+}
 export interface getClassesByMeInput {
     page: number;
     pageSize: number;
