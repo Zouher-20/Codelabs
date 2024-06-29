@@ -248,7 +248,12 @@ export default function ClassLabPage() {
                 }
                 empty={false}
             />
-            <ExitClassModal callback={() => {}} classId={classInfo?.id ?? ''}></ExitClassModal>
+            <ExitClassModal
+                callback={() => {
+                    route.push('/classes');
+                }}
+                classId={classInfo?.id ?? ''}
+            ></ExitClassModal>
         </div>
     );
 }
