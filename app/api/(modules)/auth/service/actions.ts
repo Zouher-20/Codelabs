@@ -134,6 +134,13 @@ export const signIn = async (email: string, password: string) => {
 export const signOut = async () => {
     cookies().set('session', '', { expires: new Date(0) });
 };
+
+export const getMyStatisticsInfo = async () => {
+    const session = await getSession();
+    const userId = session?.id
+    UsersRepository.getMyStatisticsInfo(userId);
+}
+
 export const completeMyInfo = async (payload: CompleteMyInfoInput) => {
     const session = await getSession();
     const userId = session?.id
