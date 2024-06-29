@@ -13,6 +13,9 @@ export interface CloneLabForRoomInClassInput {
     type?: string;
     labId: string;
 }
+export interface ExitUserFromYourClassInput {
+    classRoomId: string;
+}
 
 export interface getClassesByMeInput {
     page: number;
