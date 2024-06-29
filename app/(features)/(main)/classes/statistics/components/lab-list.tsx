@@ -1,4 +1,6 @@
+import { userType } from '@/app/@types/user';
 import ClassLab from '@/app/components/globals/lab/class-lab';
+import UserAvatar from '@/app/components/globals/user-avatar';
 export default function ClassLabListComponent({
     labs,
     title,
@@ -19,7 +21,7 @@ export default function ClassLabListComponent({
                             key={e.title + `${index}`}
                             onClick={() => onLabClicked(index)}
                         >
-                            <ClassLab lab={e} />
+                            <ClassLab footer={<UserAvatar user={e.user} />} />
                         </div>
                     ))}
                 </div>
@@ -31,4 +33,5 @@ export default function ClassLabListComponent({
 export interface LabModel {
     title?: string;
     id: string;
+    user?: userType;
 }
