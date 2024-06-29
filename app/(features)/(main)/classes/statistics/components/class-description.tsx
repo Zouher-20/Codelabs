@@ -23,7 +23,7 @@ export default function ClassDescriptionComponent({
     return (
         <div className="w-full">
             <CodeLabContainer>
-                <div className="flex flex-col justify-center p-5">
+                <div className="flex w-full flex-col justify-center p-5">
                     <div className="flex justify-between">
                         <p className="text-lg font-bold">{className}</p>
                         {dropdown}

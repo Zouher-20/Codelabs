@@ -1,7 +1,10 @@
 'use client';
 
 import { RoomType } from '@/app/@types/room';
-import { getRoomAndTeacherDetails } from '@/app/api/(modules)/class-room/services/action';
+import {
+    getMyLabInRoom,
+    getRoomAndTeacherDetails
+} from '@/app/api/(modules)/class-room/services/action';
 import { EmptyState } from '@/app/components/page-state/empty';
 import { LoadingState } from '@/app/components/page-state/loading';
 import { ManageState } from '@/app/components/page-state/state_manager';
@@ -12,6 +15,7 @@ import toast from 'react-hot-toast';
 import CodeLabContainer from '../../components/container';
 import ClassDescriptionComponent from '../../statistics/components/class-description';
 import FeedbackModal from '../../statistics/components/feedback-modal';
+import { LabModel } from '../../statistics/components/lab-list';
 import StatisticsContainer from '../../statistics/components/statistics_components';
 import CloneLabComponent from './components/clone-lab-component';
 import { FeedbackComponent } from './components/feed-back';
@@ -22,11 +26,14 @@ export default function ClassLabPage() {
     useEffect(() => {
         const id = currentParams.get('roomId') ?? '-1';
         getRoomInfo({ id });
+        getLabModel({ id });
     }, []);
 
     const [roomLoading, setRoomLoading] = useState(true);
     const [roomError, setRoomError] = useState(null);
     const [roomInfo, setRoomInfo] = useState<RoomType | null>(null);
+    const [labLoading, setLabLoading] = useState(true);
+    const [labInfo, setLabInfo] = useState<LabModel | null>(null);
 
     const [submitRoomLoading, setSubmitRoomLoading] = useState(false);
 
@@ -52,6 +59,20 @@ export default function ClassLabPage() {
             setRoomError(e.message);
         } finally {
             setRoomLoading(false);
+        }
+    };
+
+    const getLabModel = async ({ id }: { id: string }) => {
+        setLabLoading(true);
+        try {
+            const res = await getMyLabInRoom({ roomId: id });
+            setLabInfo({
+                id: res?.id ?? ''
+            });
+        } catch (e: any) {
+            toast.error(e.message);
+        } finally {
+            setLabLoading(false);
         }
     };
 
@@ -88,14 +109,15 @@ export default function ClassLabPage() {
             if (result2.statusCode >= 300) {
                 throw new Error(result2.data);
             }
-            route.push('/lab' + result2.data.labId);
-            toast.success('submit lab done');
+            route.push('/lab/' + result2.data.labId);
+            toast.success('clone lab done');
         } catch (e: any) {
             toast.error(e.message);
         } finally {
             setSubmitRoomLoading(false);
         }
     };
+
     return (
         <div className="flex min-h-[550px] flex-col gap-2 p-3">
             <div className="flex w-full flex-wrap gap-2 md:w-1/4">
@@ -165,11 +187,15 @@ export default function ClassLabPage() {
             <div className="flex gap-2 max-md:flex-wrap">
                 <FeedbackComponent feedbacks={[]} onClick={onFeedbackClicked} />
                 <CloneLabComponent
-                    buttonText="Clone To Start Coding"
+                    buttonText={labInfo != null ? 'view lab' : 'Clone To Start Coding'}
                     onButtonClick={() => {
-                        onLabClicked();
+                        if (labInfo != null) {
+                            route.push('/lab/' + labInfo.id);
+                        } else {
+                            onLabClicked();
+                        }
                     }}
-                    loading={submitRoomLoading}
+                    loading={labLoading || submitRoomLoading}
                 />
             </div>
             <FeedbackModal

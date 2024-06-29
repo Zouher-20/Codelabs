@@ -264,7 +264,7 @@ export default function LabDetails() {
 
                             <CodeLabContainer height={'18rem'} minWidth="64">
                                 <div className="flex w-full flex-col justify-center gap-5 p-5">
-                                    <div className="flex">
+                                    <div className="flex justify-between">
                                         <article className="line-clamp-5 text-wrap text-sm">
                                             {lab?.description}
                                         </article>
