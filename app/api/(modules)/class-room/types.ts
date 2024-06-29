@@ -13,6 +13,9 @@ export interface CloneLabForRoomInClassInput {
     type?: string;
     labId: string;
 }
+export interface cloneLabFromTeacherInRoomInput {
+    roomId: string
+}
 export interface ExitUserFromYourClassInput {
     classRoomId: string;
 }

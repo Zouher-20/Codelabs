@@ -9,6 +9,7 @@ import {
     AddRomInClassInput,
     AddUsersInClassInput,
     CloneLabForRoomInClassInput,
+    cloneLabFromTeacherInRoomInput,
     createRoomFromTemplateInput,
     DeleteMYClassInput,
     DeleteUserFromMyClassInput,
@@ -40,6 +41,11 @@ export const cloneLabForRoomInClass = async (payload: CloneLabForRoomInClassInpu
     const session = await getSession();
     const userId = session?.id;
     return ActoinRoomRepository.cloneLabForRoomInClass(payload, userId);
+};
+export const cloneLabFromTeacherInRoom = async (payload: cloneLabFromTeacherInRoomInput) => {
+    const session = await getSession();
+    const userId = session?.id;
+    return ActoinRoomRepository.cloneLabFromTeacherInRoom(payload, userId);
 };
 
 export const createRoomFromTemplate = async (payload: createRoomFromTemplateInput) => {
