@@ -135,101 +135,105 @@ class ActoinRoomRepository {
     }
 
 
-    // static async cloneLabFromUserProject(
-    //     payload: {
-    //         labId: string;
-    //         roomId: string
-    //     },
-    //     userId: string
-    // ) {
-    //     let labJsonFilePath: string;
+    static async cloneLabFromTeacherInRoom(
+        payload: {
+            roomId: string
+        },
+        userId: string
+    ) {
 
-    //     const mylab = await db.lab.findUnique({
-    //         where: {
-    //             id: payload.labId ?? ''
-    //         }
-    //     });
-    //     if (!mylab) {
-    //         throw new Error('this project not found code lab');
-    //     }
+        const myRoom = await db.rom.findUnique({
+            where: {
+                id: payload.roomId
+            }
+        });
+        if (myRoom?.endAt && myRoom.endAt.getTime() > Date.now()) {
+            throw new Error('this room duration has ended');
 
-    //     labJsonFilePath = path.join(
-    //         process.cwd(),
-    //         'public',
-    //         mylab.jsonFile ?? ""
-    //     );
+        }
+        const lab = await db.classProject.findFirst({
+            where: {
+                romId: payload.roomId,
+                memberClass: {
+                    isTeacher: true
+                }
+            }
+        });
 
-    //     if (hasLabsPlan && countMyUserProject < userPlan.plan.FeaturePlan[0].value) {
-    //         const newJsonFileName = `${uuidv4()}.json`;
-    //         const newJsonFilePath = path.join(
-    //             process.cwd(),
-    //             'public',
-    //             'uploads',
-    //             'labs',
-    //             newJsonFileName
-    //         );
+        let labJsonFilePath: string;
 
-    //         try {
-    //             const templateJsonContent = await fs.readFile(labJsonFilePath, 'utf8');
-    //             await fs.writeFile(newJsonFilePath, templateJsonContent);
+        const mylab = await db.lab.findUnique({
+            where: {
+                id: lab?.labId
+            }
+        });
+        if (!mylab) {
+            throw new Error('this project not found code lab');
+        }
 
-    //             const newLab = await db.lab.create({
-    //                 data: {
-    //                     jsonFile: `/uploads/labs/${newJsonFileName}`
-    //                 }
-    //             });
+        labJsonFilePath = path.join(
+            process.cwd(),
+            'public',
+            mylab.jsonFile ?? ""
+        );
 
-    //             const newUserProject = await db.userProject.create({
-    //                 data: {
-    //                     name: payload.name,
-    //                     description: payload.description,
-    //                     userId: userId,
-    //                     labId: newLab.id
-    //                 }
-    //             });
 
-    //             const tags = await db.tag.findMany({
-    //                 where: {
-    //                     id: {
-    //                         in: payload.tagId
-    //                     }
-    //                 }
-    //             });
+        const hasClassProject = await db.classProject.findFirst({
+            where: {
+                romId: payload.roomId,
+                memberClass: {
+                    userId: userId
+                }
+            }
+        });
 
-    //             if (tags.length !== payload.tagId.length) {
-    //                 throw new Error(`One or more tags not found.`);
-    //             }
+        if (hasClassProject) {
+            throw new Error('you have an project class in this room');
+        }
+        const memberClass = await db.memberClass.findFirst({
+            where: {
+                classRom: {
+                    Rom: {
+                        some: {
+                            id: payload.roomId
+                        }
+                    }
+                },
+                userId: userId
+            }
+        });
 
-    //             const tagMorphCreatePromises = tags.map(tag =>
-    //                 db.tagMorph.create({
-    //                     data: {
-    //                         tagId: tag.id,
-    //                         userprojectId: newUserProject.id
-    //                     }
-    //                 })
-    //             );
+        const newJsonFileName = `${uuidv4()}.json`;
+        const newJsonFilePath = path.join(
+            process.cwd(),
+            'public',
+            'uploads',
+            'labs',
+            newJsonFileName
+        );
 
-    //             await db.userProject.update({
-    //                 where: {
-    //                     labId: payload.labId
-    //                 },
-    //                 data: {
-    //                     clone: {
-    //                         increment: 1
-    //                     }
-    //                 }
-    //             });
-    //             await Promise.all(tagMorphCreatePromises);
+        try {
+            const templateJsonContent = await fs.readFile(labJsonFilePath, 'utf8');
+            await fs.writeFile(newJsonFilePath, templateJsonContent);
 
-    //             return newUserProject;
-    //         } catch (error) {
-    //             console.error('Error reading or writing JSON file:', error);
-    //             throw new Error('Failed to create lab from template');
-    //         }
-    //     } else {
-    //         throw new Error('User does not have access to create more user projects.');
-    //     }
-    // }
+            const newLab = await db.lab.create({
+                data: {
+                    jsonFile: `/uploads/labs/${newJsonFileName}`
+                }
+            });
+            await db.classProject.create({
+                data: {
+                    labId: newLab.id,
+                    romId: payload.roomId,
+                    memberClassId: memberClass?.id
+                }
+            });
+        } catch (error) {
+            console.error('Error reading or writing JSON file:', error);
+            throw new Error('Failed to create lab from template');
+        }
+
+    }
 
 
 
@@ -347,7 +351,7 @@ class ActoinRoomRepository {
                         type: payload.type ?? '',
                         name: payload.name ?? '',
                         endAt: payload.endAt,
-                        description: payload.description ?? ''
+                        description: payload.description ?? '',
                     }
                 });
 
