@@ -1,11 +1,11 @@
-import { RoomType } from '@/app/@types/room';
 import ClassLab from '@/app/components/globals/lab/class-lab';
+import { LabModel } from './lab-list';
 export default function RoomListComponent({
     rooms,
     title,
     onLabClicked
 }: {
-    rooms: Array<RoomType>;
+    rooms: Array<LabModel>;
     title: string;
     onLabClicked: (index: number) => void;
 }) {
@@ -20,7 +20,7 @@ export default function RoomListComponent({
                             key={e.title + `${index}`}
                             onClick={() => onLabClicked(index)}
                         >
-                            <ClassLab name={e.title ?? ''} type="Type" />
+                            <ClassLab lab={e} />
                         </div>
                     ))}
                 </div>

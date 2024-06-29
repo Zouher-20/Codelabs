@@ -19,7 +19,7 @@ export default function ClassLabListComponent({
                             key={e.title + `${index}`}
                             onClick={() => onLabClicked(index)}
                         >
-                            <ClassLab name={e.title ?? ''} type="Type" />
+                            <ClassLab lab={e} />
                         </div>
                     ))}
                 </div>
