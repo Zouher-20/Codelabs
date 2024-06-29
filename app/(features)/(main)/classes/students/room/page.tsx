@@ -1,10 +1,7 @@
 'use client';
 
 import { RoomType } from '@/app/@types/room';
-import {
-    getRoomAndTeacherDetails,
-    submittedLabsInRoom
-} from '@/app/api/(modules)/class-room/services/action';
+import { getRoomAndTeacherDetails } from '@/app/api/(modules)/class-room/services/action';
 import { EmptyState } from '@/app/components/page-state/empty';
 import { LoadingState } from '@/app/components/page-state/loading';
 import { ManageState } from '@/app/components/page-state/state_manager';
@@ -75,16 +72,22 @@ export default function ClassLabPage() {
         }
     };
     const onLabClicked = async () => {
-        // const params = {
-        //     id: ''
-        // };
-        // const queryString = new URLSearchParams(params).toString();
-        // route.push('/lab' + '?' + queryString);
         const id = currentParams.get('roomId') ?? '-1';
-
         setSubmitRoomLoading(true);
         try {
-            await submittedLabsInRoom({ jsonFile: '', romId: id });
+            const response2 = await fetch('/api/class-room/clone-from-teacher', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    roomId: id
+                })
+            });
+            const result2 = await response2.json();
+            if (result2.statusCode >= 300) {
+                throw new Error(result2.data);
+            }
             toast.success('submit lab done');
         } catch (e: any) {
             toast.error(e.message);

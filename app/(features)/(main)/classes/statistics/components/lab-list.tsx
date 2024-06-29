@@ -1,6 +1,7 @@
 import { ClassRoomUserType } from '@/app/@types/user';
 import ClassLab from '@/app/components/globals/lab/class-lab';
 import UserAvatar from '@/app/components/globals/user-avatar';
+import { Icon } from '@iconify/react/dist/iconify.js';
 export default function ClassLabListComponent({
     labs,
     title,
@@ -23,16 +24,26 @@ export default function ClassLabListComponent({
                         >
                             <ClassLab
                                 footer={
-                                    <UserAvatar
-                                        user={{
-                                            email: e.user?.email ?? '',
-                                            id: e.user?.id ?? '',
-                                            username: e.user?.name ?? '',
-                                            image: e.user?.image ?? '',
-                                            userImage: e.user?.image,
-                                            name: e.user?.name
-                                        }}
-                                    />
+                                    <div className="flex items-center justify-between">
+                                        <UserAvatar
+                                            user={{
+                                                email: e.user?.email ?? '',
+                                                id: e.user?.id ?? '',
+                                                username: e.user?.name ?? '',
+                                                image: e.user?.image ?? '',
+                                                userImage: e.user?.image,
+                                                name: e.user?.name
+                                            }}
+                                        />
+                                        {e.user?.isTeacher && (
+                                            <div className="rounded-md bg-base-200 p-1">
+                                                <Icon
+                                                    icon="solar:case-round-bold-duotone"
+                                                    className="size-6"
+                                                />
+                                            </div>
+                                        )}
+                                    </div>
                                 }
                             />
                         </div>
