@@ -88,6 +88,7 @@ export default function ClassLabPage() {
             if (result2.statusCode >= 300) {
                 throw new Error(result2.data);
             }
+            route.push('/lab' + result2.data.labId);
             toast.success('submit lab done');
         } catch (e: any) {
             toast.error(e.message);
