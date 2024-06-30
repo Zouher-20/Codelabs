@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { cloneLabFromUserProject, createUserProjectLabFromTemplate } from '../../services/action';
-import { CloneCodeFromUserProjectInput, UserProjectInput } from '../../types';
+import { cloneLabFromUserProject } from '../../services/action';
+import { CloneCodeFromUserProjectInput } from '../../types';
 
 export async function POST(req: Request) {
     try {
@@ -11,7 +11,6 @@ export async function POST(req: Request) {
             statusCode: 200,
             data: response
         });
-
     } catch (err: any) {
         console.log('Error:', err);
         return NextResponse.json({

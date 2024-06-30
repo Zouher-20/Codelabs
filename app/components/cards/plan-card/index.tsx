@@ -26,7 +26,7 @@ const PlanCard = ({
         >
             <div className="flex justify-between">
                 <IconRenderer
-                    className='text-primary'
+                    className="text-primary"
                     fontSize={33}
                     icon="solar:link-circle-line-duotone"
                 />
@@ -83,13 +83,13 @@ function Advantages(plan: planType, active?: boolean) {
                 feature.value > 0 && feature.name === 'participate' ? null : (
                     <div key={index} className="flex gap-3">
                         <IconRenderer
-                            className='text-primary'
+                            className="text-primary"
                             fontSize={28}
                             icon="solar:check-read-broken"
                         />
                         {feature.value > 0 ? (
                             feature.name === 'students in class' ||
-                                feature.name === 'labs in class' ? (
+                            feature.name === 'labs in class' ? (
                                 <p>
                                     Only {feature.value} {feature.name}
                                 </p>
@@ -101,7 +101,7 @@ function Advantages(plan: planType, active?: boolean) {
                         ) : feature.name === 'participate' ? (
                             <p>Participate in challegens</p>
                         ) : feature.name === 'students in class' ||
-                            feature.name === 'labs in class' ? (
+                          feature.name === 'labs in class' ? (
                             <p>Up to 25 {feature.name}</p>
                         ) : (
                             <p>Unlimited {feature.name}</p>

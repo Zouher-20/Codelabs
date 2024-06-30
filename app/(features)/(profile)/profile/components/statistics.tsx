@@ -84,7 +84,12 @@ const Statistics = ({ user }: { user: userType }) => {
                                 flexibility!
                                 <br />
                                 Check out our options to find the perfect plan for you!"
-                                <Link href={`/plans/${user.PlanSubscription?.planId}`} className="btn btn-primary ml-2 ">Extend</Link>
+                                <Link
+                                    href={`/plans/${user.PlanSubscription?.planId}`}
+                                    className="btn btn-primary ml-2 "
+                                >
+                                    Extend
+                                </Link>
                             </div>
                         </div>
                     </div>

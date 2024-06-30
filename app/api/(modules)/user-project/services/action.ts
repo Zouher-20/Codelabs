@@ -2,6 +2,7 @@
 
 import { deleteMyCommentUserProjectLabInput } from '@/app/api/(modules)/admin/types';
 import { getSession } from '../../auth/service/actions';
+import UserProjectActionRepository from '../repository/user-project-action-repository';
 import UserProjectRepository from '../repository/user-project-repository';
 import {
     AddAndDeleteStarUserProjectInput,
@@ -16,7 +17,6 @@ import {
     UserProjectInput,
     userProjectStaredInput
 } from '../types';
-import UserProjectActionRepository from '../repository/user-project-action-repository';
 
 export const createUserProjectLabFromTemplate = async (payload: UserProjectInput) => {
     const session = await getSession();
@@ -33,7 +33,7 @@ export const editMyUserProjectLab = async (payload: EditMyUserProjectLabInput) =
     const session = await getSession();
     const userId = session?.id;
     return UserProjectRepository.editMyUserProjectLab(payload, userId);
-}
+};
 export const getUserProjectsLab = async (payload: GetUserProjectInput) => {
     const session = await getSession();
     const userId = session?.id;

@@ -103,6 +103,7 @@ export default function DiscoverPage() {
         <div className="px-3 py-5">
             <div className="flex gap-5 max-md:flex-col">
                 <HomeButtons
+                    key={'primary'}
                     onButtonClick={() => {
                         if (document) {
                             (
@@ -116,11 +117,14 @@ export default function DiscoverPage() {
                     subTitle="Start from scratch. Put some love ❤️ and build something great ✨ ."
                 ></HomeButtons>
                 <HomeButtons
-                    onButtonClick={() => { }}
+                    key={'secondary'}
+                    onButtonClick={() => {
+                        route.push('/blogs');
+                    }}
                     color="secondary"
-                    title="Clone a lab"
+                    title="Write a blog"
                     icon="solar:lightbulb-bold-duotone"
-                    subTitle="Add your touch 👌 . Create a new masterpiece from another one 🔥."
+                    subTitle="Unleash the author inside you ✍️. Let others embrace your ideas 💡."
                 ></HomeButtons>
             </div>
             <div className="h-3"></div>
@@ -141,7 +145,7 @@ export default function DiscoverPage() {
                             onLabClicked={e => {
                                 onLabClicked(e);
                             }}
-                            onLabInteractionClicked={() => { }}
+                            onLabInteractionClicked={() => {}}
                         />
                         <div className="m-10" />
                         <LabListComponent
@@ -149,7 +153,7 @@ export default function DiscoverPage() {
                             onMoreClicked={() => {
                                 onMoreClicked(true);
                             }}
-                            onLabInteractionClicked={() => { }}
+                            onLabInteractionClicked={() => {}}
                             title="Trending"
                             onLabClicked={e => {
                                 onLabClicked(e);

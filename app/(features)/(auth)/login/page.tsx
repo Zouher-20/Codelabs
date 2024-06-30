@@ -27,7 +27,7 @@ export default function LoginPage() {
                 if (user.role === ROLE.ADMIN) {
                     router.push('/admin');
                 } else {
-                    router.push('/');
+                    router.push('/discover');
                 }
             }
         } catch (err: any) {

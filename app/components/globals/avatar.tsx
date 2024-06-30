@@ -3,9 +3,15 @@
 import Image from 'next/image';
 import { useRef, useState } from 'react';
 
-const Avatar = ({ photo, imageSize, imagePath }
-    : { photo: (photo: File) => void; imageSize?: number, imagePath?: string }) => {
-
+const Avatar = ({
+    photo,
+    imageSize,
+    imagePath
+}: {
+    photo: (photo: File) => void;
+    imageSize?: number;
+    imagePath?: string;
+}) => {
     const [imageFile, setImageFile] = useState(imagePath ?? '');
     const hiddenFileInput = useRef<HTMLInputElement>(null);
 

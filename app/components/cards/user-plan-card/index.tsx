@@ -1,9 +1,8 @@
-'use client'
+'use client';
 import { planType } from '@/app/@types/plan';
 import IconRenderer from '../../globals/icon';
 
 const UserPlanCard = ({ plan, active }: { plan: planType; active?: boolean }) => {
-
     return (
         <div
             className={
@@ -17,7 +16,7 @@ const UserPlanCard = ({ plan, active }: { plan: planType; active?: boolean }) =>
                     fontSize={33}
                     icon="solar:link-circle-line-duotone"
                 />
-                <p className="text-xl text-white capitalize">{plan.name} Plan</p>
+                <p className="text-xl capitalize text-white">{plan.name} Plan</p>
             </div>
             <p className="text-gray-400">{plan.subtitle}</p>
             <div className="grid gap-1">
@@ -37,7 +36,7 @@ const UserPlanCard = ({ plan, active }: { plan: planType; active?: boolean }) =>
                             />
                             {feature.value > 0 ? (
                                 feature.name === 'students in class' ||
-                                    feature.name === 'labs in class' ? (
+                                feature.name === 'labs in class' ? (
                                     <p>
                                         Only {feature.value} {feature.name}
                                     </p>
@@ -49,7 +48,7 @@ const UserPlanCard = ({ plan, active }: { plan: planType; active?: boolean }) =>
                             ) : feature.name === 'participate' ? (
                                 <p>Participate in challegens</p>
                             ) : feature.name === 'students in class' ||
-                                feature.name === 'labs in class' ? (
+                              feature.name === 'labs in class' ? (
                                 <p>Up to 25 {feature.name}</p>
                             ) : (
                                 <p>Unlimited {feature.name}</p>

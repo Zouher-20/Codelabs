@@ -1,7 +1,6 @@
 'use client';
-import { blogType } from '@/app/@types/blog';
 import { getSession } from '@/app/api/(modules)/auth/service/actions';
-import { addBlog, editBlog, getDetailsBlog } from '@/app/api/(modules)/blog/services/action';
+import { editBlog, getDetailsBlog } from '@/app/api/(modules)/blog/services/action';
 import Avatar from '@/app/components/globals/avatar';
 import CodeLabsQuill from '@/app/components/globals/codelabs-quill';
 import Button from '@/app/components/globals/form/button';
@@ -23,7 +22,6 @@ interface FormValues {
 }
 
 const EditBlog = ({ params }: { params: { id: string } }) => {
-
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [defaultValues, setDefaultValues] = useState<FormValues>({
@@ -53,7 +51,7 @@ const EditBlog = ({ params }: { params: { id: string } }) => {
             } finally {
                 setLoading(false);
             }
-        }
+        };
         getDetails();
     }, [params.id]);
 
@@ -68,7 +66,8 @@ const EditBlog = ({ params }: { params: { id: string } }) => {
                 });
                 const result = await response.json();
                 await editBlog({ ...values, photo: result.data, blogId: params.id });
-            } else if (values.photo) await editBlog({ ...values, photo: values.photo, blogId: params.id });
+            } else if (values.photo)
+                await editBlog({ ...values, photo: values.photo, blogId: params.id });
             else await editBlog({ ...values, photo: '', blogId: params.id });
             const user = await getSession();
             if (user.role == 'ADMIN') {
@@ -84,7 +83,7 @@ const EditBlog = ({ params }: { params: { id: string } }) => {
         <ManageState
             loading={loading}
             error={error}
-            errorAndEmptyCallback={() => { }}
+            errorAndEmptyCallback={() => {}}
             empty={false}
             loadedState={
                 <div className="flex flex-col gap-4 p-8">
@@ -109,7 +108,8 @@ const EditBlog = ({ params }: { params: { id: string } }) => {
                                         <label>Add your blogs cover</label>
                                         <Avatar
                                             imagePath={props.values.photo as string}
-                                            photo={(photo: File) => (props.values.photo = photo)} />
+                                            photo={(photo: File) => (props.values.photo = photo)}
+                                        />
                                     </div>
                                     <div className="flex w-full flex-col gap-2  lg:w-3/5">
                                         <span className="grid gap-2">
@@ -153,7 +153,8 @@ const EditBlog = ({ params }: { params: { id: string } }) => {
                     </Formik>
                     <CustomToaster />
                 </div>
-            } />
+            }
+        />
     );
 };
 

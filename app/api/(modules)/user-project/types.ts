@@ -8,7 +8,7 @@ export interface CloneCodeFromUserProjectInput {
     name?: string;
     description?: string;
     tagId: string[];
-    labId: string
+    labId: string;
 }
 export interface EditMyUserProjectLabInput {
     userProjectid: string;

@@ -10,7 +10,7 @@
 }
 
 .card-style::before {
-    content: "";
+    content: '';
     position: absolute;
     background-color: #282c2b;
     opacity: 50%;

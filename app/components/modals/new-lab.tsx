@@ -133,7 +133,7 @@ const NewLabModal = () => {
                                         name="name"
                                         type="text"
                                         placeholder="lab name"
-                                        icon="solar:user-bold"
+                                        icon="solar:subtitles-bold"
                                         value={props.values.name}
                                         onBlur={props.handleBlur}
                                         onChange={props.handleChange}

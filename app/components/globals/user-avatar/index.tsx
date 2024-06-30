@@ -1,6 +1,12 @@
 import { userType } from '@/app/@types/user';
 
-const UserAvatar = ({ user, labName }: { user?: userType | undefined | null, labName?: string }) => {
+const UserAvatar = ({
+    user,
+    labName
+}: {
+    user?: userType | undefined | null;
+    labName?: string;
+}) => {
     return (
         <div className="flex items-center gap-3 py-1">
             {(user?.userImage ?? '') != '' ? (
@@ -16,9 +22,9 @@ const UserAvatar = ({ user, labName }: { user?: userType | undefined | null, lab
                     </div>
                 </div>
             )}
-            <div className='flex flex-col -mt-2 overflow-hidden gap-1'>
-                {labName && <span className='text-lg font-bold line-clamp-1'>{labName + " " + labName + labName + labName}</span>}
-                <span className="text-sm self-start">{user?.username ?? 'userName'}</span>
+            <div className="-mt-2 flex flex-col gap-1 overflow-hidden">
+                {labName && <span className="line-clamp-1 text-lg font-bold">{labName}</span>}
+                <span className="self-start text-sm">{user?.username ?? 'userName'}</span>
             </div>
         </div>
     );

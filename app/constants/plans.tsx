@@ -8,9 +8,9 @@ export const basicPlan = {
         { name: 'classes', value: 2 },
         { name: 'students in class', value: 5 },
         { name: 'labs in class', value: 2 },
-        { name: 'participate', value: -1 },
+        { name: 'participate', value: -1 }
     ]
-}
+};
 export const plusPlan = {
     title: 'Plus',
     subtitle: 'For users who want to do more.',
@@ -21,9 +21,9 @@ export const plusPlan = {
         { name: 'classes', value: 5 },
         { name: 'students in class', value: 10 },
         { name: 'labs in class', value: 5 },
-        { name: 'participate', value: -1 },
+        { name: 'participate', value: -1 }
     ]
-}
+};
 export const premiumPlan = {
     title: 'Premium',
     subtitle: 'For users who are seeking for the best',
@@ -34,6 +34,6 @@ export const premiumPlan = {
         { name: 'classes', value: -1 },
         { name: 'students in class', value: -1 },
         { name: 'labs in class', value: -1 },
-        { name: 'participate', value: 1 },
+        { name: 'participate', value: 1 }
     ]
-}
+};

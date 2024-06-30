@@ -10,11 +10,19 @@ import TreeHelper from '../lab/tree-helper';
 import EditorToolbar from './editor-toolbar';
 import { TreeReducerActionType, useTree, useTreeDispatch } from './tree-context';
 
-export default function CodeEditor({ files }: { files: FileSystemTree }) {
+export default function CodeEditor({
+    files,
+    isEditAllowed
+}: {
+    files: FileSystemTree;
+    isEditAllowed: boolean;
+}) {
+    const screenShot = () => {
+        const iframeEl = document.getElementById('lab-preview-iframe');
+    };
     const { editor, setEditor, booting, writeFile, setupContainer, webcontainerInstance } =
         useContainer();
     const [language, setLanguage] = useState('json');
-    const [dirty, setDirty] = useState(false);
     const dispatch = useTreeDispatch();
 
     const tree = useTree();
@@ -23,7 +31,6 @@ export default function CodeEditor({ files }: { files: FileSystemTree }) {
             setEditor(value);
             if (dispatch) dispatch({ type: TreeReducerActionType.FILE_UPDATE, payload: value });
             writeFile(tree.activeFile, value);
-            setDirty(true);
         }
     }, 500);
 
@@ -32,10 +39,10 @@ export default function CodeEditor({ files }: { files: FileSystemTree }) {
         else if (tree.activeFileName?.includes('.js')) setLanguage('javascript');
         else if (tree.activeFileName?.includes('.ts')) setLanguage('typescript');
         else if (tree.activeFileName?.includes('.css')) setLanguage('css');
+        else if (tree.activeFileName?.includes('.html')) setLanguage('html');
         else setLanguage('text');
 
         setEditor(get(tree.nodes, TreeHelper.getParsedPath(tree.activeFile)));
-        setDirty(false);
     }, [tree.activeFile]);
 
     useEffect(() => {
@@ -48,9 +55,9 @@ export default function CodeEditor({ files }: { files: FileSystemTree }) {
     }, [webcontainerInstance.current]);
 
     return (
-        <div className="grid min-h-screen w-5/6 grid-cols-2">
-            <EditorToolbar dirty={dirty} />
-            <div className="editor min-h-[600px] w-full">
+        <div className="grid min-h-screen flex-grow grid-cols-2">
+            <EditorToolbar isEditAllowed={isEditAllowed} />
+            <div className="editor min-h-[735px] w-full">
                 <Editor
                     className="h-full w-full rounded-lg"
                     language={language}

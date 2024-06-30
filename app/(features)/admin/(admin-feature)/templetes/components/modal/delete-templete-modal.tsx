@@ -2,7 +2,6 @@
 import { deletTemplate } from '@/app/api/(modules)/admin/template/services/action';
 import Button from '@/app/components/globals/form/button';
 import IconRenderer from '@/app/components/globals/icon';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 
@@ -21,7 +20,7 @@ const DeleteTempletesModal = ({
             await deletTemplate({ templateId });
             callback();
             (document.getElementById('delete-templetes-modal') as HTMLDialogElement).close();
-            toast.success("delete templete done");
+            toast.success('delete templete done');
         } catch (error: any) {
             toast.error(error.message);
         } finally {

@@ -93,7 +93,9 @@ const UpdatePlan = ({
                             <input
                                 type="checkbox"
                                 className="checkbox-primary checkbox mt-1 rounded-sm"
-                                checked={values.FeaturePlan[index]?.value < ('0' as unknown as number)}
+                                checked={
+                                    values.FeaturePlan[index]?.value < ('0' as unknown as number)
+                                }
                                 onChange={event => {
                                     event.target.checked
                                         ? handleChange(`features[${index}].value`)('-1')
@@ -109,9 +111,10 @@ const UpdatePlan = ({
                                     disabled={values.FeaturePlan[index]?.value < 0}
                                     value={
                                         values.FeaturePlan[index]?.value == -1 ||
-                                            values.FeaturePlan[index]?.value == 0
+                                        values.FeaturePlan[index]?.value == 0
                                             ? values.FeaturePlan[index].name
-                                            : (values.FeaturePlan[index]?.value as unknown as string)
+                                            : (values.FeaturePlan[index]
+                                                  ?.value as unknown as string)
                                     }
                                     onChange={event => handleInputChange(index, event)}
                                 />

@@ -5,5 +5,5 @@ export interface chartType {
     series: Array<number>;
     height: number;
     width: number;
-    addStat?:boolean
+    addStat?: boolean;
 }

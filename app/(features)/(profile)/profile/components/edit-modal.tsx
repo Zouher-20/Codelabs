@@ -12,7 +12,7 @@ export type userInfo = {
     bio?: string;
     position?: string;
 };
-const EditModal = ({ userInfo, isUpdate }: { userInfo: userInfo, isUpdate: Function }) => {
+const EditModal = ({ userInfo, isUpdate }: { userInfo: userInfo; isUpdate: Function }) => {
     const validationSchema = yup.object().shape({
         bio: textField,
         position: textField
@@ -22,7 +22,7 @@ const EditModal = ({ userInfo, isUpdate }: { userInfo: userInfo, isUpdate: Funct
             await completeMyInfo({ bio: values.bio, position: values.position });
             isUpdate(true);
             (document.getElementById('new-lab-modal') as HTMLDialogElement).close();
-            toast.success('Update Your profile successfully')
+            toast.success('Update Your profile successfully');
         } catch (err: any) {
             toast.error(err);
         }
@@ -55,17 +55,13 @@ const EditModal = ({ userInfo, isUpdate }: { userInfo: userInfo, isUpdate: Funct
                                     name={key}
                                     type="text"
                                     placeholder={key}
-                                    icon={
-                                        key == 'bio'
-                                            ? 'mingcute:user-info-fill'
-                                            : 'mdi:position'
-                                    }
+                                    icon={key == 'bio' ? 'mingcute:user-info-fill' : 'mdi:position'}
                                     value={values[key as keyof typeof userInfo]}
                                     onBlur={handleBlur}
                                     onChange={handleChange}
                                     errors={
                                         errors[key as keyof typeof userInfo] &&
-                                            touched[key as keyof typeof userInfo]
+                                        touched[key as keyof typeof userInfo]
                                             ? errors[key as keyof typeof userInfo]
                                             : null
                                     }

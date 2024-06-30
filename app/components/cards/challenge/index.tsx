@@ -1,24 +1,33 @@
-import Image from "next/image";
-import defaultImage from '@/public/images/challenges/attachment.svg'
+import defaultImage from '@/public/images/challenges/attachment.svg';
+import Image from 'next/image';
 
-const Challenge = ({ image, name, description, children }: {
-    image?: string,
-    name: string,
-    description: string,
-    children?: React.ReactNode
+const Challenge = ({
+    image,
+    name,
+    description,
+    children
+}: {
+    image?: string;
+    name: string;
+    description: string;
+    children?: React.ReactNode;
 }) => {
     return (
-        <div className="bg-base-300 flex flex-col xl:flex-row xl:gap-8 p-4 rounded-2xl  max-xl:text-center w-full">
-            <div className="bg-base-200 flex max-xl:self-center justify-center h-fit min-w-40 max-w-fit   rounded-xl">
-                <Image className="self-center h-full w-full" src={image ? image : defaultImage} alt="image" />
+        <div className="flex w-full flex-col rounded-2xl bg-base-300 p-4 max-xl:text-center  xl:flex-row xl:gap-8">
+            <div className="flex h-fit min-w-40 max-w-fit justify-center rounded-xl bg-base-200   max-xl:self-center">
+                <Image
+                    className="h-full w-full self-center"
+                    src={image ? image : defaultImage}
+                    alt="image"
+                />
             </div>
-            <div className="flex flex-col gap-2 slef-center w-full py-4">
+            <div className="slef-center flex w-full flex-col gap-2 py-4">
                 <h1 className="text-xl font-bold">{name}</h1>
-                <p className="text-sm tracking-wide h-full max-w-xl">{description}</p>
+                <p className="h-full max-w-xl text-sm tracking-wide">{description}</p>
                 {children}
             </div>
         </div>
     );
-}
+};
 
 export default Challenge;

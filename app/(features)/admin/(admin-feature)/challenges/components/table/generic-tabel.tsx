@@ -1,6 +1,6 @@
 import PagginationComponent from './paggination';
 
-export interface GenericTableModel { }
+export interface GenericTableModel {}
 
 export default class CodeLabTable<T extends GenericTableModel> {
     builder: ({ item, index }: { item: T; index: number }) => JSX.Element;
@@ -37,7 +37,7 @@ export default class CodeLabTable<T extends GenericTableModel> {
                 <div className="w-full overflow-x-auto">
                     <table className="table">
                         {this.tableHeader}
-                        <tbody >
+                        <tbody>
                             {this.items.map((item, index) => {
                                 return this.builder({ item, index });
                             })}

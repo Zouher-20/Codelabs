@@ -49,11 +49,14 @@ class AdminChallengeRepository {
         };
     }
 
-    static async getDetailsChallenge(payload: {
-        page: number;
-        pageSize: number;
-        challengeId: string;
-    }, userId: string) {
+    static async getDetailsChallenge(
+        payload: {
+            page: number;
+            pageSize: number;
+            challengeId: string;
+        },
+        userId: string
+    ) {
         const skip = (payload.page - 1) * payload.pageSize;
 
         const challenge = await db.challenge.findUnique({
@@ -69,14 +72,12 @@ class AdminChallengeRepository {
                 }
             }
         });
-        const view = await db.veiw.findFirst(
-            {
-                where: {
-                    userId: userId,
-                    challengeId: payload.challengeId
-                }
+        const view = await db.veiw.findFirst({
+            where: {
+                userId: userId,
+                challengeId: payload.challengeId
             }
-        );
+        });
         if (!view) {
             await db.veiw.create({
                 data: {

@@ -101,16 +101,14 @@ class AdminRepository {
         const tagCount = await db.tag.count({
             where: {
                 tagename: { contains: payload.tagName, mode: 'insensitive' }
-
             }
         });
         return {
             tags,
             tagCount
         };
-
     }
-    static async editTage(payload: { tagId: string, newTag: string }) {
+    static async editTage(payload: { tagId: string; newTag: string }) {
         const myTag = await db.tag.findUnique({
             where: {
                 id: payload.tagId
@@ -128,9 +126,7 @@ class AdminRepository {
             }
         });
         return newTag;
-
     }
-
 
     static async addTag(tag: string, tagType: TAGTYPE | null) {
         const existingTag = await db.tag.findUnique({

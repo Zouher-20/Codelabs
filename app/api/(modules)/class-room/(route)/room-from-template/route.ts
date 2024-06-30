@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server';
 import { createRoomFromTemplate } from '../../services/action';
-import { createRoomFromTemplateInput } from '../../types';
-
 
 export async function POST(req: Request) {
     try {
@@ -11,7 +9,6 @@ export async function POST(req: Request) {
             statusCode: 200,
             data: response
         });
-
     } catch (err: any) {
         console.log('Error:', err);
         return NextResponse.json({

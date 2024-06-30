@@ -18,17 +18,20 @@ const SelectField = ({
     useEffect(() => setIsMounted(true), []);
 
     const onChange = (option: type.ValueType<type.MyOptionType | type.MyOptionType[]>) => {
-        form.setFieldValue(field.name, (
-            isMulti ? (option as type.MyOptionType[]).map((item: type.MyOptionType) => item.value)
-                : (option as type.MyOptionType).value))
+        form.setFieldValue(
+            field.name,
+            isMulti
+                ? (option as type.MyOptionType[]).map((item: type.MyOptionType) => item.value)
+                : (option as type.MyOptionType).value
+        );
     };
 
     const getValue = () => {
         if (isMulti) {
-            if (options) return options.filter((option: any) => field.value.indexOf(option.value) >= 0);
+            if (options)
+                return options.filter((option: any) => field.value.indexOf(option.value) >= 0);
             else return [];
-        }
-        else return options.filter((option: any) => field.value.indexOf(option.value) >= 0)
+        } else return options.filter((option: any) => field.value.indexOf(option.value) >= 0);
         // else return { value: field.value, label: field.value };
     };
 
@@ -94,7 +97,7 @@ const selectStyle = (errors: string | null) => {
         }),
         singleValue: baseStyles => ({
             ...baseStyles,
-            color: 'white',
+            color: 'white'
         }),
         multiValue: baseStyles => ({
             ...baseStyles,
@@ -125,10 +128,10 @@ const selectStyle = (errors: string | null) => {
             backgroundColor: state.isDisabled
                 ? undefined
                 : state.isSelected
+                  ? '#1D231C'
+                  : state.isFocused
                     ? '#1D231C'
-                    : state.isFocused
-                        ? '#1D231C'
-                        : undefined,
+                    : undefined,
             ':active': {
                 ...baseStyles[':active'],
                 backgroundColor: !state.isDisabled

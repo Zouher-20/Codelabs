@@ -1,10 +1,10 @@
 'use client';
 
+import { getMyInfo } from '@/app/api/(modules)/auth/service/actions';
 import { CustomToaster } from '@/app/components/toast/custom-toaster';
+import { useEffect, useState } from 'react';
 import DeleteAccountModal from './delete-modal';
 import EditModal from './edit-modal';
-import { useEffect, useState } from 'react';
-import { getMyInfo } from '@/app/api/(modules)/auth/service/actions';
 
 const PersonalInfo = () => {
     const [UserInfo, setUserInfo] = useState<any>();
@@ -12,17 +12,18 @@ const PersonalInfo = () => {
 
     useEffect(() => {
         const getUser = async () => {
-            const user = await getMyInfo()
-            if (user) setUserInfo({
-                username: user.username,
-                email: user.email,
-                bio: user.bio,
-                position: user.position
-            })
+            const user = await getMyInfo();
+            if (user)
+                setUserInfo({
+                    username: user.username,
+                    email: user.email,
+                    bio: user.bio,
+                    position: user.position
+                });
             setIsUpdate(false);
-        }
-        getUser()
-    }, [isUpdate])
+        };
+        getUser();
+    }, [isUpdate]);
 
     function toggleModal() {
         if (document) {
@@ -46,14 +47,20 @@ const PersonalInfo = () => {
                 </button>
             </div>
             <div className="flex flex-col gap-4 px-2">
-                {UserInfo && Object.keys(UserInfo).map(key => (
-                    <div className="flex flex-col " key={key}>
-                        <p className="capitalize">{key}</p>
-                        <p key={key} className="text-gray-500">
-                            {(UserInfo as any)[key] ?? (key == 'bio' ? 'ex : Bio' : (key == 'position' ? 'ex: Designer ,developer' : ''))}
-                        </p>
-                    </div>
-                ))}
+                {UserInfo &&
+                    Object.keys(UserInfo).map(key => (
+                        <div className="flex flex-col " key={key}>
+                            <p className="capitalize">{key}</p>
+                            <p key={key} className="text-gray-500">
+                                {(UserInfo as any)[key] ??
+                                    (key == 'bio'
+                                        ? 'ex : Bio'
+                                        : key == 'position'
+                                          ? 'ex: Designer ,developer'
+                                          : '')}
+                            </p>
+                        </div>
+                    ))}
             </div>
             <span className="divider "></span>
             <div className="flex flex-col gap-2">
@@ -69,7 +76,12 @@ const PersonalInfo = () => {
                     delete my account
                 </button>
             </div>
-            {UserInfo && <EditModal userInfo={{ bio: UserInfo.bio, position: UserInfo.position }} isUpdate={(val: boolean) => setIsUpdate(val)} />}
+            {UserInfo && (
+                <EditModal
+                    userInfo={{ bio: UserInfo.bio, position: UserInfo.position }}
+                    isUpdate={(val: boolean) => setIsUpdate(val)}
+                />
+            )}
             <DeleteAccountModal />
             <CustomToaster />
         </div>

@@ -219,7 +219,7 @@ class ActoinRoomRepository {
                 }
             });
             const labId = newLab.id;
-            return { labId }
+            return { labId };
         } catch (error) {
             console.error('Error reading or writing JSON file:', error);
             throw new Error('Failed to create lab from template');

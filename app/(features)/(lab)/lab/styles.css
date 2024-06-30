@@ -4,3 +4,6 @@
 .action-btns {
     display: none;
 }
+.xterm .xterm-viewport {
+    overflow: hidden;
+}

@@ -1,10 +1,8 @@
 'use client';
 
-import { userType } from "@/app/@types/user";
-
+import { userType } from '@/app/@types/user';
 
 const PersonalInfo = ({ user }: { user: userType }) => {
-
     const userInfo = { name: user.username, bio: 'Bio', position: 'Developber' };
     return (
         <div className="flex flex-col gap-2">
