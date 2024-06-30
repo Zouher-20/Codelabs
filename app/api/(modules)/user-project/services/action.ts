@@ -8,6 +8,7 @@ import {
     AddCommentUserProjectLabInput,
     CloneCodeFromUserProjectInput,
     DeleteMyUserProjectInput,
+    EditMyUserProjectLabInput,
     GetCommentUserProjectLabInput,
     GetDetailsUserProjectLabInput,
     GetUserProjectInput,
@@ -28,7 +29,11 @@ export const cloneLabFromUserProject = async (payload: CloneCodeFromUserProjectI
     return UserProjectActionRepository.cloneLabFromUserProject(payload, userId);
 };
 
-
+export const editMyUserProjectLab = async (payload: EditMyUserProjectLabInput) => {
+    const session = await getSession();
+    const userId = session?.id;
+    return UserProjectRepository.editMyUserProjectLab(payload, userId);
+}
 export const getUserProjectsLab = async (payload: GetUserProjectInput) => {
     const session = await getSession();
     const userId = session?.id;
