@@ -37,6 +37,9 @@ export interface createRoomFromTemplateInput {
     templateId: string
 
 }
+export interface GetClassProjectByIdInput {
+    classProjectId: string
+}
 export interface GetAllFeedbackInRoomInput {
     classProjectId: string;
     pageSize: number;
@@ -111,9 +114,10 @@ export interface SubmittedLabsInRoomInput {
     romId: string;
     jsonFile: string;
 }
-export interface AddFeedbackInForClassProjectInRomInput {
-    labId: string;
+export interface AddFeedbackInClassProjectIput {
     feedback: string;
+    classProjectId: string;
+
 }
 
 export interface getAllClassRoomsInput {
