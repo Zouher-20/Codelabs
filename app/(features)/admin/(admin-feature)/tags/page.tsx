@@ -8,17 +8,18 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import AddTagModal from '../challenges/components/tags-modal';
 import TagViewHeader from '../templetes/components/headea';
-import TagsTable, { TagTableType } from './components/tag-table';
+import TagsTable from './components/tag-table';
 const TagView = () => {
     const pageSize = 10;
     const params = useSearchParams();
-    const [templetes, setTag] = useState<Array<TagTableType>>([]);
+    const [templetes, setTag] = useState<Array<tag>>([]);
+    const [selectedTag, setSelectedTag] = useState<tag | null>(null);
     const [currentPage, updateCurrentPage] = useState(1);
     const [totalPageCount, setTotalPageCount] = useState(0);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [searchWord, setSearchWord] = useState('');
-    const [modalTagId, setModalTagId] = useState('');
+
     useEffect(() => {
         var pageNumber = Number(params.get('id') ?? '1');
         updateCurrentPage(pageNumber);
@@ -46,8 +47,8 @@ const TagView = () => {
                     return {
                         createdAt: e.createdAt,
                         id: e.id,
-                        name: e.tagename
-                    } as TagTableType;
+                        tagename: e.tagename
+                    } as tag;
                 })
             );
         } catch (e: any) {
@@ -69,8 +70,9 @@ const TagView = () => {
                 <TagViewHeader
                     onCreateClicked={() => {
                         if (document) {
+                            setSelectedTag(null);
                             (
-                                document.getElementById('add-templete-modal') as HTMLFormElement
+                                document.getElementById('add-tag-modal') as HTMLFormElement
                             )?.showModal();
                         }
                     }}
@@ -98,12 +100,21 @@ const TagView = () => {
                             pageCount={totalPageCount / pageSize}
                             currentPage={currentPage}
                             onPageChange={onPageChange}
-                            editTagButtonClicked={tag => {}}
+                            editTagButtonClicked={tag => {
+                                setSelectedTag(tag);
+
+                                if (document) {
+                                    (
+                                        document.getElementById('add-tag-modal') as HTMLFormElement
+                                    )?.showModal();
+                                }
+                            }}
                         />
                     }
                 />
             </div>
             <AddTagModal
+                selecetedTag={selectedTag}
                 newTagCallbackFunction={function (tag: tag): void {
                     updateCurrentPage(1);
                     getServerTag({ newSearchWord: searchWord, page: 1 });
