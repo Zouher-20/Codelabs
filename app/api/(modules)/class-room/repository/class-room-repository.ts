@@ -1,8 +1,35 @@
 import { db } from '@/app/api/core/db/db';
 import { NAMEPLAN } from '@prisma/client';
 import { DateTime } from 'next-auth/providers/kakao';
+import { date } from 'yup';
 
 class ClassRoomRepository {
+
+
+    static async deleteMyFeedback(payload: { feedbackId: string }, userId: string) {
+        const myfeedback = await db.feedbackProjct.findUnique({
+            where: {
+                id: payload.feedbackId,
+                memberClass: {
+                    userId: userId
+                }
+            }
+        });
+        if (!myfeedback) {
+            throw new Error('feedback not found or was deleted  please refresh again');
+        }
+
+        await db.feedbackProjct.delete(
+            {
+                where: {
+                    id: myfeedback.id,
+                },
+            }
+        );
+
+        return "your feedback was deleted successfully";
+    }
+
     static async deleteMyClass(payload: { classRoomId: string }, userId: string) {
         const myClass = await db.classRom.findUnique({
             where: {
