@@ -66,7 +66,8 @@ export default function ClassLabPage() {
         try {
             const res = await getMyLabInRoom({ roomId: id });
             setLabInfo({
-                id: res?.id ?? ''
+                id: res?.ClassProject?.id ?? '',
+                labId: res?.id
             });
         } catch (e: any) {
             toast.error(e.message);

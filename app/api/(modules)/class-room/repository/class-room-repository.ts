@@ -530,6 +530,9 @@ class ClassRoomRepository {
         const mylab = await db.lab.findUnique({
             where: {
                 id: myClassProject?.labId
+            },
+            include: {
+                ClassProject: true
             }
         });
         return mylab;
