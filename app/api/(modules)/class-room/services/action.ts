@@ -70,10 +70,10 @@ export const deleteMyFeedback = async (payload: DeleteMyFeedbackInput) => {
     return classRoomRepository.deleteMyFeedback(payload, userId);
 }
 
-export const getAllFeedbackInRoom = async (payload: GetAllFeedbackInRoomInput) => {
+export const getAllFeedbackInClassProject = async (payload: GetAllFeedbackInRoomInput) => {
     const session = await getSession();
     const userId = session?.id;
-    return classRoomRepository.getAllFeedbackInRoom(payload, userId);
+    return classRoomRepository.getAllFeedbackInClassProject(payload, userId);
 }
 
 export const exitUserFromYourClass = async (payload: ExitUserFromYourClassInput) => {

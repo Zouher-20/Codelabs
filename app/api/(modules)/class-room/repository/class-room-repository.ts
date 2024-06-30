@@ -85,44 +85,29 @@ class ClassRoomRepository {
         return 'users deleted successfully ';
     }
 
-    static async getAllFeedbackInRoom(payload: {
-        RoomId: string,
+    static async getAllFeedbackInClassProject(payload: {
+        classProjectId: string,
         pageSize: number,
         page: number
     }, userId: string) {
         const skip = (payload.page - 1) * payload.pageSize;
-        const myClass = await db.classRom.findFirst({
+        const classesProject = await db.classProject.findUnique({
             where: {
-                AND: [
-                    {
-                        Rom: {
-                            some: {
-                                id: payload.RoomId
-                            }
-                        }
-                    },
-                    {
-                        MemberClass: {
-                            some: {
-                                userId: userId
-                            }
-                        }
-                    }
-                ]
+                id: payload.classProjectId,
+                memberClass: {
+                    userId: userId
+                }
             }
         });
-        if (!myClass) {
-            throw new Error('No class found');
+        if (!classesProject) {
+            throw new Error('class project not found');
         }
 
         const feedbacks = await db.feedbackProjct.findMany({
             take: payload.pageSize,
             skip: skip,
             where: {
-                memberClass: {
-                    classRomId: payload.RoomId
-                }
-
+                classProjectId: payload.classProjectId
             },
             include: {
                 memberClass: {
@@ -131,7 +116,18 @@ class ClassRoomRepository {
                     }
                 }
             }
-        })
+        });
+        const feedbackCount = await db.feedbackProjct.count(
+            {
+                where: {
+                    classProjectId: payload.classProjectId,
+                },
+            }
+        );
+        return {
+            feedbacks,
+            feedbackCount
+        }
     }
 
     static async getAllClassRooms(payload: {

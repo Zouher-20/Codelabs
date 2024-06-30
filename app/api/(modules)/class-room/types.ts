@@ -38,8 +38,8 @@ export interface createRoomFromTemplateInput {
 
 }
 export interface GetAllFeedbackInRoomInput {
-    RoomId: string,
-    pageSize: number,
+    classProjectId: string;
+    pageSize: number;
     page: number
 }
 export interface getClassesByMeInput {
