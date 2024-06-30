@@ -6,6 +6,7 @@ import AdminRepository from '../repository/admin-repository';
 import {
     ChallengeInput,
     ChallengePaginationInput,
+    EditTagInput,
     TagPaginationInput,
     UsersPaginationInput,
     deleteUserInput
@@ -58,6 +59,15 @@ export const getTag = async (payload: TagPaginationInput) => {
         throw new Error('An error occurred while futching a tag.');
     }
 };
+
+export const editTage = async (payload: EditTagInput) => {
+    try {
+        return AdminRepository.editTage(payload);
+    } catch (error) {
+        console.error('An error occurred:', error);
+        throw new Error('An error occurred while futching a tag.');
+    }
+}
 
 export const getChallengeDifficult = async () => {
     try {

@@ -160,10 +160,12 @@ model ClassRom {
 }
 
 model Tag {
-  id       String     @id @default(cuid())
-  tagename String     @unique
-  tagtype  TAGTYPE?
-  TagMorph TagMorph[]
+  id        String     @id @default(cuid())
+  tagename  String     @unique
+  tagtype   TAGTYPE?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime?  @updatedAt
+  TagMorph  TagMorph[]
 }
 
 model TagMorph {
