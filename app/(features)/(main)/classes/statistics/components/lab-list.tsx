@@ -30,9 +30,7 @@ export default function ClassLabListComponent({
                                                 email: e.user?.email ?? '',
                                                 id: e.user?.id ?? '',
                                                 username: e.user?.name ?? '',
-                                                image: e.user?.image ?? '',
-                                                userImage: e.user?.image,
-                                                name: e.user?.name
+                                                userImage: e.user?.image ?? ''
                                             }}
                                         />
                                         {e.user?.isTeacher && (

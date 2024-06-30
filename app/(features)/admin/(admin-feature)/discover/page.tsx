@@ -78,9 +78,9 @@ const Discover = () => {
                         user: {
                             email: e.user.email,
                             id: e.user.id,
-                            name: e.user.username,
-                            image: e.user.userImage,
-                            role: e.user.role
+                            role: e.user.role,
+                            username: e.user.username,
+                            userImage: e.user.userImage
                         }
                     } as LabTableType;
                 })

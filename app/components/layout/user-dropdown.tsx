@@ -1,10 +1,10 @@
 import { userType } from '@/app/@types/user';
-import { getMyInfo, getSession, signOut } from '@/app/api/(modules)/auth/service/actions';
+import { getMyInfo, signOut } from '@/app/api/(modules)/auth/service/actions';
+import noImage from '@/public/images/no-image2.png';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import IconRenderer from '../globals/icon';
-import noImage from '@/public/images/no-image2.png'
 
 export default function UserDropDown() {
     const router = useRouter();
@@ -20,11 +20,11 @@ export default function UserDropDown() {
     }
     const HandleImageError = () => {
         if (user) {
-            const newUser = { ...user }
-            newUser.userImage = noImage.src
+            const newUser = { ...user };
+            newUser.userImage = noImage.src;
             setUser(newUser);
         }
-    }
+    };
     return (
         <div className="dropdown">
             <div
@@ -34,14 +34,17 @@ export default function UserDropDown() {
             >
                 {user?.userImage ? (
                     <div className="avatar">
-                        <div className="w-10 rounded">
-                            <img src={user?.userImage?.replace(/\\/g, '/')} onError={HandleImageError} />
+                        <div className="w-10 rounded-3xl">
+                            <img
+                                src={user?.userImage?.replace(/\\/g, '/')}
+                                onError={HandleImageError}
+                            />
                         </div>
                     </div>
                 ) : (
                     <div className="avatar placeholder">
                         <div className="w-10 rounded-full bg-neutral text-neutral-content">
-                            <span className="text-l">{user?.username[1]}</span>
+                            <span className="text-l">{user?.username?.at(1) ?? ''}</span>
                         </div>
                     </div>
                 )}
@@ -71,7 +74,7 @@ export default function UserDropDown() {
                             .then(() => {
                                 router.push('/login');
                             })
-                            .catch(e => { });
+                            .catch(e => {});
                     }}
                 >
                     <a className="flex items-center gap-2 text-error">

@@ -74,8 +74,7 @@ export default function LabDetails() {
                 email: res.lab.user.email,
                 id: res.lab.user.id,
                 userImage: res.lab.user.userImage ?? '',
-                username: res.lab.user.username,
-                name: res.lab.user.username ?? ''
+                username: res.lab.user.username
             }
         });
     };
@@ -86,11 +85,10 @@ export default function LabDetails() {
                 return {
                     id: e.id,
                     user: {
-                        email: e.user.email,
-                        id: e.user.id,
-                        userImage: e.user.userImage,
-                        username: e.user.username,
-                        name: e.user.username
+                        email: e.user.email ?? '',
+                        id: e.user.id ?? '',
+                        userImage: e.user.userImage ?? '',
+                        username: e.user.username ?? ''
                     },
                     feedback: e.comment
                 };

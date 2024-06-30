@@ -26,7 +26,7 @@ export default function LabTable({
                 </td>
                 <td>{item.commentCount} Comments</td>
                 <td>{item.starCount} Stars</td>
-                <td>{item.user.name}</td>
+                <td>{item.user.username}</td>
                 <td>
                     <Button label="Details" color="any" onClick={() => detailsClicked(item)} />
                 </td>
