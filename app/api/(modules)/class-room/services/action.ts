@@ -16,6 +16,7 @@ import {
     DeleteUserFromMyClassInput,
     ExitUserFromYourClassInput,
     getAllClassRoomsInput,
+    GetAllFeedbackInRoomInput,
     GetAllUserAndSearchInput,
     getClassesByMeInput,
     GetClassRomByIdInput,
@@ -62,10 +63,17 @@ export const createRoomFromTemplate = async (payload: createRoomFromTemplateInpu
     return ActoinRoomRepository.createRoomFromTemplate(payload, userId);
 };
 
+
 export const deleteMyFeedback = async (payload: DeleteMyFeedbackInput) => {
     const session = await getSession();
     const userId = session?.id;
     return classRoomRepository.deleteMyFeedback(payload, userId);
+}
+
+export const getAllFeedbackInRoom = async (payload: GetAllFeedbackInRoomInput) => {
+    const session = await getSession();
+    const userId = session?.id;
+    return classRoomRepository.getAllFeedbackInRoom(payload, userId);
 }
 
 export const exitUserFromYourClass = async (payload: ExitUserFromYourClassInput) => {
