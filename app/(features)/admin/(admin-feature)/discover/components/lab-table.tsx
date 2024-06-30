@@ -1,3 +1,4 @@
+import { tag } from '@/app/@types/tag';
 import { userType } from '@/app/@types/user';
 import Button from '@/app/components/globals/form/button';
 import CodeLabTable, { GenericTableModel } from '../../components/table/generic-tabel';
@@ -68,4 +69,5 @@ export interface LabTableType extends GenericTableModel {
     starCount: number;
     createdAt?: Date;
     user: userType;
+    tags?: Array<tag>;
 }
