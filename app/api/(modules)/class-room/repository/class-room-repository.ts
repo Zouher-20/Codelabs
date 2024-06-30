@@ -189,6 +189,63 @@ class ClassRoomRepository {
             totalCount: totalCount
         };
     }
+
+    static async getClassProjectById(payload: { classProjectId: string }, userId: string) {
+        const classProject = await db.classProject.findUnique({
+            where: {
+                id: payload.classProjectId
+            },
+            include: {
+                lab: true
+            }
+        });
+        if (!classProject) {
+            throw new Error('class project not found');
+        }
+        const myRoom = await db.rom.findFirst({
+            where: {
+                ClassProject: {
+                    some: {
+                        id: classProject.id
+                    }
+                },
+            },
+        });
+
+        if (!myRoom) {
+            throw new Error('no room found');
+        }
+
+        const myClass = await db.classRom.findFirst({
+            where: {
+                AND: [
+                    {
+                        Rom: {
+                            some: {
+                                id: myRoom.id
+                            }
+                        }
+                    },
+                    {
+                        MemberClass: {
+                            some: {
+                                userId: userId
+                            }
+                        }
+                    }
+                ]
+            }
+        });
+
+        if (!myClass) {
+            throw new Error('No class found or you are not member in this class');
+        }
+        return {
+            classProject
+        };
+
+
+    }
     static async addFeedbackInClassProject(
         payload: {
             classProjectId: string;

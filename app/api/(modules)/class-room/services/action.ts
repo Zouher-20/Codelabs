@@ -19,6 +19,7 @@ import {
     GetAllFeedbackInRoomInput,
     GetAllUserAndSearchInput,
     getClassesByMeInput,
+    GetClassProjectByIdInput,
     GetClassRomByIdInput,
     GetClassRomForStudentsByIdInput,
     GetClassRomStatistics,
@@ -69,6 +70,13 @@ export const deleteMyFeedback = async (payload: DeleteMyFeedbackInput) => {
     const userId = session?.id;
     return classRoomRepository.deleteMyFeedback(payload, userId);
 }
+
+export const getClassProjectById = async (payload: GetClassProjectByIdInput) => {
+    const session = await getSession();
+    const userId = session?.id;
+    return classRoomRepository.getClassProjectById(payload, userId);
+}
+
 
 export const getAllFeedbackInClassProject = async (payload: GetAllFeedbackInRoomInput) => {
     const session = await getSession();
