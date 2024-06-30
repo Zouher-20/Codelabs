@@ -1,3 +1,4 @@
+import { CustomToaster } from "@/app/components/toast/custom-toaster";
 import Contact from "./components/contact-us";
 import Footr from "./components/footer";
 import Framework from "./components/framework";
@@ -15,6 +16,7 @@ const LandingPage = () => {
         <Framework />
         <Contact />
         <Footr />
+        <CustomToaster />
     </div>
 }
 

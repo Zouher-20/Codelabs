@@ -116,7 +116,7 @@ export default function DiscoverPage() {
                     subTitle="Start from scratch. Put some love ❤️ and build something great ✨ ."
                 ></HomeButtons>
                 <HomeButtons
-                    onButtonClick={() => {}}
+                    onButtonClick={() => { }}
                     color="secondary"
                     title="Clone a lab"
                     icon="solar:lightbulb-bold-duotone"
@@ -141,15 +141,15 @@ export default function DiscoverPage() {
                             onLabClicked={e => {
                                 onLabClicked(e);
                             }}
-                            onLabInteractionClicked={() => {}}
+                            onLabInteractionClicked={() => { }}
                         />
-                        <div className="h-3" />
+                        <div className="m-10" />
                         <LabListComponent
                             labs={trendingLabs}
                             onMoreClicked={() => {
                                 onMoreClicked(true);
                             }}
-                            onLabInteractionClicked={() => {}}
+                            onLabInteractionClicked={() => { }}
                             title="Trending"
                             onLabClicked={e => {
                                 onLabClicked(e);
