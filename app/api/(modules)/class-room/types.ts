@@ -25,6 +25,9 @@ export interface ExitUserFromYourClassInput {
     classRoomId: string;
 }
 
+export interface DeleteMyFeedbackInput {
+    feedbackId: string
+}
 export interface createRoomFromTemplateInput {
     classRomId: string;
     description?: string;
