@@ -49,7 +49,7 @@ export default function ClassLabPage() {
 
             const currentLab = res.labs.map<LabModel>(e => {
                 return {
-                    id: e.id ?? '',
+                    id: e.ClassProject?.id ?? '',
                     user: {
                         isTeacher: e.ClassProject?.memberClass?.isTeacher ?? false,
                         name: e.ClassProject?.memberClass?.user.username ?? '',
@@ -122,7 +122,7 @@ export default function ClassLabPage() {
             const params = {
                 id,
                 roomId,
-                labId: labs![index].id.toString()
+                classProjectId: labs![index].id.toString()
             };
             const queryString = new URLSearchParams(params).toString();
             route.push('/classes/statistics/room/lab' + '?' + queryString);

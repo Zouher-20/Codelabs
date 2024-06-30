@@ -54,6 +54,7 @@ export default function ClassLabListComponent({
 
 export interface LabModel {
     title?: string;
+    labId?: string;
     id: string;
     user?: ClassRoomUserType;
 }

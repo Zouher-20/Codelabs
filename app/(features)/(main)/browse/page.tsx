@@ -2,10 +2,10 @@
 
 import LabListComponent from '@/app/(features)/(main)/stared/components/lab_list';
 import { LabTableType } from '@/app/(features)/admin/(admin-feature)/discover/components/lab-table';
-import { getMyUserProject } from '@/app/api/(modules)/user-project/services/action';
+import { getUserProjectsLab } from '@/app/api/(modules)/user-project/services/action';
 import Input from '@/app/components/globals/form/input';
 import { ManageState } from '@/app/components/page-state/state_manager';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
@@ -18,17 +18,20 @@ export default function StaredPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const route = useRouter();
+    const params = useSearchParams();
     useEffect(() => {
         fetchDataFromServer({ page: page });
     }, [page, searchWord]);
     const fetchDataFromServer = async ({ page }: { page: number }) => {
         setLoading(true);
         setError(null);
+        const tag = params.get('tag') ?? '';
         try {
-            const res = await getMyUserProject({
-                searchWord: searchWord,
+            const res = await getUserProjectsLab({
+                nameLab: searchWord,
                 page: page,
-                pageSize: pageSize
+                pageSize: pageSize,
+                tagName: tag
             });
             setLabs(
                 res.projects.map<LabTableType>((e: any) => {
@@ -43,8 +46,7 @@ export default function StaredPage() {
                         },
                         commentCount: e.commentCount,
                         starCount: e.starCount,
-                        isStared: true,
-                        viewCount: e.viewCount
+                        isStared: e.hasStarred
                     };
                 })
             );
@@ -68,7 +70,7 @@ export default function StaredPage() {
     return (
         <div className="flex flex-col">
             <div className="flex flex-col gap-8 px-6 py-2">
-                <h1 className="text-4xl font-bold text-white">My Labs</h1>
+                <h1 className="text-4xl font-bold text-white">Browse</h1>
 
                 <div className="flex gap-8">
                     <span>
@@ -85,7 +87,7 @@ export default function StaredPage() {
                         />
                     </span>
                 </div>
-            </div>{' '}
+            </div>
             <div className="pb-3">
                 <ManageState
                     loading={loading}

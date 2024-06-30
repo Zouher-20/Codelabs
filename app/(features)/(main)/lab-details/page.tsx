@@ -1,12 +1,12 @@
 'use client';
 
 import CodeLabContainer from '@/app/(features)/(main)/classes/components/container';
-import CloneLabComponent from '@/app/(features)/(main)/classes/students/room/components/clone-lab-component';
 import { FeedbackComponent } from '@/app/(features)/(main)/classes/students/room/components/feed-back';
 import CommentModal from '@/app/(features)/(main)/discover/components/comment-modal';
 import { LabTableType } from '@/app/(features)/admin/(admin-feature)/discover/components/lab-table';
 import { InteractionType } from '@/app/@types/Interaction';
 import { FeedbackType } from '@/app/@types/feedback';
+import { tag } from '@/app/@types/tag';
 import { getSession } from '@/app/api/(modules)/auth/service/actions';
 import {
     addAndDeleteStarUserProjectLab,
@@ -22,6 +22,7 @@ import { Icon } from '@iconify/react/dist/iconify.js';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import CloneLabComponent from '../classes/students/room/components/clone-lab-component';
 import CloneToClassModal from './components/modal/clone_to_class_modal';
 import CloneLabModal from './components/modal/new-lab';
 
@@ -70,6 +71,9 @@ export default function LabDetails() {
             description: res.lab.description ?? '',
             viewCount: res.viewCount,
             clone: res.lab.clone ?? 0,
+            tags: res.lab.TagMorph.map<tag>(e => {
+                return { id: e.tag.id ?? '', tagename: e.tag.tagename ?? '' };
+            }),
             user: {
                 email: res.lab.user.email,
                 id: res.lab.user.id,
@@ -164,11 +168,11 @@ export default function LabDetails() {
                         }}
                     >
                         <div>
-                            <Icon icon="solar:dna-bold-duotone" className="size-8 text-primary" />
+                            <Icon icon="solar:dna-bold-duotone" className="size-6  text-primary" />
                             Clone lab
                         </div>
                     </li>
-                    <span className="divider my-0" />
+                    <span className="divider mx-8 my-0" />
                     <li
                         onClick={() => {
                             if (document) {
@@ -181,11 +185,35 @@ export default function LabDetails() {
                         <div>
                             <Icon
                                 icon="solar:case-round-bold-duotone"
-                                className="size-8 text-primary"
+                                className="size-6 text-primary"
                             />
                             Clone to class
                         </div>
                     </li>
+                    {myId == lab?.user.id && <span className="divider mx-8 my-0" />}
+                    {myId == lab?.user.id && (
+                        <li onClick={() => {}}>
+                            <div>
+                                <Icon
+                                    icon="solar:trash-bin-2-bold-duotone"
+                                    className="size-6  text-red-500"
+                                />
+                                Delete Lab
+                            </div>
+                        </li>
+                    )}
+                    {myId == lab?.user.id && <span className="divider mx-8 my-0" />}
+                    {myId == lab?.user.id && (
+                        <li onClick={() => {}}>
+                            <div>
+                                <Icon
+                                    icon="solar:settings-broken"
+                                    className="size-6 text-primary"
+                                />
+                                Edit Lab
+                            </div>
+                        </li>
+                    )}
                 </ul>
             </div>
         );
@@ -254,48 +282,64 @@ export default function LabDetails() {
                 }}
                 loadedState={
                     <>
-                        <div className="flex gap-2 max-md:flex-wrap">
+                        <CodeLabContainer minWidth="64">
+                            <div className="flex w-full flex-col justify-center gap-5 p-5">
+                                <div className="flex items-center justify-between">
+                                    <h1>{lab?.name}</h1>
+                                    {dropdown()}
+                                </div>
+                                <article className="line-clamp-5 text-wrap text-sm">
+                                    {lab?.description}
+                                </article>
+                                <div className="flex gap-1">
+                                    {lab?.tags?.map((tag: tag, index: number) => (
+                                        <div
+                                            className="rounded-lg bg-base-200 px-2 py-1 text-sm hover:cursor-pointer"
+                                            onClick={() => {
+                                                const params = {
+                                                    tag: tag.tagename
+                                                };
+                                                const queryString = new URLSearchParams(
+                                                    params
+                                                ).toString();
+                                                route.push('browse?' + queryString);
+                                            }}
+                                        >
+                                            {tag.tagename}
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="flex gap-1">
+                                    {interactions.map(
+                                        (interaction: InteractionType, index: number) =>
+                                            Interaction({
+                                                icon: interaction.icon,
+                                                isSelected:
+                                                    (index == 0 && lab?.isStared) || index != 0,
+                                                onClick: () => {
+                                                    onInteractionClicked(index);
+                                                },
+                                                number:
+                                                    index == 0
+                                                        ? lab?.starCount
+                                                        : index == 3
+                                                          ? lab?.commentCount
+                                                          : index == 2
+                                                            ? lab?.viewCount ?? 0
+                                                            : lab?.clone,
+                                                style: interaction.style,
+                                                key: index
+                                            })
+                                    )}
+                                </div>
+                                <UserAvatar user={lab?.user}></UserAvatar>
+                            </div>
+                        </CodeLabContainer>
+                        <div className="flex items-center gap-2 max-md:flex-wrap">
                             <CloneLabComponent
                                 buttonText="view lab"
                                 onButtonClick={handleLabClick}
                             />
-
-                            <CodeLabContainer height={'18rem'} minWidth="64">
-                                <div className="flex w-full flex-col justify-center gap-5 p-5">
-                                    <div className="flex justify-between">
-                                        <article className="line-clamp-5 text-wrap text-sm">
-                                            {lab?.description}
-                                        </article>
-                                        {dropdown()}
-                                    </div>
-                                    <div className="flex gap-1">
-                                        {interactions.map(
-                                            (interaction: InteractionType, index: number) =>
-                                                Interaction({
-                                                    icon: interaction.icon,
-                                                    isSelected:
-                                                        (index == 0 && lab?.isStared) || index != 0,
-                                                    onClick: () => {
-                                                        onInteractionClicked(index);
-                                                    },
-                                                    number:
-                                                        index == 0
-                                                            ? lab?.starCount
-                                                            : index == 3
-                                                              ? lab?.commentCount
-                                                              : index == 2
-                                                                ? lab?.viewCount ?? 0
-                                                                : lab?.clone,
-                                                    style: interaction.style,
-                                                    key: index
-                                                })
-                                        )}
-                                    </div>
-                                    <UserAvatar user={lab?.user}></UserAvatar>
-                                </div>
-                            </CodeLabContainer>
-                        </div>
-                        <div>
                             <FeedbackComponent
                                 feedbacks={comments}
                                 onClick={onFeedbackClicked}

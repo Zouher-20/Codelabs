@@ -1,11 +1,8 @@
 import { db } from '@/app/api/core/db/db';
 import { NAMEPLAN } from '@prisma/client';
 import { DateTime } from 'next-auth/providers/kakao';
-import { date } from 'yup';
 
 class ClassRoomRepository {
-
-
     static async deleteMyFeedback(payload: { feedbackId: string }, userId: string) {
         const myfeedback = await db.feedbackProjct.findUnique({
             where: {
@@ -19,15 +16,13 @@ class ClassRoomRepository {
             throw new Error('feedback not found or was deleted  please refresh again');
         }
 
-        await db.feedbackProjct.delete(
-            {
-                where: {
-                    id: myfeedback.id,
-                },
+        await db.feedbackProjct.delete({
+            where: {
+                id: myfeedback.id
             }
-        );
+        });
 
-        return "your feedback was deleted successfully";
+        return 'your feedback was deleted successfully';
     }
 
     static async deleteMyClass(payload: { classRoomId: string }, userId: string) {
@@ -85,18 +80,18 @@ class ClassRoomRepository {
         return 'users deleted successfully ';
     }
 
-    static async getAllFeedbackInClassProject(payload: {
-        classProjectId: string,
-        pageSize: number,
-        page: number
-    }, userId: string) {
+    static async getAllFeedbackInClassProject(
+        payload: {
+            classProjectId: string;
+            pageSize: number;
+            page: number;
+        },
+        userId: string
+    ) {
         const skip = (payload.page - 1) * payload.pageSize;
         const classesProject = await db.classProject.findUnique({
             where: {
-                id: payload.classProjectId,
-                memberClass: {
-                    userId: userId
-                }
+                id: payload.classProjectId
             }
         });
         if (!classesProject) {
@@ -117,17 +112,15 @@ class ClassRoomRepository {
                 }
             }
         });
-        const feedbackCount = await db.feedbackProjct.count(
-            {
-                where: {
-                    classProjectId: payload.classProjectId,
-                },
+        const feedbackCount = await db.feedbackProjct.count({
+            where: {
+                classProjectId: payload.classProjectId
             }
-        );
+        });
         return {
             feedbacks,
             feedbackCount
-        }
+        };
     }
 
     static async getAllClassRooms(payload: {
@@ -213,8 +206,8 @@ class ClassRoomRepository {
                     some: {
                         id: classProject.id
                     }
-                },
-            },
+                }
+            }
         });
 
         if (!myRoom) {
@@ -248,8 +241,6 @@ class ClassRoomRepository {
         return {
             classProject
         };
-
-
     }
     static async addFeedbackInClassProject(
         payload: {
@@ -260,7 +251,7 @@ class ClassRoomRepository {
     ) {
         const hasClassProject = await db.classProject.findUnique({
             where: {
-                id: payload.classProjectId,
+                id: payload.classProjectId
             }
         });
 
@@ -274,7 +265,7 @@ class ClassRoomRepository {
                     some: {
                         id: hasClassProject.id
                     }
-                },
+                }
             }
         });
 
@@ -309,12 +300,7 @@ class ClassRoomRepository {
 
         const memberClass = await db.memberClass.findFirst({
             where: {
-                userId: userId,
-                ClassProject: {
-                    some: {
-                        id: payload.classProjectId
-                    }
-                }
+                userId: userId
             }
         });
 
@@ -1088,16 +1074,13 @@ class ClassRoomRepository {
             throw new Error('class not found or you are not join in this class');
         }
 
-        await db.memberClass.deleteMany(
-            {
-                where: {
-                    classRomId: payload.classRoomId,
-                    userId: userId
-                }
+        await db.memberClass.deleteMany({
+            where: {
+                classRomId: payload.classRoomId,
+                userId: userId
             }
-        );
-        return "Class Checkout Successful";
-
+        });
+        return 'Class Checkout Successful';
     }
 
     static async getRomById(
