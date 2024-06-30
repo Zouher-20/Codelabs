@@ -12,6 +12,7 @@ import {
     cloneLabFromTeacherInRoomInput,
     createRoomFromTemplateInput,
     DeleteMYClassInput,
+    DeleteMyFeedbackInput,
     DeleteUserFromMyClassInput,
     ExitUserFromYourClassInput,
     getAllClassRoomsInput,
@@ -60,6 +61,12 @@ export const createRoomFromTemplate = async (payload: createRoomFromTemplateInpu
     const userId = session?.id;
     return ActoinRoomRepository.createRoomFromTemplate(payload, userId);
 };
+
+export const deleteMyFeedback = async (payload: DeleteMyFeedbackInput) => {
+    const session = await getSession();
+    const userId = session?.id;
+    return classRoomRepository.deleteMyFeedback(payload, userId);
+}
 
 export const exitUserFromYourClass = async (payload: ExitUserFromYourClassInput) => {
     const session = await getSession();
