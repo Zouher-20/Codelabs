@@ -5,6 +5,10 @@ export interface TagPaginationInput {
     pageSize: number;
     tagName?: string;
 }
+export interface EditTagInput {
+    tagId: string;
+    newTag: string;
+}
 
 export interface UsersPaginationInput {
     page: number;

@@ -57,41 +57,55 @@ class ClassRoomRepository {
         }
         return 'users deleted successfully ';
     }
-    // static async getAllFeedbackInRoom(payload: {
-    //     RomId: string,
-    //     pageSize: number,
-    //     page: number
-    // }, userId: string) {
 
-    //     const myClass = await db.classRom.findFirst({
-    //         where: {
-    //             AND: [
-    //                 {
-    //                     Rom: {
-    //                         some: {
-    //                             id: myRoom.id
-    //                         }
-    //                     }
-    //                 },
-    //                 {
-    //                     MemberClass: {
-    //                         some: {
-    //                             userId: userId
-    //                         }
-    //                     }
-    //                 }
-    //             ]
-    //         }
-    //     });
+    static async getAllFeedbackInRoom(payload: {
+        RoomId: string,
+        pageSize: number,
+        page: number
+    }, userId: string) {
+        const skip = (payload.page - 1) * payload.pageSize;
+        const myClass = await db.classRom.findFirst({
+            where: {
+                AND: [
+                    {
+                        Rom: {
+                            some: {
+                                id: payload.RoomId
+                            }
+                        }
+                    },
+                    {
+                        MemberClass: {
+                            some: {
+                                userId: userId
+                            }
+                        }
+                    }
+                ]
+            }
+        });
+        if (!myClass) {
+            throw new Error('No class found');
+        }
 
-    //     if (!myClass) {
-    //         throw new Error('No class found');
-    //     }
+        const feedbacks = await db.feedbackProjct.findMany({
+            take: payload.pageSize,
+            skip: skip,
+            where: {
+                memberClass: {
+                    classRomId: payload.RoomId
+                }
 
-    //     const feedbacks = await db.feedbackProjct.findMany({
-    //         where:{}
-    //     })
-    // }
+            },
+            include: {
+                memberClass: {
+                    include: {
+                        user: true
+                    }
+                }
+            }
+        })
+    }
 
     static async getAllClassRooms(payload: {
         page: number;
