@@ -297,7 +297,7 @@ export default function LabDetails() {
                                             className="rounded-lg bg-base-200 px-2 py-1 text-sm hover:cursor-pointer"
                                             onClick={() => {
                                                 const params = {
-                                                    tag: tag.tagename
+                                                    tagId: tag.id
                                                 };
                                                 const queryString = new URLSearchParams(
                                                     params
