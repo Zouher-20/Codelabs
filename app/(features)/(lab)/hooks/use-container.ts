@@ -74,7 +74,7 @@ export function useContainer() {
             switch (pkgManagerType) {
                 case 'npm':
                     pkgManagerAsString = 'npm';
-                    paramsArray = ['install'];
+                    paramsArray = ['install', '--force'];
                     break;
                 case 'yarn':
                     pkgManagerAsString = 'yarn';
