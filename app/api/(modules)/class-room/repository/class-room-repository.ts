@@ -196,7 +196,12 @@ class ClassRoomRepository {
                 id: payload.classProjectId
             },
             include: {
-                lab: true
+                lab: true,
+                memberClass: {
+                    include: {
+                        user: true
+                    }
+                }
             }
         });
         if (!classProject) {
