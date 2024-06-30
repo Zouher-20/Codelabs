@@ -20,16 +20,14 @@ import { LabModel } from './lab-list';
 
 const FeedbackModal = ({
     lab,
-    onFeedbackChange,
-    open
+    onFeedbackChange
 }: {
     onFeedbackChange: ({ addedValue }: { addedValue: number }) => void;
     lab: LabModel | null;
-    open: boolean;
 }) => {
     useEffect(() => {
         getServerData();
-    }, [open]);
+    }, [lab]);
     const [totalFeedbackCount, setTotalFeedbackCount] = useState(1);
     const [error, setError] = useState<string | null>(null);
     const [feedbackLoading, setFeedbackLoading] = useState<boolean>(true);

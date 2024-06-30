@@ -1,7 +1,9 @@
 'use client';
 
+import { FeedbackType } from '@/app/@types/feedback';
 import { RoomType } from '@/app/@types/room';
 import {
+    getAllFeedbackInClassProject,
     getMyLabInRoom,
     getRoomAndTeacherDetails
 } from '@/app/api/(modules)/class-room/services/action';
@@ -24,9 +26,7 @@ export default function ClassLabPage() {
     const currentParams = useSearchParams();
     const route = useRouter();
     useEffect(() => {
-        const id = currentParams.get('roomId') ?? '-1';
-        getRoomInfo({ id });
-        getLabModel({ id });
+        getServerDate();
     }, []);
 
     const [roomLoading, setRoomLoading] = useState(true);
@@ -34,9 +34,18 @@ export default function ClassLabPage() {
     const [roomInfo, setRoomInfo] = useState<RoomType | null>(null);
     const [labLoading, setLabLoading] = useState(true);
     const [labInfo, setLabInfo] = useState<LabModel | null>(null);
+    const [feedback, setFeedback] = useState<Array<FeedbackType>>([]);
 
     const [submitRoomLoading, setSubmitRoomLoading] = useState(false);
-
+    const getServerDate = () => {
+        const id = currentParams.get('roomId') ?? '-1';
+        getRoomInfo({ id });
+        getLabModel({ id }).then(res => {
+            if (res) {
+                getLabFeedback(res);
+            }
+        });
+    };
     const getRoomInfo = async ({ id }: { id: string }) => {
         setRoomLoading(true);
         try {
@@ -61,6 +70,32 @@ export default function ClassLabPage() {
         }
     };
 
+    const getLabFeedback = async (classProjectId: string) => {
+        try {
+            const res = await getAllFeedbackInClassProject({
+                page: 1,
+                classProjectId: classProjectId,
+                pageSize: 10
+            });
+            setFeedback(
+                res.feedbacks.map<FeedbackType>(e => {
+                    return {
+                        id: e.id ?? '',
+                        user: {
+                            email: e.memberClass.user.email ?? '',
+                            id: e.memberClass.user.id ?? '',
+                            userImage: e.memberClass.user.userImage ?? '',
+                            username: e.memberClass.user.username ?? ''
+                        },
+
+                        feedback: e.feedback ?? ''
+                    };
+                })
+            );
+        } catch (e: any) {
+            toast.error(e.message);
+        }
+    };
     const getLabModel = async ({ id }: { id: string }) => {
         setLabLoading(true);
         try {
@@ -69,6 +104,7 @@ export default function ClassLabPage() {
                 id: res?.ClassProject?.id ?? '',
                 labId: res?.id
             });
+            return res?.ClassProject?.id;
         } catch (e: any) {
             toast.error(e.message);
         } finally {
@@ -184,24 +220,42 @@ export default function ClassLabPage() {
                 }
                 empty={false}
             />
-            <div className="flex gap-2 max-md:flex-wrap">
-                <FeedbackComponent feedbacks={[]} onClick={onFeedbackClicked} />
-                <CloneLabComponent
-                    buttonText={labInfo != null ? 'view lab' : 'Clone To Start Coding'}
-                    onButtonClick={() => {
-                        if (labInfo != null) {
-                            route.push('/lab/' + labInfo.id);
-                        } else {
-                            onLabClicked();
-                        }
-                    }}
-                    loading={labLoading || submitRoomLoading}
-                />
-            </div>
+            <ManageState
+                loading={roomLoading}
+                error={roomError}
+                errorAndEmptyCallback={() => {
+                    const id = currentParams.get('roomId') ?? '-1';
+
+                    getRoomInfo({ id });
+                }}
+                customLoadingPage={
+                    <CodeLabContainer>
+                        <LoadingState />
+                    </CodeLabContainer>
+                }
+                loadedState={
+                    <div className="flex gap-2 max-md:flex-wrap">
+                        <FeedbackComponent feedbacks={feedback} onClick={onFeedbackClicked} />
+                        <CloneLabComponent
+                            buttonText={labInfo != null ? 'view lab' : 'Clone To Start Coding'}
+                            onButtonClick={() => {
+                                if (labInfo != null) {
+                                    route.push('/lab/' + labInfo.labId);
+                                } else {
+                                    onLabClicked();
+                                }
+                            }}
+                            loading={labLoading || submitRoomLoading}
+                        />
+                    </div>
+                }
+                empty={false}
+            />
             <FeedbackModal
-                room={roomInfo}
-                onFeedbackChange={function ({ addedValue }: { addedValue: number }): void {}}
-                open={false}
+                lab={labInfo}
+                onFeedbackChange={function ({ addedValue }: { addedValue: number }): void {
+                    getLabFeedback(labInfo?.id ?? '');
+                }}
             />
             <CustomToaster />
         </div>
