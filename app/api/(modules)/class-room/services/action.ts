@@ -5,7 +5,7 @@ import { getSession } from '@/app/api/(modules)/auth/service/actions';
 import classRoomRepository from '@/app/api/(modules)/class-room/repository/class-room-repository';
 import {
     AddClassRoomInput,
-    AddFeedbackInForClassProjectInRomInput,
+    AddFeedbackInClassProjectIput,
     AddRomInClassInput,
     AddUsersInClassInput,
     CloneLabForRoomInClassInput,
@@ -19,6 +19,7 @@ import {
     GetAllFeedbackInRoomInput,
     GetAllUserAndSearchInput,
     getClassesByMeInput,
+    GetClassProjectByIdInput,
     GetClassRomByIdInput,
     GetClassRomForStudentsByIdInput,
     GetClassRomStatistics,
@@ -70,6 +71,13 @@ export const deleteMyFeedback = async (payload: DeleteMyFeedbackInput) => {
     return classRoomRepository.deleteMyFeedback(payload, userId);
 }
 
+export const getClassProjectById = async (payload: GetClassProjectByIdInput) => {
+    const session = await getSession();
+    const userId = session?.id;
+    return classRoomRepository.getClassProjectById(payload, userId);
+}
+
+
 export const getAllFeedbackInClassProject = async (payload: GetAllFeedbackInRoomInput) => {
     const session = await getSession();
     const userId = session?.id;
@@ -111,12 +119,12 @@ export const submittedLabsInRoom = async (payload: SubmittedLabsInRoomInput) => 
     const userId = session?.id;
     return classRoomRepository.submitLabsInRoom(payload, userId);
 };
-export const addFeedbackInForClassProjectInRom = async (
-    payload: AddFeedbackInForClassProjectInRomInput
+export const addFeedbackInClassProject = async (
+    payload: AddFeedbackInClassProjectIput
 ) => {
     const session = await getSession();
     const userId = session?.id;
-    return classRoomRepository.addFeedbackInForClassProjectInRom(payload, userId);
+    return classRoomRepository.addFeedbackInClassProject(payload, userId);
 };
 
 export const getUserInClass = async (payload: GetUserInClassInput) => {

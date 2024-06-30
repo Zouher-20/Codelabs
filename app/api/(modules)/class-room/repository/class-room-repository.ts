@@ -189,43 +189,87 @@ class ClassRoomRepository {
             totalCount: totalCount
         };
     }
-    static async addFeedbackInForClassProjectInRom(
-        payload: {
-            labId: string;
-            feedback: string;
-        },
-        userId: string
-    ) {
-        // Check if the lab exists
-        const hasLab = await db.lab.findUnique({
+
+    static async getClassProjectById(payload: { classProjectId: string }, userId: string) {
+        const classProject = await db.classProject.findUnique({
             where: {
-                id: payload.labId
+                id: payload.classProjectId
+            },
+            include: {
+                lab: true
             }
         });
-
-        if (!hasLab) {
-            throw new Error('no lab found');
+        if (!classProject) {
+            throw new Error('class project not found');
         }
-
-        // Check if the class project associated with the lab exists
-        const myClassProject = await db.classProject.findFirst({
-            where: {
-                labId: payload.labId
-            }
-        });
-
-        if (!myClassProject) {
-            throw new Error('no class project found');
-        }
-
-        // Check if the room associated with the class project exists
         const myRoom = await db.rom.findFirst({
             where: {
                 ClassProject: {
                     some: {
-                        id: myClassProject.id
+                        id: classProject.id
                     }
-                }
+                },
+            },
+        });
+
+        if (!myRoom) {
+            throw new Error('no room found');
+        }
+
+        const myClass = await db.classRom.findFirst({
+            where: {
+                AND: [
+                    {
+                        Rom: {
+                            some: {
+                                id: myRoom.id
+                            }
+                        }
+                    },
+                    {
+                        MemberClass: {
+                            some: {
+                                userId: userId
+                            }
+                        }
+                    }
+                ]
+            }
+        });
+
+        if (!myClass) {
+            throw new Error('No class found or you are not member in this class');
+        }
+        return {
+            classProject
+        };
+
+
+    }
+    static async addFeedbackInClassProject(
+        payload: {
+            classProjectId: string;
+            feedback: string;
+        },
+        userId: string
+    ) {
+        const hasClassProject = await db.classProject.findUnique({
+            where: {
+                id: payload.classProjectId,
+            }
+        });
+
+        if (!hasClassProject) {
+            throw new Error('class Project not found');
+        }
+
+        const myRoom = await db.rom.findFirst({
+            where: {
+                ClassProject: {
+                    some: {
+                        id: hasClassProject.id
+                    }
+                },
             }
         });
 
@@ -233,7 +277,6 @@ class ClassRoomRepository {
             throw new Error('no room found');
         }
 
-        // Check if the user is a member of the class in the given room
         const myClass = await db.classRom.findFirst({
             where: {
                 AND: [
@@ -261,17 +304,12 @@ class ClassRoomRepository {
 
         const memberClass = await db.memberClass.findFirst({
             where: {
-                AND: [
-                    {
-                        userId: userId
-                    },
-                    {
-                        classRomId: myClass.id
-                    },
-                    {
-                        OR: [{ isTeacher: true }]
+                userId: userId,
+                ClassProject: {
+                    some: {
+                        id: payload.classProjectId
                     }
-                ]
+                }
             }
         });
 
@@ -282,7 +320,7 @@ class ClassRoomRepository {
         const newFeedback = await db.feedbackProjct.create({
             data: {
                 feedback: payload.feedback,
-                classProjectId: myClassProject.id,
+                classProjectId: payload.classProjectId,
                 memberClassId: memberClass.id
             }
         });
