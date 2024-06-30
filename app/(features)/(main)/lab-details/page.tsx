@@ -168,11 +168,11 @@ export default function LabDetails() {
                         }}
                     >
                         <div>
-                            <Icon icon="solar:dna-bold-duotone" className="size-8 text-primary" />
+                            <Icon icon="solar:dna-bold-duotone" className="size-6  text-primary" />
                             Clone lab
                         </div>
                     </li>
-                    <span className="divider my-0" />
+                    <span className="divider mx-8 my-0" />
                     <li
                         onClick={() => {
                             if (document) {
@@ -185,30 +185,30 @@ export default function LabDetails() {
                         <div>
                             <Icon
                                 icon="solar:case-round-bold-duotone"
-                                className="size-8 text-primary"
+                                className="size-6 text-primary"
                             />
                             Clone to class
                         </div>
                     </li>
-                    {myId == lab?.user.id && <span className="divider my-0" />}
+                    {myId == lab?.user.id && <span className="divider mx-8 my-0" />}
                     {myId == lab?.user.id && (
                         <li onClick={() => {}}>
                             <div>
                                 <Icon
                                     icon="solar:trash-bin-2-bold-duotone"
-                                    className="size-8 text-red-500"
+                                    className="size-6  text-red-500"
                                 />
                                 Delete Lab
                             </div>
                         </li>
                     )}
-                    {myId == lab?.user.id && <span className="divider my-0" />}
+                    {myId == lab?.user.id && <span className="divider mx-8 my-0" />}
                     {myId == lab?.user.id && (
                         <li onClick={() => {}}>
                             <div>
                                 <Icon
                                     icon="solar:settings-broken"
-                                    className="size-8 text-primary"
+                                    className="size-6 text-primary"
                                 />
                                 Edit Lab
                             </div>
@@ -293,7 +293,18 @@ export default function LabDetails() {
                                 </article>
                                 <div className="flex gap-1">
                                     {lab?.tags?.map((tag: tag, index: number) => (
-                                        <div className="rounded-lg bg-base-200 px-2 py-1 text-sm">
+                                        <div
+                                            className="rounded-lg bg-base-200 px-2 py-1 text-sm hover:cursor-pointer"
+                                            onClick={() => {
+                                                const params = {
+                                                    tag: tag.tagename
+                                                };
+                                                const queryString = new URLSearchParams(
+                                                    params
+                                                ).toString();
+                                                route.push('browse?' + queryString);
+                                            }}
+                                        >
                                             {tag.tagename}
                                         </div>
                                     ))}
