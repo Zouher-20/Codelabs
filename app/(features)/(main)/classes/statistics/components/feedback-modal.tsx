@@ -1,7 +1,10 @@
 import { FeedbackType } from '@/app/@types/feedback';
 import { RoomType } from '@/app/@types/room';
 import { getSession } from '@/app/api/(modules)/auth/service/actions';
-import { addFeedbackInForClassProjectInRom } from '@/app/api/(modules)/class-room/services/action';
+import {
+    addFeedbackInForClassProjectInRom,
+    getAllFeedbackInClassProject
+} from '@/app/api/(modules)/class-room/services/action';
 import IconRenderer from '@/app/components/globals/icon';
 import { LoadingState } from '@/app/components/page-state/loading';
 import { ManageState } from '@/app/components/page-state/state_manager';
@@ -52,7 +55,7 @@ const FeedbackModal = ({
             try {
                 const res = await addFeedbackInForClassProjectInRom({
                     feedback: values.message.trim(),
-                    labId: room?.labId ?? ''
+                    labId: ''
                 });
                 handleChange('message')('');
                 setPage(1);
@@ -69,21 +72,27 @@ const FeedbackModal = ({
         setFeedbackLoading(true);
         setError(null);
         try {
-            const res = await getAllF({
-                userProjectId: room?.id ?? '',
+            const res = await getAllFeedbackInClassProject({
                 page: currentPage,
+                classProjectId: classProjectId?.id ?? '',
                 pageSize: 10
             });
             setFeedback(
-                res.feedback.map<FeedbackType>(e => {
+                res.feedbacks.map<FeedbackType>(e => {
                     return {
-                        id: e.id,
-                        user: { ...e.user, name: e.user.username },
-                        feedback: e.feedback
+                        id: e.id ?? '',
+                        user: {
+                            email: e.memberClass.user.email ?? '',
+                            id: e.memberClass.user.id ?? '',
+                            userImage: e.memberClass.user.userImage ?? '',
+                            username: e.memberClass.user.username ?? ''
+                        },
+
+                        feedback: e.feedback ?? ''
                     };
                 })
             );
-            setTotalFeedbackCount(res.countOfFeedback);
+            setTotalFeedbackCount(res.feedbackCount);
         } catch (e: any) {
             setError(e.message);
             toast.error(e.message);
