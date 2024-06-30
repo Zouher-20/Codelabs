@@ -1,6 +1,10 @@
 import { FeedbackType } from '@/app/@types/feedback';
 import { getSession } from '@/app/api/(modules)/auth/service/actions';
-import { getAllFeedbackInClassProject } from '@/app/api/(modules)/class-room/services/action';
+import {
+    addFeedbackInClassProject,
+    deleteMyFeedback,
+    getAllFeedbackInClassProject
+} from '@/app/api/(modules)/class-room/services/action';
 import IconRenderer from '@/app/components/globals/icon';
 import { LoadingState } from '@/app/components/page-state/loading';
 import { ManageState } from '@/app/components/page-state/state_manager';
@@ -50,9 +54,9 @@ const FeedbackModal = ({
         if (values.message.trim().length != 0) {
             setLoading(true);
             try {
-                const res = await addFeedbackInForClassProjectInRom({
+                await addFeedbackInClassProject({
                     feedback: values.message.trim(),
-                    labId: ''
+                    classProjectId: lab?.id ?? ''
                 });
                 handleChange('message')('');
                 setPage(1);
@@ -106,7 +110,7 @@ const FeedbackModal = ({
     });
     const deleteFeedbackCallback = async (feedback: FeedbackType) => {
         try {
-            // const res = await deleteMyFeedbackUserProjectLab({ feedbackId: feedback.id });
+            const res = await deleteMyFeedback({ feedbackId: feedback.id });
             toast.success('delete feedback done successfully');
             setPage(1);
             await getLabFeedback({ currentPage: 1 });
