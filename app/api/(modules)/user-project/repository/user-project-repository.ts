@@ -168,6 +168,59 @@ class UserProjectRepository {
         });
     }
 
+    static async editMyLab(payload: {
+        userProjectid: string;
+        name?: string;
+        description?: string;
+        tagId: string[];
+    }, userId: string) {
+        const myUserProject = await db.userProject.findUnique({
+            where: {
+                id: payload.userProjectid,
+                userId: userId
+            }
+        });
+        if (!myUserProject) {
+            throw new Error('this lab not found');
+        }
+
+
+        const newUserProject = await db.userProject.update({
+            where: { id: myUserProject.id },
+            data: {
+                name: payload.name,
+                description: payload.description
+
+            }
+        });
+        const tags = await db.tag.findMany({
+            where: {
+                id: {
+                    in: payload.tagId
+                }
+            }
+        });
+
+        if (tags.length !== payload.tagId.length) {
+            throw new Error(`One or more tags not found.`);
+        }
+        const tagMorphCreatePromises = tags.map(tag =>
+            db.tagMorph.updateMany({
+                where: {
+                    tagId: tag.id,
+                },
+                data: {
+                    tagId: tag.id,
+                    userprojectId: newUserProject.id,
+                }
+            })
+        );
+
+        await Promise.all(tagMorphCreatePromises);
+        return "";
+
+    }
+
     static async getUserProjectsLab(
         payload: {
             page: number;
