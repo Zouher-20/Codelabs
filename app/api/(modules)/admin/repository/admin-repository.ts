@@ -98,10 +98,39 @@ class AdminRepository {
                 tagename: { contains: payload.tagName }
             }
         });
+        const tagCount = await db.tag.count({
+            where: {
+                tagename: { contains: payload.tagName, mode: 'insensitive' }
+
+            }
+        });
         return {
-            tags
+            tags,
+            tagCount
         };
+
     }
+    static async editTage(payload: { tagId: string, newTag: string }) {
+        const myTag = await db.tag.findUnique({
+            where: {
+                id: payload.tagId
+            }
+        });
+        if (!myTag) {
+            throw new Error('this tage is not found');
+        }
+        const newTag = await db.tag.update({
+            where: {
+                id: myTag.id
+            },
+            data: {
+                tagename: payload.newTag
+            }
+        });
+        return newTag;
+
+    }
+
 
     static async addTag(tag: string, tagType: TAGTYPE | null) {
         const existingTag = await db.tag.findUnique({
