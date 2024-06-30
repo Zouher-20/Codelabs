@@ -1,4 +1,5 @@
 'use client';
+import { exitUserFromYourClass } from '@/app/api/(modules)/class-room/services/action';
 import Button from '@/app/components/globals/form/button';
 import IconRenderer from '@/app/components/globals/icon';
 import { useState } from 'react';
@@ -10,10 +11,10 @@ const ExitClassModal = ({ classId, callback }: { classId: string; callback: () =
     const onSubmit = async () => {
         setLoading(true);
         try {
-            // await deletTemplate({ classId });
+            await exitUserFromYourClass({ classRoomId: classId });
             callback();
             (document.getElementById('exit-class-modal') as HTMLDialogElement).close();
-            toast.success('delete templete done');
+            toast.success('Exit Class done');
         } catch (error: any) {
             toast.error(error.message);
         } finally {

@@ -1,6 +1,7 @@
-import { userType } from '@/app/@types/user';
+import { ClassRoomUserType } from '@/app/@types/user';
 import ClassLab from '@/app/components/globals/lab/class-lab';
 import UserAvatar from '@/app/components/globals/user-avatar';
+import { Icon } from '@iconify/react/dist/iconify.js';
 export default function ClassLabListComponent({
     labs,
     title,
@@ -21,7 +22,28 @@ export default function ClassLabListComponent({
                             key={e.title + `${index}`}
                             onClick={() => onLabClicked(index)}
                         >
-                            <ClassLab footer={<UserAvatar user={e.user} />} />
+                            <ClassLab
+                                footer={
+                                    <div className="flex items-center justify-between">
+                                        <UserAvatar
+                                            user={{
+                                                email: e.user?.email ?? '',
+                                                id: e.user?.id ?? '',
+                                                username: e.user?.name ?? '',
+                                                userImage: e.user?.image ?? ''
+                                            }}
+                                        />
+                                        {e.user?.isTeacher && (
+                                            <div className="rounded-md bg-base-200 p-1">
+                                                <Icon
+                                                    icon="solar:case-round-bold-duotone"
+                                                    className="size-6"
+                                                />
+                                            </div>
+                                        )}
+                                    </div>
+                                }
+                            />
                         </div>
                     ))}
                 </div>
@@ -33,5 +55,5 @@ export default function ClassLabListComponent({
 export interface LabModel {
     title?: string;
     id: string;
-    user?: userType;
+    user?: ClassRoomUserType;
 }

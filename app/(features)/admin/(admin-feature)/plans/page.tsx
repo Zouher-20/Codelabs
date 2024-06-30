@@ -33,7 +33,12 @@ const Plans = () => {
                         createdAt: e.createdAt,
                         duration: e.duration,
                         FeaturePlan: e.FeaturePlan.map(feature => {
-                            return { name: feature.name, value: feature.value };
+                            return {
+                                name: feature.name ?? '',
+                                id: feature.id ?? '',
+                                planId: feature.planId,
+                                value: feature.value ?? 0
+                            };
                         }),
                         id: e.id,
                         name: e.name ?? '',
@@ -126,7 +131,7 @@ const Plans = () => {
                 <ManageState
                     error={error}
                     empty={plans.length == 0}
-                    errorAndEmptyCallback={() => { }}
+                    errorAndEmptyCallback={() => {}}
                     loadedState={plans.map((e, index) => (
                         <PlanCard
                             key={index}

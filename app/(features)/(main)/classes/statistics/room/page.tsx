@@ -51,12 +51,12 @@ export default function ClassLabPage() {
                 return {
                     id: e.id ?? '',
                     user: {
+                        isTeacher: e.ClassProject?.memberClass?.isTeacher ?? false,
                         name: e.ClassProject?.memberClass?.user.username ?? '',
                         image: e.ClassProject?.memberClass?.user.userImage ?? '',
-                        username: e.ClassProject?.memberClass?.user.username ?? '',
-                        userImage: e.ClassProject?.memberClass?.user.userImage ?? '',
                         id: e.ClassProject?.memberClass?.user.id ?? '',
-                        email: e.ClassProject?.memberClass?.user.email ?? ''
+                        email: e.ClassProject?.memberClass?.user.email ?? '',
+                        selected: UserState.notSelected
                     }
                 };
             });
@@ -71,8 +71,7 @@ export default function ClassLabPage() {
         setStudentLoading(true);
         try {
             const res = await getStudentsStatisticsSubmitted({ page: 1, pageSize: 100, romId: id });
-            console.log(res);
-            console.log('sdadsad');
+
             const currentStudent = res.usersWithLabs.map<ClassRoomUserType>(e => {
                 return {
                     email: e.email,

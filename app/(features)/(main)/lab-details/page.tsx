@@ -74,8 +74,7 @@ export default function LabDetails() {
                 email: res.lab.user.email,
                 id: res.lab.user.id,
                 userImage: res.lab.user.userImage ?? '',
-                username: res.lab.user.username,
-                name: res.lab.user.username ?? ''
+                username: res.lab.user.username
             }
         });
     };
@@ -86,11 +85,10 @@ export default function LabDetails() {
                 return {
                     id: e.id,
                     user: {
-                        email: e.user.email,
-                        id: e.user.id,
-                        userImage: e.user.userImage,
-                        username: e.user.username,
-                        name: e.user.username
+                        email: e.user.email ?? '',
+                        id: e.user.id ?? '',
+                        userImage: e.user.userImage ?? '',
+                        username: e.user.username ?? ''
                     },
                     feedback: e.comment
                 };
@@ -264,7 +262,7 @@ export default function LabDetails() {
 
                             <CodeLabContainer height={'18rem'} minWidth="64">
                                 <div className="flex w-full flex-col justify-center gap-5 p-5">
-                                    <div className="flex">
+                                    <div className="flex justify-between">
                                         <article className="line-clamp-5 text-wrap text-sm">
                                             {lab?.description}
                                         </article>
