@@ -111,9 +111,10 @@ export interface SubmittedLabsInRoomInput {
     romId: string;
     jsonFile: string;
 }
-export interface AddFeedbackInForClassProjectInRomInput {
-    labId: string;
+export interface AddFeedbackInClassProjectIput {
     feedback: string;
+    classProjectId: string;
+
 }
 
 export interface getAllClassRoomsInput {
