@@ -1,11 +1,13 @@
 'use client';
 
+import { getClassProjectById } from '@/app/api/(modules)/class-room/services/action';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import CloneLabComponent from '../../../students/room/components/clone-lab-component';
 import { FeedbackComponent } from '../../../students/room/components/feed-back';
 import FeedbackModal from '../../components/feedback-modal';
 import { LabModel } from '../../components/lab-list';
+import { ManageState } from '@/app/components/page-state/state_manager';
 
 export default function ClassLabPage() {
     const currentParams = useSearchParams();
@@ -17,22 +19,9 @@ export default function ClassLabPage() {
     const getClassProject = async () => {
         setLabLoading(true);
         try {
-            const res = await getLabsSubmittedInRom({ page: 1, pageSize: 100, romId: id });
-
-            const currentLab = res.labs.map<LabModel>(e => {
-                return {
-                    id: e.ClassProject?.id ?? '',
-                    user: {
-                        isTeacher: e.ClassProject?.memberClass?.isTeacher ?? false,
-                        name: e.ClassProject?.memberClass?.user.username ?? '',
-                        image: e.ClassProject?.memberClass?.user.userImage ?? '',
-                        id: e.ClassProject?.memberClass?.user.id ?? '',
-                        email: e.ClassProject?.memberClass?.user.email ?? '',
-                        selected: UserState.notSelected
-                    }
-                };
-            });
-            setLabs(currentLab);
+            const id = currentParams.get('classProjectId') ?? '-1';
+            const res = await getClassProjectById({ classProjectId: id });
+            setLabs({id:res.classProject.labId,user:{email:,name,image:,}});
         } catch (e: any) {
             setLabError(e.message);
         } finally {
@@ -52,7 +41,12 @@ export default function ClassLabPage() {
     };
 
     return (
-        <div className="flex min-h-[550px] flex-col gap-2 p-3">
+        <ManageState
+        empty={false}
+        error={labError}
+        errorAndEmptyCallback={()=>{}}
+        loadedState={
+            <div className="flex min-h-[550px] flex-col gap-2 p-3">
             <div className="flex gap-2 max-md:flex-wrap">
                 <FeedbackComponent feedbacks={[]} onClick={onFeedbackClicked} />
                 <CloneLabComponent buttonText="view lab" onButtonClick={handleLabClick} />
@@ -63,5 +57,7 @@ export default function ClassLabPage() {
                 open={false}
             />
         </div>
+        }
+        loading={labLoading}/>
     );
 }

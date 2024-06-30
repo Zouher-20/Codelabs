@@ -1,10 +1,6 @@
 import { FeedbackType } from '@/app/@types/feedback';
-import { RoomType } from '@/app/@types/room';
 import { getSession } from '@/app/api/(modules)/auth/service/actions';
-import {
-    addFeedbackInForClassProjectInRom,
-    getAllFeedbackInClassProject
-} from '@/app/api/(modules)/class-room/services/action';
+import { getAllFeedbackInClassProject } from '@/app/api/(modules)/class-room/services/action';
 import IconRenderer from '@/app/components/globals/icon';
 import { LoadingState } from '@/app/components/page-state/loading';
 import { ManageState } from '@/app/components/page-state/state_manager';
@@ -16,14 +12,15 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import * as yup from 'yup';
 import FeedbackListComponent from './feedback_list_components';
+import { LabModel } from './lab-list';
 
 const FeedbackModal = ({
-    classProjectId,
+    lab,
     onFeedbackChange,
     open
 }: {
     onFeedbackChange: ({ addedValue }: { addedValue: number }) => void;
-    classProjectId: RoomType | null;
+    lab: LabModel | null;
     open: boolean;
 }) => {
     useEffect(() => {
@@ -40,7 +37,7 @@ const FeedbackModal = ({
     };
     const [loading, setLoading] = useState(false);
     const getServerData = async () => {
-        if (classProjectId != null) {
+        if (lab != null) {
             setPage(1);
             const session = await getSession();
             if (session) {
@@ -74,7 +71,7 @@ const FeedbackModal = ({
         try {
             const res = await getAllFeedbackInClassProject({
                 page: currentPage,
-                classProjectId: classProjectId?.id ?? '',
+                classProjectId: lab?.id ?? '',
                 pageSize: 10
             });
             setFeedback(
