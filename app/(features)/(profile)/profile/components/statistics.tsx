@@ -3,6 +3,7 @@ import { userType } from '@/app/@types/user';
 import { getMyStatisticsInfo } from '@/app/api/(modules)/auth/service/actions';
 import StatisticsComponent from '@/app/components/statistics/statistics-components';
 import { NAMEPLAN } from '@prisma/client';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 type statisticsType = {
@@ -57,13 +58,14 @@ const Statistics = ({ user }: { user: userType }) => {
                     >
                         <div className={index == 2 ? 'sm:w-1/3' : ''}>
                             <StatisticsComponent
+                                addStat={true}
                                 cardLabel={statistic.label}
-                                labels={[statistic.label, statistic.name]}
+                                labels={[statistic.name, statistic.label]}
                                 series={[
                                     myInfo[statistic.key as keyof typeof myInfo],
                                     myCapacity[statistic.key as keyof typeof myCapacity]
                                 ]}
-                                colors={['#50FA7B', '#282C2B']}
+                                colors={['#282C2B', '#50FA7B']}
                                 width={220}
                                 height={200}
                             />
@@ -82,7 +84,7 @@ const Statistics = ({ user }: { user: userType }) => {
                                 flexibility!
                                 <br />
                                 Check out our options to find the perfect plan for you!"
-                                <button className="btn btn-primary ml-2 ">Extend</button>
+                                <Link href={`/plans/${user.PlanSubscription?.planId}`} className="btn btn-primary ml-2 ">Extend</Link>
                             </div>
                         </div>
                     </div>

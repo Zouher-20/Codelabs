@@ -10,7 +10,7 @@ const Framework = () => {
         { icon: 'fluent:code-text-16-filled', name: 'Even More ...' },
 
     ]
-    return <div className=" mx-auto">
+    return <div id="Frameworks" className="pt-16 mx-auto">
         <div className="flex flex-col text-center w-full mb-20">
             <h1 className="sm:text-3xl text-2xl font-medium title-font mb-4 text-white">Get Started Quicker</h1>
             <p className="lg:w-2/3 mx-auto leading-relaxed text-base">Get inspiration from Labs using frameworks, libraries, and design patterns. Then, start your own with premade templates..</p>

@@ -1,7 +1,8 @@
 import IconRenderer from "@/app/components/globals/icon";
+import Link from "next/link";
 
 const Services = () => {
-    return <section className="text-gray-400 mt-20 body-font">
+    return <section id="Services" className="text-gray-400 pt-16 mt-12 body-font">
         <div className="text-center mb-4">
             <h1 className="sm:text-3xl text-2xl font-medium title-font text-white mb-4">The best place to build, test, and discover front-end code</h1>
             <p className="text-base leading-relaxed xl:w-2/4 lg:w-3/4 mx-auto text-gray-400 text-opacity-80">CodeLabs is a social development environment for front-end designers and developers,Build and deploy a website, show off your work, build test cases to learn and debug, and find inspiration.</p>
@@ -38,7 +39,7 @@ const Services = () => {
                     <p className="leading-relaxed text-base">Become a part of active front-end community by sharing work. Presenting at a conference? Show your code directly in the browser with Presentation Mode..</p>
                 </div>
             </div>
-            <button className="btn btn-primary flex mx-auto mt-20  bg-primary border-0 py-2 px-8 focus:outline-none text-lg rounded-xl">Try Now</button>
+            <Link href={'/register'} className=" max-w-fit btn btn-primary flex mx-auto mt-8  bg-primary border-0 py-2 px-8 focus:outline-none text-lg rounded-xl">Try Now</Link>
         </div>
     </section>
 }
