@@ -168,7 +168,7 @@ class UserProjectRepository {
         });
     }
 
-    static async editMyLab(payload: {
+    static async editMyUserProjectLab(payload: {
         userProjectid: string;
         name?: string;
         description?: string;
@@ -210,30 +210,27 @@ class UserProjectRepository {
                     tagId: tag.id,
                 },
                 data: {
-                    tagId: tag.id,
                     userprojectId: newUserProject.id,
                 }
             })
         );
 
         await Promise.all(tagMorphCreatePromises);
-        return "";
-
+        return " your lab was updated ";
     }
-
     static async getUserProjectsLab(
         payload: {
             page: number;
             pageSize: number;
             nameLab?: string;
-            tagName?: string;
+            tagId?: string;
         },
         userId: string
     ) {
         const skip = (payload.page - 1) * payload.pageSize;
         let args = {};
 
-        if (payload.nameLab && payload.tagName) {
+        if (payload.nameLab && payload.tagId) {
             args = {
                 AND: [
                     {
@@ -242,7 +239,7 @@ class UserProjectRepository {
                     {
                         TagMorph: {
                             tag: {
-                                tagename: { contains: payload.tagName }
+                                id: { contains: payload.tagId }
                             }
                         }
                     }
@@ -252,11 +249,11 @@ class UserProjectRepository {
             args = {
                 name: { contains: payload.nameLab }
             };
-        } else if (payload.tagName) {
+        } else if (payload.tagId) {
             args = {
                 TagMorph: {
                     tag: {
-                        tagename: { contains: payload.tagName }
+                        id: { contains: payload.tagId }
                     }
                 }
             };
@@ -265,7 +262,6 @@ class UserProjectRepository {
         const myProjects = await db.userProject.findMany({
             take: payload.pageSize,
             skip: skip,
-            orderBy: { createdAt: 'desc' },
             include: {
                 user: true,
                 lab: true,
@@ -284,11 +280,11 @@ class UserProjectRepository {
                     where: { userprojectId: project.id }
                 });
 
-                const viewCount = await db.veiw.count({
+                const starCount = await db.star.count({
                     where: { userprojectId: project.id }
                 });
 
-                const starCount = await db.star.count({
+                const viewCount = await db.veiw.count({
                     where: { userprojectId: project.id }
                 });
 
@@ -327,7 +323,6 @@ class UserProjectRepository {
             totalCount: totalCount
         };
     }
-
     static async getTrendingUserProjectsLab(
         payload: {
             page: number;
@@ -445,7 +440,6 @@ class UserProjectRepository {
             totalCount: totalCount
         };
     }
-
     static async getCommentUserProjectLab(payload: {
         page: number;
         pageSize: number;
@@ -546,7 +540,6 @@ class UserProjectRepository {
             isStarred: isStarred != null
         };
     }
-
     static async addCommentUserProjectLab(
         payload: { userProjectId: string; comment: string },
         userId: string

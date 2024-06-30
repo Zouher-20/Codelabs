@@ -10,12 +10,18 @@ export interface CloneCodeFromUserProjectInput {
     tagId: string[];
     labId: string
 }
+export interface EditMyUserProjectLabInput {
+    userProjectid: string;
+    name?: string;
+    description?: string;
+    tagId: string[];
+}
 
 export interface GetUserProjectInput {
     page: number;
     pageSize: number;
     nameLab?: string;
-    tagName?: string;
+    tagId?: string;
 }
 
 export interface AddCommentUserProjectLabInput {
