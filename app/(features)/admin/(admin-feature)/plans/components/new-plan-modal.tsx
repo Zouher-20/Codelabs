@@ -29,7 +29,7 @@ const NewPlanModal = ({ onPlanAdded }: { onPlanAdded: (plan: planType) => void }
                 createdAt: res.createdAt,
                 duration: res.duration,
                 features: values.features.map(e => {
-                    return { name: e.name, value: Number(e.value) };
+                    return { name: e.name, value: Number(e.value), planId: '', id: '' };
                 }),
                 id: res.id,
                 name: res.name ?? '',
@@ -115,8 +115,8 @@ const NewPlanModal = ({ onPlanAdded }: { onPlanAdded: (plan: planType) => void }
                     {values.features.map((feature, index) => (
                         <div key={index} className="flex gap-12 ">
                             <span className="w-full min-w-24">
-                                {feature.name == NAMEPLAN.labsInClass
-                                    ? 'lab in class'
+                                {feature.name == NAMEPLAN.romsInClass
+                                    ? 'room in class'
                                     : feature.name == NAMEPLAN.studentsInClass
                                       ? 'student in class'
                                       : feature.name}
@@ -137,8 +137,8 @@ const NewPlanModal = ({ onPlanAdded }: { onPlanAdded: (plan: planType) => void }
                                     name={feature.name}
                                     type="number"
                                     placeholder={
-                                        feature.name == NAMEPLAN.labsInClass
-                                            ? 'lab in class'
+                                        feature.name == NAMEPLAN.romsInClass
+                                            ? 'room in class'
                                             : feature.name == NAMEPLAN.studentsInClass
                                               ? 'student in class'
                                               : feature.name

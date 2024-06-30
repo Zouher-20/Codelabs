@@ -1,24 +1,27 @@
 'use client';
+import { challengeType } from '@/app/@types/challenge';
 import { MyOptionType } from '@/app/@types/select';
 import { tag } from '@/app/@types/tag';
-import { addChallenge, getChallenge, getTag } from '@/app/api/(modules)/admin/service/action';
+import {
+    deleteChallenge,
+    getDetailsChallenge
+} from '@/app/api/(modules)/admin/challenge/services/action';
+import { addChallenge, getTag } from '@/app/api/(modules)/admin/service/action';
 import CodeLabsQuill from '@/app/components/globals/codelabs-quill';
 import Button from '@/app/components/globals/form/button';
 import Input from '@/app/components/globals/form/input';
+import CodeLabDatePicker from '@/app/components/globals/form/input/date-picker';
 import Select from '@/app/components/globals/form/select/select';
 import IconRenderer from '@/app/components/globals/icon';
+import '@/app/components/globals/quillStyle.css';
 import { CustomToaster } from '@/app/components/toast/custom-toaster';
 import { textField } from '@/app/schemas';
 import { Field, Form, Formik } from 'formik';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import * as yup from 'yup';
 import AddTagModal from '../../components/tags-modal';
-import '@/app/components/globals/quillStyle.css';
-import { challengeType } from '@/app/@types/challenge';
-import CodeLabDatePicker from '@/app/components/globals/form/input/date-picker';
-import { useRouter } from 'next/navigation';
-import { deleteChallenge, getDetailsChallenge } from '@/app/api/(modules)/admin/challenge/services/action';
 
 const AddChallenge = ({ params }: { params: { id: string } }) => {
     const router = useRouter();
@@ -27,22 +30,21 @@ const AddChallenge = ({ params }: { params: { id: string } }) => {
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState(new Date());
     const [tOptions, setTOptions] = useState<Array<MyOptionType>>([]);
-    const [defaultValues, setDefaultValues] = useState<challengeType>(
-        {
-            name: '',
-            difficulty: 'easy',
-            endAt: date,
-            startedAt: date,
-            description: '',
-            resources: '',
-            tagId: []
-        }
-    );
+    const [defaultValues, setDefaultValues] = useState<challengeType>({
+        name: '',
+        difficulty: 'easy',
+        endAt: date,
+        startedAt: date,
+        description: '',
+        resources: '',
+        tagId: [],
+        tagMorph: []
+    });
     let difficultyOptions = [
         { label: 'easy', value: 'easy' },
         { label: 'difficult', value: 'difficult' },
         { label: 'Medium', value: 'Medium' }
-    ]
+    ];
     useEffect(() => {
         gettagId();
         if (params.id) {
@@ -77,13 +79,13 @@ const AddChallenge = ({ params }: { params: { id: string } }) => {
                 startedAt: res.challenge?.startedAt ? res.challenge?.startedAt : date,
                 description: res.challenge?.description ? res.challenge?.description : '',
                 resources: res.challenge?.resources ? res.challenge?.resources : '',
-                tagId: res.challenge?.TagMorph ? res.challenge?.TagMorph.map((tag) => tag.tagId) : [],
+                tagId: res.challenge?.TagMorph ? res.challenge?.TagMorph.map(tag => tag.tagId) : [],
                 isComplete: res.challenge?.isComplete,
-                createdAt: res.challenge?.createdAt,
-            }
-            setStartDate(res.challenge?.startedAt ? res.challenge?.startedAt : date)
-            setEndDate(res.challenge?.endAt ? res.challenge?.endAt : date)
-            setDefaultValues(data);
+                createdAt: res.challenge?.createdAt
+            };
+            setStartDate(res.challenge?.startedAt ? res.challenge?.startedAt : date);
+            setEndDate(res.challenge?.endAt ? res.challenge?.endAt : date);
+            setDefaultValues({ ...data, tagMorph: [] });
         } catch (error: any) {
             toast.error(error.message);
         }
@@ -92,7 +94,7 @@ const AddChallenge = ({ params }: { params: { id: string } }) => {
     const createChallenge = async (values: challengeType) => {
         try {
             values.startedAt = startDate;
-            values.endAt = endDate
+            values.endAt = endDate;
             const res = await addChallenge(values);
             return res;
         } catch (error: any) {
@@ -109,20 +111,19 @@ const AddChallenge = ({ params }: { params: { id: string } }) => {
     };
 
     const validationSchema = yup.object().shape({
-        name: textField,
+        name: textField
     });
 
     const onSubmit = (values: challengeType) => {
         if (isUpdate) {
-            let res = deleteChallengeByID()
+            let res = deleteChallengeByID();
             if (res != undefined) {
-                router.push('/admin/challenges')
+                router.push('/admin/challenges');
             }
-        }
-        else {
-            let res = createChallenge(values)
+        } else {
+            let res = createChallenge(values);
             if (res != undefined) {
-                router.push('/admin/challenges')
+                router.push('/admin/challenges');
             }
         }
     };
@@ -179,9 +180,8 @@ const AddChallenge = ({ params }: { params: { id: string } }) => {
                                 placeholder="Select a difficulty..."
                                 isMulti={false}
                                 validate={(value: string) => {
-                                    value ? 'Required' : undefined
-                                }
-                                }
+                                    value ? 'Required' : undefined;
+                                }}
                                 errors={
                                     props.errors.difficulty && props.touched.difficulty
                                         ? props.errors.difficulty
@@ -258,23 +258,23 @@ const AddChallenge = ({ params }: { params: { id: string } }) => {
                             />
                         </div>
                         <span className="col-start-2 flex justify-end">
-                            {isUpdate
-                                ? <Button
+                            {isUpdate ? (
+                                <Button
                                     onClick={() => props.validateForm()}
                                     style="w-fit"
                                     color="error"
                                     label="Delete"
                                     type="submit"
                                 />
-                                : <Button
+                            ) : (
+                                <Button
                                     onClick={() => props.validateForm()}
                                     style="w-fit"
                                     color="any"
                                     label="Continue"
                                     type="submit"
                                 />
-
-                            }
+                            )}
                         </span>
                     </Form>
                 )}

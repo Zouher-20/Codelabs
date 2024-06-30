@@ -1,5 +1,6 @@
 import { userType } from '@/app/@types/user';
-import { getSession, signOut } from '@/app/api/(modules)/auth/service/actions';
+import { getMyInfo, signOut } from '@/app/api/(modules)/auth/service/actions';
+import noImage from '@/public/images/no-image2.png';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -12,20 +13,18 @@ export default function UserDropDown() {
         getUser();
     }, []);
     async function getUser() {
-        const session = await getSession();
-        if (session) {
-            setUser({
-                id: session?.id ?? '',
-                email: session?.email ?? '',
-                name: session?.username ?? '',
-                role: session?.role ?? '',
-                image: session?.userImage ?? '',
-                userImage: session?.userImage ?? '',
-                username: session?.username ?? ''
-            });
+        const user = await getMyInfo();
+        if (user) {
+            setUser(user as unknown as userType);
         }
     }
-
+    const HandleImageError = () => {
+        if (user) {
+            const newUser = { ...user };
+            newUser.userImage = noImage.src;
+            setUser(newUser);
+        }
+    };
     return (
         <div className="dropdown">
             <div
@@ -35,19 +34,22 @@ export default function UserDropDown() {
             >
                 {user?.userImage ? (
                     <div className="avatar">
-                        <div className="w-10 rounded">
-                            <img src={`http://localhost:3000${user?.image?.replace(/\\/g, '/')}`} />
+                        <div className="w-10 rounded-3xl">
+                            <img
+                                src={user?.userImage?.replace(/\\/g, '/')}
+                                onError={HandleImageError}
+                            />
                         </div>
                     </div>
                 ) : (
                     <div className="avatar placeholder">
                         <div className="w-10 rounded-full bg-neutral text-neutral-content">
-                            <span className="text-l">{user?.name[0]}</span>
+                            <span className="text-l">{user?.username?.at(1) ?? ''}</span>
                         </div>
                     </div>
                 )}
                 <div className="text-start">
-                    <span className="font-bold">{user?.name}</span>
+                    <span className="font-bold">{user?.username}</span>
                     <div className="text-xs">{user?.email}</div>
                 </div>
             </div>

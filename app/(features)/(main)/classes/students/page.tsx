@@ -81,7 +81,13 @@ export default function ClassLabPage() {
                 })
             );
             const res2 = await getMyInfo();
-            setMyInfo({ ...res2, PlanSubscription: null });
+            setMyInfo({
+                email: res2.email ?? '',
+                username: res2.username ?? '',
+                userImage: res2.userImage ?? '',
+                id: res2.id ?? '',
+                PlanSubscription: null
+            });
         } catch (e: any) {
             setUserError(e.message);
         } finally {
@@ -248,7 +254,12 @@ export default function ClassLabPage() {
                 }
                 empty={false}
             />
-            <ExitClassModal callback={() => {}} classId={classInfo?.id ?? ''}></ExitClassModal>
+            <ExitClassModal
+                callback={() => {
+                    route.push('/classes');
+                }}
+                classId={classInfo?.id ?? ''}
+            ></ExitClassModal>
         </div>
     );
 }

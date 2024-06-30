@@ -3,23 +3,23 @@ import PersonalInfo from '@/app/(features)/(profile)/profile/components/personal
 import { userType } from '@/app/@types/user';
 
 const user: userType = {
-    name: 'User name',
     email: 'username903@gmail.com',
-    image: null,
     id: '1',
-    plan: 'plus',
     bio: 'A few word about you',
-    position: 'Developer',
-    labs: 4,
-    classes: 1
+    position: 'Developer'
 };
 const Profile = () => {
     return (
         <div className="flex flex-col gap-4 px-2">
             <h1 className=" text-2xl">Account Setting</h1>
-            <Avatar user={user} />
+            <Avatar
+                username={user.username ?? ''}
+                photo={function (photo: File): void {
+                    throw new Error('Function not implemented.');
+                }}
+            />
             <div className="mb-4">
-                <PersonalInfo user={user} />
+                <PersonalInfo />
             </div>
         </div>
     );

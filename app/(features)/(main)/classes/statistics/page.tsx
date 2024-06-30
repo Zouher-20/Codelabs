@@ -115,7 +115,13 @@ export default function StatisticsPage() {
                 })
             );
             const res2 = await getMyInfo();
-            setMyInfo({ ...res2, PlanSubscription: null });
+            setMyInfo({
+                email: res2.email ?? '',
+                id: res2.id ?? '',
+                username: res2.username ?? '',
+                userImage: res2.userImage ?? '',
+                PlanSubscription: null
+            });
         } catch (e: any) {
             setUserError(e.message);
         } finally {

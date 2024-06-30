@@ -16,7 +16,7 @@ const UpdatePlan = ({
         onEditPlan({
             createdAt: plan?.createdAt,
             duration: values.duration.toString(),
-            features: values.features,
+            FeaturePlan: values.FeaturePlan,
             id: plan?.id ?? '',
             name: values.title,
             price: values.price,
@@ -31,7 +31,7 @@ const UpdatePlan = ({
             subtitle: plan?.subtitle ?? '',
             duration: plan?.duration ?? '',
             price: plan?.price ?? 0,
-            features: plan?.features ?? []
+            FeaturePlan: plan?.FeaturePlan ?? []
         },
         onSubmit
     });
@@ -87,13 +87,13 @@ const UpdatePlan = ({
                         <span>Unlimited</span>
                         <span className="min-w-72">Number</span>
                     </div>
-                    {plan?.features.map((feature, index) => (
+                    {plan?.FeaturePlan.map((feature, index) => (
                         <div key={index} className="flex gap-12 ">
                             <span className="w-full min-w-24">{feature.name}</span>
                             <input
                                 type="checkbox"
                                 className="checkbox-primary checkbox mt-1 rounded-sm"
-                                checked={values.features[index]?.value < ('0' as unknown as number)}
+                                checked={values.FeaturePlan[index]?.value < ('0' as unknown as number)}
                                 onChange={event => {
                                     event.target.checked
                                         ? handleChange(`features[${index}].value`)('-1')
@@ -106,12 +106,12 @@ const UpdatePlan = ({
                                     name={feature.name}
                                     type="number"
                                     placeholder={feature.name}
-                                    disabled={values.features[index]?.value < 0}
+                                    disabled={values.FeaturePlan[index]?.value < 0}
                                     value={
-                                        values.features[index]?.value == -1 ||
-                                        values.features[index]?.value == 0
-                                            ? values.features[index].name
-                                            : (values.features[index]?.value as unknown as string)
+                                        values.FeaturePlan[index]?.value == -1 ||
+                                            values.FeaturePlan[index]?.value == 0
+                                            ? values.FeaturePlan[index].name
+                                            : (values.FeaturePlan[index]?.value as unknown as string)
                                     }
                                     onChange={event => handleInputChange(index, event)}
                                 />

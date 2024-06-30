@@ -74,6 +74,11 @@ const AdminSiteSidebarItem: Array<SideBarItemType> = [
         icon: 'solar:diploma-verified-bold-duotone',
         name: 'Templetes',
         route: '/admin/templetes'
+    },
+    {
+        icon: 'solar:tag-bold-duotone',
+        name: 'Tags',
+        route: '/admin/tags'
     }
 ];
 

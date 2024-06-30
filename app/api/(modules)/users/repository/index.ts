@@ -46,8 +46,10 @@ class UsersRepository {
         }
         return userDetails;
     }
-    static async completeMyInfo(payload: { imagePath?: string, bio?: string, position?: string }, userId: string) {
-
+    static async completeMyInfo(
+        payload: { imagePath?: string; bio?: string; position?: string },
+        userId: string
+    ) {
         const existingUser = await db.user.findUnique({
             where: { id: userId }
         });
@@ -55,26 +57,23 @@ class UsersRepository {
             throw new Error('user not found');
         }
         if (payload.imagePath == null) {
-            payload.imagePath = existingUser.userImage ?? ""
+            payload.imagePath = existingUser.userImage ?? '';
         }
         return await db.user.update({
             data: {
                 userImage: payload.imagePath,
                 bio: payload.bio,
                 position: payload.position
-
             },
             where: {
                 id: userId
             }
         });
-
     }
 
-    // plan ,  lab , class 
-    // get all plan (edit) 
+    // plan ,  lab , class
+    // get all plan (edit)
     static async getMyStatisticsInfo(userId: string) {
-
         const classCount = await db.classRom.count({
             where: {
                 MemberClass: {
@@ -106,23 +105,21 @@ class UsersRepository {
             classCount,
             chellangeCount,
             blogCount
-        }
-
+        };
     }
-
 
     static async create(payload: CreateUserInput, planId?: string) {
         const requestedPlan = GlobalUtils.isNullOrUndefined(planId)
             ? await db.plan.findFirst({
-                where: {
-                    price: -1
-                }
-            })
+                  where: {
+                      price: -1
+                  }
+              })
             : await db.plan.findUnique({
-                where: {
-                    id: planId
-                }
-            });
+                  where: {
+                      id: planId
+                  }
+              });
         if (!requestedPlan) throw new Error('Cannot find requested plan');
         return await db.user.create({
             data: {

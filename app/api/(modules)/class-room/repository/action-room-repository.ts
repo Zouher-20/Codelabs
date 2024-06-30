@@ -1,12 +1,11 @@
 import { db } from '@/app/api/core/db/db';
 import { NAMEPLAN } from '@prisma/client';
-import { DateTime } from 'next-auth/providers/kakao';
 import { promises as fs } from 'fs';
+import { DateTime } from 'next-auth/providers/kakao';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 
 class ActoinRoomRepository {
-
     static async cloneLabForRoomInClass(
         payload: {
             classRomId: string;
@@ -18,7 +17,6 @@ class ActoinRoomRepository {
         },
         userId: string
     ) {
-
         const mylab = await db.lab.findUnique({
             where: {
                 id: payload.labId
@@ -104,7 +102,7 @@ class ActoinRoomRepository {
                         type: payload.type ?? '',
                         name: payload.name ?? '',
                         endAt: payload.endAt,
-                        description: payload.description ?? '',
+                        description: payload.description ?? ''
                     }
                 })
             ]);
@@ -117,7 +115,7 @@ class ActoinRoomRepository {
                 }
             });
 
-            const labId = newLab.id
+            const labId = newLab.id;
             await db.userProject.update({
                 where: {
                     labId: payload.labId
@@ -134,14 +132,12 @@ class ActoinRoomRepository {
         }
     }
 
-
     static async cloneLabFromTeacherInRoom(
         payload: {
-            roomId: string
+            roomId: string;
         },
         userId: string
     ) {
-
         const myRoom = await db.rom.findUnique({
             where: {
                 id: payload.roomId
@@ -149,7 +145,6 @@ class ActoinRoomRepository {
         });
         if (myRoom?.endAt && myRoom.endAt.getTime() < Date.now()) {
             throw new Error('this room duration has ended');
-
         }
         const lab = await db.classProject.findFirst({
             where: {
@@ -171,12 +166,7 @@ class ActoinRoomRepository {
             throw new Error('this project not found code lab');
         }
 
-        labJsonFilePath = path.join(
-            process.cwd(),
-            'public',
-            mylab.jsonFile ?? ""
-        );
-
+        labJsonFilePath = path.join(process.cwd(), 'public', mylab.jsonFile ?? '');
 
         const hasClassProject = await db.classProject.findFirst({
             where: {
@@ -234,11 +224,7 @@ class ActoinRoomRepository {
             console.error('Error reading or writing JSON file:', error);
             throw new Error('Failed to create lab from template');
         }
-
     }
-
-
-
 
     static async createRoomFromTemplate(
         payload: {
@@ -247,12 +233,10 @@ class ActoinRoomRepository {
             name?: string;
             endAt: DateTime;
             type?: string;
-            templateId: string
+            templateId: string;
         },
         userId: string
     ) {
-
-
         let templateJsonFilePath: string;
 
         const myTemplate = await db.tamblate.findUnique({
@@ -279,7 +263,6 @@ class ActoinRoomRepository {
             );
         }
 
-
         const myClass = await db.classRom.findFirst({
             where: {
                 MemberClass: {
@@ -294,7 +277,6 @@ class ActoinRoomRepository {
         if (!myClass) {
             throw new Error('No class found');
         }
-
 
         const memberclass = await db.memberClass.findFirst({
             where: {
@@ -353,7 +335,7 @@ class ActoinRoomRepository {
                         type: payload.type ?? '',
                         name: payload.name ?? '',
                         endAt: payload.endAt,
-                        description: payload.description ?? '',
+                        description: payload.description ?? ''
                     }
                 });
 
@@ -364,32 +346,16 @@ class ActoinRoomRepository {
                         memberClassId: memberclass?.id
                     }
                 });
-
-
             } catch (e) {
                 console.error('Error reading or writing JSON file:', e);
                 throw new Error('Failed to create room from template');
             }
-
 
             return { message: 'Rom added to class successfully' };
         } else {
             throw new Error('Rom limit reached for this class.');
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
 
 export default ActoinRoomRepository;

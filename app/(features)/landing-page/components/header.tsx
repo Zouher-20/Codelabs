@@ -1,12 +1,10 @@
 const Header = () => {
-    return <div className="flex gap-2 px-8 pt-8">
-        <div className="w-2/3 text-center self-center">
-            <h1 className="text-5xl font-bold">Create Your Lab! <br /> With Your Favorate FrameWork</h1>
-            <p className="py-6">
-                Best online code editor in the world fast easy flexible.
-            </p>
-            <button className="btn btn-primary">Get Started</button>
-        </div>
+    return <div className="flex flex-col px-8 py-24 text-center justify-center items-center">
+        <h1 className="text-5xl font-bold">Create Your Lab! <br /> With Your Favorate FrameWork</h1>
+        <p className="py-6">
+            CodeLabs is your best choise as an online code editor fast easy and flexible.
+        </p>
+        <button className="btn btn-primary max-w-fit text-lg ">Get Started</button>
     </div>
 }
 

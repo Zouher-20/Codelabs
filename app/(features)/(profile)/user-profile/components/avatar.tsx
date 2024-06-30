@@ -1,6 +1,14 @@
+'use client'
 import Image from "next/image";
+import noImage from '@/public/images/no-image2.png'
+import { useState } from "react";
 
 const Avatar = ({ user }: { user: { username: string, userimage: string } }) => {
+    const [userImageState, setUserImageState] = useState(user.userimage);
+
+    const handleError = () => {
+        setUserImageState('/images/no-image2.png');
+    };
     return (
         <div className="flex gap-4 py-1">
             <div className="avatar w-[140px] h-[140px]">
@@ -9,11 +17,11 @@ const Avatar = ({ user }: { user: { username: string, userimage: string } }) => 
                     height={140}
                     width={140}
                     alt="user"
-                    src={user.userimage ? user.userimage :
-                        "https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"}
+                    src={userImageState ? userImageState.replace(/\\/g, '/') : noImage}
+                    onError={handleError}
                 />
             </div>
-            <section className="self-center flex flex-col">
+            <section className="self-start flex flex-col">
                 <span className="text-lg ">{user.username}</span>
             </section>
         </div>

@@ -51,16 +51,17 @@ const PlanDetails = () => {
             setUsers(
                 user.user.users.map(e => {
                     return {
-                        email: e.email,
-                        id: e.id,
-                        name: e.username,
+                        email: e.email ?? '',
+                        id: e.id ?? '',
+                        name: e.username ?? '',
                         labs: 1,
+                        userimage: e.userImage ?? '',
                         role: e.role,
                         createdAt: e.createdAt,
                         classes: 1,
                         plan: {
                             duration: e.PlanSubscription?.plan.duration,
-                            features: [],
+                            FeaturePlan: [],
                             id: e.PlanSubscription?.id,
                             name: e.PlanSubscription?.plan.name,
                             price: e.PlanSubscription?.plan.price,

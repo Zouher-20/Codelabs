@@ -44,7 +44,6 @@ const BlogDetails = ({ params }: { params: { id: string } }) => {
                 setUser({
                     email: userRes.email ?? '',
                     id: userRes.id ?? '',
-                    name: userRes.username ?? '',
                     userImage: userRes.userImage ?? '',
                     username: userRes.username
                 });

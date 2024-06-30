@@ -3,17 +3,14 @@ import { NAMEPLAN } from '@prisma/client';
 export interface userType {
     id: string;
     email: string;
-    name?: string | null;
-    username: string;
-    image?: string | null;
-    user?: string;
+    username?: string;
     password?: string;
-    bio?: string | null;
+    bio?: string;
     role?: string;
     createdAt?: Date | null;
-    position?: string | null;
+    position?: string;
     typeUser?: string | null;
-    userImage?: string | null;
+    userImage?: string;
     planEndDate?: Date | null;
     inActive?: boolean;
     PlanSubscription?: {
@@ -27,7 +24,7 @@ export interface userType {
             duration: string | null;
             subtitle: string;
             createdAt: Date | null;
-            FeaturePlan: { name: NAMEPLAN; value: number };
+            FeaturePlan: Array<{ name: NAMEPLAN; value: number }>;
         };
     } | null;
 }

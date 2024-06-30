@@ -37,8 +37,8 @@ export default function StaredPage() {
                         user: {
                             email: e.user.email,
                             id: e.user.id,
-                            name: e.user.username,
-                            image: e.user.userImage,
+                            username: e.user.username,
+                            userImage: e.user.userImage,
                             role: e.user.role
                         },
                         commentCount: e.commentCount,

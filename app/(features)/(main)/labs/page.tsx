@@ -2,7 +2,7 @@
 
 import LabListComponent from '@/app/(features)/(main)/stared/components/lab_list';
 import { LabTableType } from '@/app/(features)/admin/(admin-feature)/discover/components/lab-table';
-import { getStarredUserProjects } from '@/app/api/(modules)/user-project/services/action';
+import { getMyUserProject } from '@/app/api/(modules)/user-project/services/action';
 import Input from '@/app/components/globals/form/input';
 import { ManageState } from '@/app/components/page-state/state_manager';
 import { useRouter } from 'next/navigation';
@@ -25,20 +25,20 @@ export default function StaredPage() {
         setLoading(true);
         setError(null);
         try {
-            const res = await getStarredUserProjects({
+            const res = await getMyUserProject({
                 searchWord: searchWord,
                 page: page,
                 pageSize: pageSize
             });
             setLabs(
-                res.starredUserProjects.map<LabTableType>((e: any) => {
+                res.projects.map<LabTableType>((e: any) => {
                     return {
                         ...e,
                         user: {
                             email: e.user.email,
                             id: e.user.id,
-                            name: e.user.username,
-                            image: e.user.userImage,
+                            username: e.user.username,
+                            userImage: e.user.userImage,
                             role: e.user.role
                         },
                         commentCount: e.commentCount,
@@ -48,7 +48,7 @@ export default function StaredPage() {
                     };
                 })
             );
-            setTotalItemCount(res.starredUserProjectCount);
+            setTotalItemCount(res.totalCount);
         } catch (e: any) {
             setError(e.message);
             toast.error(e.message);

@@ -102,8 +102,6 @@ const NewLabModal = () => {
                 throw new Error(result2.data);
             }
             toast.success('lab created successfully');
-            console.log(result2);
-            console.log('Dsadsadsd');
             router.push('/lab' + '/' + result2.data.labId);
         } catch (error: any) {
             toast.error(error.message);

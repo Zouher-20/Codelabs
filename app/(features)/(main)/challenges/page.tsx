@@ -21,15 +21,14 @@ async function getData() {
 
 export default async function ChallengesPage() {
     const challenges = await getData();
-
     return (
         <div className="flex flex-col gap-8 pb-8">
             <Introduction showImage={challenges ? true : false} />
 
-            {challenges.currentCh ? (
+            {challenges.currentCh.length > 0 ? (
                 <CurrentChallenge challenge={challenges.currentCh[0]} />
             ) : (
-                <div className="flex w-full justify-center text-xl font-bold text-warning">
+                <div className="flex justify-center pt-44 text-xl font-bold ">
                     There is no challenge right now !
                 </div>
             )}

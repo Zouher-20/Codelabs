@@ -1,10 +1,8 @@
 'use client';
 import { TempletsTableType } from '@/app/@types/templetes';
-import { addTemplate } from '@/app/api/(modules)/admin/template/services/action';
 import Avatar from '@/app/components/globals/avatar';
 import Button from '@/app/components/globals/form/button';
 import Input from '@/app/components/globals/form/input';
-import { CustomToaster } from '@/app/components/toast/custom-toaster';
 import { Form, Formik } from 'formik';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
@@ -46,7 +44,7 @@ const AddTempelet = ({ callback }: { callback: (template: TempletsTableType) => 
                     body: JSON.stringify({
                         imageTemplate: result.data,
                         nameTemplate: values.title
-                    }),
+                    })
                 });
                 const result2 = await response2.json();
                 if (result2.statusCode >= 300) {
@@ -61,8 +59,7 @@ const AddTempelet = ({ callback }: { callback: (template: TempletsTableType) => 
                 });
             } catch (e: any) {
                 toast.error(e.message);
-            }
-            finally {
+            } finally {
                 setLoading(false);
             }
         }
@@ -85,13 +82,10 @@ const AddTempelet = ({ callback }: { callback: (template: TempletsTableType) => 
                         {props => (
                             <Form className="flex w-full flex-col ">
                                 <div className="flex flex-wrap items-center gap-4">
-                                    <div className="flex flex-col ">
-                                        <label>templete image</label>
-                                        <Avatar
-                                            imageSize={100}
-                                            photo={(photo: File) => (props.values.photo = photo)}
-                                        />
-                                    </div>
+                                    <Avatar
+                                        imageSize={100}
+                                        photo={(photo: File) => (props.values.photo = photo)}
+                                    />
                                     <div className="flex flex-col">
                                         <Input
                                             id="title"
@@ -110,7 +104,7 @@ const AddTempelet = ({ callback }: { callback: (template: TempletsTableType) => 
                                         />
                                     </div>
                                 </div>
-                                <div className='flex justify-end'>
+                                <div className="flex justify-end">
                                     <Button
                                         onClick={() => props.validateForm()}
                                         style="w-fit self-end "

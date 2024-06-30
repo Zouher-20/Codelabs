@@ -8,6 +8,9 @@ import AuthUtils from './app/utils/auth-utils';
 // This function can be marked `async` if using `await` inside
 export async function middleware(request: NextRequest) {
     try {
+        if (request.nextUrl.pathname == '/' || request.nextUrl.pathname == '/admin') {
+            return NextResponse.redirect(new URL('/landing-page', request.url));
+        }
         const session = await getSessionInMiddleware();
         if (!session) return LoginRedirect(request);
         return CheckRole({ request, session });
@@ -57,5 +60,6 @@ async function getSessionInMiddleware() {
 }
 
 export const config = {
-    matcher: '/((?!api|_next/static|_next/image|favicon.ico|lab|uploads|logo-title.svg).*)'
+    matcher:
+        '/((?!api|_next/static|landing-page|_next/image|favicon.ico|lab|uploads|logo-title.svg).*)'
 };

@@ -1,7 +1,10 @@
 import { FeedbackType } from '@/app/@types/feedback';
-import { RoomType } from '@/app/@types/room';
 import { getSession } from '@/app/api/(modules)/auth/service/actions';
-import { addFeedbackInForClassProjectInRom } from '@/app/api/(modules)/class-room/services/action';
+import {
+    addFeedbackInClassProject,
+    deleteMyFeedback,
+    getAllFeedbackInClassProject
+} from '@/app/api/(modules)/class-room/services/action';
 import IconRenderer from '@/app/components/globals/icon';
 import { LoadingState } from '@/app/components/page-state/loading';
 import { ManageState } from '@/app/components/page-state/state_manager';
@@ -13,14 +16,15 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import * as yup from 'yup';
 import FeedbackListComponent from './feedback_list_components';
+import { LabModel } from './lab-list';
 
 const FeedbackModal = ({
-    room,
+    lab,
     onFeedbackChange,
     open
 }: {
     onFeedbackChange: ({ addedValue }: { addedValue: number }) => void;
-    room: RoomType | null;
+    lab: LabModel | null;
     open: boolean;
 }) => {
     useEffect(() => {
@@ -37,7 +41,7 @@ const FeedbackModal = ({
     };
     const [loading, setLoading] = useState(false);
     const getServerData = async () => {
-        if (room != null) {
+        if (lab != null) {
             setPage(1);
             const session = await getSession();
             if (session) {
@@ -50,9 +54,9 @@ const FeedbackModal = ({
         if (values.message.trim().length != 0) {
             setLoading(true);
             try {
-                const res = await addFeedbackInForClassProjectInRom({
+                await addFeedbackInClassProject({
                     feedback: values.message.trim(),
-                    labId: room?.labId ?? ''
+                    classProjectId: lab?.id ?? ''
                 });
                 handleChange('message')('');
                 setPage(1);
@@ -69,21 +73,27 @@ const FeedbackModal = ({
         setFeedbackLoading(true);
         setError(null);
         try {
-            // const res = await getFeedbackUserProjectLab({
-            //     userProjectId: room?.id ?? '',
-            //     page: currentPage,
-            //     pageSize: 10
-            // });
-            // setFeedback(
-            //     res.feedback.map<FeedbackType>(e => {
-            //         return {
-            //             id: e.id,
-            //             user: { ...e.user, name: e.user.username },
-            //             feedback: e.feedback
-            //         };
-            //     })
-            // );
-            // setTotalFeedbackCount(res.countOfFeedback);
+            const res = await getAllFeedbackInClassProject({
+                page: currentPage,
+                classProjectId: lab?.id ?? '',
+                pageSize: 10
+            });
+            setFeedback(
+                res.feedbacks.map<FeedbackType>(e => {
+                    return {
+                        id: e.id ?? '',
+                        user: {
+                            email: e.memberClass.user.email ?? '',
+                            id: e.memberClass.user.id ?? '',
+                            userImage: e.memberClass.user.userImage ?? '',
+                            username: e.memberClass.user.username ?? ''
+                        },
+
+                        feedback: e.feedback ?? ''
+                    };
+                })
+            );
+            setTotalFeedbackCount(res.feedbackCount);
         } catch (e: any) {
             setError(e.message);
             toast.error(e.message);
@@ -100,7 +110,7 @@ const FeedbackModal = ({
     });
     const deleteFeedbackCallback = async (feedback: FeedbackType) => {
         try {
-            // const res = await deleteMyFeedbackUserProjectLab({ feedbackId: feedback.id });
+            const res = await deleteMyFeedback({ feedbackId: feedback.id });
             toast.success('delete feedback done successfully');
             setPage(1);
             await getLabFeedback({ currentPage: 1 });

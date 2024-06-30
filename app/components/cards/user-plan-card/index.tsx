@@ -26,14 +26,37 @@ const UserPlanCard = ({ plan, active }: { plan: planType; active?: boolean }) =>
                 </p>
                 <p>{plan.duration}</p>
             </div>
-            <div>
-                {plan.FeaturePlan?.map((feature) => (
-                    <div key={feature.id} className='flex gap-4 text-xl'>
-                        <span>{feature.name} :</span>
-                        <span>{feature.value}</span>
-                    </div>
-
-                ))}
+            <div className="flex flex-col gap-2">
+                {plan.FeaturePlan.map((feature, index) =>
+                    feature.value > 0 && feature.name === 'participate' ? null : (
+                        <div key={index} className="flex gap-3">
+                            <IconRenderer
+                                className={active ? 'text-white' : 'text-primary'}
+                                fontSize={28}
+                                icon="solar:check-read-broken"
+                            />
+                            {feature.value > 0 ? (
+                                feature.name === 'students in class' ||
+                                    feature.name === 'labs in class' ? (
+                                    <p>
+                                        Only {feature.value} {feature.name}
+                                    </p>
+                                ) : (
+                                    <p>
+                                        Limited {feature.value} {feature.name}
+                                    </p>
+                                )
+                            ) : feature.name === 'participate' ? (
+                                <p>Participate in challegens</p>
+                            ) : feature.name === 'students in class' ||
+                                feature.name === 'labs in class' ? (
+                                <p>Up to 25 {feature.name}</p>
+                            ) : (
+                                <p>Unlimited {feature.name}</p>
+                            )}
+                        </div>
+                    )
+                )}
             </div>
         </div>
     );

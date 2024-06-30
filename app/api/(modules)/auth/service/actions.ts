@@ -56,11 +56,11 @@ export const getMyInfo = async () => {
     const session = await getSession();
     const userId = session?.id;
     return UsersRepository.getMyInfo(userId);
-}
+};
 
 export const getUserDetails = async (payload: GetUserDetails) => {
     return UsersRepository.getUserDetails(payload);
-}
+};
 
 export const adminRegister = async (req: Request) => {
     const body = await req.json();
@@ -137,15 +137,15 @@ export const signOut = async () => {
 
 export const getMyStatisticsInfo = async () => {
     const session = await getSession();
-    const userId = session?.id
-    UsersRepository.getMyStatisticsInfo(userId);
-}
+    const userId = session?.id;
+    return UsersRepository.getMyStatisticsInfo(userId);
+};
 
 export const completeMyInfo = async (payload: CompleteMyInfoInput) => {
     const session = await getSession();
-    const userId = session?.id
-    UsersRepository.completeMyInfo(payload, userId);
-}
+    const userId = session?.id;
+    return UsersRepository.completeMyInfo(payload, userId);
+};
 
 export const getSession = async () => {
     const sessionAsToken = cookies().get('session')?.value;

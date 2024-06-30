@@ -1,3 +1,4 @@
+import { tag } from '@/app/@types/tag';
 import { userType } from '@/app/@types/user';
 import Button from '@/app/components/globals/form/button';
 import CodeLabTable, { GenericTableModel } from '../../components/table/generic-tabel';
@@ -26,7 +27,7 @@ export default function LabTable({
                 </td>
                 <td>{item.commentCount} Comments</td>
                 <td>{item.starCount} Stars</td>
-                <td>{item.user.name}</td>
+                <td>{item.user.username}</td>
                 <td>
                     <Button label="Details" color="any" onClick={() => detailsClicked(item)} />
                 </td>
@@ -68,4 +69,5 @@ export interface LabTableType extends GenericTableModel {
     starCount: number;
     createdAt?: Date;
     user: userType;
+    tags?: Array<tag>;
 }

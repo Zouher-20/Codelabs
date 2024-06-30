@@ -41,13 +41,7 @@ const BlogDetails = ({ params }: { params: { id: string } }) => {
                     isStarred: data.isStarred
                 });
                 const userRes = await getMyInfo();
-                setUser({
-                    email: userRes.email ?? '',
-                    id: userRes.id ?? '',
-                    name: userRes.username ?? '',
-                    userImage: userRes.userImage ?? '',
-                    username: userRes.username
-                });
+                setUser(userRes as unknown as userType);
             } catch (e: any) {
                 setError(e.message);
             } finally {
