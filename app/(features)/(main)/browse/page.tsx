@@ -25,13 +25,13 @@ export default function StaredPage() {
     const fetchDataFromServer = async ({ page }: { page: number }) => {
         setLoading(true);
         setError(null);
-        const tag = params.get('tag') ?? '';
+        const tagId = params.get('tagId') ?? '';
         try {
             const res = await getUserProjectsLab({
                 nameLab: searchWord,
                 page: page,
                 pageSize: pageSize,
-                tagName: tag
+                tagId: tagId
             });
             setLabs(
                 res.projects.map<LabTableType>((e: any) => {

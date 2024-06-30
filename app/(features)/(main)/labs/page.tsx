@@ -31,19 +31,30 @@ export default function StaredPage() {
                 pageSize: pageSize
             });
             setLabs(
-                res.projects.map<LabTableType>((e: any) => {
+                res.projects.map<LabTableType>(e => {
                     return {
-                        ...e,
+                        name: e.name ?? '',
+                        clone: e.clone ?? 0,
+                        description: e.description ?? '',
+                        id: e.id ?? '',
+                        createdAt: e.createdAt,
+                        labId: e.labId ?? '',
+                        tags: e.TagMorph.map(e => {
+                            return {
+                                id: e.id ?? '',
+                                tagename: e.tag.tagename ?? ''
+                            };
+                        }),
                         user: {
-                            email: e.user.email,
-                            id: e.user.id,
-                            username: e.user.username,
-                            userImage: e.user.userImage,
+                            email: e.user.email ?? '',
+                            id: e.user.id ?? '',
+                            username: e.user.username ?? '',
+                            userImage: e.user.userImage ?? '',
                             role: e.user.role
                         },
                         commentCount: e.commentCount,
                         starCount: e.starCount,
-                        isStared: true,
+                        isStared: e.hasStarred,
                         viewCount: e.viewCount
                     };
                 })
