@@ -15,12 +15,12 @@ import * as yup from 'yup';
 import FeedbackListComponent from './feedback_list_components';
 
 const FeedbackModal = ({
-    room,
+    classProjectId,
     onFeedbackChange,
     open
 }: {
     onFeedbackChange: ({ addedValue }: { addedValue: number }) => void;
-    room: RoomType | null;
+    classProjectId: RoomType | null;
     open: boolean;
 }) => {
     useEffect(() => {
@@ -37,7 +37,7 @@ const FeedbackModal = ({
     };
     const [loading, setLoading] = useState(false);
     const getServerData = async () => {
-        if (room != null) {
+        if (classProjectId != null) {
             setPage(1);
             const session = await getSession();
             if (session) {
@@ -69,21 +69,21 @@ const FeedbackModal = ({
         setFeedbackLoading(true);
         setError(null);
         try {
-            // const res = await getFeedbackUserProjectLab({
-            //     userProjectId: room?.id ?? '',
-            //     page: currentPage,
-            //     pageSize: 10
-            // });
-            // setFeedback(
-            //     res.feedback.map<FeedbackType>(e => {
-            //         return {
-            //             id: e.id,
-            //             user: { ...e.user, name: e.user.username },
-            //             feedback: e.feedback
-            //         };
-            //     })
-            // );
-            // setTotalFeedbackCount(res.countOfFeedback);
+            const res = await getAllF({
+                userProjectId: room?.id ?? '',
+                page: currentPage,
+                pageSize: 10
+            });
+            setFeedback(
+                res.feedback.map<FeedbackType>(e => {
+                    return {
+                        id: e.id,
+                        user: { ...e.user, name: e.user.username },
+                        feedback: e.feedback
+                    };
+                })
+            );
+            setTotalFeedbackCount(res.countOfFeedback);
         } catch (e: any) {
             setError(e.message);
             toast.error(e.message);

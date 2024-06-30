@@ -31,7 +31,11 @@ export default function ClassLabPage() {
                 <FeedbackComponent feedbacks={[]} onClick={onFeedbackClicked} />
                 <CloneLabComponent buttonText="view lab" onButtonClick={handleLabClick} />
             </div>
-            <FeedbackModal comments={[]} />
+            <FeedbackModal
+                onFeedbackChange={function ({ addedValue }: { addedValue: number }): void {}}
+                room={null}
+                open={false}
+            />
         </div>
     );
 }
