@@ -9,11 +9,10 @@ export async function POST(req: Request) {
         return NextResponse.json({
             data: response
         });
-
     } catch (err) {
         console.log('Error:', err);
         return NextResponse.json({
-            data: "error while uploading"
+            data: 'error while uploading'
         });
     }
 }

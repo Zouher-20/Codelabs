@@ -64,32 +64,29 @@ export const createRoomFromTemplate = async (payload: createRoomFromTemplateInpu
     return ActoinRoomRepository.createRoomFromTemplate(payload, userId);
 };
 
-
 export const deleteMyFeedback = async (payload: DeleteMyFeedbackInput) => {
     const session = await getSession();
     const userId = session?.id;
     return classRoomRepository.deleteMyFeedback(payload, userId);
-}
+};
 
 export const getClassProjectById = async (payload: GetClassProjectByIdInput) => {
     const session = await getSession();
     const userId = session?.id;
     return classRoomRepository.getClassProjectById(payload, userId);
-}
-
+};
 
 export const getAllFeedbackInClassProject = async (payload: GetAllFeedbackInRoomInput) => {
     const session = await getSession();
     const userId = session?.id;
     return classRoomRepository.getAllFeedbackInClassProject(payload, userId);
-}
+};
 
 export const exitUserFromYourClass = async (payload: ExitUserFromYourClassInput) => {
     const session = await getSession();
     const userId = session?.id;
     return classRoomRepository.exitUserFromYourClass(payload, userId);
 };
-
 
 export const getClassCreateByMe = async (payload: getClassesByMeInput) => {
     const session = await getSession();
@@ -119,9 +116,7 @@ export const submittedLabsInRoom = async (payload: SubmittedLabsInRoomInput) => 
     const userId = session?.id;
     return classRoomRepository.submitLabsInRoom(payload, userId);
 };
-export const addFeedbackInClassProject = async (
-    payload: AddFeedbackInClassProjectIput
-) => {
+export const addFeedbackInClassProject = async (payload: AddFeedbackInClassProjectIput) => {
     const session = await getSession();
     const userId = session?.id;
     return classRoomRepository.addFeedbackInClassProject(payload, userId);
@@ -141,7 +136,7 @@ export const getRomInClass = async (payload: GetRomInClassInput) => {
 
 export const getAllClassRooms = async (payload: getAllClassRoomsInput) => {
     return classRoomRepository.getAllClassRooms(payload);
-}
+};
 export const addRomInClass = async (payload: AddRomInClassInput) => {
     const session = await getSession();
     const userId = session?.id;
@@ -149,15 +144,15 @@ export const addRomInClass = async (payload: AddRomInClassInput) => {
 };
 export const deleteMyClass = async (payload: DeleteMYClassInput) => {
     const session = await getSession();
-    const userId = session?.id
+    const userId = session?.id;
     return classRoomRepository.deleteMyClass(payload, userId);
-}
+};
 
 export const deleteUserFromMyClass = async (payload: DeleteUserFromMyClassInput) => {
     const session = await getSession();
-    const userId = session?.id
+    const userId = session?.id;
     return classRoomRepository.deleteUserFromMyClass(payload, userId);
-}
+};
 
 export const addUsersInClass = async (payload: AddUsersInClassInput) => {
     const session = await getSession();

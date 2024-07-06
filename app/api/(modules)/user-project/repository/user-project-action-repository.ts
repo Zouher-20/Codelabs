@@ -133,7 +133,7 @@ class UserProjectActionRepository {
             name?: string;
             description?: string;
             tagId: string[];
-            labId: string
+            labId: string;
         },
         userId: string
     ) {
@@ -148,11 +148,7 @@ class UserProjectActionRepository {
             throw new Error('this project not found code lab');
         }
 
-        labJsonFilePath = path.join(
-            process.cwd(),
-            'public',
-            mylab.jsonFile ?? ""
-        );
+        labJsonFilePath = path.join(process.cwd(), 'public', mylab.jsonFile ?? '');
 
         const countMyUserProject = await db.userProject.count({
             where: {

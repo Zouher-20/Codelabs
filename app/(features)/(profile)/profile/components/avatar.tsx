@@ -1,19 +1,22 @@
-"use client"
+'use client';
 
-import IconRenderer from "@/app/components/globals/icon";
-import Image from "next/image";
-import { useRef, useState } from "react";
-import noImage from '@/public/images/no-image2.png'
+import IconRenderer from '@/app/components/globals/icon';
+import noImage from '@/public/images/no-image2.png';
+import Image from 'next/image';
+import { useRef, useState } from 'react';
 
-const Avatar = ({ photo, imageSize, imagePath, username }
-    : {
-        photo: (photo: File) => void;
-        imageSize?: number,
-        imagePath?: string,
-        username: string
-    }) => {
-
-    const [imageFile, setImageFile] = useState(imagePath ?? '')
+const Avatar = ({
+    photo,
+    imageSize,
+    imagePath,
+    username
+}: {
+    photo: (photo: File) => void;
+    imageSize?: number;
+    imagePath?: string;
+    username: string;
+}) => {
+    const [imageFile, setImageFile] = useState(imagePath ?? '');
     const hiddenFileInput = useRef<HTMLInputElement>(null);
 
     const handleClick = () => {
@@ -26,7 +29,7 @@ const Avatar = ({ photo, imageSize, imagePath, username }
 
         const reader = new FileReader();
         reader.readAsDataURL(fileUploaded);
-        reader.onload = (e) => {
+        reader.onload = e => {
             if (e.target?.result) {
                 setImageFile(e.target.result as string);
                 photo(fileUploaded);
@@ -38,7 +41,8 @@ const Avatar = ({ photo, imageSize, imagePath, username }
     };
     return (
         <div className="flex gap-4 py-1">
-            <div className="avatar"
+            <div
+                className="avatar"
                 style={{ width: `${imageSize ?? 140}px`, height: `${imageSize ?? 140}px` }}
             >
                 <Image
@@ -50,13 +54,19 @@ const Avatar = ({ photo, imageSize, imagePath, username }
                     onError={handleError}
                 />
             </div>
-            <section className="self-center flex flex-col">
+            <section className="flex flex-col self-center">
                 <span className="text-lg ">{username}</span>
-                <span onClick={handleClick} className="relative flex gap-1  text-gray-500 cursor-pointer">
-                    <IconRenderer className="self-end cursor-pointer" height={18} width={18} icon='basil:edit-outline' />
-                    <button style={{ cursor: 'pointer', font: 'inherit', }} >
-                        change image
-                    </button>
+                <span
+                    onClick={handleClick}
+                    className="relative flex cursor-pointer  gap-1 text-gray-500"
+                >
+                    <IconRenderer
+                        className="cursor-pointer self-end"
+                        height={18}
+                        width={18}
+                        icon="basil:edit-outline"
+                    />
+                    <button style={{ cursor: 'pointer', font: 'inherit' }}>change image</button>
                     <input
                         type="file"
                         onChange={handleChange}
@@ -67,6 +77,6 @@ const Avatar = ({ photo, imageSize, imagePath, username }
             </section>
         </div>
     );
-}
+};
 
 export default Avatar;

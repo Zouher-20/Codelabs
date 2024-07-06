@@ -34,7 +34,8 @@ export function useContainer() {
                     theme: {
                         background: '#100F13'
                     },
-                    rows: 15
+                    fontSize: 12,
+                    rows: 12
                 });
                 terminalInstance.current.open(terminalEl);
             } else {

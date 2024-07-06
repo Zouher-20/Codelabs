@@ -67,7 +67,7 @@ export const editTage = async (payload: EditTagInput) => {
         console.error('An error occurred:', error);
         throw new Error('An error occurred while futching a tag.');
     }
-}
+};
 
 export const getChallengeDifficult = async () => {
     try {

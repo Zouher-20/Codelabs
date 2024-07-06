@@ -1,6 +1,6 @@
-import Image from './components/top-image';
-import Body from './components/body';
 import { CustomToaster } from '@/app/components/toast/custom-toaster';
+import Body from './components/body';
+import Image from './components/top-image';
 
 export default async function BlogsPage() {
     return (
@@ -25,4 +25,3 @@ const Intoduction = () => {
         </div>
     );
 };
-

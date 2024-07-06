@@ -51,7 +51,7 @@ button.ql-active,
 .ql-picker-item:hover,
 .ql-snow.ql-toolbar .ql-picker-item.ql-selected,
 .ql-picker-item.ql-selected {
-    color: #50FA7B;
+    color: #50fa7b;
 }
 
 .ql-snow.ql-toolbar button:hover .ql-stroke,
@@ -82,7 +82,7 @@ button.ql-active,
 .ql-snow .ql-toolbar .ql-picker-item:hover .ql-stroke-miter,
 .ql-snow.ql-toolbar .ql-picker-item.ql-selected .ql-stroke-miter,
 .ql-snow .ql-toolbar .ql-picker-item.ql-selected .ql-stroke-miter {
-    stroke: #50FA7B;
+    stroke: #50fa7b;
 }
 
 ql-snow.ql-toolbar button:hover .ql-stroke,
@@ -113,7 +113,7 @@ ql-snow.ql-toolbar button:hover .ql-stroke,
 .ql-snow .ql-toolbar .ql-picker-item:hover .ql-stroke-miter,
 .ql-snow.ql-toolbar .ql-picker-item.ql-selected .ql-stroke-miter,
 .ql-snow .ql-toolbar .ql-picker-item.ql-selected .ql-stroke-miter {
-    stroke: #50FA7B;
+    stroke: #50fa7b;
 }
 
 .ql-snow.ql-toolbar button:hover .ql-fill,
@@ -144,5 +144,5 @@ ql-snow.ql-toolbar button:hover .ql-stroke,
 .ql-snow .ql-toolbar .ql-picker-item:hover .ql-stroke.ql-fill,
 .ql-snow.ql-toolbar .ql-picker-item.ql-selected .ql-stroke.ql-fill,
 .ql-snow .ql-toolbar .ql-picker-item.ql-selected .ql-stroke.ql-fill {
-    fill: #50FA7B;
+    fill: #50fa7b;
 }

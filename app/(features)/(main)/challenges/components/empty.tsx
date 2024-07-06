@@ -1,13 +1,17 @@
-import Image from "next/image";
-import imageDefault from '@/public/images/challenges/notFound.svg'
+import imageDefault from '@/public/images/challenges/notFound.svg';
+import Image from 'next/image';
 
 const Empty = ({ emptyImage }: { emptyImage?: string }) => {
     return (
-        <div className="flex flex-col w-full text-center py-24 px-4 gap-4" >
-            <Image src={emptyImage ? emptyImage : imageDefault} alt="" className='self-center m-auto xl:w-1/3' />
-            <p >Currently there is now challenges come later to see what's new</p>
-        </div >
+        <div className="flex w-full flex-col gap-4 px-4 py-24 text-center">
+            <Image
+                src={emptyImage ? emptyImage : imageDefault}
+                alt=""
+                className="m-auto self-center xl:w-1/3"
+            />
+            <p>Currently there is now challenges come later to see what's new</p>
+        </div>
     );
-}
+};
 
 export default Empty;

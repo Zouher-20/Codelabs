@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { addTemplate, uploadImage } from '../../services/action';
 import { addTemplateInput } from '../../../types';
+import { addTemplate } from '../../services/action';
 
 export async function POST(req: Request) {
     try {
@@ -11,7 +11,6 @@ export async function POST(req: Request) {
             statusCode: 200,
             data: response
         });
-
     } catch (err: any) {
         console.log('Error:', err);
         return NextResponse.json({

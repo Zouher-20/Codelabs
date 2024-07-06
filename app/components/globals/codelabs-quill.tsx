@@ -1,7 +1,7 @@
+import '@/app/components/globals/quillStyle.css';
 import dynamic from 'next/dynamic';
 import { useMemo } from 'react';
 import 'react-quill/dist/quill.snow.css';
-import '@/app/components/globals/quillStyle.css'
 
 export default function CodeLabsQuill({
     onChange,

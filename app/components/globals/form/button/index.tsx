@@ -5,7 +5,8 @@ const Button = ({ label, style, color, type, disabled, onClick, loading }: butto
     const basic = ' bg-white text-black hover:bg-base-100 hover:text-white';
     const outlin = 'bg-base-300 text-white border-1 border-white hover:bg-white hover:text-black';
     const fill = 'bg-base-100';
-    const error = 'bg-red-600 opacity-70 text-white hover:opacity-100 hover:bg-red-600 hover:text-white';
+    const error =
+        'bg-red-600 opacity-70 text-white hover:opacity-100 hover:bg-red-600 hover:text-white';
     return loading ? (
         <span className="loading loading-spinner loading-lg"></span>
     ) : (
@@ -20,14 +21,14 @@ const Button = ({ label, style, color, type, disabled, onClick, loading }: butto
                 (color == 'basic'
                     ? basic
                     : color == 'fill'
-                        ? fill
-                        : color == 'outline'
-                            ? outlin
-                            : color == 'yellow'
-                                ? yellow
-                                : color == 'error'
-                                    ? error
-                                    : 'bg-base-200 text-primary')
+                      ? fill
+                      : color == 'outline'
+                        ? outlin
+                        : color == 'yellow'
+                          ? yellow
+                          : color == 'error'
+                            ? error
+                            : 'bg-base-200 text-primary')
             }
         >
             {label}

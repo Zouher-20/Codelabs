@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { cloneLabFromTeacherInRoom } from '../../services/action';
 
-
 export async function POST(req: Request) {
     try {
         const body = await req.json();
@@ -10,7 +9,6 @@ export async function POST(req: Request) {
             statusCode: 200,
             data: response
         });
-
     } catch (err: any) {
         console.log('Error:', err);
         return NextResponse.json({

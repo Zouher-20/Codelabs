@@ -7,7 +7,7 @@ export interface AddClassRoomInput {
 }
 
 export interface GetMyLabInRoomInput {
-    roomId: string
+    roomId: string;
 }
 
 export interface CloneLabForRoomInClassInput {
@@ -19,14 +19,14 @@ export interface CloneLabForRoomInClassInput {
     labId: string;
 }
 export interface cloneLabFromTeacherInRoomInput {
-    roomId: string
+    roomId: string;
 }
 export interface ExitUserFromYourClassInput {
     classRoomId: string;
 }
 
 export interface DeleteMyFeedbackInput {
-    feedbackId: string
+    feedbackId: string;
 }
 export interface createRoomFromTemplateInput {
     classRomId: string;
@@ -34,16 +34,15 @@ export interface createRoomFromTemplateInput {
     name?: string;
     endAt: DateTime;
     type?: string;
-    templateId: string
-
+    templateId: string;
 }
 export interface GetClassProjectByIdInput {
-    classProjectId: string
+    classProjectId: string;
 }
 export interface GetAllFeedbackInRoomInput {
     classProjectId: string;
     pageSize: number;
-    page: number
+    page: number;
 }
 export interface getClassesByMeInput {
     page: number;
@@ -117,13 +116,12 @@ export interface SubmittedLabsInRoomInput {
 export interface AddFeedbackInClassProjectIput {
     feedback: string;
     classProjectId: string;
-
 }
 
 export interface getAllClassRoomsInput {
     page: number;
     pageSize: number;
-    searchWord?: string
+    searchWord?: string;
 }
 
 export interface DeleteUserFromMyClassInput {
@@ -131,6 +129,5 @@ export interface DeleteUserFromMyClassInput {
     userIds: string[];
 }
 export interface DeleteMYClassInput {
-
     classRoomId: string;
 }

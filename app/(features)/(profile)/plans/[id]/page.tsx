@@ -1,4 +1,4 @@
-"use client"
+'use client';
 import { planType } from '@/app/@types/plan';
 import { getPlan } from '@/app/api/(modules)/admin/plan/service/action';
 import PlanCard from '@/app/components/cards/plan-card';
@@ -35,7 +35,7 @@ const Plans = ({ params }: { params: { id: string } }) => {
                 <ManageState
                     error={error}
                     empty={plans.length == 0}
-                    errorAndEmptyCallback={() => { }}
+                    errorAndEmptyCallback={() => {}}
                     loadedState={plans.map((e, index) => (
                         <PlanCard
                             key={index}

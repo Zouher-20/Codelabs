@@ -1,8 +1,5 @@
-import BaseResponse from '@/app/api/core/base-response/base-response';
 import { db } from '@/app/api/core/db/db';
 import { NAMEPLAN, Prisma } from '@prisma/client';
-import { mkdir, writeFile } from 'node:fs/promises';
-import { join } from 'path';
 
 class BlogRepository {
     static async deleteMyCommentUserProjectLab(
@@ -461,14 +458,12 @@ class BlogRepository {
         if (!blog) {
             throw new Error('Lab is not found');
         }
-        const view = await db.veiw.findFirst(
-            {
-                where: {
-                    userId: userId,
-                    blogId: payload.blogId
-                }
+        const view = await db.veiw.findFirst({
+            where: {
+                userId: userId,
+                blogId: payload.blogId
             }
-        );
+        });
         if (!view) {
             await db.veiw.create({
                 data: {

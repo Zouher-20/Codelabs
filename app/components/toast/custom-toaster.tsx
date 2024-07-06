@@ -1,5 +1,5 @@
 'use client';
-import { DefaultToastOptions, Toaster, ToasterProps } from 'react-hot-toast';
+import { DefaultToastOptions, Toaster } from 'react-hot-toast';
 
 const toastOptions: DefaultToastOptions = {
     className: 'cb-toast',

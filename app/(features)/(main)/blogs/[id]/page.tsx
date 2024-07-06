@@ -56,7 +56,7 @@ const BlogDetails = ({ params }: { params: { id: string } }) => {
         <ManageState
             loading={loading}
             error={error}
-            errorAndEmptyCallback={() => { }}
+            errorAndEmptyCallback={() => {}}
             empty={false}
             loadedState={
                 <div className="relative mx-auto flex flex-col gap-2 px-4 py-8 ">
@@ -69,15 +69,16 @@ const BlogDetails = ({ params }: { params: { id: string } }) => {
                         </h1>
                     </div>
                     <div className="flex gap-4">
-                        {blog?.user.userImage ?
+                        {blog?.user.userImage ? (
                             <Image
                                 src={blog?.user.userImage.replace(/\\/g, '/')}
                                 alt="user"
                                 width={56}
                                 height={56}
-                                className='rounded-full h-24 w-24 bg-cover'
+                                className="h-24 w-24 rounded-full bg-cover"
                             />
-                            : <Link
+                        ) : (
+                            <Link
                                 href={
                                     user?.id == blog?.user.id
                                         ? '/profile'
@@ -86,7 +87,8 @@ const BlogDetails = ({ params }: { params: { id: string } }) => {
                                 className="w-14 cursor-pointer rounded-full bg-black p-4 text-center capitalize"
                             >
                                 {blog?.user.username.slice(0, 1)}
-                            </Link>}
+                            </Link>
+                        )}
                         <span className="flex flex-col gap-1">
                             <Link
                                 href={

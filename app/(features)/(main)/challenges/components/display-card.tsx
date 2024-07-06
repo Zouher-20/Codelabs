@@ -1,9 +1,9 @@
-const DisplayCard = ({ name, resources }: { name: string, resources: string }) => {
+const DisplayCard = ({ name, resources }: { name: string; resources: string }) => {
     return (
-        <div className="p-8 bg-base-100 rounded-3xl lg:basis-1/2 flex flex-col gap-4">
-            <h1 className="text-primary text-3xl font-bold -mt-12 ">{name}</h1>
+        <div className="flex flex-col gap-4 rounded-3xl bg-base-100 p-8 lg:basis-1/2">
+            <h1 className="-mt-12 text-3xl font-bold text-primary ">{name}</h1>
             <span dangerouslySetInnerHTML={{ __html: resources }}></span>
         </div>
-    )
-}
-export default DisplayCard
+    );
+};
+export default DisplayCard;

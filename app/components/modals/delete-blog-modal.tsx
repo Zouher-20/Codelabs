@@ -3,8 +3,13 @@
 import Button from '@/app/components/globals/form/button';
 import IconRenderer from '@/app/components/globals/icon';
 
-const DeleteBlogModal = ({ index, onDelete }: { index: string, onDelete: (val: boolean) => void }) => {
-
+const DeleteBlogModal = ({
+    index,
+    onDelete
+}: {
+    index: string;
+    onDelete: (val: boolean) => void;
+}) => {
     const onSubmit = () => {
         onDelete(true);
         (document.getElementById(`delete-blog-modal${index}`) as HTMLDialogElement).close();
@@ -20,10 +25,13 @@ const DeleteBlogModal = ({ index, onDelete }: { index: string, onDelete: (val: b
                     <h3 className="slef-center text-2xl font-bold">Delete Blog</h3>
                 </form>
                 <div className="flex w-full flex-col gap-2 px-8">
-                    <p>
-                        Are you sure you want to delete this blog
-                    </p>
-                    <Button label="Delete Plan" color="error" onClick={onSubmit} style="w-28 self-end" />
+                    <p>Are you sure you want to delete this blog</p>
+                    <Button
+                        label="Delete Plan"
+                        color="error"
+                        onClick={onSubmit}
+                        style="w-28 self-end"
+                    />
                 </div>
             </div>
         </dialog>

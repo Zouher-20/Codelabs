@@ -1,6 +1,6 @@
 import DatePicker from 'react-datepicker';
 import IconRenderer from '../../icon';
-import "./style.css"
+import './style.css';
 
 export interface dateFieldType {
     placeholder?: string;

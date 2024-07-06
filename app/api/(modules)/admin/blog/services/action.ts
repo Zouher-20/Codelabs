@@ -1,4 +1,4 @@
-"use server";
+'use server';
 import AdminBlogRepository from '@/app/api/(modules)/admin/blog/repository/admin-blog-repository';
 import { deleteAnyBlogInput } from '@/app/api/(modules)/admin/types';
 import { getSession } from '@/app/api/(modules)/auth/service/actions';

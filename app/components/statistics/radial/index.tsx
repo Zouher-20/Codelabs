@@ -1,12 +1,11 @@
-'use client'
+'use client';
 
-import dynamic from "next/dynamic";
-const ApexChart = dynamic(() => import("react-apexcharts"), { ssr: false });
-import { ApexOptions } from "apexcharts";
-import { chartType } from "@/app/@types/chart";
+import { chartType } from '@/app/@types/chart';
+import { ApexOptions } from 'apexcharts';
+import dynamic from 'next/dynamic';
+const ApexChart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 const RadialChart = ({ labels, colors, series, height, width }: chartType) => {
-
     const chartOptions: ApexOptions = {
         series: series,
         labels: labels,
@@ -21,30 +20,33 @@ const RadialChart = ({ labels, colors, series, height, width }: chartType) => {
                 startAngle: -90,
                 endAngle: 90,
                 track: {
-                    background: "#282C2B",
-                },
-            },
-        },
-        colors: colors,
-        responsive: [{
-            breakpoint: 480,
-            options: {
-                chart: {
-                    width: 200
-                },
-                legend: {
-                    position: 'bottom'
+                    background: '#282C2B'
                 }
             }
-        }],
-        dataLabels: {
-            enabled: false,
-        }, stroke: {
-            show: false,
         },
-    }
+        colors: colors,
+        responsive: [
+            {
+                breakpoint: 480,
+                options: {
+                    chart: {
+                        width: 200
+                    },
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        ],
+        dataLabels: {
+            enabled: false
+        },
+        stroke: {
+            show: false
+        }
+    };
     return (
-        <div className='w-1/3 h-1/3' >
+        <div className="h-1/3 w-1/3">
             <ApexChart
                 options={chartOptions}
                 series={chartOptions.series}
@@ -52,8 +54,8 @@ const RadialChart = ({ labels, colors, series, height, width }: chartType) => {
                 height={height}
                 width={width}
             />
-        </div >
+        </div>
     );
-}
+};
 
 export default RadialChart;

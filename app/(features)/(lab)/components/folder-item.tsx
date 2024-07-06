@@ -41,8 +41,6 @@ export default function FolderItem({ name, node }: { name: string; node: Directo
             confirmButtonColor: '#282C2B',
             inputValidator: result => !result && 'Type the folder name'
         }).then(result => {
-            console.log(result);
-
             if (result.isConfirmed && !result.isDismissed) {
                 dispatch &&
                     dispatch({
@@ -65,8 +63,6 @@ export default function FolderItem({ name, node }: { name: string; node: Directo
             inputPlaceholder: 'example.js',
             confirmButtonColor: '#282C2B'
         }).then(result => {
-            console.log(result);
-
             if (result.isConfirmed && !result.isDismissed) {
                 dispatch &&
                     dispatch({

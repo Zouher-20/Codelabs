@@ -1,11 +1,10 @@
-'use client'
+'use client';
 
-import dynamic from "next/dynamic";
-const ApexChart = dynamic(() => import("react-apexcharts"), { ssr: false });
-import { ApexOptions } from "apexcharts";
+import { ApexOptions } from 'apexcharts';
+import dynamic from 'next/dynamic';
+const ApexChart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 const BubbleChart = () => {
-
     const chartOptions: ApexOptions = {
         series: [
             { name: 'apple', data: [[8, 3, 45]] },
@@ -32,7 +31,7 @@ const BubbleChart = () => {
                 fontWeight: '300',
                 colors: ['#282C2B']
             },
-            formatter: (value) => value ? `${value}%` : ''
+            formatter: value => (value ? `${value}%` : '')
         },
         fill: {
             opacity: 1
@@ -41,7 +40,7 @@ const BubbleChart = () => {
             show: true
         },
         stroke: {
-            width: 5,
+            width: 5
         },
         plotOptions: {
             bubble: {
@@ -80,10 +79,10 @@ const BubbleChart = () => {
         },
         tooltip: {
             enabled: false
-        },
+        }
     };
     return (
-        <div className='w-1/3 h-1/3'>
+        <div className="h-1/3 w-1/3">
             <ApexChart
                 options={chartOptions}
                 series={chartOptions.series}
@@ -93,6 +92,6 @@ const BubbleChart = () => {
             />
         </div>
     );
-}
+};
 
 export default BubbleChart;

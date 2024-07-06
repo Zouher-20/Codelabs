@@ -44,7 +44,7 @@ class UserProjectRepository {
             // Create Lab record and associate it with the new user project
             const newLab = await db.lab.create({
                 data: {
-                    jsonFile: payload.jsonFile,
+                    jsonFile: payload.jsonFile
                 }
             });
 
@@ -168,12 +168,15 @@ class UserProjectRepository {
         });
     }
 
-    static async editMyUserProjectLab(payload: {
-        userProjectid: string;
-        name?: string;
-        description?: string;
-        tagId: string[];
-    }, userId: string) {
+    static async editMyUserProjectLab(
+        payload: {
+            userProjectid: string;
+            name?: string;
+            description?: string;
+            tagId: string[];
+        },
+        userId: string
+    ) {
         const myUserProject = await db.userProject.findUnique({
             where: {
                 id: payload.userProjectid,
@@ -184,13 +187,11 @@ class UserProjectRepository {
             throw new Error('this lab not found');
         }
 
-
         const newUserProject = await db.userProject.update({
             where: { id: myUserProject.id },
             data: {
                 name: payload.name,
                 description: payload.description
-
             }
         });
         const tags = await db.tag.findMany({
@@ -207,16 +208,16 @@ class UserProjectRepository {
         const tagMorphCreatePromises = tags.map(tag =>
             db.tagMorph.updateMany({
                 where: {
-                    tagId: tag.id,
+                    tagId: tag.id
                 },
                 data: {
-                    userprojectId: newUserProject.id,
+                    userprojectId: newUserProject.id
                 }
             })
         );
 
         await Promise.all(tagMorphCreatePromises);
-        return " your lab was updated ";
+        return ' your lab was updated ';
     }
     static async getUserProjectsLab(
         payload: {
@@ -238,8 +239,10 @@ class UserProjectRepository {
                     },
                     {
                         TagMorph: {
-                            tag: {
-                                id: { contains: payload.tagId }
+                            some: {
+                                tag: {
+                                    id: payload.tagId
+                                }
                             }
                         }
                     }
@@ -252,8 +255,10 @@ class UserProjectRepository {
         } else if (payload.tagId) {
             args = {
                 TagMorph: {
-                    tag: {
-                        id: { contains: payload.tagId }
+                    some: {
+                        tag: {
+                            id: payload.tagId
+                        }
                     }
                 }
             };
@@ -488,17 +493,15 @@ class UserProjectRepository {
                         tag: true
                     }
                 },
-                lab: true,
+                lab: true
             }
         });
-        const view = await db.veiw.findFirst(
-            {
-                where: {
-                    userId: userId,
-                    userprojectId: payload.userProjectId
-                }
+        const view = await db.veiw.findFirst({
+            where: {
+                userId: userId,
+                userprojectId: payload.userProjectId
             }
-        );
+        });
         if (!view) {
             await db.veiw.create({
                 data: {

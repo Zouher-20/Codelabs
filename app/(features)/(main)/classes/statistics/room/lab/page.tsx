@@ -107,7 +107,6 @@ export default function ClassLabPage() {
                                 getLabFeedback();
                             }}
                             lab={lab}
-                            open={false}
                         />
                     </div>
                 }

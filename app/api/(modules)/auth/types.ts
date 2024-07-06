@@ -25,7 +25,7 @@ export interface AllUserInformationInput {
 }
 
 export interface GetUserDetails {
-    userId: string
+    userId: string;
 }
 export interface CompleteMyInfoInput {
     imagePath?: string;
