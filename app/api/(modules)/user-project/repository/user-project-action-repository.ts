@@ -66,7 +66,10 @@ class UserProjectActionRepository {
             featurePlan => featurePlan.name === NAMEPLAN.labs
         );
 
-        if (hasLabsPlan && countMyUserProject < userPlan.plan.FeaturePlan[0].value) {
+        if (
+            (hasLabsPlan && countMyUserProject < userPlan.plan.FeaturePlan[0].value) ||
+            userPlan.plan.FeaturePlan[0].value === -1
+        ) {
             const newJsonFileName = `${uuidv4()}.json`;
             const newJsonFilePath = path.join(
                 process.cwd(),
@@ -177,7 +180,10 @@ class UserProjectActionRepository {
             featurePlan => featurePlan.name === NAMEPLAN.labs
         );
 
-        if (hasLabsPlan && countMyUserProject < userPlan.plan.FeaturePlan[0].value) {
+        if (
+            (hasLabsPlan && countMyUserProject < userPlan.plan.FeaturePlan[0].value) ||
+            userPlan.plan.FeaturePlan[0].value === -1
+        ) {
             const newJsonFileName = `${uuidv4()}.json`;
             const newJsonFilePath = path.join(
                 process.cwd(),

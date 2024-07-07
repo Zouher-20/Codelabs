@@ -22,7 +22,10 @@ const Framework = () => {
             </div>
             <div className="flex w-[75vw] flex-row flex-wrap items-center justify-center gap-8">
                 {cards.map(card => (
-                    <div className=" flex h-52 w-48 flex-col items-center justify-center gap-4 rounded-xl bg-base-300 p-8 text-white transition-all duration-200 ease-in hover:scale-[1.1] hover:text-primary">
+                    <div
+                        key={card.name}
+                        className=" flex h-52 w-48 flex-col items-center justify-center gap-4 rounded-xl bg-base-300 p-8 text-white transition-all duration-200 ease-in hover:scale-[1.1] hover:text-primary"
+                    >
                         <IconRenderer icon={card.icon} width={200} height={200} className="px-6" />
                         <p className="text-center">{card.name}</p>
                     </div>

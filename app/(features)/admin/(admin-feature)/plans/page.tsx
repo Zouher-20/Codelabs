@@ -100,7 +100,14 @@ const Plans = () => {
                     return {
                         ...item,
                         duration: plan?.duration ?? item.duration,
-                        features: plan?.FeaturePlan ?? item.FeaturePlan,
+                        FeaturePlan: plan?.FeaturePlan.map(feature => {
+                            return {
+                                name: feature.name ?? '',
+                                id: feature.id ?? '',
+                                planId: feature.planId,
+                                value: feature.value ?? 0
+                            };
+                        }),
                         name: plan?.name ?? item.name,
                         price: plan?.price ?? item.price,
                         subtitle: plan?.subtitle ?? item.subtitle

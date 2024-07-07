@@ -23,7 +23,9 @@ export default async function ChallengesPage() {
     const challenges = await getData();
     return (
         <div className="flex flex-col gap-8 pb-8">
-            <Introduction showImage={challenges ? true : false} />
+            <Introduction
+                showImage={challenges && challenges.currentCh.length < 0 ? true : false}
+            />
 
             {challenges.currentCh.length > 0 ? (
                 <CurrentChallenge challenge={challenges.currentCh[0]} />

@@ -10,6 +10,7 @@ import { tag } from '@/app/@types/tag';
 import { getSession } from '@/app/api/(modules)/auth/service/actions';
 import {
     addAndDeleteStarUserProjectLab,
+    deleteMyUserProjectLab,
     getCommentUserProjectLab,
     getDetailsUserProjectLab
 } from '@/app/api/(modules)/user-project/services/action';
@@ -18,6 +19,7 @@ import UserAvatar from '@/app/components/globals/user-avatar';
 import { ManageState } from '@/app/components/page-state/state_manager';
 import { CustomToaster } from '@/app/components/toast/custom-toaster';
 import { interactions } from '@/app/constants/interactions';
+import { SwalUtil } from '@/app/utils/swal-util';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -48,6 +50,7 @@ export default function LabDetails() {
             await getLabDetails(id);
             await getLabComment({ id: id });
             const session = await getSession();
+
             if (session) {
                 setMyId(session?.id);
             }
@@ -60,6 +63,7 @@ export default function LabDetails() {
     };
     const getLabDetails = async (id: string) => {
         const res = await getDetailsUserProjectLab({ userProjectId: id });
+
         setLab({
             id: res.lab.id,
             name: res.lab.name ?? '',
@@ -67,7 +71,7 @@ export default function LabDetails() {
             createdAt: res.lab.createdAt ?? '',
             commentCount: res.commentCount,
             starCount: res.starCount,
-            labId: res.lab.lab.id,
+            labId: res.lab.labId,
             description: res.lab.description ?? '',
             viewCount: res.viewCount,
             clone: res.lab.clone ?? 0,
@@ -192,7 +196,13 @@ export default function LabDetails() {
                     </li>
                     {myId == lab?.user.id && <span className="divider mx-8 my-0" />}
                     {myId == lab?.user.id && (
-                        <li onClick={() => {}}>
+                        <li
+                            onClick={() => {
+                                SwalUtil.showConfirm(() => {
+                                    deleteMyLab();
+                                });
+                            }}
+                        >
                             <div>
                                 <Icon
                                     icon="solar:trash-bin-2-bold-duotone"
@@ -272,6 +282,15 @@ export default function LabDetails() {
 
         route.push('/lab' + '/' + result2.data.labId);
     };
+
+    const deleteMyLab = async () => {
+        try {
+            await deleteMyUserProjectLab({ userProjectId: params.get('id') || '' });
+            route.back();
+        } catch (err: any) {
+            toast.error(err.message);
+        }
+    };
     return (
         <div className="flex min-h-[550px] flex-col gap-2 p-3">
             <ManageState
@@ -294,6 +313,7 @@ export default function LabDetails() {
                                 <div className="flex gap-1">
                                     {lab?.tags?.map((tag: tag, index: number) => (
                                         <div
+                                            key={tag.id}
                                             className="rounded-lg bg-base-200 px-2 py-1 text-sm hover:cursor-pointer"
                                             onClick={() => {
                                                 const params = {
