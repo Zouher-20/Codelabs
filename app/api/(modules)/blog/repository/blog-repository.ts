@@ -49,7 +49,10 @@ class BlogRepository {
             featurePlan => featurePlan.name === NAMEPLAN.blogs
         );
 
-        if (hasBlogPlan && countMyBlog < blogPlan.plan.FeaturePlan[0].value) {
+        if (
+            (hasBlogPlan && countMyBlog < blogPlan.plan.FeaturePlan[0].value) ||
+            blogPlan.plan.FeaturePlan[0].value === -1
+        ) {
             const myBlog = await db.blog.create({
                 data: {
                     contant: payload.content,

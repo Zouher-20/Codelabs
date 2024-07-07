@@ -135,13 +135,13 @@ const Comments = ({
                                                 <img
                                                     src={comment.user.userImage}
                                                     alt="user"
-                                                    width={32}
+                                                    width={60}
                                                     onClick={() => {
                                                         route.push(
                                                             `/user-profile/${comment.user.id}`
                                                         );
                                                     }}
-                                                    className="cursor-pointer"
+                                                    className="cursor-pointer rounded"
                                                 />
                                             ) : (
                                                 <div

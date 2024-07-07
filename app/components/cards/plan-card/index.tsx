@@ -79,7 +79,7 @@ export default PlanCard;
 function Advantages(plan: planType, active?: boolean) {
     return (
         <div className="flex flex-col gap-2">
-            {plan.FeaturePlan.map((feature, index) =>
+            {plan.FeaturePlan?.map((feature, index) =>
                 feature.value > 0 && feature.name === 'participate' ? null : (
                     <div key={index} className="flex gap-3">
                         <IconRenderer

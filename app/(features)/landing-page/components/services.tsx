@@ -1,7 +1,11 @@
+import { getSession } from '@/app/api/(modules)/auth/service/actions';
 import IconRenderer from '@/app/components/globals/icon';
+import { ROLE } from '@prisma/client';
 import Link from 'next/link';
 
-const Services = () => {
+const Services = async () => {
+    const session = await getSession();
+
     return (
         <section id="Services" className="body-font mt-12 pt-16 text-gray-400">
             <div className="mb-4 text-center">
@@ -73,7 +77,13 @@ const Services = () => {
                     </div>
                 </div>
                 <Link
-                    href={'/register'}
+                    href={
+                        session && session.role === ROLE.ADMIN
+                            ? '/admin/discover'
+                            : session && session.role === ROLE.USER
+                              ? '/discover'
+                              : '/register'
+                    }
                     className=" btn btn-primary mx-auto mt-8 flex max-w-fit  rounded-xl border-0 bg-primary px-8 py-2 text-lg focus:outline-none"
                 >
                     Try Now

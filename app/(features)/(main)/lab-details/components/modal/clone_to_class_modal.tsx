@@ -56,7 +56,7 @@ const CloneToClassModal = ({
                     };
                 })
             );
-            setSelectedClass(res.classes[0].id);
+            setSelectedClass(res.classes[0]?.id);
         } catch (e: any) {
             toast.error(e.message);
         }

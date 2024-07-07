@@ -37,7 +37,7 @@ const UpdatePlan = ({
     });
     const handleInputChange = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = event.target.value;
-        handleChange(`features[${index}].value`)(newValue);
+        handleChange(`FeaturePlan[${index}].value`)(newValue);
     };
     return (
         <dialog id="update-plan-modal" className="modal">
@@ -98,8 +98,8 @@ const UpdatePlan = ({
                                 }
                                 onChange={event => {
                                     event.target.checked
-                                        ? handleChange(`features[${index}].value`)('-1')
-                                        : handleChange(`features[${index}].value`)('0');
+                                        ? handleChange(`FeaturePlan[${index}].value`)('-1')
+                                        : handleChange(`FeaturePlan[${index}].value`)('0');
                                 }}
                             />
                             {feature.name != 'participate' ? (
@@ -112,9 +112,8 @@ const UpdatePlan = ({
                                     value={
                                         values.FeaturePlan[index]?.value == -1 ||
                                         values.FeaturePlan[index]?.value == 0
-                                            ? values.FeaturePlan[index].name
-                                            : (values.FeaturePlan[index]
-                                                  ?.value as unknown as string)
+                                            ? values.FeaturePlan[index]?.name
+                                            : values.FeaturePlan[index]?.value
                                     }
                                     onChange={event => handleInputChange(index, event)}
                                 />
