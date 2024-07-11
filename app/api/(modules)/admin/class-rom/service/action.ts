@@ -1,5 +1,5 @@
 "use server";
-import { getAllClassRoomsInput, GetClassRomStatistics, GetRomInClassInput, GetRoomAndTeacherDetailsInput, GetUserInClassInput } from "../../../class-room/types";
+import { getAllClassRoomsInput, GetClassRomByIdInput, GetClassRomStatistics, GetRomInClassInput, GetRoomAndTeacherDetailsInput, GetUserInClassInput } from "../../../class-room/types";
 import AdminClassRoomRepository from "../repository/admin-class-rom-repository";
 
 export const getRoomAndTeacherDetailsForAdmin = async (payload: GetRoomAndTeacherDetailsInput) => {
@@ -8,6 +8,10 @@ export const getRoomAndTeacherDetailsForAdmin = async (payload: GetRoomAndTeache
 
 export const getClassRomStatisticsForAdmin = async (payload: GetClassRomStatistics) => {
     return AdminClassRoomRepository.getClassRomStatisticsForAdmin(payload);
+};
+export const getClassRomById = async (payload: GetClassRomByIdInput) => {
+
+    return AdminClassRoomRepository.getClassRomByIdForAdmin(payload);
 };
 
 export const getAllClassRooms = async (payload: getAllClassRoomsInput) => {

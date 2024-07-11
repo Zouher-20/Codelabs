@@ -92,7 +92,7 @@ class AdminClassRoomRepository {
 
         const userPlan = await db.planSubscription.findUnique({
             where: {
-                userId: teacher?.id
+                userId: teacher?.userId
             },
             include: {
                 plan: {
@@ -235,7 +235,6 @@ class AdminClassRoomRepository {
             countMemberClassInClassRom: countMemberClassInClassRom
         };
     }
-
     static async getRomInClassForAdmin(
         payload: {
             romePage: number;
@@ -270,6 +269,25 @@ class AdminClassRoomRepository {
         return {
             RomInClassRom: RomInClassRom,
             romCountInClassRom: romCountInClassRom
+        };
+    }
+    static async getClassRomByIdForAdmin(
+        payload: {
+            classRomId: string;
+        },
+    ) {
+        const myClassRom = await db.classRom.findUnique({
+            where: {
+                id: payload.classRomId,
+            }
+        });
+
+        if (!myClassRom) {
+            throw new Error('class Rom not found');
+        }
+
+        return {
+            myClassRom
         };
     }
 
