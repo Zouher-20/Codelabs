@@ -272,7 +272,9 @@ class AdminClassRoomRepository {
         });
         const romCountInClassRom = await db.rom.count({
             where: {
-                classRomId: myClassRom.id
+                classRomId: myClassRom.id,
+                name: { contains: payload.searchWord, mode: "insensitive" }
+
             }
         });
 
