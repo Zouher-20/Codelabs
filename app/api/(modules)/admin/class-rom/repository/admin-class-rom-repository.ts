@@ -1,18 +1,11 @@
-import { db } from "@/app/api/core/db/db";
-import { NAMEPLAN } from "@prisma/client";
+import { db } from '@/app/api/core/db/db';
+import { NAMEPLAN } from '@prisma/client';
 
 class AdminClassRoomRepository {
+    //class rom by id
+    //student
 
-
-    //class rom by id 
-    //student 
-
-
-    static async getRoomAndTeacherDetailsForAdmin(
-        payload: {
-            romId: string;
-        },
-    ) {
+    static async getRoomAndTeacherDetailsForAdmin(payload: { romId: string }) {
         const myClass = await db.classRom.findFirst({
             where: {
                 AND: [
@@ -22,7 +15,7 @@ class AdminClassRoomRepository {
                                 id: payload.romId
                             }
                         }
-                    },
+                    }
                 ]
             }
         });
@@ -57,12 +50,7 @@ class AdminClassRoomRepository {
         return myRom;
     }
 
-    static async getClassRomStatisticsForAdmin(
-        payload: {
-            classRomId: string;
-        },
-    ) {
-
+    static async getClassRomStatisticsForAdmin(payload: { classRomId: string }) {
         const teacher = await db.memberClass.findFirst({
             where: {
                 classRomId: payload.classRomId,
@@ -201,9 +189,11 @@ class AdminClassRoomRepository {
             totalCount: totalCount
         };
     }
-    static async getUserInClassForAdmin(
-        payload: { userPage: number; userPageSize: number; classRomId: string },
-    ) {
+    static async getUserInClassForAdmin(payload: {
+        userPage: number;
+        userPageSize: number;
+        classRomId: string;
+    }) {
         const userSkip = (payload.userPage - 1) * payload.userPageSize;
         const myClassRom = await db.classRom.findUnique({
             where: {
@@ -236,10 +226,5 @@ class AdminClassRoomRepository {
             countMemberClassInClassRom: countMemberClassInClassRom
         };
     }
-
-
-
-
-
 }
 export default AdminClassRoomRepository;

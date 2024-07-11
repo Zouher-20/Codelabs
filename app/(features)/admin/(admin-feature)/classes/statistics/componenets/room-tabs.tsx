@@ -20,11 +20,14 @@ export function VerticalTabs() {
     const [users, setUsers] = useState<Array<ClassRoomUserType>>([]);
     const [roomLoading, setRoomLoading] = useState(true);
     const [roomError, setRoomError] = useState(null);
+    const [page, setPage] = useState(1);
+    const [totalPageCount, setToatalPageCount] = useState(0);
+    const [searchWord, setSearchWord] = useState('');
 
     const getClassRoomsById = async ({ id }: { id: string }) => {
         setRoomLoading(true);
         try {
-            const res = await getRomInClass({ classRomId: id, romePage: 1, romPageSize: 10 });
+            const res = await getRomInClass({ classRomId: id, romePage: page, romPageSize: 10 });
             setRooms(
                 res.RomInClassRom.map<RoomTableType>(value => {
                     return {
@@ -38,6 +41,7 @@ export function VerticalTabs() {
                     };
                 })
             );
+            setToatalPageCount(res.romCountInClassRom);
         } catch (e: any) {
             setRoomError(e.message);
         } finally {
@@ -49,8 +53,8 @@ export function VerticalTabs() {
         try {
             const res = await getUserInClassForAdmin({
                 classRomId: id,
-                userPage: 1,
-                userPageSize: 100
+                userPage: page,
+                userPageSize: 10
             });
             setUsers(
                 res.memberClassInClassRom.map<ClassRoomUserType>(value => {
@@ -63,6 +67,7 @@ export function VerticalTabs() {
                     };
                 })
             );
+            setToatalPageCount(res.countMemberClassInClassRom);
         } catch (e: any) {
             setUserError(e.message);
         } finally {
@@ -70,11 +75,11 @@ export function VerticalTabs() {
         }
     };
     useEffect(() => {
-        getTapInfo();
-    }, []);
-    const getTapInfo = () => {
+        getTapInfo(activeTab);
+    }, [page]);
+    const getTapInfo = (label: string) => {
         const id = currentParams.get('id') ?? '-1';
-        if (activeTab == 'Rooms') {
+        if (label == 'Rooms') {
             getClassRoomsById({ id });
         } else {
             getClassStudentsById({ id });
@@ -96,9 +101,11 @@ export function VerticalTabs() {
                     loadedState={
                         <RoomTable
                             rooms={rooms}
-                            pageCount={0}
-                            currentPage={1}
-                            onPageChange={() => {}}
+                            pageCount={totalPageCount / 10}
+                            currentPage={page}
+                            onPageChange={({ index }) => {
+                                setPage(index);
+                            }}
                             deleteRoomButtonClicked={() => {}}
                         />
                     }
@@ -119,9 +126,11 @@ export function VerticalTabs() {
                     loadedState={
                         <StudentTable
                             students={users}
-                            pageCount={0}
-                            currentPage={1}
-                            onPageChange={() => {}}
+                            pageCount={totalPageCount / 10}
+                            currentPage={page}
+                            onPageChange={({ index }) => {
+                                setPage(index);
+                            }}
                             deleteStudentButtonClicked={() => {}}
                         />
                     }
@@ -145,6 +154,8 @@ export function VerticalTabs() {
                         value={label}
                         onClick={() => {
                             setActiveTab(label);
+                            setSearchWord('');
+                            setPage(1);
                         }}
                         className={`${activeTab === label ? 'rounded-xl bg-base-100  text-white ' : ''} font-bold`}
                         placeholder={undefined}
@@ -157,7 +168,14 @@ export function VerticalTabs() {
                 {data.map(({ label, componenet }) => (
                     <TabPanel key={label} value={label}>
                         <div className="flex w-full flex-col">
-                            <RoomViewHeader searchWord={''} onFieldChanged={e => {}} name={label} />
+                            <RoomViewHeader
+                                searchWord={searchWord}
+                                onFieldChanged={e => {
+                                    setSearchWord(e);
+                                    setPage(1);
+                                }}
+                                name={label}
+                            />
 
                             {componenet}
                         </div>
