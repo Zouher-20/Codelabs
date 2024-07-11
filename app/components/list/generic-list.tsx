@@ -40,7 +40,7 @@ export default class CodeLabList<T> {
                 <div
                     className={
                         this.wrap
-                            ? 'flex w-full flex-wrap justify-center gap-1 overflow-x-auto'
+                            ? 'flex w-full flex-wrap justify-start gap-1 overflow-x-auto'
                             : 'w-full flex-wrap overflow-x-auto'
                     }
                 >
