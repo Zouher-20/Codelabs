@@ -192,6 +192,7 @@ class AdminClassRoomRepository {
         userPage: number;
         userPageSize: number;
         classRomId: string;
+        searchWord?: string;
     }) {
         const userSkip = (payload.userPage - 1) * payload.userPageSize;
         const myClassRom = await db.classRom.findUnique({
@@ -206,7 +207,10 @@ class AdminClassRoomRepository {
 
         const memberClassInClassRom = await db.memberClass.findMany({
             where: {
-                classRomId: myClassRom.id
+                classRomId: myClassRom.id,
+                user: {
+                    username: { contains: payload.searchWord, mode: 'insensitive' }
+                }
             },
             take: payload.userPageSize,
             skip: userSkip,
@@ -216,7 +220,10 @@ class AdminClassRoomRepository {
         });
         const countMemberClassInClassRom = await db.memberClass.count({
             where: {
-                classRomId: myClassRom.id
+                classRomId: myClassRom.id,
+                user: {
+                    username: { contains: payload.searchWord, mode: 'insensitive' }
+                }
             }
         });
 
@@ -229,6 +236,7 @@ class AdminClassRoomRepository {
         romePage: number;
         romPageSize: number;
         classRomId: string;
+        searchWord?: string;
     }) {
         const romSkip = (payload.romePage - 1) * payload.romPageSize;
         const myClassRom = await db.classRom.findUnique({
@@ -243,14 +251,17 @@ class AdminClassRoomRepository {
 
         const RomInClassRom = await db.rom.findMany({
             where: {
-                classRomId: myClassRom.id
+                classRomId: myClassRom.id,
+                name: { contains: payload.searchWord, mode: 'insensitive' }
             },
+
             take: payload.romPageSize,
             skip: romSkip
         });
         const romCountInClassRom = await db.rom.count({
             where: {
-                classRomId: myClassRom.id
+                classRomId: myClassRom.id,
+                name: { contains: payload.searchWord, mode: 'insensitive' }
             }
         });
 

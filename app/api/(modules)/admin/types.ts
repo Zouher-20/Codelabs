@@ -104,3 +104,18 @@ export interface getAllTemplateInput {
     page: number;
     searchWord?: string;
 }
+
+export interface GetUserInClassForAdminInput {
+
+    classRomId: string;
+    userPage: number;
+    userPageSize: number;
+    searchWord?: string
+}
+
+export interface GetRomInClassInputForAdmin {
+    romePage: number;
+    romPageSize: number;
+    classRomId: string;
+    searchWord?: string
+}
