@@ -110,6 +110,20 @@ class UserProjectActionRepository {
                     throw new Error(`One or more tags not found.`);
                 }
 
+
+                const challengeTagsCount = await db.tag.count({
+                    where: {
+                        id: {
+                            in: payload.tagId
+                        },
+                        isChanllange: true
+                    }
+                });
+
+                if (challengeTagsCount > 1) {
+                    throw new Error('It is not possible to choose more than one challenge type tag');
+                }
+
                 const tagMorphCreatePromises = tags.map(tag =>
                     db.tagMorph.create({
                         data: {
@@ -222,6 +236,19 @@ class UserProjectActionRepository {
 
                 if (tags.length !== payload.tagId.length) {
                     throw new Error(`One or more tags not found.`);
+                }
+
+                const challengeTagsCount = await db.tag.count({
+                    where: {
+                        id: {
+                            in: payload.tagId
+                        },
+                        isChanllange: true
+                    }
+                });
+
+                if (challengeTagsCount > 1) {
+                    throw new Error('It is not possible to choose more than one challenge type tag');
                 }
 
                 const tagMorphCreatePromises = tags.map(tag =>

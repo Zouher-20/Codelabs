@@ -47,30 +47,29 @@ enum TAGTYPE {
 }
 
 model User {
-  id                     String                   @id @default(cuid())
-  email                  String                   @unique
-  username               String                   @unique
-  password               String
-  bio                    String?
-  role                   ROLE
-  createdAt              DateTime                 @default(now())
-  position               String?
-  typeUser               String?
-  userImage              String?
-  planEndDate            DateTime?
-  inActive               Boolean                  @default(false)
-  verifiedAt             DateTime?
-  Feedback               Feedback?
-  EditorConfig           EditorConfig?
-  ChallengeParticipation ChallengeParticipation[]
-  UserProject            UserProject[]
-  Star                   Star[]
-  Comment                Comment[]
-  Blog                   Blog[]
-  MemberClass            MemberClass[]
-  Verified               Verified?
-  PlanSubscription       PlanSubscription?
-  veiw                   veiw[]
+  id               String            @id @default(cuid())
+  email            String            @unique
+  username         String            @unique
+  password         String
+  bio              String?
+  role             ROLE
+  createdAt        DateTime          @default(now())
+  position         String?
+  typeUser         String?
+  userImage        String?
+  planEndDate      DateTime?
+  inActive         Boolean           @default(false)
+  verifiedAt       DateTime?
+  Feedback         Feedback?
+  EditorConfig     EditorConfig?
+  UserProject      UserProject[]
+  Star             Star[]
+  Comment          Comment[]
+  Blog             Blog[]
+  MemberClass      MemberClass[]
+  Verified         Verified?
+  PlanSubscription PlanSubscription?
+  veiw             veiw[]
 }
 
 model Verified {
@@ -160,12 +159,12 @@ model ClassRom {
 }
 
 model Tag {
-  id        String     @id @default(cuid())
-  tagename  String     @unique
-  tagtype   TAGTYPE?
-  createdAt DateTime   @default(now())
-  updatedAt DateTime?  @updatedAt
-  TagMorph  TagMorph[]
+  id           String     @id @default(cuid())
+  tagename     String     @unique
+  isChanllange Boolean?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime?  @updatedAt
+  TagMorph     TagMorph[]
 }
 
 model TagMorph {
@@ -174,43 +173,29 @@ model TagMorph {
   tag           Tag          @relation(fields: [tagId], references: [id], onDelete: Cascade)
   userprojectId String?
   userproject   UserProject? @relation(fields: [userprojectId], references: [id], onDelete: Cascade)
+  Challenge     Challenge?   @relation(fields: [challengeId], references: [id])
   challengeId   String?
-  challenge     Challenge?   @relation(fields: [challengeId], references: [id], onDelete: Cascade)
 }
 
 model Challenge {
-  id                     String                   @id @default(cuid())
-  name                   String
-  isComplete             Boolean
-  difficulty             DIFFICULTTYPE
-  description            String?
-  resources              String?
-  endAt                  DateTime?
-  startedAt              DateTime?
-  createdAt              DateTime                 @default(now())
-  ChallengeParticipation ChallengeParticipation[]
-  TagMorph               TagMorph[]
-  Star                   Star[]
-  veiw                   veiw[]
-}
-
-model ChallengeParticipation {
-  id          String    @id @default(cuid())
-  challenge   Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  challengeId String
-  userId      String
-  labId       String    @unique
-  lab         Lab       @relation(fields: [labId], references: [id], onDelete: Cascade)
+  id          String        @id @default(cuid())
+  name        String
+  isComplete  Boolean
+  difficulty  DIFFICULTTYPE
+  description String?
+  resources   String?
+  endAt       DateTime?
+  startedAt   DateTime?
+  createdAt   DateTime      @default(now())
+  TagMorph    TagMorph[]
 }
 
 model Lab {
-  id                     String                  @id @default(cuid())
-  jsonFile               String
-  ClassProject           ClassProject?
-  ChallengeParticipation ChallengeParticipation?
-  Tamblate               Tamblate?
-  UserProject            UserProject?
+  id           String        @id @default(cuid())
+  jsonFile     String
+  ClassProject ClassProject?
+  Tamblate     Tamblate?
+  UserProject  UserProject?
 }
 
 model Tamblate {
@@ -257,8 +242,6 @@ model Star {
   userId        String
   userprojectId String?
   blogId        String?
-  challengeId   String?
-  challenge     Challenge?   @relation(fields: [challengeId], references: [id], onDelete: Cascade)
   blog          Blog?        @relation(fields: [blogId], references: [id], onDelete: Cascade)
   userproject   UserProject? @relation(fields: [userprojectId], references: [id], onDelete: Cascade)
   user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -269,8 +252,6 @@ model veiw {
   userId        String
   userprojectId String?
   blogId        String?
-  challengeId   String?
-  challenge     Challenge?   @relation(fields: [challengeId], references: [id], onDelete: Cascade)
   blog          Blog?        @relation(fields: [blogId], references: [id], onDelete: Cascade)
   userproject   UserProject? @relation(fields: [userprojectId], references: [id], onDelete: Cascade)
   user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
