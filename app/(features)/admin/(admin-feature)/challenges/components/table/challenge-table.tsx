@@ -1,7 +1,6 @@
 import { deleteChallenge } from '@/app/api/(modules)/admin/challenge/services/action';
 import IconRenderer from '@/app/components/globals/icon';
 import { DIFFICULTTYPE } from '@prisma/client';
-import Link from 'next/link';
 import toast from 'react-hot-toast';
 import CodeLabTable, { GenericTableModel } from './generic-tabel';
 
@@ -47,12 +46,12 @@ export default function ClassesTable({
                 <td>{item.isComplete ? 'complete' : 'working'}</td>
                 <td>{item.difficulty}</td>
                 <td>
-                    <Link
+                    {/* <Link
                         href={`/admin/challenges/challenge-details/${item.id}`}
                         className="btn btn-outline h-[35px] min-h-[35px]"
                     >
                         Details
-                    </Link>
+                    </Link> */}
                 </td>
                 <td>
                     <button

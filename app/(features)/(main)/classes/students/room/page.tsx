@@ -60,7 +60,8 @@ export default function ClassLabPage() {
                 teatcher: {
                     email: res.classRom?.MemberClass[0].user.email ?? '',
                     id: res.classRom?.MemberClass[0].user.id ?? '',
-                    username: res.classRom?.MemberClass[0].user.username ?? ''
+                    username: res.classRom?.MemberClass[0].user.username ?? '',
+                    userImage: res.classRom?.MemberClass[0].user.userImage ?? ''
                 }
             });
         } catch (e: any) {

@@ -68,6 +68,7 @@ const TagView = () => {
         <div className="flex flex-col gap-2 p-6">
             <div className="flex flex-col">
                 <TagViewHeader
+                    name="Tags"
                     onCreateClicked={() => {
                         if (document) {
                             setSelectedTag(null);

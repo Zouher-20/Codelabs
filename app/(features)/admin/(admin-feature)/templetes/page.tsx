@@ -70,6 +70,7 @@ const Templetes = () => {
         <div className="flex flex-col gap-2 p-6">
             <div className="flex flex-col">
                 <TempletesViewHeader
+                    name="Templates"
                     onCreateClicked={() => {
                         if (document) {
                             (

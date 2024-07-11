@@ -121,11 +121,13 @@ const BlogDetails = ({ params }: { params: { id: string } }) => {
                         <p>Your feedback would be greatly appreciated.</p>
                     </div>
                     <div className="divider m-0"></div>
-                    {blog?.photo && <img src={blog.photo} alt="blog" className="lg:max-w-[51vw]" />}
+                    {blog?.photo && (
+                        <img src={blog.photo} alt="blog" className="mx-auto lg:max-w-[51vw]" />
+                    )}
                     {blog?.contant && (
                         <div
                             dangerouslySetInnerHTML={{ __html: blog.contant }}
-                            className="lg:max-w-[51vw]"
+                            className="mx-auto lg:max-w-[51vw]"
                         ></div>
                     )}
                 </div>

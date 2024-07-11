@@ -25,7 +25,7 @@ export default function LoginPage() {
             const user = await signIn(values.email, values.password);
             if (user) {
                 if (user.role === ROLE.ADMIN) {
-                    router.push('/admin');
+                    router.push('/admin/discover');
                 } else {
                     router.push('/discover');
                 }

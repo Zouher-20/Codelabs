@@ -93,8 +93,11 @@ class LabRepository {
                     user: true
                 }
             });
+            const room = await db.rom.findUnique({
+                where: { id: lab.ClassProject.romId as string }
+            });
             return {
-                name: lab.ClassProject?.romId,
+                name: room?.name,
                 code: labContents,
                 author: memberClass?.user
             };

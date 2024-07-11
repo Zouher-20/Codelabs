@@ -66,8 +66,6 @@ export interface deleteChallengeInput {
 }
 
 export interface challengeDetailsInput {
-    page: number;
-    pageSize: number;
     challengeId: string;
 }
 

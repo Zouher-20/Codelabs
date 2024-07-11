@@ -1,3 +1,4 @@
+'use client';
 import Avatar from '@/app/(features)/(profile)/profile/components/avatar';
 import PersonalInfo from '@/app/(features)/(profile)/profile/components/personal-info';
 import { userType } from '@/app/@types/user';
@@ -12,12 +13,7 @@ const Profile = () => {
     return (
         <div className="flex flex-col gap-4 px-2">
             <h1 className=" text-2xl">Account Setting</h1>
-            <Avatar
-                username={user.username ?? ''}
-                photo={function (photo: File): void {
-                    throw new Error('Function not implemented.');
-                }}
-            />
+            <Avatar username={user.username ?? ''} photo={(photo: File) => {}} />
             <div className="mb-4">
                 <PersonalInfo />
             </div>

@@ -28,8 +28,13 @@ const NewPlanModal = ({ onPlanAdded }: { onPlanAdded: (plan: planType) => void }
             onPlanAdded({
                 createdAt: res.createdAt,
                 duration: res.duration,
-                features: values.features.map(e => {
-                    return { name: e.name, value: Number(e.value), planId: '', id: '' };
+                FeaturePlan: res.FeaturePlan.map(feature => {
+                    return {
+                        name: feature.name ?? '',
+                        id: feature.id ?? '',
+                        planId: feature.planId,
+                        value: feature.value ?? 0
+                    };
                 }),
                 id: res.id,
                 name: res.name ?? '',

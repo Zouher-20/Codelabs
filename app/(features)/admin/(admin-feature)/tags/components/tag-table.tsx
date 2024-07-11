@@ -1,5 +1,5 @@
 import { tag } from '@/app/@types/tag';
-import { Icon } from '@iconify/react/dist/iconify.js';
+import IconRenderer from '@/app/components/globals/icon';
 import CodeLabTable from '../../components/table/generic-tabel';
 
 export default function TagsTable({
@@ -21,7 +21,7 @@ export default function TagsTable({
                 <td>{item.tagename}</td>
                 <td>{item.createdAt?.toLocaleString('en-US')}</td>
                 <td className="flex justify-center">
-                    <Icon
+                    <IconRenderer
                         icon="solar:settings-bold-duotone"
                         fontSize={30}
                         className="hover:cursor-pointer"
