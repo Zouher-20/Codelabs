@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import ClassesTable, { ClassTableType } from '../components/table/classes-table';
-import ClassesViewHeader from './statistics/components/header';
+import ClassesViewHeader from './components/header';
 
 const Classes = () => {
     const pageSize = 10;
