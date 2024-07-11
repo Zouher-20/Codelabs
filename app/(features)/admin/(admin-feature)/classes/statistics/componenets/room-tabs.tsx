@@ -39,7 +39,12 @@ export function VerticalTabs({ withAddButtons }: { withAddButtons: boolean }) {
     }) => {
         setRoomLoading(true);
         try {
-            const res = await getRomInClass({ classRomId: id, romePage: page, romPageSize: 10 });
+            const res = await getRomInClass({
+                classRomId: id,
+                romePage: page,
+                romPageSize: 10,
+                searchWord
+            });
             setRooms(
                 res.RomInClassRom.map<RoomTableType>(value => {
                     return {
@@ -74,7 +79,8 @@ export function VerticalTabs({ withAddButtons }: { withAddButtons: boolean }) {
             const res = await getUserInClassForAdmin({
                 classRomId: id,
                 userPage: page,
-                userPageSize: 10
+                userPageSize: 10,
+                searchWord
             });
             setUsers(
                 res.memberClassInClassRom.map<ClassRoomUserType>(value => {

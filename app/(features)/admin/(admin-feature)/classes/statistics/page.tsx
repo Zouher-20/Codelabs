@@ -5,13 +5,12 @@ import ClassDescriptionComponent from '@/app/(features)/(main)/classes/statistic
 import StatisticsContainer from '@/app/(features)/(main)/classes/statistics/components/statistics_components';
 import { classType } from '@/app/@types/class';
 import {
-    getClassRomById,
+    getClassRomByIdForAdmin,
     getClassRomStatisticsForAdmin
 } from '@/app/api/(modules)/admin/class-rom/service/action';
 import { EmptyState } from '@/app/components/page-state/empty';
 import { LoadingState } from '@/app/components/page-state/loading';
 import { ManageState } from '@/app/components/page-state/state_manager';
-import { Icon } from '@iconify/react/dist/iconify.js';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { VerticalTabs } from './componenets/room-tabs';
@@ -61,7 +60,7 @@ export default function StatisticsPage() {
     const getClassInfo = async ({ id }: { id: string }) => {
         setClassLoading(true);
         try {
-            const res = await getClassRomById({ classRomId: id });
+            const res = await getClassRomByIdForAdmin({ classRomId: id });
             setClassInfo({
                 id: res.myClassRom.id,
                 title: res.myClassRom.name,
@@ -173,45 +172,6 @@ export default function StatisticsPage() {
                         classDescription={classInfo?.description ?? ''}
                         className={classInfo?.title ?? ''}
                         classType={classInfo?.type ?? ''}
-                        dropdown={
-                            <div className="dropdown dropdown-left">
-                                <div
-                                    tabIndex={0}
-                                    role="button"
-                                    className="flex cursor-pointer items-center gap-2 rounded-btn hover:opacity-85"
-                                >
-                                    <Icon
-                                        icon="solar:menu-dots-bold-duotone"
-                                        className="size-10 text-primary"
-                                    />
-                                </div>
-
-                                <ul
-                                    tabIndex={0}
-                                    className="menu dropdown-content z-[1] mt-4 w-52 rounded-box bg-base-100 p-2 shadow"
-                                >
-                                    <li
-                                        onClick={() => {
-                                            if (document) {
-                                                (
-                                                    document.getElementById(
-                                                        'delete-class-modal'
-                                                    ) as HTMLFormElement
-                                                )?.showModal();
-                                            }
-                                        }}
-                                    >
-                                        <div className="text-red-500">
-                                            <Icon
-                                                icon="solar:trash-bin-2-bold-duotone"
-                                                className="size-8 text-red-500"
-                                            />
-                                            Delete Class
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                        }
                     />
                 }
                 empty={false}
