@@ -1,7 +1,7 @@
 'use client';
-import { ClassRoomUserType, userType } from '@/app/@types/user';
-import { getMyInfo } from '@/app/api/(modules)/auth/service/actions';
-import { getRomInClass, getUserInClass } from '@/app/api/(modules)/class-room/services/action';
+import { ClassRoomUserType } from '@/app/@types/user';
+import { getUserInClassForAdmin } from '@/app/api/(modules)/admin/class-rom/service/action';
+import { getRomInClass } from '@/app/api/(modules)/class-room/services/action';
 import { ManageState } from '@/app/components/page-state/state_manager';
 import { Tab, TabPanel, Tabs, TabsBody, TabsHeader } from '@material-tailwind/react';
 import { useSearchParams } from 'next/navigation';
@@ -20,7 +20,6 @@ export function VerticalTabs() {
     const [users, setUsers] = useState<Array<ClassRoomUserType>>([]);
     const [roomLoading, setRoomLoading] = useState(true);
     const [roomError, setRoomError] = useState(null);
-    const [myInfo, setMyInfo] = useState<userType | null>(null);
 
     const getClassRoomsById = async ({ id }: { id: string }) => {
         setRoomLoading(true);
@@ -48,7 +47,11 @@ export function VerticalTabs() {
     const getClassStudentsById = async ({ id }: { id: string }) => {
         setUserLoading(true);
         try {
-            const res = await getUserInClass({ classRomId: id, userPage: 1, userPageSize: 100 });
+            const res = await getUserInClassForAdmin({
+                classRomId: id,
+                userPage: 1,
+                userPageSize: 100
+            });
             setUsers(
                 res.memberClassInClassRom.map<ClassRoomUserType>(value => {
                     return {
@@ -60,14 +63,6 @@ export function VerticalTabs() {
                     };
                 })
             );
-            const res2 = await getMyInfo();
-            setMyInfo({
-                email: res2.email ?? '',
-                id: res2.id ?? '',
-                username: res2.username ?? '',
-                userImage: res2.userImage ?? '',
-                PlanSubscription: null
-            });
         } catch (e: any) {
             setUserError(e.message);
         } finally {
