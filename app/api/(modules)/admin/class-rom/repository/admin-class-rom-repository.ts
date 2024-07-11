@@ -56,7 +56,6 @@ class AdminClassRoomRepository {
 
         return myRom;
     }
-
     static async getClassRomStatisticsForAdmin(
         payload: {
             classRomId: string;
@@ -236,6 +235,44 @@ class AdminClassRoomRepository {
             countMemberClassInClassRom: countMemberClassInClassRom
         };
     }
+
+    static async getRomInClassForAdmin(
+        payload: {
+            romePage: number;
+            romPageSize: number;
+            classRomId: string;
+        },
+    ) {
+        const romSkip = (payload.romePage - 1) * payload.romPageSize;
+        const myClassRom = await db.classRom.findUnique({
+            where: {
+                id: payload.classRomId,
+            }
+        });
+
+        if (!myClassRom) {
+            throw new Error('class Rom not found');
+        }
+
+        const RomInClassRom = await db.rom.findMany({
+            where: {
+                classRomId: myClassRom.id
+            },
+            take: payload.romPageSize,
+            skip: romSkip
+        });
+        const romCountInClassRom = await db.rom.count({
+            where: {
+                classRomId: myClassRom.id
+            }
+        });
+
+        return {
+            RomInClassRom: RomInClassRom,
+            romCountInClassRom: romCountInClassRom
+        };
+    }
+
 
 
 
