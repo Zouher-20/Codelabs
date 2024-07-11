@@ -7,18 +7,16 @@ export default function RoomTable({
     currentPage,
     onPageChange,
     pageCount,
-    rooms,
-    deleteRoomButtonClicked
+    rooms
 }: {
     currentPage: number;
     onPageChange: ({ index }: { index: number }) => void;
     pageCount: number;
     rooms: Array<RoomTableType>;
-    deleteRoomButtonClicked: (room: RoomTableType) => void;
 }) {
     function TableItem({ item, index }: { item: RoomTableType; index: number }) {
         return (
-            <Card className="mt-1 max-w-80 bg-base-300" placeholder={undefined}>
+            <Card className="mt-1 max-w-80 bg-base-300" placeholder={undefined} key={index}>
                 <CardBody placeholder={undefined}>
                     <Typography
                         variant="h5"
@@ -26,13 +24,9 @@ export default function RoomTable({
                         className="mb-2"
                         placeholder={undefined}
                     >
-                        UI/UX Review Check
+                        {item.name}
                     </Typography>
-                    <Typography placeholder={undefined}>
-                        The place is close to Barceloneta Beach and bus stop just 2 min by walk and
-                        near to &quot;Naviglio&quot; where you can enjoy the main night life in
-                        Barcelona.
-                    </Typography>
+                    <Typography placeholder={undefined}>{item.desription}</Typography>
                 </CardBody>
                 <CardFooter className="pt-0" placeholder={undefined}>
                     <Button placeholder={undefined}>Read More</Button>

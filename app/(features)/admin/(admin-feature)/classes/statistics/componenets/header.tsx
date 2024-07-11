@@ -5,17 +5,19 @@ import Input from '@/app/components/globals/form/input';
 const RoomViewHeader = ({
     onFieldChanged,
     name,
-    searchWord
+    searchWord,
+    withAddButton
 }: {
     searchWord: string;
     name: string;
+    withAddButton: boolean;
     onFieldChanged: (searchWord: string) => void;
 }) => {
     return (
         <div className="flex flex-col ">
             <div className="flex w-full justify-between">
                 <h1 className="mb-10 text-4xl font-bold text-white">{name}</h1>
-                <Button label={`+ New ${name}`} color="any" onClick={() => {}} />
+                {withAddButton && <Button label={`+ New ${name}`} color="any" onClick={() => {}} />}
             </div>
 
             <div className="flex gap-8">

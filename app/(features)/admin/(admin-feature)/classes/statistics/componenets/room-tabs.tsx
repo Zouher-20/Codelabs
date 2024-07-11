@@ -1,7 +1,9 @@
 'use client';
 import { ClassRoomUserType } from '@/app/@types/user';
-import { getUserInClassForAdmin } from '@/app/api/(modules)/admin/class-rom/service/action';
-import { getRomInClass } from '@/app/api/(modules)/class-room/services/action';
+import {
+    getRomInClass,
+    getUserInClassForAdmin
+} from '@/app/api/(modules)/admin/class-rom/service/action';
 import { ManageState } from '@/app/components/page-state/state_manager';
 import { Tab, TabPanel, Tabs, TabsBody, TabsHeader } from '@material-tailwind/react';
 import { useSearchParams } from 'next/navigation';
@@ -10,7 +12,7 @@ import RoomViewHeader from './header';
 import RoomTable, { RoomTableType } from './room_table';
 import StudentTable from './user-table';
 
-export function VerticalTabs() {
+export function VerticalTabs({ withAddButtons }: { withAddButtons: boolean }) {
     const currentParams = useSearchParams();
 
     const [rooms, setRooms] = useState<Array<RoomTableType>>([]);
@@ -23,8 +25,18 @@ export function VerticalTabs() {
     const [page, setPage] = useState(1);
     const [totalPageCount, setToatalPageCount] = useState(0);
     const [searchWord, setSearchWord] = useState('');
-
-    const getClassRoomsById = async ({ id }: { id: string }) => {
+    useEffect(() => {
+        getTapInfo({ label: activeTab, page, searchWord });
+    }, []);
+    const getClassRoomsById = async ({
+        searchWord,
+        page,
+        id
+    }: {
+        searchWord: string;
+        page: number;
+        id: string;
+    }) => {
         setRoomLoading(true);
         try {
             const res = await getRomInClass({ classRomId: id, romePage: page, romPageSize: 10 });
@@ -48,7 +60,15 @@ export function VerticalTabs() {
             setRoomLoading(false);
         }
     };
-    const getClassStudentsById = async ({ id }: { id: string }) => {
+    const getClassStudentsById = async ({
+        searchWord,
+        page,
+        id
+    }: {
+        searchWord: string;
+        page: number;
+        id: string;
+    }) => {
         setUserLoading(true);
         try {
             const res = await getUserInClassForAdmin({
@@ -74,15 +94,21 @@ export function VerticalTabs() {
             setUserLoading(false);
         }
     };
-    useEffect(() => {
-        getTapInfo(activeTab);
-    }, [page]);
-    const getTapInfo = (label: string) => {
+
+    const getTapInfo = ({
+        label,
+        searchWord,
+        page
+    }: {
+        label: string;
+        searchWord: string;
+        page: number;
+    }) => {
         const id = currentParams.get('id') ?? '-1';
         if (label == 'Rooms') {
-            getClassRoomsById({ id });
+            getClassRoomsById({ id, page, searchWord });
         } else {
-            getClassStudentsById({ id });
+            getClassStudentsById({ id, page, searchWord });
         }
     };
 
@@ -95,7 +121,7 @@ export function VerticalTabs() {
                     error={roomError}
                     errorAndEmptyCallback={() => {
                         const id = currentParams.get('id') ?? '-1';
-                        getClassRoomsById({ id });
+                        getClassRoomsById({ id, page, searchWord });
                     }}
                     loading={roomLoading}
                     loadedState={
@@ -104,9 +130,10 @@ export function VerticalTabs() {
                             pageCount={totalPageCount / 10}
                             currentPage={page}
                             onPageChange={({ index }) => {
+                                const id = currentParams.get('id') ?? '-1';
                                 setPage(index);
+                                getClassRoomsById({ id, page: index, searchWord });
                             }}
-                            deleteRoomButtonClicked={() => {}}
                         />
                     }
                 />
@@ -120,7 +147,7 @@ export function VerticalTabs() {
                     error={userError}
                     errorAndEmptyCallback={() => {
                         const id = currentParams.get('id') ?? '-1';
-                        getClassStudentsById({ id });
+                        getClassStudentsById({ id, page, searchWord });
                     }}
                     loading={userLoading}
                     loadedState={
@@ -130,8 +157,14 @@ export function VerticalTabs() {
                             currentPage={page}
                             onPageChange={({ index }) => {
                                 setPage(index);
+                                const id = currentParams.get('id') ?? '-1';
+
+                                getClassStudentsById({
+                                    id,
+                                    page: index,
+                                    searchWord
+                                });
                             }}
-                            deleteStudentButtonClicked={() => {}}
                         />
                     }
                 />
@@ -156,6 +189,7 @@ export function VerticalTabs() {
                             setActiveTab(label);
                             setSearchWord('');
                             setPage(1);
+                            getTapInfo({ label, page: 1, searchWord: '' });
                         }}
                         className={`${activeTab === label ? 'rounded-xl bg-base-100  text-white ' : ''} font-bold`}
                         placeholder={undefined}
@@ -170,9 +204,15 @@ export function VerticalTabs() {
                         <div className="flex w-full flex-col">
                             <RoomViewHeader
                                 searchWord={searchWord}
+                                withAddButton={withAddButtons}
                                 onFieldChanged={e => {
                                     setSearchWord(e);
                                     setPage(1);
+                                    getTapInfo({
+                                        label,
+                                        page: 1,
+                                        searchWord: e
+                                    });
                                 }}
                                 name={label}
                             />
