@@ -47,29 +47,34 @@ enum TAGTYPE {
 }
 
 model User {
-  id               String            @id @default(cuid())
-  email            String            @unique
-  username         String            @unique
-  password         String
-  bio              String?
-  role             ROLE
-  createdAt        DateTime          @default(now())
-  position         String?
-  typeUser         String?
-  userImage        String?
-  planEndDate      DateTime?
-  inActive         Boolean           @default(false)
-  verifiedAt       DateTime?
-  Feedback         Feedback?
-  EditorConfig     EditorConfig?
-  UserProject      UserProject[]
-  Star             Star[]
-  Comment          Comment[]
-  Blog             Blog[]
-  MemberClass      MemberClass[]
-  Verified         Verified?
-  PlanSubscription PlanSubscription?
-  veiw             veiw[]
+  id                       String                     @id @default(cuid())
+  email                    String                     @unique
+  username                 String                     @unique
+  password                 String
+  bio                      String?
+  role                     ROLE
+  createdAt                DateTime                   @default(now())
+  position                 String?
+  typeUser                 String?
+  userImage                String?
+  planEndDate              DateTime?
+  inActive                 Boolean                    @default(false)
+  verifiedAt               DateTime?
+  Feedback                 Feedback?
+  EditorConfig             EditorConfig?
+  UserProject              UserProject[]
+  Star                     Star[]
+  Comment                  Comment[]
+  Blog                     Blog[]
+  MemberClass              MemberClass[]
+  Verified                 Verified?
+  PlanSubscription         PlanSubscription?
+  veiw                     veiw[]
+  ReportUserProject        ReportUserProject[]
+  ReportBlog               ReportBlog[]
+  ReportClass              ReportClass[]
+  ReportCommentBlog        ReportCommentBlog[]
+  ReportCommentUserProject ReportCommentUserProject[]
 }
 
 model Verified {
@@ -156,6 +161,7 @@ model ClassRom {
   updatedAt   DateTime?     @updatedAt
   MemberClass MemberClass[]
   Rom         Rom[]
+  ReportClass ReportClass?
 }
 
 model Tag {
@@ -190,6 +196,66 @@ model Challenge {
   TagMorph    TagMorph[]
 }
 
+model ReportUserProject {
+  id            String      @id @default(cuid())
+  userId        String
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reportId      String      @unique
+  report        Report      @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  userprojectId String      @unique
+  userProject   UserProject @relation(fields: [userprojectId], references: [id], onDelete: Cascade)
+}
+
+model ReportBlog {
+  id       String @id @default(cuid())
+  userId   String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reportId String @unique
+  report   Report @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  blogId   String @unique
+  blog     Blog   @relation(fields: [blogId], references: [id], onDelete: Cascade)
+}
+
+model ReportClass {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reportId    String   @unique
+  report      Report   @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  classRoomId String   @unique
+  classRom    ClassRom @relation(fields: [classRoomId], references: [id], onDelete: Cascade)
+}
+
+model ReportCommentBlog {
+  id        String  @id @default(cuid())
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reportId  String  @unique
+  report    Report  @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  commentId String  @unique
+  comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+}
+
+model ReportCommentUserProject {
+  id                   String  @id @default(cuid())
+  userId               String
+  user                 User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reportId             String  @unique
+  report               Report  @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  commentUserProjectId String  @unique
+  comment              Comment @relation(fields: [commentUserProjectId], references: [id], onDelete: Cascade)
+}
+
+model Report {
+  id                       String                    @id @default(cuid())
+  messageReport            String?
+  ReportUserProject        ReportUserProject?
+  ReportBlog               ReportBlog?
+  ReportClass              ReportClass?
+  ReportCommentBlog        ReportCommentBlog?
+  ReportCommentUserProject ReportCommentUserProject?
+}
+
 model Lab {
   id           String        @id @default(cuid())
   jsonFile     String
@@ -209,32 +275,36 @@ model Tamblate {
 }
 
 model UserProject {
-  id          String     @id @default(cuid())
-  userId      String
-  clone       Int        @default(0)
-  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  name        String?
-  createdAt   DateTime   @default(now())
-  description String?
-  labId       String     @unique
-  lab         Lab        @relation(fields: [labId], references: [id], onDelete: Cascade)
-  Star        Star[]
-  Comment     Comment[]
-  TagMorph    TagMorph[]
-  veiw        veiw[]
+  id                String             @id @default(cuid())
+  userId            String
+  clone             Int                @default(0)
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name              String?
+  createdAt         DateTime           @default(now())
+  description       String?
+  labId             String             @unique
+  lab               Lab                @relation(fields: [labId], references: [id], onDelete: Cascade)
+  Star              Star[]
+  Comment           Comment[]
+  TagMorph          TagMorph[]
+  veiw              veiw[]
+  ReportUserProject ReportUserProject?
+  reportBlogId      String?
+  reportClassId     String?
 }
 
 model Blog {
-  id        String    @id @default(cuid())
-  userId    String
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  contant   String?
-  photo     String?
-  createdAt DateTime  @default(now())
-  title     String?
-  Star      Star[]
-  Comment   Comment[]
-  veiw      veiw[]
+  id         String      @id @default(cuid())
+  userId     String
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  contant    String?
+  photo      String?
+  createdAt  DateTime    @default(now())
+  title      String?
+  Star       Star[]
+  Comment    Comment[]
+  veiw       veiw[]
+  ReportBlog ReportBlog?
 }
 
 model Star {
@@ -258,14 +328,16 @@ model veiw {
 }
 
 model Comment {
-  id            String       @id @default(cuid())
-  comment       String
-  userId        String
-  userprojectId String?
-  blogId        String?
-  blog          Blog?        @relation(fields: [blogId], references: [id], onDelete: Cascade)
-  userproject   UserProject? @relation(fields: [userprojectId], references: [id], onDelete: Cascade)
-  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                       String                    @id @default(cuid())
+  comment                  String
+  userId                   String
+  userprojectId            String?
+  blogId                   String?
+  blog                     Blog?                     @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  userproject              UserProject?              @relation(fields: [userprojectId], references: [id], onDelete: Cascade)
+  user                     User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ReportCommentBlog        ReportCommentBlog?
+  ReportCommentUserProject ReportCommentUserProject?
 }
 
 model MemberClass {
