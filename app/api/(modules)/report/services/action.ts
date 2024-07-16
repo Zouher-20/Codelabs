@@ -1,5 +1,5 @@
 
-"user server";
+"use server";
 import { getSession } from '../../auth/service/actions';
 import ReportRepository from '../repository/report-repository';
 import { AddReportInput } from '../type';
