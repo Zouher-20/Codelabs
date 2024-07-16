@@ -79,6 +79,11 @@ const AdminSiteSidebarItem: Array<SideBarItemType> = [
         icon: 'solar:tag-bold-duotone',
         name: 'Tags',
         route: '/admin/tags'
+    },
+    {
+        icon: 'solar:masks-bold-duotone',
+        name: 'Reports',
+        route: '/admin/reports'
     }
 ];
 
