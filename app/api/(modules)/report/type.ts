@@ -3,7 +3,7 @@ export interface AddReportInput {
     userProjectId?: string;
     blogId?: string;
     commentUserProjectId?: string;
-    commentBlogId: string;
+    commentBlogId?: string;
     classId?: string;
     messageReport: string;
 }
