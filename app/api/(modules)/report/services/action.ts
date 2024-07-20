@@ -1,8 +1,9 @@
 
 "use server";
+import { ROLE } from '@prisma/client';
 import { getSession } from '../../auth/service/actions';
 import ReportRepository from '../repository/report-repository';
-import { AddReportInput } from '../type';
+import { AddReportInput, DeleteAnyReportInput, GetReportedInput } from '../type';
 
 
 export const addReport = async (
@@ -14,3 +15,34 @@ export const addReport = async (
 };
 
 
+
+export const deleteAnyReport = async (
+    payload: DeleteAnyReportInput
+) => {
+    const session = await getSession();
+    const role = session?.role;
+    if (role === ROLE.ADMIN) {
+        return ReportRepository.deleteAnyReport(payload);
+
+    }
+    else {
+        throw new Error(" you are not admin");
+    }
+
+};
+
+
+export const getReport = async (
+    payload: GetReportedInput
+) => {
+    const session = await getSession();
+    const role = session?.role;
+    if (role === ROLE.ADMIN) {
+        return ReportRepository.getReport(payload);
+
+    }
+    else {
+        throw new Error(" you are not admin");
+    }
+
+};

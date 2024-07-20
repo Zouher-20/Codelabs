@@ -7,3 +7,13 @@ export interface AddReportInput {
     classId?: string;
     messageReport: string;
 }
+
+export interface GetReportedInput {
+    page: number;
+    pageSize: number;
+    reportType: any;
+}
+
+export interface DeleteAnyReportInput {
+    reportId: string;
+}
