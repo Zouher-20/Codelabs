@@ -26,4 +26,33 @@ export class SwalUtil {
             }
         });
     }
+    static showReportModalWithTextArea(
+        confirmCB: (textareaText: string) => void,
+        cancelCB?: CallableFunction,
+        options: SweetAlertOptions = {}
+    ) {
+        Swal.fire({
+            background: '#171818',
+            color: '#f2f2f2',
+            iconColor: '#FF5861',
+            title: 'Confirm Report',
+            icon: 'warning',
+            confirmButtonText: 'Yes, report!',
+            cancelButtonColor: '#100f13',
+            confirmButtonColor: '#FF5861',
+            showCancelButton: true,
+            html: '<textarea id="swal-textarea" class="swal2-textarea w-80 text-sm rounded-lg" placeholder="Type your reason here..."></textarea>',
+            preConfirm: () => {
+                const textarea = document.getElementById('swal-textarea') as HTMLTextAreaElement;
+                return textarea.value;
+            },
+            ...options
+        }).then(result => {
+            if (result.isConfirmed) {
+                confirmCB(result.value as string); // Pass the textarea text to the confirm callback
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                if (cancelCB) cancelCB();
+            }
+        });
+    }
 }

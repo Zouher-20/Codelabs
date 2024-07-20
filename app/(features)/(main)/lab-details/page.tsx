@@ -8,12 +8,14 @@ import { InteractionType } from '@/app/@types/Interaction';
 import { FeedbackType } from '@/app/@types/feedback';
 import { tag } from '@/app/@types/tag';
 import { getSession } from '@/app/api/(modules)/auth/service/actions';
+import { addReport } from '@/app/api/(modules)/report/services/action';
 import {
     addAndDeleteStarUserProjectLab,
     deleteMyUserProjectLab,
     getCommentUserProjectLab,
     getDetailsUserProjectLab
 } from '@/app/api/(modules)/user-project/services/action';
+import { ReportType } from '@/app/api/core/constant/enum';
 import Interaction from '@/app/components/globals/lab/interaction';
 import UserAvatar from '@/app/components/globals/user-avatar';
 import { ManageState } from '@/app/components/page-state/state_manager';
@@ -147,7 +149,33 @@ export default function LabDetails() {
         }
     };
 
-    const dropdown = () => {
+    const DropDownItem = ({
+        text,
+        onClick,
+        color,
+        icon,
+        withSpreator
+    }: {
+        text: string;
+        onClick: () => void;
+        color: string;
+        icon: string;
+        withSpreator?: boolean;
+    }) => {
+        return (
+            <div>
+                {(withSpreator ?? true) && <span className="divider mx-8 my-0" />}
+                <li onClick={onClick}>
+                    <div>
+                        <Icon icon={icon} className={`size-6 ${color}`} />
+                        {text}
+                    </div>
+                </li>
+            </div>
+        );
+    };
+
+    const Dropdown = () => {
         return (
             <div className="dropdown dropdown-left">
                 <div
@@ -162,7 +190,9 @@ export default function LabDetails() {
                     tabIndex={0}
                     className="menu dropdown-content z-[1] mt-4 w-52 rounded-box bg-base-100 p-2 shadow"
                 >
-                    <li
+                    <DropDownItem
+                        withSpreator={false}
+                        text="Clone lab"
                         onClick={() => {
                             if (document) {
                                 (
@@ -170,14 +200,11 @@ export default function LabDetails() {
                                 )?.showModal();
                             }
                         }}
-                    >
-                        <div>
-                            <Icon icon="solar:dna-bold-duotone" className="size-6  text-primary" />
-                            Clone lab
-                        </div>
-                    </li>
-                    <span className="divider mx-8 my-0" />
-                    <li
+                        color="text-primary"
+                        icon="solar:dna-bold-duotone"
+                    />
+                    <DropDownItem
+                        text="Clone lab to class"
                         onClick={() => {
                             if (document) {
                                 (
@@ -185,44 +212,38 @@ export default function LabDetails() {
                                 )?.showModal();
                             }
                         }}
-                    >
-                        <div>
-                            <Icon
-                                icon="solar:case-round-bold-duotone"
-                                className="size-6 text-primary"
+                        color="text-primary"
+                        icon="solar:case-round-bold-duotone"
+                    />
+                    <DropDownItem
+                        text="Report lab"
+                        onClick={() => {
+                            SwalUtil.showReportModalWithTextArea((text: string) => {
+                                reportLab(text);
+                            });
+                        }}
+                        color="text-red-500"
+                        icon="solar:masks-bold-duotone"
+                    />
+                    {myId === lab?.user.id && (
+                        <>
+                            <DropDownItem
+                                text="Delete Lab"
+                                onClick={() => {
+                                    SwalUtil.showConfirm(() => {
+                                        deleteMyLab();
+                                    });
+                                }}
+                                color="text-red-500"
+                                icon="solar:trash-bin-2-bold-duotone"
                             />
-                            Clone to class
-                        </div>
-                    </li>
-                    {myId == lab?.user.id && <span className="divider mx-8 my-0" />}
-                    {myId == lab?.user.id && (
-                        <li
-                            onClick={() => {
-                                SwalUtil.showConfirm(() => {
-                                    deleteMyLab();
-                                });
-                            }}
-                        >
-                            <div>
-                                <Icon
-                                    icon="solar:trash-bin-2-bold-duotone"
-                                    className="size-6  text-red-500"
-                                />
-                                Delete Lab
-                            </div>
-                        </li>
-                    )}
-                    {myId == lab?.user.id && <span className="divider mx-8 my-0" />}
-                    {myId == lab?.user.id && (
-                        <li onClick={() => {}}>
-                            <div>
-                                <Icon
-                                    icon="solar:settings-broken"
-                                    className="size-6 text-primary"
-                                />
-                                Edit Lab
-                            </div>
-                        </li>
+                            <DropDownItem
+                                text="Edit Lab"
+                                onClick={() => {}}
+                                color="text-primary"
+                                icon="solar:settings-broken"
+                            />
+                        </>
                     )}
                 </ul>
             </div>
@@ -291,6 +312,20 @@ export default function LabDetails() {
             toast.error(err.message);
         }
     };
+    const reportLab = async (message: string) => {
+        try {
+            const id = params.get('id') ?? '';
+
+            await addReport({
+                userProjectId: id,
+                messageReport: message,
+                reportType: ReportType.USER_PROJECT
+            });
+        } catch (err: any) {
+            toast.error(err.message);
+        }
+    };
+
     return (
         <div className="flex min-h-[550px] flex-col gap-2 p-3">
             <ManageState
@@ -305,7 +340,7 @@ export default function LabDetails() {
                             <div className="flex w-full flex-col justify-center gap-5 p-5">
                                 <div className="flex items-center justify-between">
                                     <h1>{lab?.name}</h1>
-                                    {dropdown()}
+                                    <Dropdown />
                                 </div>
                                 <article className="line-clamp-5 text-wrap text-sm">
                                     {lab?.description}

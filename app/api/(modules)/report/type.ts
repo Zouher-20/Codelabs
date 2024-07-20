@@ -5,5 +5,5 @@ export interface AddReportInput {
     commentUserProjectId?: string;
     commentBlogId: string;
     classId?: string;
-    messageReport: string
+    messageReport: string;
 }
