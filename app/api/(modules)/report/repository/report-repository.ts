@@ -335,6 +335,7 @@ class ReportRepository {
                     }
                 },
                 include: {
+                    report: true,
                     user: true,
                     userProject: {
                         include: {
@@ -365,6 +366,7 @@ class ReportRepository {
                     }
                 },
                 include: {
+                    report: true,
                     user: true,
                     comment: {
                         include: {
@@ -399,6 +401,7 @@ class ReportRepository {
                     }
                 },
                 include: {
+                    report: true,
                     user: true,
                     comment: {
                         include: {
@@ -433,6 +436,7 @@ class ReportRepository {
                     },
                 },
                 include: {
+                    report: true,
                     user: true,
                     blog: {
                         include: {
@@ -462,6 +466,7 @@ class ReportRepository {
                     }
                 },
                 include: {
+                    report: true,
                     user: true,
                     classRom: {
                         include: {
@@ -563,7 +568,7 @@ class ReportRepository {
         });
 
         if (report?.ReportBlog) {
-            return     result = await db.report.findUnique({
+            return result = await db.report.findUnique({
                 where: {
                     id: report?.id
                 },
@@ -584,7 +589,7 @@ class ReportRepository {
         }
         else if (report?.ReportCommentBlog) {
 
-            return     result = await db.report.findUnique({
+            return result = await db.report.findUnique({
                 where: {
                     id: report?.id
                 },
@@ -605,7 +610,7 @@ class ReportRepository {
         }
         else if (report?.ReportCommentUserProject) {
 
-            return     result = await db.report.findUnique({
+            return result = await db.report.findUnique({
                 where: {
                     id: report?.id
                 },
@@ -627,7 +632,7 @@ class ReportRepository {
         }
         else if (report?.ReportUserProject) {
 
-            return   result = await db.report.findUnique({
+            return result = await db.report.findUnique({
                 where: {
                     id: report?.id
                 },
@@ -648,7 +653,7 @@ class ReportRepository {
         }
         else if (report?.ReportClass) {
 
-          return  result = await db.report.findUnique({
+            return result = await db.report.findUnique({
                 where: {
                     id: report?.id
                 },
