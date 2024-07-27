@@ -5,7 +5,6 @@ import BlogsTab from './tabs/blog-tab';
 import ClassTab from './tabs/class-tab';
 import LabsCommentsTab from './tabs/labs-comment-tab';
 import LabsTab from './tabs/labs-tab';
-import UserTab from './tabs/user-tab';
 
 const ReportsTabs = () => {
     const [activeTab, setActiveTab] = useState('Labs');
@@ -21,10 +20,6 @@ const ReportsTabs = () => {
         {
             label: 'Blogs',
             componenet: <BlogsTab />
-        },
-        {
-            label: 'Users',
-            componenet: <UserTab />
         },
         {
             label: 'Labs Comments',
