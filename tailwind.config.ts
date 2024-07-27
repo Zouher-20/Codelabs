@@ -27,6 +27,12 @@ const config: Config = {
                     '--rounded-btn': '12px', // border radius rounded-btn utility class, used in buttons and similar element
                     '--rounded-badge': '12px', // border radius rounded-badge utility class, used in badges and similar
                     '--tab-radius': '12px' // border radius of tabs
+                },
+                extend: {
+                    zIndex: {
+                        '9999': '9999',
+                        '5000': '5000'
+                    }
                 }
             }
         ]

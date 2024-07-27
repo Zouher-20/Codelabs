@@ -1,19 +1,21 @@
-import { ReportType } from "@/app/api/core/constant/enum";
-import { db } from "@/app/api/core/db/db.js";
+import { ReportType } from '@/app/api/core/constant/enum';
+import { db } from '@/app/api/core/db/db';
 class ReportRepository {
-    static async addReport(payload: {
-        reportType: any;
-        userProjectId?: string;
-        blogId?: string;
-        commentUserProjectId?: string;
-        commentBlogId?: string;
-        classId?: string;
-        messageReport: string
-    }, userId: string) {
+    static async addReport(
+        payload: {
+            reportType: any;
+            userProjectId?: string;
+            blogId?: string;
+            commentUserProjectId?: string;
+            commentBlogId?: string;
+            classId?: string;
+            messageReport: string;
+        },
+        userId: string
+    ) {
         if (payload.reportType === ReportType.USER_PROJECT) {
-
-            if (payload.userProjectId == null || payload.userProjectId === "") {
-                throw new Error("userProjectId is required");
+            if (payload.userProjectId == null || payload.userProjectId === '') {
+                throw new Error('userProjectId is required');
             }
             const lab = await db.userProject.findUnique({
                 where: {
@@ -21,7 +23,7 @@ class ReportRepository {
                 }
             });
             if (!lab) {
-                throw new Error("lab not found");
+                throw new Error('lab not found');
             }
             const hasreport = await db.reportUserProject.findUnique({
                 where: {
@@ -30,7 +32,7 @@ class ReportRepository {
                 }
             });
             if (hasreport) {
-                throw new Error(" you have alrady report in this lab");
+                throw new Error(' you have alrady report in this lab');
             }
             const newReport = await db.report.create({
                 data: {
@@ -44,21 +46,19 @@ class ReportRepository {
                     userId: userId
                 }
             });
-            return "thanks for reporting.";
-        }
-        else if (payload.reportType === ReportType.COMMENT_USER_PROJECT) {
-
-            if (payload.commentUserProjectId == null || payload.commentUserProjectId === "") {
-                throw new Error("commentUserProjectId is required ");
+            return 'thanks for reporting.';
+        } else if (payload.reportType === ReportType.COMMENT_USER_PROJECT) {
+            if (payload.commentUserProjectId == null || payload.commentUserProjectId === '') {
+                throw new Error('commentUserProjectId is required ');
             }
 
             const comment = await db.comment.findUnique({
                 where: {
-                    id: payload.commentUserProjectId,
+                    id: payload.commentUserProjectId
                 }
             });
             if (!comment) {
-                throw new Error("comment not found !.");
+                throw new Error('comment not found !.');
             }
 
             const hasreport = await db.reportCommentUserProject.findUnique({
@@ -68,7 +68,7 @@ class ReportRepository {
                 }
             });
             if (hasreport) {
-                throw new Error(" you have alrady report for this comment");
+                throw new Error(' you have alrady report for this comment');
             }
             const newReport = await db.report.create({
                 data: {
@@ -82,14 +82,10 @@ class ReportRepository {
                     commentUserProjectId: comment.id
                 }
             });
-            return "thanks for reporting.";
-
-
-        }
-        else if (payload.reportType === ReportType.BLOG) {
-
-            if (payload.blogId == null || payload.blogId === "") {
-                throw new Error("blogId is required");
+            return 'thanks for reporting.';
+        } else if (payload.reportType === ReportType.BLOG) {
+            if (payload.blogId == null || payload.blogId === '') {
+                throw new Error('blogId is required');
             }
             const blog = await db.blog.findUnique({
                 where: {
@@ -97,7 +93,7 @@ class ReportRepository {
                 }
             });
             if (!blog) {
-                throw new Error("blog not found");
+                throw new Error('blog not found');
             }
             const hasreport = await db.reportBlog.findUnique({
                 where: {
@@ -106,7 +102,7 @@ class ReportRepository {
                 }
             });
             if (hasreport) {
-                throw new Error(" you have alrady report in this blog");
+                throw new Error(' you have alrady report in this blog');
             }
             const newReport = await db.report.create({
                 data: {
@@ -120,22 +116,20 @@ class ReportRepository {
                     userId: userId
                 }
             });
-            return "thanks for reporting.";
-        }
-        else if (payload.reportType === ReportType.COMMENT_BLOG) {
-
-            if (payload.commentBlogId == null || payload.commentBlogId === "") {
-                throw new Error(" blogId is required ");
+            return 'thanks for reporting.';
+        } else if (payload.reportType === ReportType.COMMENT_BLOG) {
+            if (payload.commentBlogId == null || payload.commentBlogId === '') {
+                throw new Error(' blogId is required ');
             }
 
             const comment = await db.comment.findUnique({
                 where: {
-                    id: payload.commentUserProjectId,
+                    id: payload.commentBlogId
                 }
             });
 
             if (!comment) {
-                throw new Error("comment not found !.");
+                throw new Error('comment not found !.');
             }
             const hasreport = await db.reportCommentBlog.findUnique({
                 where: {
@@ -144,7 +138,7 @@ class ReportRepository {
                 }
             });
             if (hasreport) {
-                throw new Error(" you have alrady report for this comment");
+                throw new Error(' you have alrady report for this comment');
             }
             const newReport = await db.report.create({
                 data: {
@@ -158,12 +152,10 @@ class ReportRepository {
                     commentId: comment.id
                 }
             });
-            return "thanks for reporting.";
-        }
-        else if (payload.reportType === ReportType.CLASS) {
-
-            if (payload.classId == null || payload.classId === "") {
-                throw new Error("class Id is required");
+            return 'thanks for reporting.';
+        } else if (payload.reportType === ReportType.CLASS) {
+            if (payload.classId == null || payload.classId === '') {
+                throw new Error('class Id is required');
             }
             const classRoom = await db.classRom.findUnique({
                 where: {
@@ -171,7 +163,7 @@ class ReportRepository {
                 }
             });
             if (!classRoom) {
-                throw new Error("classRoom not found");
+                throw new Error('classRoom not found');
             }
             const checkinclass = await db.classRom.findUnique({
                 where: {
@@ -184,7 +176,7 @@ class ReportRepository {
                 }
             });
             if (!checkinclass) {
-                throw new Error(" you are not member in this class");
+                throw new Error(' you are not member in this class');
             }
             const hasreport = await db.reportClass.findUnique({
                 where: {
@@ -193,7 +185,7 @@ class ReportRepository {
                 }
             });
             if (hasreport) {
-                throw new Error(" you have alrady report in this lab");
+                throw new Error(' you have alrady report in this lab');
             }
             const newReport = await db.report.create({
                 data: {
@@ -207,19 +199,12 @@ class ReportRepository {
                     userId: userId
                 }
             });
-            return "thanks for reporting.";
-
+            return 'thanks for reporting.';
+        } else {
+            throw new Error('please chose type for report..');
         }
-        else {
-            throw new Error("please chose type for report..");
-        }
-
-
     }
-    static async deleteAnyReport(payload: {
-        reportId: string
-    }) {
-
+    static async deleteAnyReport(payload: { reportId: string }) {
         const report = await db.report.findUnique({
             where: {
                 id: payload.reportId
@@ -234,11 +219,10 @@ class ReportRepository {
                 id: report.id
             }
         });
-        return "report deleted successflly";
+        return 'report deleted successflly';
     }
 
     static async deleteMyReport(payload: { reportId: string }, userId: string) {
-
         const findMyReport = await db.report.findUnique({
             where: {
                 id: payload.reportId,
@@ -268,7 +252,6 @@ class ReportRepository {
                             userId: userId
                         }
                     }
-
                 ]
             }
         });
@@ -282,15 +265,16 @@ class ReportRepository {
                 id: findMyReport.id
             }
         });
-        return "report deleted successfully"
+        return 'report deleted successfully';
     }
 
-    static async editMyReport(payload: {
-        reportId: string
-        reportMessage: string
-    }, userId: string) {
-
-
+    static async editMyReport(
+        payload: {
+            reportId: string;
+            reportMessage: string;
+        },
+        userId: string
+    ) {
         const findMyReport = await db.report.findUnique({
             where: {
                 id: payload.reportId,
@@ -320,7 +304,6 @@ class ReportRepository {
                             userId: userId
                         }
                     }
-
                 ]
             }
         });
@@ -337,21 +320,12 @@ class ReportRepository {
                 messageReport: payload.reportMessage
             }
         });
-        return "report was updated successfully";
+        return 'report was updated successfully';
     }
-    static async getReport(
-        payload: {
-            page: number;
-            pageSize: number;
-            reportType: any;
-        }
-    ) {
-
+    static async getReport(payload: { page: number; pageSize: number; reportType: any }) {
         const skip = (payload.page - 1) * payload.pageSize;
 
-
         if (payload.reportType === ReportType.USER_PROJECT) {
-
             const labReported = await db.report.findMany({
                 skip: skip,
                 take: payload.pageSize,
@@ -364,27 +338,20 @@ class ReportRepository {
                                     user: true
                                 }
                             }
-
                         }
-
                     }
-
                 }
-
             });
             const totalLabReported = await db.report.count({
                 where: {
                     ReportUserProject: {}
                 }
-
             });
             return {
                 labReported,
                 totalLabReported
-            }
-        }
-        else if (payload.reportType === ReportType.COMMENT_USER_PROJECT) {
-
+            };
+        } else if (payload.reportType === ReportType.COMMENT_USER_PROJECT) {
             const commentLabReported = await db.report.findMany({
                 skip: skip,
                 take: payload.pageSize,
@@ -401,28 +368,20 @@ class ReportRepository {
                                     }
                                 }
                             }
-
                         }
-
                     }
-
                 }
-
             });
             const totalCommentLabReported = await db.report.count({
                 where: {
                     ReportCommentUserProject: {}
                 }
-
             });
             return {
                 commentLabReported,
                 totalCommentLabReported
-            }
-
-        }
-        else if (payload.reportType === ReportType.COMMENT_BLOG) {
-
+            };
+        } else if (payload.reportType === ReportType.COMMENT_BLOG) {
             const commentBlogReported = await db.report.findMany({
                 skip: skip,
                 take: payload.pageSize,
@@ -439,27 +398,20 @@ class ReportRepository {
                                     }
                                 }
                             }
-
                         }
-
                     }
-
                 }
-
             });
             const totalCommentBlogReported = await db.report.count({
                 where: {
                     ReportCommentBlog: {}
                 }
-
             });
             return {
                 commentBlogReported,
                 totalCommentBlogReported
-            }
-        }
-        else if (payload.reportType === ReportType.BLOG) {
-
+            };
+        } else if (payload.reportType === ReportType.BLOG) {
             const blogReported = await db.report.findMany({
                 skip: skip,
                 take: payload.pageSize,
@@ -473,26 +425,19 @@ class ReportRepository {
                                 }
                             }
                         }
-
                     }
-
                 }
-
             });
             const totalBlogReported = await db.report.count({
                 where: {
                     ReportBlog: {}
                 }
-
             });
             return {
                 blogReported,
                 totalBlogReported
-            }
-        }
-        else if (payload.reportType === ReportType.CLASS) {
-
-
+            };
+        } else if (payload.reportType === ReportType.CLASS) {
             const classReported = await db.report.findMany({
                 skip: skip,
                 take: payload.pageSize,
@@ -510,33 +455,24 @@ class ReportRepository {
                                 }
                             }
                         }
-
                     }
-
                 }
-
             });
             const totalClassgReported = await db.report.count({
                 where: {
                     ReportClass: {}
                 }
-
             });
             return {
                 classReported,
                 totalClassgReported
-            }
-
-
+            };
         } else {
-            throw new Error("please chose type for geting result..");
+            throw new Error('please chose type for geting result..');
         }
     }
 
-    static async sendSpamEmailForReport() { }
-
-
-
+    static async sendSpamEmailForReport() {}
 }
 
 export default ReportRepository;

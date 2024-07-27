@@ -5,7 +5,7 @@ export interface AddReportInput {
     commentUserProjectId?: string;
     commentBlogId?: string;
     classId?: string;
-    messageReport: string
+    messageReport: string;
 }
 
 export interface GetReportedInput {
@@ -15,6 +15,5 @@ export interface GetReportedInput {
 }
 
 export interface DeleteAnyReportInput {
-    reportId: string
-
+    reportId: string;
 }
