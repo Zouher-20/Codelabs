@@ -3,6 +3,8 @@ import { buttonType } from '@/app/@types/button';
 const Button = ({ label, style, color, type, disabled, onClick, loading }: buttonType) => {
     const yellow = 'bg-secondary text-black hover:bg-[#a6a643] hover:text-black';
     const basic = ' bg-white text-black hover:bg-base-100 hover:text-white';
+    const outlinError =
+        'bg-base-300 text-red-500 border-1 border-red-500 hover:bg-white hover:text-black ';
     const outlin = 'bg-base-300 text-white border-1 border-white hover:bg-white hover:text-black';
     const fill = 'bg-base-100';
     const error =
@@ -28,7 +30,9 @@ const Button = ({ label, style, color, type, disabled, onClick, loading }: butto
                           ? yellow
                           : color == 'error'
                             ? error
-                            : 'bg-base-200 text-primary')
+                            : color == 'outlinError'
+                              ? outlinError
+                              : 'bg-base-200 text-primary')
             }
         >
             {label}

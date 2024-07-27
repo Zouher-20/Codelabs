@@ -9,12 +9,17 @@ import {
     getRomInClass,
     getUserInClass
 } from '@/app/api/(modules)/class-room/services/action';
+import { addReport } from '@/app/api/(modules)/report/services/action';
+import { ReportType } from '@/app/api/core/constant/enum';
 import { EmptyState } from '@/app/components/page-state/empty';
 import { LoadingState } from '@/app/components/page-state/loading';
 import { ManageState } from '@/app/components/page-state/state_manager';
+import { CustomToaster } from '@/app/components/toast/custom-toaster';
+import { SwalUtil } from '@/app/utils/swal-util';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import CodeLabContainer from '../components/container';
 import ClassDescriptionComponent from '../statistics/components/class-description';
 import RoomListComponent from '../statistics/components/room_list';
@@ -128,6 +133,20 @@ export default function ClassLabPage() {
             console.error('Invalid id or index.');
         }
         return;
+    };
+    const reportLab = async (message: string) => {
+        try {
+            const id = currentParams.get('id') ?? '-1';
+
+            const res = await addReport({
+                classId: id,
+                messageReport: message,
+                reportType: ReportType.CLASS
+            });
+            toast.success(res);
+        } catch (err: any) {
+            toast.error(err.message);
+        }
     };
     return (
         <div className="flex flex-col gap-2">
@@ -247,6 +266,21 @@ export default function ClassLabPage() {
                                             Exit Class
                                         </div>
                                     </li>
+                                    <li
+                                        onClick={() => {
+                                            SwalUtil.showReportModalWithTextArea(value => {
+                                                reportLab(value);
+                                            });
+                                        }}
+                                    >
+                                        <div className="text-red-500">
+                                            <Icon
+                                                icon="solar:masks-bold-duotone"
+                                                className="size-8 text-red-500"
+                                            />
+                                            Report class
+                                        </div>
+                                    </li>
                                 </ul>
                             </div>
                         }
@@ -260,6 +294,7 @@ export default function ClassLabPage() {
                 }}
                 classId={classInfo?.id ?? ''}
             ></ExitClassModal>
+            <CustomToaster />
         </div>
     );
 }

@@ -6,11 +6,17 @@ import { blogType } from '@/app/@types/blog';
 import { userType } from '@/app/@types/user';
 import { getMyInfo } from '@/app/api/(modules)/auth/service/actions';
 import { getDetailsBlog } from '@/app/api/(modules)/blog/services/action';
+import { addReport } from '@/app/api/(modules)/report/services/action';
+import { ReportType } from '@/app/api/core/constant/enum';
 import IconRenderer from '@/app/components/globals/icon';
 import { ManageState } from '@/app/components/page-state/state_manager';
+import { CustomToaster } from '@/app/components/toast/custom-toaster';
+import { SwalUtil } from '@/app/utils/swal-util';
+import { Icon } from '@iconify/react/dist/iconify.js';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 
 const BlogDetails = ({ params }: { params: { id: string } }) => {
     const [blog, setBlog] = useState<blogTableType | null>(null);
@@ -51,7 +57,18 @@ const BlogDetails = ({ params }: { params: { id: string } }) => {
 
         getData();
     }, [params.id]);
-
+    const reportBlog = async (message: string) => {
+        try {
+            const res = await addReport({
+                blogId: params.id,
+                messageReport: message,
+                reportType: ReportType.BLOG
+            });
+            toast.success(res);
+        } catch (err: any) {
+            toast.error(err.message);
+        }
+    };
     return (
         <ManageState
             loading={loading}
@@ -60,13 +77,48 @@ const BlogDetails = ({ params }: { params: { id: string } }) => {
             empty={false}
             loadedState={
                 <div className="relative mx-auto flex flex-col gap-2 px-4 py-8 ">
-                    <div className="flex gap-4 lg:-ml-8">
-                        <Link href="/blogs" className="mb-4 self-center ">
-                            <IconRenderer fontSize={24} icon="solar:arrow-left-linear" />
-                        </Link>
-                        <h1 className="slef-center mb-6 flex gap-2 text-4xl font-bold text-white">
-                            {blog?.title}
-                        </h1>
+                    <div className="flex justify-between gap-4 lg:-ml-8">
+                        <div className="flex">
+                            <Link href="/blogs" className="mb-4 self-center ">
+                                <IconRenderer fontSize={24} icon="solar:arrow-left-linear" />
+                            </Link>
+                            <h1 className="slef-center mb-6 flex gap-2 text-4xl font-bold text-white">
+                                {blog?.title}
+                            </h1>
+                        </div>
+                        <div className="dropdown dropdown-left">
+                            <div
+                                tabIndex={0}
+                                role="button"
+                                className="flex cursor-pointer items-center gap-2 rounded-btn hover:opacity-85"
+                            >
+                                <Icon
+                                    icon="solar:menu-dots-bold-duotone"
+                                    className="size-10 text-primary"
+                                />
+                            </div>
+
+                            <ul
+                                tabIndex={0}
+                                className="menu dropdown-content z-[1] mt-4 w-52 rounded-box bg-base-100 p-2 shadow"
+                            >
+                                <li
+                                    onClick={() => {
+                                        SwalUtil.showReportModalWithTextArea(value => {
+                                            reportBlog(value);
+                                        });
+                                    }}
+                                >
+                                    <div className="text-red-500">
+                                        <Icon
+                                            icon="solar:masks-bold-duotone"
+                                            className="size-8 text-red-500"
+                                        />
+                                        Report Blog
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                     <div className="flex gap-4">
                         {blog?.user.userImage ? (
@@ -130,6 +182,7 @@ const BlogDetails = ({ params }: { params: { id: string } }) => {
                             className="mx-auto lg:max-w-[51vw]"
                         ></div>
                     )}
+                    <CustomToaster />
                 </div>
             }
         />

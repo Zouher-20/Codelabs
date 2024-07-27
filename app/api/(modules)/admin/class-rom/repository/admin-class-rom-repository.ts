@@ -1,18 +1,11 @@
-import { db } from "@/app/api/core/db/db";
-import { NAMEPLAN } from "@prisma/client";
+import { db } from '@/app/api/core/db/db';
+import { NAMEPLAN } from '@prisma/client';
 
 class AdminClassRoomRepository {
+    //class rom by id
+    //student
 
-
-    //class rom by id 
-    //student 
-
-
-    static async getRoomAndTeacherDetailsForAdmin(
-        payload: {
-            romId: string;
-        },
-    ) {
+    static async getRoomAndTeacherDetailsForAdmin(payload: { romId: string }) {
         const myClass = await db.classRom.findFirst({
             where: {
                 AND: [
@@ -22,7 +15,7 @@ class AdminClassRoomRepository {
                                 id: payload.romId
                             }
                         }
-                    },
+                    }
                 ]
             }
         });
@@ -56,12 +49,7 @@ class AdminClassRoomRepository {
 
         return myRom;
     }
-    static async getClassRomStatisticsForAdmin(
-        payload: {
-            classRomId: string;
-        },
-    ) {
-
+    static async getClassRomStatisticsForAdmin(payload: { classRomId: string }) {
         const teacher = await db.memberClass.findFirst({
             where: {
                 classRomId: payload.classRomId,
@@ -200,9 +188,12 @@ class AdminClassRoomRepository {
             totalCount: totalCount
         };
     }
-    static async getUserInClassForAdmin(
-        payload: { userPage: number; userPageSize: number; classRomId: string, searchWord?: string },
-    ) {
+    static async getUserInClassForAdmin(payload: {
+        userPage: number;
+        userPageSize: number;
+        classRomId: string;
+        searchWord?: string;
+    }) {
         const userSkip = (payload.userPage - 1) * payload.userPageSize;
         const myClassRom = await db.classRom.findUnique({
             where: {
@@ -218,7 +209,7 @@ class AdminClassRoomRepository {
             where: {
                 classRomId: myClassRom.id,
                 user: {
-                    username: { contains: payload.searchWord, mode: "insensitive" }
+                    username: { contains: payload.searchWord, mode: 'insensitive' }
                 }
             },
             take: payload.userPageSize,
@@ -231,7 +222,7 @@ class AdminClassRoomRepository {
             where: {
                 classRomId: myClassRom.id,
                 user: {
-                    username: { contains: payload.searchWord, mode: "insensitive" }
+                    username: { contains: payload.searchWord, mode: 'insensitive' }
                 }
             }
         });
@@ -241,18 +232,16 @@ class AdminClassRoomRepository {
             countMemberClassInClassRom: countMemberClassInClassRom
         };
     }
-    static async getRomInClassForAdmin(
-        payload: {
-            romePage: number;
-            romPageSize: number;
-            classRomId: string;
-            searchWord?: string
-        },
-    ) {
+    static async getRomInClassForAdmin(payload: {
+        romePage: number;
+        romPageSize: number;
+        classRomId: string;
+        searchWord?: string;
+    }) {
         const romSkip = (payload.romePage - 1) * payload.romPageSize;
         const myClassRom = await db.classRom.findUnique({
             where: {
-                id: payload.classRomId,
+                id: payload.classRomId
             }
         });
 
@@ -263,8 +252,7 @@ class AdminClassRoomRepository {
         const RomInClassRom = await db.rom.findMany({
             where: {
                 classRomId: myClassRom.id,
-                name: { contains: payload.searchWord, mode: "insensitive" }
-
+                name: { contains: payload.searchWord, mode: 'insensitive' }
             },
 
             take: payload.romPageSize,
@@ -273,8 +261,7 @@ class AdminClassRoomRepository {
         const romCountInClassRom = await db.rom.count({
             where: {
                 classRomId: myClassRom.id,
-                name: { contains: payload.searchWord, mode: "insensitive" }
-
+                name: { contains: payload.searchWord, mode: 'insensitive' }
             }
         });
 
@@ -283,14 +270,10 @@ class AdminClassRoomRepository {
             romCountInClassRom: romCountInClassRom
         };
     }
-    static async getClassRomByIdForAdmin(
-        payload: {
-            classRomId: string;
-        },
-    ) {
+    static async getClassRomByIdForAdmin(payload: { classRomId: string }) {
         const myClassRom = await db.classRom.findUnique({
             where: {
-                id: payload.classRomId,
+                id: payload.classRomId
             }
         });
 
@@ -302,11 +285,5 @@ class AdminClassRoomRepository {
             myClassRom
         };
     }
-
-
-
-
-
-
 }
 export default AdminClassRoomRepository;

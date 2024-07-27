@@ -7,7 +7,11 @@ import {
     deleteMyCommentInBlog,
     getCommentBlog
 } from '@/app/api/(modules)/blog/services/action';
+import { addReport } from '@/app/api/(modules)/report/services/action';
+import { ReportType } from '@/app/api/core/constant/enum';
 import IconRenderer from '@/app/components/globals/icon';
+import { SwalUtil } from '@/app/utils/swal-util';
+import { Icon } from '@iconify/react/dist/iconify.js';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -77,6 +81,18 @@ const Comments = ({
         }
         setIsOpen(!isOpen);
     }
+    const reportComment = async ({ message, id }: { message: string; id: string }) => {
+        try {
+            const res = await addReport({
+                commentBlogId: id,
+                messageReport: message,
+                reportType: ReportType.COMMENT_BLOG
+            });
+            toast.success(res);
+        } catch (err: any) {
+            toast.error(err.message);
+        }
+    };
     return (
         <div>
             <span>
@@ -155,8 +171,8 @@ const Comments = ({
                                                     {comment.user.username.slice(0, 1)}
                                                 </div>
                                             )}
-                                            <div className="flex flex-col gap-1 self-center ">
-                                                <div className="flex gap-2">
+                                            <div className="flex w-full flex-col gap-1 self-center">
+                                                <div className="flex w-full justify-between gap-2">
                                                     <p
                                                         onClick={() => {
                                                             route.push(
@@ -167,17 +183,78 @@ const Comments = ({
                                                     >
                                                         {comment.user.username}
                                                     </p>
-                                                    {(comment.user.id == user?.id || isAdmin) && (
-                                                        <IconRenderer
-                                                            icon={'solar:trash-bin-2-bold-duotone'}
-                                                            width={20}
-                                                            height={24}
-                                                            className={'cursor-pointer text-error'}
-                                                            onClick={() =>
-                                                                deleteCommentHandler(comment.id)
-                                                            }
-                                                        />
-                                                    )}
+                                                    <div className="dropdown dropdown-left">
+                                                        <div
+                                                            tabIndex={0}
+                                                            role="button"
+                                                            className="flex cursor-pointer items-center gap-2 rounded-btn hover:opacity-85"
+                                                        >
+                                                            <Icon
+                                                                icon="solar:menu-dots-bold-duotone"
+                                                                className="size-10 text-primary"
+                                                            />
+                                                        </div>
+
+                                                        <ul
+                                                            tabIndex={0}
+                                                            className="menu dropdown-content z-[1] mt-4 w-52 rounded-box bg-base-100 p-2 shadow"
+                                                        >
+                                                            {(comment.user.id == user?.id ||
+                                                                isAdmin) && (
+                                                                <li
+                                                                    onClick={() => {
+                                                                        if (document) {
+                                                                            (
+                                                                                document.getElementById(
+                                                                                    'Comments'
+                                                                                ) as HTMLFormElement
+                                                                            )?.close();
+                                                                        }
+                                                                        SwalUtil.showConfirm(() => {
+                                                                            deleteCommentHandler(
+                                                                                comment.id
+                                                                            );
+                                                                        });
+                                                                    }}
+                                                                >
+                                                                    <div className="text-red-500">
+                                                                        <Icon
+                                                                            icon="solar:trash-bin-2-bold-duotone"
+                                                                            className="size-8 text-red-500"
+                                                                        />
+                                                                        Delete Comment
+                                                                    </div>
+                                                                </li>
+                                                            )}
+                                                            <li
+                                                                onClick={() => {
+                                                                    if (document) {
+                                                                        (
+                                                                            document.getElementById(
+                                                                                'Comments'
+                                                                            ) as HTMLFormElement
+                                                                        )?.close();
+                                                                    }
+                                                                    SwalUtil.showReportModalWithTextArea(
+                                                                        value => {
+                                                                            reportComment({
+                                                                                id: comment.id,
+                                                                                message: value
+                                                                            });
+                                                                        }
+                                                                    );
+                                                                }}
+                                                            >
+                                                                <div className="text-red-500">
+                                                                    <Icon
+                                                                        icon="solar:masks-bold-duotone"
+                                                                        className="size-8 text-red-500"
+                                                                    />
+                                                                    Report Comment
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
                                                 </div>
                                                 <p className="pr-2 text-lg text-white">
                                                     {comment.comment}
