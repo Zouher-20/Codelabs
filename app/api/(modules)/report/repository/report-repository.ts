@@ -322,29 +322,33 @@ class ReportRepository {
         });
         return 'report was updated successfully';
     }
-    static async getReport(payload: { page: number; pageSize: number; reportType: any }) {
+    static async getReport(payload: { page: number; pageSize: number; reportType: any, searchWord?: string }) {
         const skip = (payload.page - 1) * payload.pageSize;
 
         if (payload.reportType === ReportType.USER_PROJECT) {
-            const labReported = await db.report.findMany({
+            const labReported = await db.reportUserProject.findMany({
                 skip: skip,
                 take: payload.pageSize,
+                where: {
+                    report: {
+                        messageReport: { contains: payload.searchWord, mode: "insensitive" }
+                    }
+                },
                 include: {
-                    ReportUserProject: {
+                    user: true,
+                    userProject: {
                         include: {
-                            user: true,
-                            userProject: {
-                                include: {
-                                    user: true
-                                }
-                            }
+                            user: true
                         }
                     }
+
                 }
             });
-            const totalLabReported = await db.report.count({
+            const totalLabReported = await db.reportUserProject.count({
                 where: {
-                    ReportUserProject: {}
+                    report: {
+                        messageReport: { contains: payload.searchWord, mode: "insensitive" }
+                    }
                 }
             });
             return {
@@ -352,29 +356,33 @@ class ReportRepository {
                 totalLabReported
             };
         } else if (payload.reportType === ReportType.COMMENT_USER_PROJECT) {
-            const commentLabReported = await db.report.findMany({
+            const commentLabReported = await db.reportCommentUserProject.findMany({
                 skip: skip,
                 take: payload.pageSize,
+                where: {
+                    report: {
+                        messageReport: { contains: payload.searchWord, mode: "insensitive" }
+                    }
+                },
                 include: {
-                    ReportCommentUserProject: {
+                    user: true,
+                    comment: {
                         include: {
-                            user: true,
-                            comment: {
+                            userproject: {
                                 include: {
-                                    userproject: {
-                                        include: {
-                                            user: true
-                                        }
-                                    }
+                                    user: true
                                 }
                             }
                         }
+
                     }
                 }
             });
-            const totalCommentLabReported = await db.report.count({
+            const totalCommentLabReported = await db.reportCommentUserProject.count({
                 where: {
-                    ReportCommentUserProject: {}
+                    report: {
+                        messageReport: { contains: payload.searchWord, mode: "insensitive" }
+                    }
                 }
             });
             return {
@@ -382,29 +390,33 @@ class ReportRepository {
                 totalCommentLabReported
             };
         } else if (payload.reportType === ReportType.COMMENT_BLOG) {
-            const commentBlogReported = await db.report.findMany({
+            const commentBlogReported = await db.reportCommentBlog.findMany({
                 skip: skip,
                 take: payload.pageSize,
+                where: {
+                    report: {
+                        messageReport: { contains: payload.searchWord, mode: "insensitive" }
+                    }
+                },
                 include: {
-                    ReportCommentBlog: {
+                    user: true,
+                    comment: {
                         include: {
-                            user: true,
-                            comment: {
+                            blog: {
                                 include: {
-                                    blog: {
-                                        include: {
-                                            user: true
-                                        }
-                                    }
+                                    user: true
                                 }
                             }
                         }
+
                     }
                 }
             });
-            const totalCommentBlogReported = await db.report.count({
+            const totalCommentBlogReported = await db.reportCommentBlog.count({
                 where: {
-                    ReportCommentBlog: {}
+                    report: {
+                        messageReport: { contains: payload.searchWord, mode: "insensitive" }
+                    }
                 }
             });
             return {
@@ -412,9 +424,149 @@ class ReportRepository {
                 totalCommentBlogReported
             };
         } else if (payload.reportType === ReportType.BLOG) {
-            const blogReported = await db.report.findMany({
+            const blogReported = await db.reportBlog.findMany({
                 skip: skip,
                 take: payload.pageSize,
+                where: {
+                    report: {
+                        messageReport: { contains: payload.searchWord, mode: "insensitive" }
+                    },
+                },
+                include: {
+                    user: true,
+                    blog: {
+                        include: {
+                            user: true
+                        }
+                    }
+                }
+            });
+            const totalBlogReported = await db.reportBlog.count({
+                where: {
+                    report: {
+                        messageReport: { contains: payload.searchWord, mode: "insensitive" }
+                    }
+                }
+            });
+            return {
+                blogReported,
+                totalBlogReported
+            };
+        } else if (payload.reportType === ReportType.CLASS) {
+            const classReported = await db.reportClass.findMany({
+                skip: skip,
+                take: payload.pageSize,
+                where: {
+                    report: {
+                        messageReport: { contains: payload.searchWord, mode: "insensitive" }
+                    }
+                },
+                include: {
+                    user: true,
+                    classRom: {
+                        include: {
+                            MemberClass: {
+                                include: {
+                                    user: true
+                                }
+                            }
+                        }
+                    }
+
+                }
+            });
+            const totalClassgReported = await db.reportClass.count({
+                where: {
+                    report: {
+                        messageReport: { contains: payload.searchWord, mode: "insensitive" }
+                    }
+                }
+            });
+            return {
+                classReported,
+                totalClassgReported
+            };
+        } else {
+            throw new Error('please chose type for geting result..');
+        }
+    }
+
+    static async getReportById(payload: { reportId: string }) {
+
+        let result;
+
+        const report = await db.report.findUnique({
+            where: {
+                id: payload.reportId
+            },
+            include: {
+                ReportBlog: {
+                    include: {
+                        user: true,
+                        blog: {
+                            include: {
+                                user: true
+                            }
+                        },
+                    },
+
+                },
+                ReportCommentBlog: {
+                    include: {
+                        comment: {
+                            include: {
+                                blog: true,
+                                user: true
+                            }
+                        },
+                        user: true
+                    }
+                },
+                ReportUserProject: {
+                    include: {
+                        user: true,
+                        userProject: {
+                            include: {
+                                lab: true,
+                                user: true
+                            }
+                        }
+                    }
+                },
+                ReportClass: {
+                    include: {
+                        user: true,
+                        classRom: {
+                            include: {
+                                MemberClass: {
+                                    include: {
+                                        user: true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                ReportCommentUserProject: {
+                    include: {
+                        comment: {
+                            include: {
+                                user: true,
+                                userproject: true
+                            }
+                        },
+                        user: true
+                    },
+
+                }
+            }
+        });
+
+        if (report?.ReportBlog) {
+            return     result = await db.report.findUnique({
+                where: {
+                    id: report?.id
+                },
                 include: {
                     ReportBlog: {
                         include: {
@@ -423,24 +575,83 @@ class ReportRepository {
                                 include: {
                                     user: true
                                 }
-                            }
+                            },
+                        },
+
+                    },
+                }
+            });
+        }
+        else if (report?.ReportCommentBlog) {
+
+            return     result = await db.report.findUnique({
+                where: {
+                    id: report?.id
+                },
+                include: {
+                    ReportCommentBlog: {
+                        include: {
+                            comment: {
+                                include: {
+                                    blog: true,
+                                    user: true
+                                }
+                            },
+                            user: true
                         }
+                    },
+                }
+            });
+        }
+        else if (report?.ReportCommentUserProject) {
+
+            return     result = await db.report.findUnique({
+                where: {
+                    id: report?.id
+                },
+                include: {
+                    ReportCommentUserProject: {
+                        include: {
+                            comment: {
+                                include: {
+                                    user: true,
+                                    userproject: true
+                                }
+                            },
+                            user: true
+                        },
+
                     }
                 }
             });
-            const totalBlogReported = await db.report.count({
+        }
+        else if (report?.ReportUserProject) {
+
+            return   result = await db.report.findUnique({
                 where: {
-                    ReportBlog: {}
+                    id: report?.id
+                },
+                include: {
+                    ReportUserProject: {
+                        include: {
+                            user: true,
+                            userProject: {
+                                include: {
+                                    lab: true,
+                                    user: true
+                                }
+                            }
+                        }
+                    },
                 }
             });
-            return {
-                blogReported,
-                totalBlogReported
-            };
-        } else if (payload.reportType === ReportType.CLASS) {
-            const classReported = await db.report.findMany({
-                skip: skip,
-                take: payload.pageSize,
+        }
+        else if (report?.ReportClass) {
+
+          return  result = await db.report.findUnique({
+                where: {
+                    id: report?.id
+                },
                 include: {
                     ReportClass: {
                         include: {
@@ -455,24 +666,17 @@ class ReportRepository {
                                 }
                             }
                         }
-                    }
+                    },
                 }
             });
-            const totalClassgReported = await db.report.count({
-                where: {
-                    ReportClass: {}
-                }
-            });
-            return {
-                classReported,
-                totalClassgReported
-            };
-        } else {
-            throw new Error('please chose type for geting result..');
         }
+        else {
+            return "report not found";
+        }
+
     }
 
-    static async sendSpamEmailForReport() {}
+    static async sendSpamEmailForReport() { }
 }
 
 export default ReportRepository;

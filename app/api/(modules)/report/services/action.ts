@@ -3,7 +3,7 @@
 import { ROLE } from '@prisma/client';
 import { getSession } from '../../auth/service/actions';
 import ReportRepository from '../repository/report-repository';
-import { AddReportInput, DeleteAnyReportInput, GetReportedInput } from '../type';
+import { AddReportInput, DeleteAnyReportInput, getReportByIdInput, GetReportedInput } from '../type';
 
 
 export const addReport = async (
@@ -39,6 +39,21 @@ export const getReport = async (
     const role = session?.role;
     if (role === ROLE.ADMIN) {
         return ReportRepository.getReport(payload);
+
+    }
+    else {
+        throw new Error(" you are not admin");
+    }
+
+};
+
+export const getReportById = async (
+    payload: getReportByIdInput
+) => {
+    const session = await getSession();
+    const role = session?.role;
+    if (role === ROLE.ADMIN) {
+        return ReportRepository.getReportById(payload);
 
     }
     else {
