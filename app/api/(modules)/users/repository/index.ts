@@ -84,11 +84,11 @@ class UsersRepository {
                 }
             }
         });
-        const chellangeCount = await db.challengeParticipation.count({
-            where: {
-                userId: userId
-            }
-        });
+        // const chellangeCount = await db.challengeParticipation.count({
+        //     where: {
+        //         userId: userId
+        //     }
+        // });
 
         const projectCount = await db.userProject.count({
             where: {
@@ -103,7 +103,6 @@ class UsersRepository {
         return {
             projectCount,
             classCount,
-            chellangeCount,
             blogCount
         };
     }
@@ -111,15 +110,15 @@ class UsersRepository {
     static async create(payload: CreateUserInput, planId?: string) {
         const requestedPlan = GlobalUtils.isNullOrUndefined(planId)
             ? await db.plan.findFirst({
-                  where: {
-                      price: -1
-                  }
-              })
+                where: {
+                    price: -1
+                }
+            })
             : await db.plan.findUnique({
-                  where: {
-                      id: planId
-                  }
-              });
+                where: {
+                    id: planId
+                }
+            });
         if (!requestedPlan) throw new Error('Cannot find requested plan');
         return await db.user.create({
             data: {
