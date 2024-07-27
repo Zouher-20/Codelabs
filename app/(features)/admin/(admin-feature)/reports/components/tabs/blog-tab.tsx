@@ -20,6 +20,7 @@ const BlogsTab = () => {
     useEffect(() => {
         var pageNumber = Number(params.get('id') ?? '1');
         updateCurrentPage(pageNumber);
+        getBlogsReports({ newSearchWord: '', page: currentPage });
     }, []);
     const getBlogsReports = async ({
         newSearchWord,
@@ -43,6 +44,7 @@ const BlogsTab = () => {
                     };
                 }) ?? []
             );
+            setTotalPageCount(res.totalBlogReported ?? 0);
         } catch (e: any) {
             setError(e.message);
             toast.error(e.message);
@@ -56,7 +58,14 @@ const BlogsTab = () => {
     };
     return (
         <div>
-            <ReportsViewHeader onFieldChanged={() => {}} title="Blogs" searchWord="" />
+            <ReportsViewHeader
+                onFieldChanged={value => {
+                    setSearchWord(value);
+                    getBlogsReports({ page: currentPage, newSearchWord: value });
+                }}
+                title="Blogs"
+                searchWord={searchWord}
+            />
             <ManageState
                 empty={blogs.length == 0}
                 error={error}

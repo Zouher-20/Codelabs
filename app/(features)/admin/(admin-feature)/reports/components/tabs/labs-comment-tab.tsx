@@ -1,3 +1,5 @@
+import { getReport } from '@/app/api/(modules)/report/services/action';
+import { ReportType } from '@/app/api/core/constant/enum';
 import { ManageState } from '@/app/components/page-state/state_manager';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -20,6 +22,7 @@ const LabsCommentCommentsTab = () => {
     useEffect(() => {
         var pageNumber = Number(params.get('id') ?? '1');
         updateCurrentPage(pageNumber);
+        getLabsCommentReports({ newSearchWord: '', page: pageNumber });
     }, []);
     const getLabsCommentReports = async ({
         newSearchWord,
@@ -31,6 +34,24 @@ const LabsCommentCommentsTab = () => {
         setLoading(true);
         setError(null);
         try {
+            const res = await getReport({
+                page: page,
+                pageSize: 10,
+                reportType: ReportType.COMMENT_USER_PROJECT
+            });
+
+            setLabsComment(
+                res.commentLabReported?.map(e => {
+                    return {
+                        commentId: e.ReportCommentUserProject?.commentUserProjectId ?? '',
+                        comment: e.ReportCommentUserProject?.comment.comment ?? '',
+                        id: e.ReportCommentUserProject?.id ?? '',
+                        text: e.messageReport ?? '',
+                        username: e.ReportCommentUserProject?.user.username ?? ''
+                    };
+                }) ?? []
+            );
+            setTotalPageCount(res.totalCommentLabReported ?? 0);
         } catch (e: any) {
             setError(e.message);
             toast.error(e.message);
@@ -44,7 +65,14 @@ const LabsCommentCommentsTab = () => {
     };
     return (
         <div>
-            <ReportsViewHeader onFieldChanged={() => {}} title="Labs Comments" searchWord="" />
+            <ReportsViewHeader
+                onFieldChanged={value => {
+                    setSearchWord(value);
+                    getLabsCommentReports({ newSearchWord: value, page: currentPage });
+                }}
+                title="Labs Comments"
+                searchWord={searchWord}
+            />
             <ManageState
                 empty={labsComment.length == 0}
                 error={error}

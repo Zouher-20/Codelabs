@@ -1,3 +1,5 @@
+import { getReport } from '@/app/api/(modules)/report/services/action';
+import { ReportType } from '@/app/api/core/constant/enum';
 import { ManageState } from '@/app/components/page-state/state_manager';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -18,6 +20,7 @@ const LabsTab = () => {
     useEffect(() => {
         var pageNumber = Number(params.get('id') ?? '1');
         updateCurrentPage(pageNumber);
+        getLabsReports({ newSearchWord: '', page: pageNumber });
     }, []);
     const getLabsReports = async ({
         newSearchWord,
@@ -29,6 +32,24 @@ const LabsTab = () => {
         setLoading(true);
         setError(null);
         try {
+            const res = await getReport({
+                page: page,
+                pageSize: 10,
+                reportType: ReportType.USER_PROJECT
+            });
+
+            setLabs(
+                res.labReported?.map(e => {
+                    return {
+                        description: e.ReportUserProject?.userProject.description ?? '',
+                        id: e.ReportUserProject?.id ?? '',
+                        labId: e.ReportUserProject?.userprojectId ?? '',
+                        name: e.ReportUserProject?.user.username ?? '',
+                        text: e.messageReport ?? ''
+                    };
+                }) ?? []
+            );
+            setTotalPageCount(res.totalLabReported ?? 0);
         } catch (e: any) {
             setError(e.message);
             toast.error(e.message);
@@ -42,7 +63,17 @@ const LabsTab = () => {
     };
     return (
         <div>
-            <ReportsViewHeader onFieldChanged={() => {}} title="Labs" searchWord="" />
+            <ReportsViewHeader
+                onFieldChanged={value => {
+                    setSearchWord(value);
+                    getLabsReports({
+                        newSearchWord: value,
+                        page: currentPage
+                    });
+                }}
+                title="Labs"
+                searchWord={searchWord}
+            />
             <ManageState
                 empty={labs.length == 0}
                 error={error}

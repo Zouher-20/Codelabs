@@ -1,3 +1,5 @@
+import { getReport } from '@/app/api/(modules)/report/services/action';
+import { ReportType } from '@/app/api/core/constant/enum';
 import { ManageState } from '@/app/components/page-state/state_manager';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -18,6 +20,7 @@ const ClassTab = () => {
     useEffect(() => {
         var pageNumber = Number(params.get('id') ?? '1');
         updateCurrentPage(pageNumber);
+        getClasssReports({ newSearchWord: '', page: pageNumber });
     }, []);
     const getClasssReports = async ({
         newSearchWord,
@@ -29,6 +32,24 @@ const ClassTab = () => {
         setLoading(true);
         setError(null);
         try {
+            const res = await getReport({
+                page: page,
+                pageSize: 10,
+                reportType: ReportType.CLASS
+            });
+
+            setClasss(
+                res.classReported?.map(e => {
+                    return {
+                        classname: e.ReportClass?.classRom.name ?? '',
+                        id: e.ReportClass?.id ?? '',
+                        text: e.messageReport ?? '',
+                        userId: e.ReportClass?.userId ?? '',
+                        username: e.ReportClass?.user.username ?? ''
+                    };
+                }) ?? []
+            );
+            setTotalPageCount(res.totalClassgReported ?? 0);
         } catch (e: any) {
             setError(e.message);
             toast.error(e.message);
@@ -43,7 +64,14 @@ const ClassTab = () => {
 
     return (
         <div>
-            <ReportsViewHeader onFieldChanged={() => {}} title="Classs" searchWord="" />
+            <ReportsViewHeader
+                onFieldChanged={value => {
+                    setSearchWord(value);
+                    getClasssReports({ newSearchWord: value, page: currentPage });
+                }}
+                title="Classs"
+                searchWord={searchWord}
+            />
             <ManageState
                 empty={classes.length == 0}
                 error={error}

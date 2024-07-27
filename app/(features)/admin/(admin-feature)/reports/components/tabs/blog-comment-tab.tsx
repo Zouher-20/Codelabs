@@ -1,3 +1,5 @@
+import { getReport } from '@/app/api/(modules)/report/services/action';
+import { ReportType } from '@/app/api/core/constant/enum';
 import { ManageState } from '@/app/components/page-state/state_manager';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -20,6 +22,8 @@ const BlogsCommentCommentsTab = () => {
     useEffect(() => {
         var pageNumber = Number(params.get('id') ?? '1');
         updateCurrentPage(pageNumber);
+        getBlogsCommentReports;
+        getBlogsCommentReports({ newSearchWord: '', page: pageNumber });
     }, []);
     const getBlogsCommentReports = async ({
         newSearchWord,
@@ -31,6 +35,24 @@ const BlogsCommentCommentsTab = () => {
         setLoading(true);
         setError(null);
         try {
+            const res = await getReport({
+                page: page,
+                pageSize: 10,
+                reportType: ReportType.COMMENT_BLOG
+            });
+
+            setBlogsComment(
+                res.commentBlogReported?.map(e => {
+                    return {
+                        commentId: e.ReportCommentBlog?.commentId ?? '',
+                        comment: e.ReportCommentBlog?.comment.comment ?? '',
+                        id: e.ReportCommentBlog?.id ?? '',
+                        text: e.messageReport ?? '',
+                        username: e.ReportCommentBlog?.user.username ?? ''
+                    };
+                }) ?? []
+            );
+            setTotalPageCount(res.totalCommentBlogReported ?? 0);
         } catch (e: any) {
             setError(e.message);
             toast.error(e.message);
@@ -44,7 +66,14 @@ const BlogsCommentCommentsTab = () => {
     };
     return (
         <div>
-            <ReportsViewHeader onFieldChanged={() => {}} title="Blogs Comments" searchWord="" />
+            <ReportsViewHeader
+                onFieldChanged={value => {
+                    setSearchWord(value);
+                    getBlogsCommentReports({ newSearchWord: value, page: currentPage });
+                }}
+                title="Blogs Comments"
+                searchWord={searchWord}
+            />
             <ManageState
                 empty={blogsComment.length == 0}
                 error={error}
