@@ -8,19 +8,21 @@ import { InteractionType } from '@/app/@types/Interaction';
 import { FeedbackType } from '@/app/@types/feedback';
 import { tag } from '@/app/@types/tag';
 import { getSession } from '@/app/api/(modules)/auth/service/actions';
+import { addReport } from '@/app/api/(modules)/report/services/action';
 import {
     addAndDeleteStarUserProjectLab,
     deleteMyUserProjectLab,
     getCommentUserProjectLab,
     getDetailsUserProjectLab
 } from '@/app/api/(modules)/user-project/services/action';
+import { ReportType } from '@/app/api/core/constant/enum';
+import Dropdown from '@/app/components/drop_down';
 import Interaction from '@/app/components/globals/lab/interaction';
 import UserAvatar from '@/app/components/globals/user-avatar';
 import { ManageState } from '@/app/components/page-state/state_manager';
 import { CustomToaster } from '@/app/components/toast/custom-toaster';
 import { interactions } from '@/app/constants/interactions';
 import { SwalUtil } from '@/app/utils/swal-util';
-import { Icon } from '@iconify/react/dist/iconify.js';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -146,88 +148,6 @@ export default function LabDetails() {
             toast.error(e.message);
         }
     };
-
-    const dropdown = () => {
-        return (
-            <div className="dropdown dropdown-left">
-                <div
-                    tabIndex={0}
-                    role="button"
-                    className="flex cursor-pointer items-center gap-2 rounded-btn hover:opacity-85"
-                >
-                    <Icon icon="solar:menu-dots-bold-duotone" className="size-10 text-primary" />
-                </div>
-
-                <ul
-                    tabIndex={0}
-                    className="menu dropdown-content z-[1] mt-4 w-52 rounded-box bg-base-100 p-2 shadow"
-                >
-                    <li
-                        onClick={() => {
-                            if (document) {
-                                (
-                                    document.getElementById('clone-lab-modal') as HTMLFormElement
-                                )?.showModal();
-                            }
-                        }}
-                    >
-                        <div>
-                            <Icon icon="solar:dna-bold-duotone" className="size-6  text-primary" />
-                            Clone lab
-                        </div>
-                    </li>
-                    <span className="divider mx-8 my-0" />
-                    <li
-                        onClick={() => {
-                            if (document) {
-                                (
-                                    document.getElementById('clone-lab-to-class') as HTMLFormElement
-                                )?.showModal();
-                            }
-                        }}
-                    >
-                        <div>
-                            <Icon
-                                icon="solar:case-round-bold-duotone"
-                                className="size-6 text-primary"
-                            />
-                            Clone to class
-                        </div>
-                    </li>
-                    {myId == lab?.user.id && <span className="divider mx-8 my-0" />}
-                    {myId == lab?.user.id && (
-                        <li
-                            onClick={() => {
-                                SwalUtil.showConfirm(() => {
-                                    deleteMyLab();
-                                });
-                            }}
-                        >
-                            <div>
-                                <Icon
-                                    icon="solar:trash-bin-2-bold-duotone"
-                                    className="size-6  text-red-500"
-                                />
-                                Delete Lab
-                            </div>
-                        </li>
-                    )}
-                    {myId == lab?.user.id && <span className="divider mx-8 my-0" />}
-                    {myId == lab?.user.id && (
-                        <li onClick={() => {}}>
-                            <div>
-                                <Icon
-                                    icon="solar:settings-broken"
-                                    className="size-6 text-primary"
-                                />
-                                Edit Lab
-                            </div>
-                        </li>
-                    )}
-                </ul>
-            </div>
-        );
-    };
     const onCloneClicked = async (values: {
         name: string;
         description: string;
@@ -291,6 +211,21 @@ export default function LabDetails() {
             toast.error(err.message);
         }
     };
+    const reportLab = async (message: string) => {
+        try {
+            const id = params.get('id') ?? '';
+
+            const res = await addReport({
+                userProjectId: id,
+                messageReport: message,
+                reportType: ReportType.USER_PROJECT
+            });
+            toast.success(res);
+        } catch (err: any) {
+            toast.error(err.message);
+        }
+    };
+
     return (
         <div className="flex min-h-[550px] flex-col gap-2 p-3">
             <ManageState
@@ -305,7 +240,73 @@ export default function LabDetails() {
                             <div className="flex w-full flex-col justify-center gap-5 p-5">
                                 <div className="flex items-center justify-between">
                                     <h1>{lab?.name}</h1>
-                                    {dropdown()}
+                                    <Dropdown
+                                        items={[
+                                            {
+                                                color: 'text-primary',
+                                                icon: 'solar:dna-bold-duotone',
+                                                onClick: () => {
+                                                    if (document) {
+                                                        (
+                                                            document.getElementById(
+                                                                'clone-lab-modal'
+                                                            ) as HTMLFormElement
+                                                        )?.showModal();
+                                                    }
+                                                },
+                                                text: 'Clone lab',
+                                                withSpreator: false
+                                            },
+                                            {
+                                                color: 'text-primary',
+                                                icon: 'solar:case-round-bold-duotone',
+                                                onClick: () => {
+                                                    if (document) {
+                                                        (
+                                                            document.getElementById(
+                                                                'clone-lab-to-class'
+                                                            ) as HTMLFormElement
+                                                        )?.showModal();
+                                                    }
+                                                },
+                                                text: 'Clone lab to class'
+                                            },
+                                            {
+                                                color: 'text-red-500',
+                                                icon: 'solar:masks-bold-duotone',
+                                                onClick: () => {
+                                                    SwalUtil.showReportModalWithTextArea(
+                                                        (text: string) => {
+                                                            reportLab(text);
+                                                        }
+                                                    );
+                                                },
+                                                text: 'Report lab'
+                                            },
+                                            {
+                                                color: 'text-red-500',
+                                                icon: 'solar:trash-bin-2-bold-duotone',
+                                                onClick: () => {
+                                                    SwalUtil.showConfirm(() => {
+                                                        deleteMyLab();
+                                                    });
+                                                },
+                                                show: myId === lab?.user.id,
+                                                text: 'Delete Lab'
+                                            },
+                                            {
+                                                show: myId === lab?.user.id,
+                                                color: 'text-primary',
+                                                icon: 'solar:settings-broken',
+                                                onClick: () => {
+                                                    SwalUtil.showConfirm(() => {
+                                                        deleteMyLab();
+                                                    });
+                                                },
+                                                text: 'Edit Lab'
+                                            }
+                                        ]}
+                                    />
                                 </div>
                                 <article className="line-clamp-5 text-wrap text-sm">
                                     {lab?.description}

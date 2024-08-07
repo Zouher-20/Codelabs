@@ -34,7 +34,7 @@ export const addTag = async (tag: string) => {
         const session = await getSession();
 
         if (session?.role === ROLE.ADMIN) {
-            return AdminRepository.addTag(tag, null);
+            return AdminRepository.addTag(tag);
         } else {
             throw new Error('Access denied: You are not an admin.');
         }
@@ -83,19 +83,7 @@ export const getChallengeDifficult = async () => {
     }
 };
 
-export const addChallenge = async (payload: ChallengeInput) => {
-    try {
-        const session = await getSession();
-        if (session?.role === ROLE.ADMIN) {
-            return AdminRepository.addChallenge(payload);
-        } else {
-            throw new Error('Access denied: You are not an admin.');
-        }
-    } catch (error) {
-        console.error('An error occurred:', error);
-        throw new Error('An error occurred while adding a challenge.');
-    }
-};
+
 
 export const getChallenge = async (payload: ChallengePaginationInput) => {
     try {

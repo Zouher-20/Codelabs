@@ -1,5 +1,5 @@
 import { db } from '@/app/api/core/db/db';
-import { DIFFICULTTYPE, TAGTYPE } from '@prisma/client';
+import { DIFFICULTTYPE } from '@prisma/client';
 
 class AdminRepository {
     static async findManyUser(payload: {
@@ -127,8 +127,7 @@ class AdminRepository {
         });
         return newTag;
     }
-
-    static async addTag(tag: string, tagType: TAGTYPE | null) {
+    static async addTag(tag: string,) {
         const existingTag = await db.tag.findUnique({
             where: {
                 tagename: tag
@@ -142,13 +141,11 @@ class AdminRepository {
         const newTag = await db.tag.create({
             data: {
                 tagename: tag,
-                tagtype: tagType ?? TAGTYPE.normal
             }
         });
 
         return newTag;
     }
-
     static async findManyChallenge(payload: {
         page: number;
         pageSize: number;
@@ -181,14 +178,6 @@ class AdminRepository {
             where: {
                 ...args
             },
-            include: {
-                ChallengeParticipation: true,
-                TagMorph: {
-                    include: {
-                        tag: true
-                    }
-                }
-            }
         });
 
         const challengeCount = await db.challenge.count({
@@ -206,7 +195,6 @@ class AdminRepository {
         const typeChallenge = Object.values(DIFFICULTTYPE);
         return typeChallenge;
     }
-
     static async deleteUser(payload: { userId: string }) {
         const requestingUser = await db.user.findUnique({
             where: {
@@ -221,54 +209,6 @@ class AdminRepository {
                 id: payload.userId
             }
         });
-    }
-
-    static async addChallenge(payload: {
-        name: string;
-        difficulty: DIFFICULTTYPE;
-        endAt: Date;
-        startedAt: Date;
-        description: string;
-        resources: string;
-        tagId: string[];
-    }) {
-        const newChallenge = await db.challenge.create({
-            data: {
-                name: payload.name,
-                description: payload.description,
-                resources: payload.resources,
-                endAt: payload.endAt,
-                startedAt: payload.startedAt,
-                difficulty: payload.difficulty,
-                isComplete: false
-            }
-        });
-
-        // 2. Retrieve tags based on the provided tagNames
-        const tags = await db.tag.findMany({
-            where: {
-                id: {
-                    in: payload.tagId
-                }
-            }
-        });
-
-        if (tags.length !== payload.tagId.length) {
-            throw new Error(`One or more tags not found.`);
-        }
-
-        const tagMorphCreatePromises = tags.map(tag =>
-            db.tagMorph.create({
-                data: {
-                    tagId: tag.id,
-                    challengeId: newChallenge.id
-                }
-            })
-        );
-
-        await Promise.all(tagMorphCreatePromises);
-
-        return newChallenge;
     }
 }
 
