@@ -1,6 +1,7 @@
 import CodeLabList from '@/app/components/list/generic-list';
 import { Button, Card, CardBody, CardFooter, Typography } from '@material-tailwind/react';
 
+import { useRouter } from 'next/navigation';
 import { GenericTableModel } from '../../../components/table/generic-tabel';
 
 export default function RoomTable({
@@ -14,7 +15,17 @@ export default function RoomTable({
     pageCount: number;
     rooms: Array<RoomTableType>;
 }) {
+    const route = useRouter();
+
     function TableItem({ item, index }: { item: RoomTableType; index: number }) {
+        const onReadMoreClicked = () => {
+            const params = {
+                id: item.id
+            };
+            const queryString = new URLSearchParams(params).toString();
+            route.push('/admin/classes/statistics/room' + '?' + queryString);
+            return;
+        };
         return (
             <Card className="mt-1 max-w-80 bg-base-300" placeholder={undefined} key={index}>
                 <CardBody placeholder={undefined}>
@@ -29,7 +40,14 @@ export default function RoomTable({
                     <Typography placeholder={undefined}>{item.desription}</Typography>
                 </CardBody>
                 <CardFooter className="pt-0" placeholder={undefined}>
-                    <Button placeholder={undefined}>Read More</Button>
+                    <Button
+                        placeholder={undefined}
+                        onClick={() => {
+                            onReadMoreClicked();
+                        }}
+                    >
+                        Read More
+                    </Button>
                 </CardFooter>
             </Card>
         );

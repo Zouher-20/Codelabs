@@ -49,6 +49,7 @@ const BlogsCommentCommentsTab = () => {
                         commentId: e?.commentId ?? '',
                         comment: e?.comment.comment ?? '',
                         id: e.reportId,
+                        blogId: e.comment.blogId ?? '',
                         text: e.report.messageReport ?? '',
                         username: e?.user.username ?? ''
                     };
