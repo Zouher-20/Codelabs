@@ -44,7 +44,7 @@ export default function ReportLabTable({
             <thead>
                 <tr>
                     <th>Name</th>
-                    <th>Email</th>
+                    <th>Description</th>
                     <th>Message</th>
                 </tr>
             </thead>
