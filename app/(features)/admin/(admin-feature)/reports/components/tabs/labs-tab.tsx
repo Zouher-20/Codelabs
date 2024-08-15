@@ -1,4 +1,7 @@
+import { deleteAnyReport, getReport } from '@/app/api/(modules)/report/services/action';
+import { ReportType } from '@/app/api/core/constant/enum';
 import { ManageState } from '@/app/components/page-state/state_manager';
+import { SwalUtil } from '@/app/utils/swal-util';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -18,6 +21,7 @@ const LabsTab = () => {
     useEffect(() => {
         var pageNumber = Number(params.get('id') ?? '1');
         updateCurrentPage(pageNumber);
+        getLabsReports({ newSearchWord: '', page: pageNumber });
     }, []);
     const getLabsReports = async ({
         newSearchWord,
@@ -29,6 +33,25 @@ const LabsTab = () => {
         setLoading(true);
         setError(null);
         try {
+            const res = await getReport({
+                page: page,
+                pageSize: 10,
+                reportType: ReportType.USER_PROJECT,
+                searchWord: newSearchWord
+            });
+
+            setLabs(
+                res.labReported?.map(e => {
+                    return {
+                        description: e.userProject.description ?? '',
+                        id: e.reportId,
+                        labId: e?.userprojectId ?? '',
+                        name: e?.user.username ?? '',
+                        text: e.report.messageReport ?? ''
+                    };
+                }) ?? []
+            );
+            setTotalPageCount(res.totalLabReported ?? 0);
         } catch (e: any) {
             setError(e.message);
             toast.error(e.message);
@@ -40,9 +63,28 @@ const LabsTab = () => {
         updateCurrentPage(index);
         getLabsReports({ newSearchWord: searchWord, page: index });
     };
+    const deleteReport = async (id: string) => {
+        try {
+            await deleteAnyReport({ reportId: id });
+            getLabsReports({ newSearchWord: searchWord, page: currentPage });
+            toast.success('delete report done');
+        } catch (e: any) {
+            toast.error(e.message);
+        }
+    };
     return (
         <div>
-            <ReportsViewHeader onFieldChanged={() => {}} title="Labs" searchWord="" />
+            <ReportsViewHeader
+                onFieldChanged={value => {
+                    setSearchWord(value);
+                    getLabsReports({
+                        newSearchWord: value,
+                        page: currentPage
+                    });
+                }}
+                title="Labs"
+                searchWord={searchWord}
+            />
             <ManageState
                 empty={labs.length == 0}
                 error={error}
@@ -59,7 +101,11 @@ const LabsTab = () => {
                         pageCount={totalPageCount / pageSize}
                         currentPage={currentPage}
                         onPageChange={onPageChange}
-                        deleteLabsButtonClicked={user => {}}
+                        deleteLabsButtonClicked={user => {
+                            SwalUtil.showConfirm(() => {
+                                deleteReport(user.id);
+                            });
+                        }}
                     />
                 }
             />
