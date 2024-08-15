@@ -1,6 +1,7 @@
-import { getReport } from '@/app/api/(modules)/report/services/action';
+import { deleteAnyReport, getReport } from '@/app/api/(modules)/report/services/action';
 import { ReportType } from '@/app/api/core/constant/enum';
 import { ManageState } from '@/app/components/page-state/state_manager';
+import { SwalUtil } from '@/app/utils/swal-util';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -37,17 +38,18 @@ const LabsCommentCommentsTab = () => {
             const res = await getReport({
                 page: page,
                 pageSize: 10,
-                reportType: ReportType.COMMENT_USER_PROJECT
+                reportType: ReportType.COMMENT_USER_PROJECT,
+                searchWord: newSearchWord
             });
 
             setLabsComment(
                 res.commentLabReported?.map(e => {
                     return {
-                        commentId: e.ReportCommentUserProject?.commentUserProjectId ?? '',
-                        comment: e.ReportCommentUserProject?.comment.comment ?? '',
-                        id: e.ReportCommentUserProject?.id ?? '',
-                        text: e.messageReport ?? '',
-                        username: e.ReportCommentUserProject?.user.username ?? ''
+                        commentId: e?.commentUserProjectId ?? '',
+                        comment: e?.comment.comment ?? '',
+                        id: e.reportId,
+                        text: e.report.messageReport ?? '',
+                        username: e?.user.username ?? ''
                     };
                 }) ?? []
             );
@@ -62,6 +64,15 @@ const LabsCommentCommentsTab = () => {
     const onPageChange = ({ index }: { index: number }) => {
         updateCurrentPage(index);
         getLabsCommentReports({ newSearchWord: searchWord, page: index });
+    };
+    const deleteReport = async (id: string) => {
+        try {
+            await deleteAnyReport({ reportId: id });
+            getLabsCommentReports({ newSearchWord: searchWord, page: currentPage });
+            toast.success('delete report done');
+        } catch (e: any) {
+            toast.error(e.message);
+        }
     };
     return (
         <div>
@@ -89,7 +100,11 @@ const LabsCommentCommentsTab = () => {
                         pageCount={totalPageCount / pageSize}
                         currentPage={currentPage}
                         onPageChange={onPageChange}
-                        deleteLabCommentButtonClicked={labComment => {}}
+                        deleteLabCommentButtonClicked={labComment => {
+                            SwalUtil.showConfirm(() => {
+                                deleteReport(labComment.id);
+                            });
+                        }}
                     />
                 }
             />

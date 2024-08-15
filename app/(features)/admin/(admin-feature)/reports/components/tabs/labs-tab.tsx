@@ -1,6 +1,7 @@
-import { getReport } from '@/app/api/(modules)/report/services/action';
+import { deleteAnyReport, getReport } from '@/app/api/(modules)/report/services/action';
 import { ReportType } from '@/app/api/core/constant/enum';
 import { ManageState } from '@/app/components/page-state/state_manager';
+import { SwalUtil } from '@/app/utils/swal-util';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -35,17 +36,18 @@ const LabsTab = () => {
             const res = await getReport({
                 page: page,
                 pageSize: 10,
-                reportType: ReportType.USER_PROJECT
+                reportType: ReportType.USER_PROJECT,
+                searchWord: newSearchWord
             });
 
             setLabs(
                 res.labReported?.map(e => {
                     return {
-                        description: e.ReportUserProject?.userProject.description ?? '',
-                        id: e.ReportUserProject?.id ?? '',
-                        labId: e.ReportUserProject?.userprojectId ?? '',
-                        name: e.ReportUserProject?.user.username ?? '',
-                        text: e.messageReport ?? ''
+                        description: e.userProject.description ?? '',
+                        id: e.reportId,
+                        labId: e?.userprojectId ?? '',
+                        name: e?.user.username ?? '',
+                        text: e.report.messageReport ?? ''
                     };
                 }) ?? []
             );
@@ -60,6 +62,15 @@ const LabsTab = () => {
     const onPageChange = ({ index }: { index: number }) => {
         updateCurrentPage(index);
         getLabsReports({ newSearchWord: searchWord, page: index });
+    };
+    const deleteReport = async (id: string) => {
+        try {
+            await deleteAnyReport({ reportId: id });
+            getLabsReports({ newSearchWord: searchWord, page: currentPage });
+            toast.success('delete report done');
+        } catch (e: any) {
+            toast.error(e.message);
+        }
     };
     return (
         <div>
@@ -90,7 +101,11 @@ const LabsTab = () => {
                         pageCount={totalPageCount / pageSize}
                         currentPage={currentPage}
                         onPageChange={onPageChange}
-                        deleteLabsButtonClicked={user => {}}
+                        deleteLabsButtonClicked={user => {
+                            SwalUtil.showConfirm(() => {
+                                deleteReport(user.id);
+                            });
+                        }}
                     />
                 }
             />

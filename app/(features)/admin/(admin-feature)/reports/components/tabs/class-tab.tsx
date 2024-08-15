@@ -1,6 +1,7 @@
-import { getReport } from '@/app/api/(modules)/report/services/action';
+import { deleteAnyReport, getReport } from '@/app/api/(modules)/report/services/action';
 import { ReportType } from '@/app/api/core/constant/enum';
 import { ManageState } from '@/app/components/page-state/state_manager';
+import { SwalUtil } from '@/app/utils/swal-util';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -35,17 +36,18 @@ const ClassTab = () => {
             const res = await getReport({
                 page: page,
                 pageSize: 10,
-                reportType: ReportType.CLASS
+                reportType: ReportType.CLASS,
+                searchWord: newSearchWord
             });
 
             setClasss(
                 res.classReported?.map(e => {
                     return {
-                        classname: e.ReportClass?.classRom.name ?? '',
-                        id: e.ReportClass?.id ?? '',
-                        text: e.messageReport ?? '',
-                        userId: e.ReportClass?.userId ?? '',
-                        username: e.ReportClass?.user.username ?? ''
+                        classname: e?.classRom.name ?? '',
+                        id: e.reportId,
+                        text: e.report.messageReport ?? '',
+                        userId: e?.userId ?? '',
+                        username: e?.user.username ?? ''
                     };
                 }) ?? []
             );
@@ -61,7 +63,15 @@ const ClassTab = () => {
         updateCurrentPage(index);
         getClasssReports({ newSearchWord: searchWord, page: index });
     };
-
+    const deleteReport = async (id: string) => {
+        try {
+            await deleteAnyReport({ reportId: id });
+            getClasssReports({ newSearchWord: searchWord, page: currentPage });
+            toast.success('delete report done');
+        } catch (e: any) {
+            toast.error(e.message);
+        }
+    };
     return (
         <div>
             <ReportsViewHeader
@@ -88,7 +98,11 @@ const ClassTab = () => {
                         pageCount={totalPageCount / pageSize}
                         currentPage={currentPage}
                         onPageChange={onPageChange}
-                        deleteClassButtonClicked={e => {}}
+                        deleteClassButtonClicked={e => {
+                            SwalUtil.showConfirm(() => {
+                                deleteReport(e.id);
+                            });
+                        }}
                     />
                 }
             />
