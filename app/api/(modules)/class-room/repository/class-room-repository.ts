@@ -816,6 +816,54 @@ class ClassRoomRepository {
         };
     }
 
+    static async editGradInClassProjectLab(payload: {
+        grad: string;
+        classProjectId: string
+    }, userId: string) {
+
+        const myclassProjectLab = await db.classProject.findUnique({
+            where: {
+                id: payload.classProjectId
+            }
+        });
+
+        if (!ClassRoomRepository) {
+            throw new Error("this lanb is not found ..")
+        }
+        const classRoom = await db.classRom.findFirst(
+            {
+                where: {
+                    MemberClass: {
+                        some: {
+                            isTeacher: true,
+                            userId: userId,
+                            ClassProject: {
+                                some: {
+                                    id: myclassProjectLab?.id
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        );
+        if (classRoom) {
+            await db.classProject.update(
+                {
+                    where: {
+                        id: payload.classProjectId
+                    },
+                    data: {
+                        grad: payload.grad
+                    }
+                }
+            );
+        } else {
+            throw new Error("you are not teacher");
+        }
+
+    }
+
     static async getClassCreateByMe(
         payload: {
             page: number;
@@ -846,7 +894,6 @@ class ClassRoomRepository {
                 MemberClass: true
             }
         });
-
         const totalClassesCount = await db.classRom.count({
             where: {
                 MemberClass: {

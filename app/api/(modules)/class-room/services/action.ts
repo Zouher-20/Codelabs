@@ -14,6 +14,7 @@ import {
     DeleteMYClassInput,
     DeleteMyFeedbackInput,
     DeleteUserFromMyClassInput,
+    EditGradInClassProjectLabInput,
     ExitUserFromYourClassInput,
     getAllClassRoomsInput,
     GetAllFeedbackInRoomInput,
@@ -110,6 +111,12 @@ export const getRoomAndTeacherDetails = async (payload: GetRoomAndTeacherDetails
     const session = await getSession();
     const userId = session?.id;
     return classRoomRepository.getRoomAndTeacherDetails(payload, userId);
+};
+
+export const editGradInClassProjectLab = async (payload: EditGradInClassProjectLabInput) => {
+    const session = await getSession();
+    const userId = session?.id;
+    return classRoomRepository.editGradInClassProjectLab(payload, userId);
 };
 export const submittedLabsInRoom = async (payload: SubmittedLabsInRoomInput) => {
     const session = await getSession();

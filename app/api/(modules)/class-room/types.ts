@@ -109,6 +109,7 @@ export interface GetLabsSubmittedInRomInput {
 export interface GetRoomAndTeacherDetailsInput {
     romId: string;
 }
+
 export interface SubmittedLabsInRoomInput {
     romId: string;
     jsonFile: string;
@@ -124,6 +125,11 @@ export interface getAllClassRoomsInput {
     searchWord?: string;
 }
 
+
+export interface EditGradInClassProjectLabInput {
+    grad: string;
+    classProjectId: string
+}
 export interface DeleteUserFromMyClassInput {
     classRoomId: string;
     userIds: string[];
