@@ -123,6 +123,7 @@ model ClassProject {
   id             String           @id @default(cuid())
   createdAt      DateTime         @default(now())
   romId          String?
+  grad           String?          @default("No sign currently")
   rom            Rom?             @relation(fields: [romId], references: [id], onDelete: Cascade)
   memberClassId  String?
   memberClass    MemberClass?     @relation(fields: [memberClassId], references: [id], onDelete: Cascade)
