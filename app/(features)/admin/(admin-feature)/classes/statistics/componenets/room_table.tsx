@@ -8,11 +8,13 @@ export default function RoomTable({
     currentPage,
     onPageChange,
     pageCount,
-    rooms
+    rooms,
+    withReadMoreButton
 }: {
     currentPage: number;
     onPageChange: ({ index }: { index: number }) => void;
     pageCount: number;
+    withReadMoreButton: boolean;
     rooms: Array<RoomTableType>;
 }) {
     const route = useRouter();
@@ -37,18 +39,22 @@ export default function RoomTable({
                     >
                         {item.name}
                     </Typography>
-                    <Typography placeholder={undefined}>{item.desription}</Typography>
+                    <Typography className="overflow-hidden text-ellipsis" placeholder={undefined}>
+                        <div className="h-20 overflow-clip">{item.desription}</div>
+                    </Typography>
                 </CardBody>
-                <CardFooter className="pt-0" placeholder={undefined}>
-                    <Button
-                        placeholder={undefined}
-                        onClick={() => {
-                            onReadMoreClicked();
-                        }}
-                    >
-                        Read More
-                    </Button>
-                </CardFooter>
+                {withReadMoreButton && (
+                    <CardFooter className="pt-0" placeholder={undefined}>
+                        <Button
+                            placeholder={undefined}
+                            onClick={() => {
+                                onReadMoreClicked();
+                            }}
+                        >
+                            Read More
+                        </Button>
+                    </CardFooter>
+                )}
             </Card>
         );
     }

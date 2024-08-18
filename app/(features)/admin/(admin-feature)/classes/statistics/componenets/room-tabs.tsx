@@ -132,6 +132,7 @@ export function VerticalTabs({ withAddButtons }: { withAddButtons: boolean }) {
                     loading={roomLoading}
                     loadedState={
                         <RoomTable
+                            withReadMoreButton={false}
                             rooms={rooms}
                             pageCount={totalPageCount / 10}
                             currentPage={page}

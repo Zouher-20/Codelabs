@@ -151,10 +151,6 @@ export default function StatisticsPage() {
                     empty={false}
                 />
             </div>
-            <div className="flex w-full flex-col gap-4">
-                <VerticalTabs withAddButtons={false} />
-            </div>
-
             <ManageState
                 loading={classLoading}
                 error={classError}
@@ -176,6 +172,9 @@ export default function StatisticsPage() {
                 }
                 empty={false}
             />
+            <div className="flex w-full flex-col gap-4">
+                <VerticalTabs withAddButtons={false} />
+            </div>
         </div>
     );
 }
