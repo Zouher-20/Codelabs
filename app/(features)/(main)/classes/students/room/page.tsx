@@ -102,6 +102,7 @@ export default function ClassLabPage() {
         try {
             const res = await getMyLabInRoom({ roomId: id });
             setLabInfo({
+                grade: res?.ClassProject?.grad,
                 id: res?.ClassProject?.id ?? '',
                 labId: res?.id
             });
@@ -214,6 +215,7 @@ export default function ClassLabPage() {
                         classDescription={roomInfo?.description ?? ''}
                         className={roomInfo?.title ?? ''}
                         classType={roomInfo?.type ?? ''}
+                        grade={labInfo?.grade}
                         endAt={roomInfo?.endAt.toLocaleString('en-US')}
                         createdAt={roomInfo?.createdAt.toLocaleString('en-US')}
                         teacher={roomInfo?.teatcher}

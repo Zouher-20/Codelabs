@@ -56,5 +56,6 @@ export interface LabModel {
     title?: string;
     labId?: string;
     id: string;
+    grade?: string | null;
     user?: ClassRoomUserType;
 }
