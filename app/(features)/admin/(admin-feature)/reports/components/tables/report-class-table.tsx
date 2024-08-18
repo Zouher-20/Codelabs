@@ -1,4 +1,5 @@
-import Button from '@/app/components/globals/form/button';
+import Dropdown from '@/app/components/drop_down';
+import { useRouter } from 'next/navigation';
 import CodeLabTable, { GenericTableModel } from '../../../components/table/generic-tabel';
 
 export default function ReportClassesTable({
@@ -14,7 +15,17 @@ export default function ReportClassesTable({
     classes: Array<ReportClassTableType>;
     deleteClassButtonClicked: (e: ReportClassTableType) => void;
 }) {
+    const route = useRouter();
+
     function TableItem({ item, index }: { item: ReportClassTableType; index: number }) {
+        const onDetailsClicked = () => {
+            const params = {
+                id: item.classId
+            };
+            const queryString = new URLSearchParams(params).toString();
+            route.push('/admin/classes/statistics' + '?' + queryString);
+            return;
+        };
         return (
             <tr className={`my-3 ${index % 2 == 0 ? 'bg-base-300' : ''}`} key={item.id}>
                 <td>{item.classname}</td>
@@ -22,10 +33,27 @@ export default function ReportClassesTable({
                 <td>{item.text}</td>
 
                 <td>
-                    <Button
-                        label="Delete"
-                        color="error"
-                        onClick={() => deleteClassButtonClicked(item)}
+                    <Dropdown
+                        items={[
+                            {
+                                color: 'text-primary',
+                                icon: 'solar:info-circle-outline',
+                                onClick: () => {
+                                    onDetailsClicked();
+                                },
+                                text: 'Details',
+                                withSpreator: false
+                            },
+                            {
+                                color: 'text-red-500',
+                                icon: 'solar:trash-bin-2-bold-duotone',
+                                onClick: () => {
+                                    deleteClassButtonClicked(item);
+                                },
+                                show: true,
+                                text: 'Delete'
+                            }
+                        ]}
                     />
                 </td>
             </tr>
@@ -58,4 +86,5 @@ export interface ReportClassTableType extends GenericTableModel {
     text: string;
     userId: string;
     id: string;
+    classId: string;
 }

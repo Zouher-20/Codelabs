@@ -2,11 +2,14 @@
 
 import { FeedbackType } from '@/app/@types/feedback';
 import {
+    editGradInClassProjectLab,
     getAllFeedbackInClassProject,
     getClassProjectById
 } from '@/app/api/(modules)/class-room/services/action';
+import Button from '@/app/components/globals/form/button';
 import { ManageState } from '@/app/components/page-state/state_manager';
 import { CustomToaster } from '@/app/components/toast/custom-toaster';
+import { SwalUtil } from '@/app/utils/swal-util';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -62,6 +65,7 @@ export default function ClassLabPage() {
             setLab({
                 id: res.classProject.id,
                 labId: res.classProject.labId,
+                grade: res.classProject.grad,
                 user: {
                     email: res.classProject.memberClass?.user.email ?? '',
                     name: res.classProject.memberClass?.user.username ?? '',
@@ -86,6 +90,17 @@ export default function ClassLabPage() {
             (document.getElementById('feedback-modal') as HTMLFormElement)?.showModal();
         }
     };
+    const editGradeCallback = async (val: string) => {
+        try {
+            await editGradInClassProjectLab({
+                classProjectId: lab?.id ?? '',
+                grad: val
+            });
+            getClassProject();
+        } catch (e: any) {
+            toast.error(e.message);
+        }
+    };
 
     return (
         <div>
@@ -95,6 +110,24 @@ export default function ClassLabPage() {
                 errorAndEmptyCallback={() => {}}
                 loadedState={
                     <div className="flex min-h-[550px] flex-col gap-2 p-3">
+                        {!lab?.user?.isTeacher && (
+                            <div
+                                className={`flex items-center justify-between rounded-lg bg-base-300 p-4`}
+                            >
+                                <p>Student current grade is: {lab?.grade}</p>
+                                <Button
+                                    onClick={() => {
+                                        SwalUtil.showEditGradeModalWithTextArea(val => {
+                                            editGradeCallback(val);
+                                        });
+                                    }}
+                                    style="w-fit self-end "
+                                    color="any"
+                                    label="Edit"
+                                    type="submit"
+                                />
+                            </div>
+                        )}
                         <div className="flex gap-2 max-md:flex-wrap">
                             <FeedbackComponent feedbacks={feedback} onClick={onFeedbackClicked} />
                             <CloneLabComponent

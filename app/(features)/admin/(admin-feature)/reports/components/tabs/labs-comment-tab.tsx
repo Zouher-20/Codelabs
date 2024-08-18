@@ -48,6 +48,7 @@ const LabsCommentCommentsTab = () => {
                         commentId: e?.commentUserProjectId ?? '',
                         comment: e?.comment.comment ?? '',
                         id: e.reportId,
+                        labId: e.comment.userprojectId ?? '',
                         text: e.report.messageReport ?? '',
                         username: e?.user.username ?? ''
                     };

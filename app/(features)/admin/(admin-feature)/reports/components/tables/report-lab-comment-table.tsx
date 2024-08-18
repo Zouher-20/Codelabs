@@ -1,4 +1,5 @@
-import Button from '@/app/components/globals/form/button';
+import Dropdown from '@/app/components/drop_down';
+import { useRouter } from 'next/navigation';
 import CodeLabTable, { GenericTableModel } from '../../../components/table/generic-tabel';
 
 export default function ReportLabCommentTable({
@@ -14,7 +15,18 @@ export default function ReportLabCommentTable({
     labComments: Array<ReportLabCommentTableType>;
     deleteLabCommentButtonClicked: (user: ReportLabCommentTableType) => void;
 }) {
+    const route = useRouter();
+
     function TableItem({ item, index }: { item: ReportLabCommentTableType; index: number }) {
+        const onDetailsClicked = () => {
+            const params = {
+                id: item.labId
+            };
+            const queryString = new URLSearchParams(params).toString();
+            route.push('/admin/discover/details' + '?' + queryString);
+
+            return;
+        };
         return (
             <tr className={`my-3 ${index % 2 == 0 ? 'bg-base-300' : ''}`} key={item.id}>
                 <td>{item.username}</td>
@@ -22,10 +34,27 @@ export default function ReportLabCommentTable({
                 <td>{item.text}</td>
 
                 <td>
-                    <Button
-                        label="Delete"
-                        color="error"
-                        onClick={() => deleteLabCommentButtonClicked(item)}
+                    <Dropdown
+                        items={[
+                            {
+                                color: 'text-primary',
+                                icon: 'solar:info-circle-outline',
+                                onClick: () => {
+                                    onDetailsClicked();
+                                },
+                                text: 'Details',
+                                withSpreator: false
+                            },
+                            {
+                                color: 'text-red-500',
+                                icon: 'solar:trash-bin-2-bold-duotone',
+                                onClick: () => {
+                                    deleteLabCommentButtonClicked(item);
+                                },
+                                show: true,
+                                text: 'Delete'
+                            }
+                        ]}
                     />
                 </td>
             </tr>
@@ -58,4 +87,5 @@ export interface ReportLabCommentTableType extends GenericTableModel {
     text: string;
     commentId: string;
     id: string;
+    labId: string;
 }

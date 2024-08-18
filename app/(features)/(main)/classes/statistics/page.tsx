@@ -1,5 +1,6 @@
 'use client';
 
+import StudentTable from '@/app/(features)/admin/(admin-feature)/classes/statistics/componenets/user-table';
 import { classType } from '@/app/@types/class';
 import { RoomType } from '@/app/@types/room';
 import { ClassRoomUserType, userType } from '@/app/@types/user';
@@ -26,7 +27,6 @@ import DeleteClassModal from './components/delete-class-modal';
 import DeleteUserFromClassModal from './components/delete-user-form-class-modal copy';
 import RoomListComponent from './components/room_list';
 import StatisticsContainer from './components/statistics_components';
-import StudentList from './components/student_list';
 
 export default function StatisticsPage() {
     useEffect(() => {
@@ -35,7 +35,7 @@ export default function StatisticsPage() {
     }, []);
 
     const getServerData = ({ id }: { id: string }) => {
-        getClassStudentsById({ id });
+        getClassStudentsById({ id, page: userPage });
         getClassRoomsById({ id });
         getClassInfo({ id });
         getClassStatistics({ id });
@@ -62,6 +62,8 @@ export default function StatisticsPage() {
     const [isStudentModelOpen, setIsStudentModelOpen] = useState<boolean>(false);
     const [myInfo, setMyInfo] = useState<userType | null>(null);
     const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+    const [userPage, setUserPage] = useState<number>(1);
+    const [userTotalPageCount, setUserToatalPageCount] = useState<number>(0);
 
     const currentParams = useSearchParams();
     const route = useRouter();
@@ -99,10 +101,10 @@ export default function StatisticsPage() {
             setStaticLoading(false);
         }
     };
-    const getClassStudentsById = async ({ id }: { id: string }) => {
+    const getClassStudentsById = async ({ id, page }: { id: string; page: number }) => {
         setUserLoading(true);
         try {
-            const res = await getUserInClass({ classRomId: id, userPage: 1, userPageSize: 100 });
+            const res = await getUserInClass({ classRomId: id, userPage: page, userPageSize: 10 });
             setUsers(
                 res.memberClassInClassRom.map<ClassRoomUserType>(value => {
                     return {
@@ -114,6 +116,7 @@ export default function StatisticsPage() {
                     };
                 })
             );
+            setUserToatalPageCount(res.countMemberClassInClassRom);
             const res2 = await getMyInfo();
             setMyInfo({
                 email: res2.email ?? '',
@@ -234,69 +237,51 @@ export default function StatisticsPage() {
                     empty={false}
                 />
             </div>
-            <div className="flex w-full gap-2 max-lg:flex-wrap">
-                <div className="w-full xl:w-1/4">
-                    <ManageState
-                        loading={userLoading}
-                        error={userError}
-                        errorAndEmptyCallback={() => {
+
+            <p className="pb-1 text-3xl">Rooms</p>
+            <ManageState
+                loading={roomLoading}
+                error={roomError}
+                errorAndEmptyCallback={() => {
+                    const id = currentParams.get('id') ?? '-1';
+                    getClassRoomsById({ id });
+                }}
+                loadedState={
+                    <RoomListComponent
+                        title="Rooms"
+                        rooms={rooms}
+                        onLabClicked={handleLabClick}
+                    ></RoomListComponent>
+                }
+                empty={rooms.length == 0}
+            />
+            <p className="pb-1 text-3xl">Students</p>
+            <ManageState
+                loading={userLoading}
+                error={userError}
+                errorAndEmptyCallback={() => {
+                    const id = currentParams.get('id') ?? '-1';
+                    getClassStudentsById({ id, page: userPage });
+                }}
+                loadedState={
+                    <StudentTable
+                        students={users}
+                        pageCount={userTotalPageCount / 10}
+                        currentPage={userPage}
+                        onPageChange={({ index }) => {
+                            setUserPage(index);
                             const id = currentParams.get('id') ?? '-1';
-                            getClassStudentsById({ id });
+
+                            getClassStudentsById({
+                                id,
+                                page: index
+                            });
                         }}
-                        customEmptyPage={
-                            <CodeLabContainer height="20.5rem" minWidth="64">
-                                <EmptyState />
-                            </CodeLabContainer>
-                        }
-                        customLoadingPage={
-                            <CodeLabContainer height="20.5rem" minWidth="64">
-                                <LoadingState />
-                            </CodeLabContainer>
-                        }
-                        loadedState={
-                            <StudentList
-                                students={users}
-                                title="Students"
-                                height="20.5rem"
-                                myInfo={myInfo}
-                                onDeleteUserClicked={e => {
-                                    setSelectedUserId(e.id ?? '');
-                                    if (document) {
-                                        (
-                                            document.getElementById(
-                                                'delete-user-from-class-modal'
-                                            ) as HTMLFormElement
-                                        )?.showModal();
-                                    }
-                                }}
-                            ></StudentList>
-                        }
-                        empty={users.length == 0}
                     />
-                </div>
-                <div className="w-full xl:w-3/4">
-                    <CodeLabContainer height="20.5rem">
-                        <div className="w-full self-center p-3">
-                            <ManageState
-                                loading={roomLoading}
-                                error={roomError}
-                                errorAndEmptyCallback={() => {
-                                    const id = currentParams.get('id') ?? '-1';
-                                    getClassRoomsById({ id });
-                                }}
-                                loadedState={
-                                    <RoomListComponent
-                                        title="Rooms"
-                                        rooms={rooms}
-                                        onLabClicked={handleLabClick}
-                                    ></RoomListComponent>
-                                }
-                                empty={rooms.length == 0}
-                            />
-                        </div>
-                    </CodeLabContainer>
-                </div>
-            </div>
+                }
+                empty={users.length == 0}
+            />
+            <p className="pb-1 text-3xl">Description</p>
             <ManageState
                 loading={classLoading}
                 error={classError}
@@ -357,14 +342,13 @@ export default function StatisticsPage() {
                 }
                 empty={false}
             />
-
             <AddStudentModal
                 initialUser={users}
                 isOpen={isStudentModelOpen}
                 classId={classInfo?.id ?? ''}
                 addCallbackFunction={() => {
                     const id = currentParams.get('id') ?? '-1';
-                    getClassStudentsById({ id });
+                    getClassStudentsById({ id, page: userPage });
                     getClassStatistics({ id });
                     toast.success('students added successfully');
                 }}
@@ -380,7 +364,7 @@ export default function StatisticsPage() {
             />
             <DeleteUserFromClassModal
                 callback={() => {
-                    getClassStudentsById({ id: classInfo?.id ?? '' });
+                    getClassStudentsById({ id: classInfo?.id ?? '', page: userPage });
                 }}
                 classId={classInfo?.id ?? ''}
                 userId={selectedUserId ?? ''}

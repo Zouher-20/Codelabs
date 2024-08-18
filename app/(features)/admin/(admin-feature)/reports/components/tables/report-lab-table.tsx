@@ -1,4 +1,5 @@
-import Button from '@/app/components/globals/form/button';
+import Dropdown from '@/app/components/drop_down';
+import { useRouter } from 'next/navigation';
 import CodeLabTable, { GenericTableModel } from '../../../components/table/generic-tabel';
 
 export default function ReportLabTable({
@@ -14,18 +15,46 @@ export default function ReportLabTable({
     labs: Array<ReportLabTableType>;
     deleteLabsButtonClicked: (user: ReportLabTableType) => void;
 }) {
+    const route = useRouter();
+
     function TableItem({ item, index }: { item: ReportLabTableType; index: number }) {
+        const onDetailsClicked = () => {
+            const params = {
+                id: item.labId
+            };
+            const queryString = new URLSearchParams(params).toString();
+            route.push('/admin/discover/details' + '?' + queryString);
+
+            return;
+        };
         return (
             <tr className={`my-3 ${index % 2 == 0 ? 'bg-base-300' : ''}`} key={item.id}>
                 <td>{item.name}</td>
                 <td>{item.description}</td>
                 <td>{item.text}</td>
 
-                <td>
-                    <Button
-                        label="Delete"
-                        color="error"
-                        onClick={() => deleteLabsButtonClicked(item)}
+                <td className="flex items-center justify-between">
+                    <Dropdown
+                        items={[
+                            {
+                                color: 'text-primary',
+                                icon: 'solar:info-circle-outline',
+                                onClick: () => {
+                                    onDetailsClicked();
+                                },
+                                text: 'Details',
+                                withSpreator: false
+                            },
+                            {
+                                color: 'text-red-500',
+                                icon: 'solar:trash-bin-2-bold-duotone',
+                                onClick: () => {
+                                    deleteLabsButtonClicked(item);
+                                },
+                                show: true,
+                                text: 'Delete'
+                            }
+                        ]}
                     />
                 </td>
             </tr>
@@ -44,7 +73,7 @@ export default function ReportLabTable({
             <thead>
                 <tr>
                     <th>Name</th>
-                    <th>Email</th>
+                    <th>Description</th>
                     <th>Message</th>
                 </tr>
             </thead>

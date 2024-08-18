@@ -55,4 +55,33 @@ export class SwalUtil {
             }
         });
     }
+    static showEditGradeModalWithTextArea(
+        confirmCB: (textareaText: string) => void,
+        cancelCB?: CallableFunction,
+        options: SweetAlertOptions = {}
+    ) {
+        Swal.fire({
+            background: '#171818',
+            color: '#f2f2f2',
+            iconColor: '#50FA7B',
+            title: 'Edit Grade',
+            icon: 'success',
+            confirmButtonText: 'confirm',
+            cancelButtonColor: '#100f13',
+            confirmButtonColor: '#50FA7B',
+            showCancelButton: true,
+            html: '<textarea id="swal-textarea" class="swal2-textarea w-80 text-sm rounded-lg" placeholder="grade"></textarea>',
+            preConfirm: () => {
+                const textarea = document.getElementById('swal-textarea') as HTMLTextAreaElement;
+                return textarea.value;
+            },
+            ...options
+        }).then(result => {
+            if (result.isConfirmed) {
+                confirmCB(result.value as string); // Pass the textarea text to the confirm callback
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                if (cancelCB) cancelCB();
+            }
+        });
+    }
 }

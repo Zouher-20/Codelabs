@@ -1,4 +1,5 @@
-import Button from '@/app/components/globals/form/button';
+import Dropdown from '@/app/components/drop_down';
+import { useRouter } from 'next/navigation';
 import CodeBlogTable, { GenericTableModel } from '../../../components/table/generic-tabel';
 
 export default function ReportBlogTable({
@@ -14,7 +15,14 @@ export default function ReportBlogTable({
     blogs: Array<ReportBlogTableType>;
     deleteBlogsButtonClicked: (user: ReportBlogTableType) => void;
 }) {
+    const route = useRouter();
+
     function TableItem({ item, index }: { item: ReportBlogTableType; index: number }) {
+        const onDetailsClicked = () => {
+            route.push('/admin/blogs/' + item.blogId);
+
+            return;
+        };
         return (
             <tr className={`my-3 ${index % 2 == 0 ? 'bg-base-300' : ''}`} key={item.id}>
                 <td>{item.name}</td>
@@ -22,10 +30,27 @@ export default function ReportBlogTable({
                 <td>{item.text}</td>
 
                 <td>
-                    <Button
-                        label="Delete"
-                        color="error"
-                        onClick={() => deleteBlogsButtonClicked(item)}
+                    <Dropdown
+                        items={[
+                            {
+                                color: 'text-primary',
+                                icon: 'solar:info-circle-outline',
+                                onClick: () => {
+                                    onDetailsClicked();
+                                },
+                                text: 'Details',
+                                withSpreator: false
+                            },
+                            {
+                                color: 'text-red-500',
+                                icon: 'solar:trash-bin-2-bold-duotone',
+                                onClick: () => {
+                                    deleteBlogsButtonClicked(item);
+                                },
+                                show: true,
+                                text: 'Delete'
+                            }
+                        ]}
                     />
                 </td>
             </tr>
