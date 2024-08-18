@@ -8,6 +8,7 @@ export default function ClassDescriptionComponent({
     classDescription,
     classType,
     endAt,
+    grade,
     createdAt,
     teacher,
     dropdown
@@ -16,6 +17,7 @@ export default function ClassDescriptionComponent({
     className: string;
     endAt?: string;
     createdAt?: string;
+    grade?: string | null;
     classDescription: string;
     teacher?: userType;
     dropdown?: JSX.Element;
@@ -33,6 +35,7 @@ export default function ClassDescriptionComponent({
                         <div className="w-1"></div>
                         <p className="text-xs">{classType}</p>
                     </div>
+                    {grade && <div className="rounded-md text-primary">Your grade is: {grade}</div>}
                     <p>{classDescription}</p>
 
                     {createdAt != null ? <p>created at: {createdAt}</p> : null}

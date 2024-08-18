@@ -143,6 +143,8 @@ export default function LabDetails() {
                         isStared: false
                     });
                 }
+            } else if (index == 3) {
+                onFeedbackClicked();
             }
         } catch (e: any) {
             toast.error(e.message);
@@ -293,17 +295,6 @@ export default function LabDetails() {
                                                 },
                                                 show: myId === lab?.user.id,
                                                 text: 'Delete Lab'
-                                            },
-                                            {
-                                                show: myId === lab?.user.id,
-                                                color: 'text-primary',
-                                                icon: 'solar:settings-broken',
-                                                onClick: () => {
-                                                    SwalUtil.showConfirm(() => {
-                                                        deleteMyLab();
-                                                    });
-                                                },
-                                                text: 'Edit Lab'
                                             }
                                         ]}
                                     />

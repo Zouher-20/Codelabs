@@ -1,20 +1,33 @@
 import CodeLabList from '@/app/components/list/generic-list';
 import { Button, Card, CardBody, CardFooter, Typography } from '@material-tailwind/react';
 
+import { useRouter } from 'next/navigation';
 import { GenericTableModel } from '../../../components/table/generic-tabel';
 
 export default function RoomTable({
     currentPage,
     onPageChange,
     pageCount,
-    rooms
+    rooms,
+    withReadMoreButton
 }: {
     currentPage: number;
     onPageChange: ({ index }: { index: number }) => void;
     pageCount: number;
+    withReadMoreButton: boolean;
     rooms: Array<RoomTableType>;
 }) {
+    const route = useRouter();
+
     function TableItem({ item, index }: { item: RoomTableType; index: number }) {
+        const onReadMoreClicked = () => {
+            const params = {
+                id: item.id
+            };
+            const queryString = new URLSearchParams(params).toString();
+            route.push('/admin/classes/statistics/room' + '?' + queryString);
+            return;
+        };
         return (
             <Card className="mt-1 max-w-80 bg-base-300" placeholder={undefined} key={index}>
                 <CardBody placeholder={undefined}>
@@ -26,11 +39,22 @@ export default function RoomTable({
                     >
                         {item.name}
                     </Typography>
-                    <Typography placeholder={undefined}>{item.desription}</Typography>
+                    <Typography className="overflow-hidden text-ellipsis" placeholder={undefined}>
+                        <div className="h-20 overflow-clip">{item.desription}</div>
+                    </Typography>
                 </CardBody>
-                <CardFooter className="pt-0" placeholder={undefined}>
-                    <Button placeholder={undefined}>Read More</Button>
-                </CardFooter>
+                {withReadMoreButton && (
+                    <CardFooter className="pt-0" placeholder={undefined}>
+                        <Button
+                            placeholder={undefined}
+                            onClick={() => {
+                                onReadMoreClicked();
+                            }}
+                        >
+                            Read More
+                        </Button>
+                    </CardFooter>
+                )}
             </Card>
         );
     }

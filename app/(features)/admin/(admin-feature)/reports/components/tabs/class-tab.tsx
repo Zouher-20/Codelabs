@@ -44,7 +44,8 @@ const ClassTab = () => {
                 res.classReported?.map(e => {
                     return {
                         classname: e?.classRom.name ?? '',
-                        id: e.reportId,
+                        id: e.id,
+                        classId: e.classRoomId,
                         text: e.report.messageReport ?? '',
                         userId: e?.userId ?? '',
                         username: e?.user.username ?? ''

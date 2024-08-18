@@ -1,5 +1,6 @@
 'use client';
 
+import StudentTable from '@/app/(features)/admin/(admin-feature)/classes/statistics/componenets/user-table';
 import { classType } from '@/app/@types/class';
 import { RoomType } from '@/app/@types/room';
 import { ClassRoomUserType, userType } from '@/app/@types/user';
@@ -11,7 +12,6 @@ import {
 } from '@/app/api/(modules)/class-room/services/action';
 import { addReport } from '@/app/api/(modules)/report/services/action';
 import { ReportType } from '@/app/api/core/constant/enum';
-import { EmptyState } from '@/app/components/page-state/empty';
 import { LoadingState } from '@/app/components/page-state/loading';
 import { ManageState } from '@/app/components/page-state/state_manager';
 import { CustomToaster } from '@/app/components/toast/custom-toaster';
@@ -23,7 +23,6 @@ import toast from 'react-hot-toast';
 import CodeLabContainer from '../components/container';
 import ClassDescriptionComponent from '../statistics/components/class-description';
 import RoomListComponent from '../statistics/components/room_list';
-import StudentList from '../statistics/components/student_list';
 import ExitClassModal from './room/components/exit-class-modal';
 
 export default function ClassLabPage() {
@@ -33,7 +32,7 @@ export default function ClassLabPage() {
     }, []);
 
     const getServerData = ({ id }: { id: string }) => {
-        getClassStudentsById({ id });
+        getClassStudentsById({ id, page: userPage });
         getClassRoomsById({ id });
         getClassInfo({ id });
     };
@@ -47,6 +46,8 @@ export default function ClassLabPage() {
     const [classError, setClassError] = useState(null);
     const [classInfo, setClassInfo] = useState<classType | null>(null);
     const [myInfo, setMyInfo] = useState<userType | null>(null);
+    const [userPage, setUserPage] = useState<number>(1);
+    const [userTotalPageCount, setUserToatalPageCount] = useState<number>(0);
 
     const getClassRoomsById = async ({ id }: { id: string }) => {
         setRoomLoading(true);
@@ -70,7 +71,7 @@ export default function ClassLabPage() {
             setRoomLoading(false);
         }
     };
-    const getClassStudentsById = async ({ id }: { id: string }) => {
+    const getClassStudentsById = async ({ id, page }: { id: string; page: number }) => {
         setUserLoading(true);
         try {
             const res = await getUserInClass({ classRomId: id, userPage: 1, userPageSize: 100 });
@@ -85,6 +86,7 @@ export default function ClassLabPage() {
                     };
                 })
             );
+            setUserToatalPageCount(res.countMemberClassInClassRom);
             const res2 = await getMyInfo();
             setMyInfo({
                 email: res2.email ?? '',
@@ -150,69 +152,50 @@ export default function ClassLabPage() {
     };
     return (
         <div className="flex flex-col gap-2">
-            <div className="flex w-full gap-2 max-lg:flex-wrap">
-                <div className="w-full xl:w-1/4">
-                    <ManageState
-                        loading={userLoading}
-                        error={userError}
-                        errorAndEmptyCallback={() => {
+            <p className="pb-1 text-3xl">Rooms</p>
+            <ManageState
+                loading={roomLoading}
+                error={roomError}
+                errorAndEmptyCallback={() => {
+                    const id = currentParams.get('id') ?? '-1';
+                    getClassRoomsById({ id });
+                }}
+                loadedState={
+                    <RoomListComponent
+                        title="Rooms"
+                        rooms={rooms}
+                        onLabClicked={handleLabClick}
+                    ></RoomListComponent>
+                }
+                empty={rooms.length == 0}
+            />
+            <p className="pb-1 text-3xl">Students</p>
+            <ManageState
+                loading={userLoading}
+                error={userError}
+                errorAndEmptyCallback={() => {
+                    const id = currentParams.get('id') ?? '-1';
+                    getClassStudentsById({ id, page: userPage });
+                }}
+                loadedState={
+                    <StudentTable
+                        students={users}
+                        pageCount={userTotalPageCount / 10}
+                        currentPage={userPage}
+                        onPageChange={({ index }) => {
+                            setUserPage(index);
                             const id = currentParams.get('id') ?? '-1';
-                            getClassStudentsById({ id });
+
+                            getClassStudentsById({
+                                id,
+                                page: index
+                            });
                         }}
-                        customEmptyPage={
-                            <CodeLabContainer height="20.5rem" minWidth="64">
-                                <EmptyState />
-                            </CodeLabContainer>
-                        }
-                        customLoadingPage={
-                            <CodeLabContainer height="20.5rem" minWidth="64">
-                                <LoadingState />
-                            </CodeLabContainer>
-                        }
-                        loadedState={
-                            <StudentList
-                                students={users}
-                                title="Students"
-                                height="20.5rem"
-                                myInfo={myInfo}
-                            ></StudentList>
-                        }
-                        empty={users.length == 0}
                     />
-                </div>
-                <div className="w-full justify-center xl:w-3/4">
-                    <div className="w-full">
-                        <ManageState
-                            loading={roomLoading}
-                            error={roomError}
-                            customEmptyPage={
-                                <CodeLabContainer height="20.5rem" minWidth="64">
-                                    <EmptyState />
-                                </CodeLabContainer>
-                            }
-                            customLoadingPage={
-                                <CodeLabContainer height="20.5rem" minWidth="64">
-                                    <LoadingState />
-                                </CodeLabContainer>
-                            }
-                            errorAndEmptyCallback={() => {
-                                const id = currentParams.get('id') ?? '-1';
-                                getClassRoomsById({ id });
-                            }}
-                            loadedState={
-                                <CodeLabContainer height="20.5rem">
-                                    <RoomListComponent
-                                        title="Rooms"
-                                        rooms={rooms}
-                                        onLabClicked={handleLabClick}
-                                    ></RoomListComponent>
-                                </CodeLabContainer>
-                            }
-                            empty={rooms.length == 0}
-                        />
-                    </div>
-                </div>
-            </div>
+                }
+                empty={users.length == 0}
+            />
+            <p className="pb-1 text-3xl">Description</p>
             <ManageState
                 loading={classLoading}
                 error={classError}
