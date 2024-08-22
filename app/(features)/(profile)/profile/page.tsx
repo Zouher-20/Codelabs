@@ -15,8 +15,8 @@ const Profile = async () => {
 
     if (user) {
         const tabs = [
-            { name: 'Personal informatio', component: <PersonalInfo /> },
-            { name: 'Billing', component: <Billing user={user} /> },
+            { name: 'Personal Information', component: <PersonalInfo /> },
+            { name: 'My Plan', component: <Billing user={user} /> },
             { name: 'Statistics', component: <Statistics user={user} /> }
         ];
         return (

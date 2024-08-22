@@ -24,6 +24,7 @@ export interface userType {
             duration: string | null;
             subtitle: string;
             createdAt: Date | null;
+            stripePriceId?: string;
             FeaturePlan: Array<{ name: NAMEPLAN; value: number }>;
         };
     } | null;
