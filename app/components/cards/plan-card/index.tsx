@@ -1,6 +1,7 @@
 import { planType } from '@/app/@types/plan';
 import Button from '../../globals/form/button';
 import IconRenderer from '../../globals/icon';
+import PaymentButton from '../../payment/payment-modal';
 
 const PlanCard = ({
     plan,
@@ -64,12 +65,16 @@ const PlanCard = ({
                 </p>
                 <p>{plan.duration} Days</p>
             </div>
-            <Button
-                disabled={active ? true : false}
-                label={isAdmin ? 'Details' : active ? 'my plan' : 'start now'}
-                color={active ? 'basic' : 'outline'}
-                onClick={onMainButtonClicked}
-            />
+            {!isAdmin && !active ? (
+                <PaymentButton priceId={plan.stripePriceId} />
+            ) : (
+                <Button
+                    disabled={active ? true : false}
+                    label={isAdmin ? 'Details' : active ? 'my plan' : 'start now'}
+                    color={active ? 'basic' : 'outline'}
+                    onClick={onMainButtonClicked}
+                />
+            )}
             <div className="flex flex-col gap-3">{Advantages(plan, active)}</div>
         </div>
     );

@@ -55,3 +55,13 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 ## Notes
 
 -   Use Prettier for code formatting.
+
+
+## Trying Payment
+Click the pay button to complete the payment, which redirects you to the specified return page.
+
+If you see the return page, and the payment in the list of successful payments in the Dashboard, your integration is successfully working. Use any of the following test cards to simulate a payment:
+
+Payment succeeds: 4242 4242 4242 4242
+Payment requires authentication: 4000 0025 0000 3155
+Payment is declined: 4000 0000 0000 9995

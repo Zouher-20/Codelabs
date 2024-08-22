@@ -4,7 +4,7 @@ const nextConfig = {
     async headers() {
         return [
             {
-                source: '/(.*)',
+                source: '/lab(.*)',
                 headers: [
                     {
                         key: 'Cross-Origin-Embedder-Policy',

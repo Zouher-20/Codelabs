@@ -100,12 +100,13 @@ model EditorConfig {
 }
 
 model Plan {
-  id        String   @id @default(cuid())
-  name      String?
-  price     Int
-  duration  String?
-  subtitle  String
-  createdAt DateTime @default(now())
+  id            String   @id @default(cuid())
+  name          String?
+  price         Int
+  duration      String?
+  stripePriceId String?
+  subtitle      String
+  createdAt     DateTime @default(now())
 
   FeaturePlan      FeaturePlan[]
   PlanSubscription PlanSubscription[]
@@ -169,6 +170,7 @@ model Tag {
   id           String     @id @default(cuid())
   tagename     String     @unique
   isChanllange Boolean?
+  tagtype      TAGTYPE?
   createdAt    DateTime   @default(now())
   updatedAt    DateTime?  @updatedAt
   TagMorph     TagMorph[]
