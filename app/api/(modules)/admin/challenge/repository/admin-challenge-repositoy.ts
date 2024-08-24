@@ -114,6 +114,13 @@ class AdminChallengeRepository {
             where: {
                 id: payload.challengeId
             },
+            include: {
+                TagMorph: {
+                    include: {
+                        tag: true
+                    }
+                }
+            }
         });
         if (!challenge) {
             throw new Error('challange not found')
