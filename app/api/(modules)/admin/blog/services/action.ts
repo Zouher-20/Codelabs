@@ -4,7 +4,7 @@ import { deleteAnyBlogInput } from '@/app/api/(modules)/admin/types';
 import { getSession } from '@/app/api/(modules)/auth/service/actions';
 import { ROLE } from '@prisma/client';
 
-export const deleteChallenge = async (payload: deleteAnyBlogInput) => {
+export const adminDeleteBlog = async (payload: deleteAnyBlogInput) => {
     const session = await getSession();
     if (session?.role === ROLE.ADMIN) {
         return AdminBlogRepository.adminDeleteBlog(payload);
