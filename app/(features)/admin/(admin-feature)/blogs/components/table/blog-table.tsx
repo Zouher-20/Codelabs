@@ -1,8 +1,8 @@
-import { deleteMyBlog } from '@/app/api/(modules)/blog/services/action';
 import IconRenderer from '@/app/components/globals/icon';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
-import CodeLabTable, { GenericTableModel } from './generic-tabel';
+import CodeLabTable, { GenericTableModel } from './generic-tabel'
+import { adminDeleteBlog } from '@/app/api/(modules)/admin/blog/services/action';
 
 export default function BlogTable({
     currentPage,
@@ -19,8 +19,9 @@ export default function BlogTable({
 }) {
     const handleDelete = async (id: string) => {
         try {
-            const res = await deleteMyBlog({ blogId: id });
+            const res = await adminDeleteBlog({ blogId: id });
             isDelete(true);
+            toast.success('challenge deleted successfully');
             return res;
         } catch (error: any) {
             toast.error(error.message);

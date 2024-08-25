@@ -34,7 +34,7 @@ const ChallengeDetails = async ({ params }: { params: { 'challenge-id': string }
 
     if (data)
         return (
-            <div className="p-4 mx-auto">
+            <div className="p-4 2xl:mx-auto 2xl:min-w-[50vw]">
                 <div className="flex w-full flex-col rounded-3xl bg-base-100 p-8 lg:w-4/5 xl:relative xl:w-3/5">
                     <span className="-ml-4 flex gap-1 text-xl font-bold text-white">
                         <Link href={'/challenges'}>

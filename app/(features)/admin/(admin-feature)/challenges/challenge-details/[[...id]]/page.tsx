@@ -111,7 +111,10 @@ const AddChallenge = ({ params }: { params: { id: string } }) => {
                 router.push('/admin/challenges');
             }
         } else {
-            createChallenge(values);
+            let res = createChallenge(values);
+            if (res != undefined) {
+                router.push('/admin/challenges');
+            }
         }
     };
 
@@ -252,14 +255,7 @@ const AddChallenge = ({ params }: { params: { id: string } }) => {
                             />
                         </div>
                         <span className="col-start-2 flex justify-end">
-                            {isUpdate ? (
-                                <Button
-                                    style="w-fit"
-                                    color="error"
-                                    label="Delete"
-                                    type="submit"
-                                />
-                            ) : (
+                            {isUpdate || (
                                 <Button
                                     onClick={() => props.validateForm()}
                                     style="w-fit"

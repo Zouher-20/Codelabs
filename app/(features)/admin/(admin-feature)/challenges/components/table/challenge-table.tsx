@@ -1,7 +1,5 @@
-import { deleteChallenge } from '@/app/api/(modules)/admin/challenge/services/action';
 import IconRenderer from '@/app/components/globals/icon';
 import { DIFFICULTTYPE } from '@prisma/client';
-import toast from 'react-hot-toast';
 import CodeLabTable, { GenericTableModel } from './generic-tabel';
 import Link from 'next/link';
 
@@ -27,15 +25,16 @@ export default function ClassesTable({
         else if (minuts < 1) return false
     };
 
-    const handleDelete = async (id: string) => {
-        try {
-            const res = await deleteChallenge({ challengeId: [`${id}`] });
-            isDelete(true);
-            return res;
-        } catch (error: any) {
-            toast.error(error.message);
-        }
-    };
+    // const handleDelete = async (id: string) => {
+    //     try {
+    //         const res = await deleteChallenge({ challengeId: [`${id}`] });
+    //         isDelete(true);
+    //         toast.success('challenge deleted successfully');
+    //         return res;
+    //     } catch (error: any) {
+    //         toast.error(error.message);
+    //     }
+    // };
     function TableItem({ item, index }: { item: challengeTableType; index: number }) {
         return (
             <tr className={`my-3 ${index % 2 == 0 ? 'bg-base-300' : ''}`}>
@@ -63,14 +62,14 @@ export default function ClassesTable({
                         Details
                     </Link>
                 </td>
-                <td>
+                {/* <td>
                     <button
                         onClick={() => handleDelete(item.id)}
                         className="btn btn-outline btn-error h-[35px] min-h-[35px]"
                     >
                         <IconRenderer className="h-6 w-6" icon="solar:trash-bin-2-broken" />
                     </button>
-                </td>
+                </td> */}
             </tr>
         );
     }
