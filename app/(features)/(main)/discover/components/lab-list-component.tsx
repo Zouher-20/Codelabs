@@ -27,7 +27,7 @@ export default function LabListComponent({
                 />
             </div>
             <div className="h-3"></div>
-            <div className="carousel relative w-full rounded-box">
+            <div className="carousel relative w-full rounded-box min-h-[340px]">
                 <div className="carousel-item gap-1">
                     {labs.map((e, index) => (
                         <div className="px-1" key={e.name + `${index}`}>

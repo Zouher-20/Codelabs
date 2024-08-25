@@ -4,16 +4,18 @@ import { useMemo } from 'react';
 import 'react-quill/dist/quill.snow.css';
 
 export default function CodeLabsQuill({
+    disabled,
     onChange,
     value
 }: {
     onChange: (value: string) => void;
     value: string;
+    disabled?: boolean
 }) {
     const QuillEditor = useMemo(() => dynamic(() => import('react-quill'), { ssr: false }), []);
 
-    const quillModules = {
-        toolbar: [
+    const quillModules = useMemo(() => ({
+        toolbar: disabled ? false : [
             [{ header: [1, 2, 3, false] }],
             ['bold', 'italic', 'underline', 'strike', 'blockquote'],
             [{ list: 'ordered' }, { list: 'bullet' }],
@@ -22,8 +24,9 @@ export default function CodeLabsQuill({
             [{ color: [] }],
             ['code-block'],
             ['clean']
-        ]
-    };
+        ],
+    }), [disabled]);
+
     const quillFormats = [
         'header',
         'bold',
@@ -45,7 +48,8 @@ export default function CodeLabsQuill({
             onChange={onChange}
             modules={quillModules}
             formats={quillFormats}
-            className="mt-2"
+            readOnly={disabled}
+            className={`mt-2 ${disabled ? 'cursor-not-allowed opacity-50' : ''}`}
         />
     );
 }

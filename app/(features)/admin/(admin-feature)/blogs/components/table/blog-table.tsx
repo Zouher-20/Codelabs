@@ -28,11 +28,12 @@ export default function BlogTable({
     };
     function TableItem({ item, index }: { item: blogTableType; index: number }) {
         return (
-            <tr className={`my-3 ${index % 2 == 0 ? 'bg-base-300' : ''}`} key={index}>
+            <tr className={`text-center my-3 ${index % 2 == 0 ? 'bg-base-300' : ''}`} key={index}>
                 <th>{index + 1}</th>
-                <td className="line-clamp-2 w-64 pb-0">{item.title}</td>
-                <td>{item.starCount} </td>
-                <td>{item.commentCount}</td>
+                <td className="line-clamp-2 w-fit pb-0">{item.title}</td>
+                <td className='text-primary'>{item.starCount}</td>
+                <td className='text-warning'>{item.viewCount}</td>
+                <td className='text-rose-500'>{item.commentCount}</td>
                 <td>{item.createdAt.toLocaleDateString()}</td>
                 <td>
                     <Link
@@ -63,12 +64,13 @@ export default function BlogTable({
         },
         tableHeader: (
             <thead>
-                <tr>
+                <tr className='text-center text-base'>
                     <th></th>
-                    <th>title</th>
-                    <th>star </th>
-                    <th>comments</th>
-                    <th>createdAt At</th>
+                    <th className='text-start'>Title</th>
+                    <th>Star</th>
+                    <th>Views</th>
+                    <th>Comments</th>
+                    <th>CreatedAt At</th>
                     <th></th>
                     <th></th>
                 </tr>
@@ -78,6 +80,7 @@ export default function BlogTable({
 }
 
 export interface blogTableType extends GenericTableModel {
+    viewCount: string;
     id: string;
     title: string;
     photo: string;

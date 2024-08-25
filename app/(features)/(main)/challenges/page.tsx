@@ -20,22 +20,22 @@ async function getData() {
 }
 
 export default async function ChallengesPage() {
-    const challenges = await getData();
+    const challenges = await getData()
     return (
         <div className="flex flex-col gap-8 pb-8">
             <Introduction
-                showImage={challenges && challenges.currentCh.length < 0 ? true : false}
+                showImage={challenges && challenges?.currentCh?.length > 0 ? true : false}
             />
 
-            {challenges.currentCh.length > 0 ? (
-                <CurrentChallenge challenge={challenges.currentCh[0]} />
+            {challenges?.currentCh?.length > 0 ? (
+                <CurrentChallenge challenge={challenges?.currentCh[0]} />
             ) : (
                 <div className="flex justify-center pt-44 text-xl font-bold ">
                     There is no challenge right now !
                 </div>
             )}
 
-            {challenges.currentCh.length > 0 && (
+            {challenges?.currentCh?.length >= 2 && (
                 <div>
                     <span className="pl-4 text-2xl font-bold">Ongoing challenges : </span>
                     <div className="mt-8 grid gap-8 px-8 lg:grid-cols-2">
@@ -51,7 +51,7 @@ export default async function ChallengesPage() {
                     </div>
                 </div>
             )}
-            {challenges.lastCh.length > 0 && (
+            {challenges?.lastCh?.length > 0 && (
                 <div>
                     <span className="text-2xl font-bold">Last challenges : </span>
                     <div className="mt-8 grid gap-8 px-8 lg:grid-cols-2">
@@ -80,10 +80,9 @@ const LastChallenge = ({ challenge }: { challenge: challengeType }) => {
     return (
         <div className="flex flex-col gap-2 rounded-2xl bg-base-100 p-4">
             <span className="mt-4 text-primary">
-                {' '}
-                {challenge.isComplete
+                {daysBetween(challenge.endAt).isfinish
                     ? `${formattedDate} Days - Complete`
-                    : `${daysBetween(challenge.endAt)} Days - Right Now`}
+                    : `${daysBetween(challenge.endAt).info} Days - Right Now`}
             </span>
             <h1 className="-ml-12 flex gap-2 text-4xl font-bold capitalize text-white">
                 <IconRenderer
@@ -135,7 +134,7 @@ const CurrentChallenge = ({ challenge }: { challenge: challengeType }) => {
         <div className="flex flex-col gap-2 rounded-l-xl bg-base-100 p-6">
             <span className="text-primary">This month challenge</span>
             <span className="text-xl font-bold text-white">
-                {daysBetween(challenge.endAt)} - {challenge.isComplete ? 'Complete' : 'Right Now!'}
+                {daysBetween(challenge.endAt).isfinish ? 'Complete' : `${daysBetween(challenge.endAt).info} Days - Right Now`}
             </span>
             <h1 className="text-4xl font-bold text-white">{challenge.name}</h1>
             <div
@@ -153,7 +152,7 @@ const daysBetween = (date: Date) => {
     const diffInMilliseconds = date.getTime() - now.getTime();
     const days = Math.ceil(diffInMilliseconds / (1000 * 60 * 60 * 24));
     const minuts = diffInMilliseconds / (1000 * 60 * 60 * 24);
-    if (minuts <= 0) return 'Finished';
-    else if (minuts < 1) return `${(diffInMilliseconds / (1000 * 60)).toFixed(2)} Minutes`;
-    return `${days}  Days`;
+    if (minuts <= 0) return { isfinish: true, info: 'Finished' };
+    else if (minuts < 1) return { isfinish: false, info: `${(diffInMilliseconds / (1000 * 60)).toFixed(2)} Minutes` };
+    return { isfinish: false, info: days };
 };

@@ -1,7 +1,6 @@
 'use client';
 import Comments from '@/app/(features)/(main)/blogs/components/Comments';
 import Favorite from '@/app/(features)/(main)/blogs/components/favorite';
-import { blogTableType } from '@/app/(features)/admin/(admin-feature)/blogs/components/table/blog-table';
 import { blogType } from '@/app/@types/blog';
 import { userType } from '@/app/@types/user';
 import { getMyInfo } from '@/app/api/(modules)/auth/service/actions';
@@ -19,7 +18,8 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
 const BlogDetails = ({ params }: { params: { id: string } }) => {
-    const [blog, setBlog] = useState<blogTableType | null>(null);
+    const [blog, setBlog] = useState<any | null>(null);
+    const [BlogDetail, setBlogDetail] = useState<any | null>(null);
     const [user, setUser] = useState<userType | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
@@ -29,23 +29,8 @@ const BlogDetails = ({ params }: { params: { id: string } }) => {
             try {
                 setLoading(true);
                 const data = await getDetailsBlog({ blogId: params.id });
-                setBlog({
-                    commentCount: data.commentCount ?? 0,
-                    contant: data.blog.contant ?? '',
-                    createdAt: new Date(data.blog.createdAt),
-                    id: data.blog.id,
-                    photo: data.blog.photo ?? '',
-                    starCount: data.starCount,
-                    title: data.blog.title ?? '',
-                    user: {
-                        email: data.blog.user.email,
-                        id: data.blog.user.id,
-                        userImage: data.blog.user.userImage,
-                        username: data.blog.user.username
-                    },
-                    userId: data.blog.userId,
-                    isStarred: data.isStarred
-                });
+                setBlog(data.blog);
+                setBlogDetail(data)
                 const userRes = await getMyInfo();
                 setUser(userRes as unknown as userType);
             } catch (e: any) {
@@ -73,7 +58,7 @@ const BlogDetails = ({ params }: { params: { id: string } }) => {
         <ManageState
             loading={loading}
             error={error}
-            errorAndEmptyCallback={() => {}}
+            errorAndEmptyCallback={() => { }}
             empty={false}
             loadedState={
                 <div className="relative mx-auto flex flex-col gap-2 px-4 py-8 ">
@@ -158,18 +143,27 @@ const BlogDetails = ({ params }: { params: { id: string } }) => {
                     <div className="divider m-0"></div>
                     <div className="flex gap-6 px-4 text-gray-500">
                         <Favorite
-                            hasStarred={blog?.isStarred ?? false}
+                            hasStarred={BlogDetail?.isStarred ?? false}
                             blogId={blog?.id ?? ''}
-                            starCount={blog?.starCount ?? 0}
+                            starCount={BlogDetail?.starCount ?? 0}
                         />
                         {blog && (
                             <Comments
                                 blog={blog as unknown as blogType}
-                                commentCount={blog?.commentCount}
+                                commentCount={BlogDetail?.commentCount}
                                 user={user}
                                 isAdmin={false}
                             />
                         )}
+                        <div className="flex gap-1">
+                            <IconRenderer
+                                icon={'fa6-solid:street-view'}
+                                width={20}
+                                height={24}
+                                className={' text-warning'}
+                            />
+                            {BlogDetail?.viewCount}
+                        </div>
                         <p>Your feedback would be greatly appreciated.</p>
                     </div>
                     <div className="divider m-0"></div>
