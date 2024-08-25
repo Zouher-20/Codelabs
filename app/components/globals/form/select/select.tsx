@@ -6,6 +6,7 @@ import makeAnimated from 'react-select/animated';
 import IconRenderer from '../../icon';
 
 const SelectField = ({
+    isDisabled,
     placeholder,
     field,
     form,
@@ -49,6 +50,7 @@ const SelectField = ({
                     icon="solar:bookmark-circle-broken"
                 />
                 <Select
+                    isDisabled={isDisabled}
                     components={animatedComponents}
                     closeMenuOnSelect={false}
                     styles={selectStyle(errors)}
@@ -128,10 +130,10 @@ const selectStyle = (errors: string | null) => {
             backgroundColor: state.isDisabled
                 ? undefined
                 : state.isSelected
-                  ? '#1D231C'
-                  : state.isFocused
                     ? '#1D231C'
-                    : undefined,
+                    : state.isFocused
+                        ? '#1D231C'
+                        : undefined,
             ':active': {
                 ...baseStyles[':active'],
                 backgroundColor: !state.isDisabled

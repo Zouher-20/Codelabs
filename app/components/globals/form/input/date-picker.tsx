@@ -3,6 +3,7 @@ import IconRenderer from '../../icon';
 import './style.css';
 
 export interface dateFieldType {
+    disabled?: boolean
     placeholder?: string;
     icon?: string;
     errors?: string | null;
@@ -10,7 +11,7 @@ export interface dateFieldType {
     onChange(date: Date): void;
 }
 
-const CodeLabDatePicker = ({ icon, errors, date, onChange }: dateFieldType) => {
+const CodeLabDatePicker = ({ disabled, icon, errors, date, onChange }: dateFieldType) => {
     return (
         <div className="flex w-full flex-col gap-1">
             <label
@@ -29,6 +30,7 @@ const CodeLabDatePicker = ({ icon, errors, date, onChange }: dateFieldType) => {
                     <></>
                 )}
                 <DatePicker
+                    disabled={disabled}
                     className="w-full bg-transparent "
                     selected={date}
                     onChange={date => onChange(date ?? new Date())}

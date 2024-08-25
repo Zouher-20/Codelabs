@@ -96,7 +96,7 @@ const Challenges = () => {
     }
 
     return (
-        <div className="flex flex-col gap-2 px-6">
+        <div className="flex flex-col gap-2 px-6 container mx-auto">
             <Header
                 searchValue={searchValue}
                 onChange={(val: string) => setSearchValue(val)}

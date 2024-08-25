@@ -7,11 +7,9 @@ import EnrollCard from '../components/enroll-card';
 const ChallengeDetails = async ({ params }: { params: { 'challenge-id': string } }) => {
     async function getData() {
         const challenge = await getDetailsChallenge({
-            challengeId: params['challenge-id'],
-            page: 1,
-            pageSize: 100
+            challengeId: params['challenge-id']
         });
-        return challenge.challenge;
+        return challenge.challenge as any;
     }
 
     const FormatDate = (date: Date) => {
@@ -26,26 +24,25 @@ const ChallengeDetails = async ({ params }: { params: { 'challenge-id': string }
         const diffInMilliseconds = date.getTime() - now.getTime();
         const days = Math.ceil(diffInMilliseconds / (1000 * 60 * 60 * 24));
         const minuts = diffInMilliseconds / (1000 * 60 * 60 * 24);
-        if (minuts <= 0) return 'Finished';
-        else if (minuts < 1) return `${(diffInMilliseconds / (1000 * 60)).toFixed(2)} Minutes`;
-        return `${days}  Days`;
+        if (minuts <= 0) return { isfinish: true, info: 'Finished' };
+        else if (minuts < 1) return { isfinish: false, info: `${(diffInMilliseconds / (1000 * 60)).toFixed(2)} Minutes` };
+        return { isfinish: false, info: days };
     };
+
 
     const data = await getData();
 
     if (data)
         return (
-            <div className="p-4">
+            <div className="p-4 mx-auto">
                 <div className="flex w-full flex-col rounded-3xl bg-base-100 p-8 lg:w-4/5 xl:relative xl:w-3/5">
                     <span className="-ml-4 flex gap-1 text-xl font-bold text-white">
                         <Link href={'/challenges'}>
                             <IconRenderer fontSize={24} icon="solar:arrow-left-linear" />
                         </Link>
-                        {data.isComplete
-                            ? `${FormatDate(data.createdAt)} - Complete`
-                            : data.startedAt &&
-                              data.endAt &&
-                              `${daysBetween(data.endAt)} - Right Now`}
+                        {daysBetween(data?.endAt).isfinish
+                            ? `${FormatDate(data?.endAt)} Days - Complete`
+                            : `${daysBetween(data?.endAt).info} Days - Right Now`}
                     </span>
                     <h1 className="mt-4 text-4xl font-bold text-white">{data.name}</h1>
                     {data.description && (
@@ -54,8 +51,7 @@ const ChallengeDetails = async ({ params }: { params: { 'challenge-id': string }
                             dangerouslySetInnerHTML={{ __html: data.description }}
                         ></div>
                     )}
-
-                    <EnrollCard title={data.name} tags={data?.TagMorph.map(item => item.tag)} />
+                    <EnrollCard challenge={data} />
                 </div>
                 <div className="mt-[7rem] flex">
                     {data.resources && <DisplayCard name="RESOURCES" resources={data.resources} />}

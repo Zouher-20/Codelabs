@@ -3,10 +3,11 @@ import { challengeType } from '@/app/@types/challenge';
 import { MyOptionType } from '@/app/@types/select';
 import { tag } from '@/app/@types/tag';
 import {
+    addChallenge,
     deleteChallenge,
     getDetailsChallenge
 } from '@/app/api/(modules)/admin/challenge/services/action';
-import { addChallenge, getTag } from '@/app/api/(modules)/admin/service/action';
+import { getTag } from '@/app/api/(modules)/admin/service/action';
 import CodeLabsQuill from '@/app/components/globals/codelabs-quill';
 import Button from '@/app/components/globals/form/button';
 import Input from '@/app/components/globals/form/input';
@@ -70,22 +71,11 @@ const AddChallenge = ({ params }: { params: { id: string } }) => {
     };
     const getChallengesByID = async (id: string) => {
         try {
-            const res = await getDetailsChallenge({ challengeId: id, page: 1, pageSize: 100 });
-            let data = {
-                id: res.challenge?.id ? res.challenge?.id : '',
-                name: res.challenge?.name ? res.challenge?.name : '',
-                difficulty: res.challenge?.difficulty ? res.challenge?.difficulty : 'easy',
-                endAt: res.challenge?.endAt ? res.challenge?.endAt : date,
-                startedAt: res.challenge?.startedAt ? res.challenge?.startedAt : date,
-                description: res.challenge?.description ? res.challenge?.description : '',
-                resources: res.challenge?.resources ? res.challenge?.resources : '',
-                tagId: res.challenge?.TagMorph ? res.challenge?.TagMorph.map(tag => tag.tagId) : [],
-                isComplete: res.challenge?.isComplete,
-                createdAt: res.challenge?.createdAt
-            };
+            const res = await getDetailsChallenge({ challengeId: id });
+            let data = res.challenge as unknown as challengeType;
             setStartDate(res.challenge?.startedAt ? res.challenge?.startedAt : date);
             setEndDate(res.challenge?.endAt ? res.challenge?.endAt : date);
-            setDefaultValues({ ...data, tagMorph: [] });
+            setDefaultValues({ ...data, tagId: [], tagMorph: [] });
         } catch (error: any) {
             toast.error(error.message);
         }
@@ -121,10 +111,7 @@ const AddChallenge = ({ params }: { params: { id: string } }) => {
                 router.push('/admin/challenges');
             }
         } else {
-            let res = createChallenge(values);
-            if (res != undefined) {
-                router.push('/admin/challenges');
-            }
+            createChallenge(values);
         }
     };
 
@@ -155,6 +142,7 @@ const AddChallenge = ({ params }: { params: { id: string } }) => {
                         <div className="flex flex-col gap-4">
                             <label className=" capitalize">name</label>
                             <Input
+                                disabled={isUpdate}
                                 id="name"
                                 name="name"
                                 type="text"
@@ -173,6 +161,7 @@ const AddChallenge = ({ params }: { params: { id: string } }) => {
                         <div className="flex flex-col gap-4">
                             <label className=" capitalize">Difficulty</label>
                             <Field
+                                isDisabled={isUpdate}
                                 className="mb-4"
                                 name="difficulty"
                                 options={difficultyOptions}
@@ -192,6 +181,7 @@ const AddChallenge = ({ params }: { params: { id: string } }) => {
                         <div className="flex flex-col gap-4">
                             <label className=" capitalize">start At</label>
                             <CodeLabDatePicker
+                                disabled={isUpdate}
                                 icon="solar:sort-by-time-bold-duotone"
                                 date={startDate}
                                 onChange={e => setStartDate(e)}
@@ -200,6 +190,7 @@ const AddChallenge = ({ params }: { params: { id: string } }) => {
                         <div className="flex flex-col gap-4">
                             <label className=" capitalize">end At</label>
                             <CodeLabDatePicker
+                                disabled={isUpdate}
                                 icon="solar:sort-by-time-bold-duotone"
                                 date={endDate}
                                 onChange={e => setEndDate(e)}
@@ -208,7 +199,7 @@ const AddChallenge = ({ params }: { params: { id: string } }) => {
                         <div className="flex flex-col gap-4">
                             <label className=" flex gap-4 capitalize">
                                 tag
-                                <label
+                                {!isUpdate && <label
                                     className="btn btn-xs tooltip tooltip-right tooltip-primary rounded-md bg-base-300"
                                     data-tip="Add New Tag"
                                     onClick={openModal}
@@ -219,9 +210,10 @@ const AddChallenge = ({ params }: { params: { id: string } }) => {
                                         width={24}
                                         height={24}
                                     ></IconRenderer>
-                                </label>
+                                </label>}
                             </label>
                             <Field
+                                isDisabled={isUpdate}
                                 className="mb-4"
                                 name="tagId"
                                 options={tOptions}
@@ -229,7 +221,7 @@ const AddChallenge = ({ params }: { params: { id: string } }) => {
                                 placeholder="Select multi tagId..."
                                 isMulti={true}
                                 validate={(value: Array<any>) =>
-                                    value.length == 0 ? 'Required' : undefined
+                                    value.length == 0 ? isUpdate ? undefined : 'Required' : undefined
                                 }
                                 errors={
                                     props.errors.tagId && props.touched.tagId
@@ -242,6 +234,7 @@ const AddChallenge = ({ params }: { params: { id: string } }) => {
                         <div className="col-span-2">
                             <label>Description</label>
                             <CodeLabsQuill
+                                disabled={isUpdate}
                                 onChange={e => {
                                     props.values.description = e;
                                 }}
@@ -251,6 +244,7 @@ const AddChallenge = ({ params }: { params: { id: string } }) => {
                         <div className="col-span-2">
                             <label>Resources</label>
                             <CodeLabsQuill
+                                disabled={isUpdate}
                                 onChange={(value: string) => {
                                     props.values.resources = value;
                                 }}
@@ -260,7 +254,6 @@ const AddChallenge = ({ params }: { params: { id: string } }) => {
                         <span className="col-start-2 flex justify-end">
                             {isUpdate ? (
                                 <Button
-                                    onClick={() => props.validateForm()}
                                     style="w-fit"
                                     color="error"
                                     label="Delete"

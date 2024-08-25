@@ -3,6 +3,7 @@ import IconRenderer from '@/app/components/globals/icon';
 import { DIFFICULTTYPE } from '@prisma/client';
 import toast from 'react-hot-toast';
 import CodeLabTable, { GenericTableModel } from './generic-tabel';
+import Link from 'next/link';
 
 export default function ClassesTable({
     currentPage,
@@ -17,6 +18,15 @@ export default function ClassesTable({
     challenges: Array<challengeTableType>;
     isDelete: (value: boolean) => void;
 }) {
+    const daysBetween = (date: Date) => {
+        let now = new Date();
+        const diffInMilliseconds = date.getTime() - now.getTime();
+        const days = Math.ceil(diffInMilliseconds / (1000 * 60 * 60 * 24));
+        const minuts = diffInMilliseconds / (1000 * 60 * 60 * 24);
+        if (minuts <= 0) return true;
+        else if (minuts < 1) return false
+    };
+
     const handleDelete = async (id: string) => {
         try {
             const res = await deleteChallenge({ challengeId: [`${id}`] });
@@ -43,15 +53,15 @@ export default function ClassesTable({
                 </th>
                 <td>{item.startedAt?.toLocaleDateString()} </td>
                 <td>{item.endAt?.toLocaleDateString()} </td>
-                <td>{item.isComplete ? 'complete' : 'working'}</td>
+                {item.endAt && <td className={daysBetween(item.endAt) ? 'text-error' : 'text-primary'}>{daysBetween(item.endAt) ? 'complete' : 'working'}</td>}
                 <td>{item.difficulty}</td>
                 <td>
-                    {/* <Link
+                    <Link
                         href={`/admin/challenges/challenge-details/${item.id}`}
                         className="btn btn-outline h-[35px] min-h-[35px]"
                     >
                         Details
-                    </Link> */}
+                    </Link>
                 </td>
                 <td>
                     <button
@@ -74,12 +84,13 @@ export default function ClassesTable({
         },
         tableHeader: (
             <thead>
-                <tr>
+                <tr className='text-base'>
                     <th>Challenges</th>
                     <th>Start At</th>
                     <th>End At</th>
                     <th>State</th>
                     <th>Difficulty</th>
+                    <th></th>
                     <th></th>
                     <th></th>
                 </tr>

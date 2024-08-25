@@ -16,4 +16,5 @@ export interface CustomSelectProps extends FieldProps {
     isMulti?: boolean;
     placeholder?: string;
     errors: string | null;
+    isDisabled?: boolean;
 }
